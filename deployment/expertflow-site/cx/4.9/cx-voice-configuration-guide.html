@@ -1,0 +1,3322 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_14b4256212d7741c9a90e3946b2e7aaf37a90ac72c333ff993440e61f0e68264" data-confluence-content-id="1042483258"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/cx/4.9/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="CX">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>CX Voice Configuration Guide | Expertflow CX</title>
+		<meta property="og:title" content="CX Voice Configuration Guide | Expertflow CX">
+		<meta property="twitter:title" content="CX Voice Configuration Guide | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/cx/4.9/cx-voice-configuration-guide">
+		<meta property="og:url" content="https://docs.expertflow.com/cx/4.9/cx-voice-configuration-guide">
+
+		<meta name="description" content="Recommendations Media Server and Expertflow CX Server Time should be synced. Limitations The limitations of the multi-channel are mentioned here. Direct ext-to…">
+		<meta property="og:description" content="Recommendations Media Server and Expertflow CX Server Time should be synced. Limitations The limitations of the multi-channel are mentioned here. Direct ext-to…">
+		<meta property="twitter:description" content="Recommendations Media Server and Expertflow CX Server Time should be synced. Limitations The limitations of the multi-channel are mentioned here. Direct ext-to…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__attachments/a_fc9f107c1e733d7685ee478d2d868b869bdd2bea309cd25b8aa30f6b04367211/image-20240319-100706.png?cb=7039bc8e22c92dc3687919a2793c0914">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__attachments/a_fc9f107c1e733d7685ee478d2d868b869bdd2bea309cd25b8aa30f6b04367211/image-20240319-100706.png?cb=7039bc8e22c92dc3687919a2793c0914">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2025-04-23T15:11:06.157Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": true
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="de0647e31d0479e8-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="de0647e31d0479e8-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="de0647e31d0479e8-19">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="de0647e31d0479e8-19" name="version" onchange="self.location.assign(this.value)" >
+				<option id="de0647e31d0479e8-3"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="de0647e31d0479e8-4"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="de0647e31d0479e8-5"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="de0647e31d0479e8-6"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="de0647e31d0479e8-7"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="de0647e31d0479e8-8"  value="/cx/4.10"  >
+					4.10
+				</option>
+				<option id="de0647e31d0479e8-9"  value="/cx/4.9/cx-voice-configuration-guide"  selected="">
+					4.9
+				</option>
+				<option id="de0647e31d0479e8-10"  value="/cx/4.8/cx-voice-configuration-guide"  >
+					4.8
+				</option>
+				<option id="de0647e31d0479e8-11"  value="/cx/4.7/cx-voice-configuration-guide"  >
+					4.7
+				</option>
+				<option id="de0647e31d0479e8-12"  value="/cx/4.6/cx-voice-configuration-guide"  >
+					4.6
+				</option>
+				<option id="de0647e31d0479e8-13"  value="/cx/4.5.3/cx-voice-configuration-guide"  >
+					4.5.3
+				</option>
+				<option id="de0647e31d0479e8-14"  value="/cx/4.5.2/cx-voice-configuration-guide"  >
+					4.5.2
+				</option>
+				<option id="de0647e31d0479e8-15"  value="/cx/4.5.1/cx-voice-configuration-guide"  >
+					4.5.1
+				</option>
+				<option id="de0647e31d0479e8-16"  value="/cx/4.5/cx-voice-configuration-guide"  >
+					4.5
+				</option>
+				<option id="de0647e31d0479e8-17"  value="/cx/4.4/cx-voice-configuration-guide"  >
+					4.4
+				</option>
+				<option id="de0647e31d0479e8-18"  value="/cx/4.3"  >
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('de0647e31d0479e8-19');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-de0647e31d0479e8-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-de0647e31d0479e8-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-de0647e31d0479e8-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="de0647e31d0479e8-20" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="de0647e31d0479e8-20">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-de0647e31d0479e8-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-de0647e31d0479e8-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="de0647e31d0479e8-37">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="de0647e31d0479e8-37" name="version" onchange="self.location.assign(this.value)" >
+				<option id="de0647e31d0479e8-21"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="de0647e31d0479e8-22"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="de0647e31d0479e8-23"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="de0647e31d0479e8-24"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="de0647e31d0479e8-25"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="de0647e31d0479e8-26"  value="/cx/4.10"  >
+					4.10
+				</option>
+				<option id="de0647e31d0479e8-27"  value="/cx/4.9/cx-voice-configuration-guide"  selected="">
+					4.9
+				</option>
+				<option id="de0647e31d0479e8-28"  value="/cx/4.8/cx-voice-configuration-guide"  >
+					4.8
+				</option>
+				<option id="de0647e31d0479e8-29"  value="/cx/4.7/cx-voice-configuration-guide"  >
+					4.7
+				</option>
+				<option id="de0647e31d0479e8-30"  value="/cx/4.6/cx-voice-configuration-guide"  >
+					4.6
+				</option>
+				<option id="de0647e31d0479e8-31"  value="/cx/4.5.3/cx-voice-configuration-guide"  >
+					4.5.3
+				</option>
+				<option id="de0647e31d0479e8-32"  value="/cx/4.5.2/cx-voice-configuration-guide"  >
+					4.5.2
+				</option>
+				<option id="de0647e31d0479e8-33"  value="/cx/4.5.1/cx-voice-configuration-guide"  >
+					4.5.1
+				</option>
+				<option id="de0647e31d0479e8-34"  value="/cx/4.5/cx-voice-configuration-guide"  >
+					4.5
+				</option>
+				<option id="de0647e31d0479e8-35"  value="/cx/4.4/cx-voice-configuration-guide"  >
+					4.4
+				</option>
+				<option id="de0647e31d0479e8-36"  value="/cx/4.3"  >
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('de0647e31d0479e8-37');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="de0647e31d0479e8-38" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="de0647e31d0479e8-39" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="de0647e31d0479e8-40" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="de0647e31d0479e8-41" href="/cx/4.9/cx-release-history" >CX Release History</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-42"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-42" href="/cx/4.9/cx-release-notes" >CX Release Notes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="de0647e31d0479e8-44" href="/cx/4.9/expertflow-cx-data-sheet" >CX Data Sheet</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="de0647e31d0479e8-45" href="/cx/4.9/hc-3-x-vs-expertflow-cx-features-comparison" >HC 3.x vs Expertflow CX - Features Comparison</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-46"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-46" href="/cx/4.9/conversation-studio" >Conversation Studio</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-48"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-48" href="/cx/4.9/customer-identities" >Customer</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-50"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-50" href="/cx/4.9/conversation-control" >Conversation Objects</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="de0647e31d0479e8-53"						aria-labelledby="de0647e31d0479e8-52"
+					></button>
+				<a id="de0647e31d0479e8-52" href="/cx/4.9/customer-channels" >Channels</a>
+			</div>
+
+<ul  id="de0647e31d0479e8-53" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-54"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-54" href="/cx/4.9/digital-channels" >Digital Channels</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-56"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-56" href="/cx/4.9/email" >Email</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="de0647e31d0479e8-59"						aria-labelledby="de0647e31d0479e8-58"
+					></button>
+				<a id="de0647e31d0479e8-58" href="/cx/4.9/cx-voice" >Voice and Video</a>
+			</div>
+
+<ul  id="de0647e31d0479e8-59" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-60"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-60" href="/cx/4.9/cx-sip-proxy" >CX SIP Proxy</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-62"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-62" href="/cx/4.9/cx-media-server" >CX Media Server</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="de0647e31d0479e8-64" href="/cx/4.9/call-forking-concepts" >Call Forking Concepts</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-65"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-65" href="/cx/4.9/ef-dialer-release-notes" >CX Dialer</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-67"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-67" href="/cx/4.9/cx-voice-deployment" >CX Voice Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="de0647e31d0479e8-70"						aria-labelledby="de0647e31d0479e8-69"
+					></button>
+				<a id="de0647e31d0479e8-69" href="/cx/4.9/cx-voice-configuration-guide" aria-current="page">CX Voice Configuration Guide</a>
+			</div>
+
+<ul  id="de0647e31d0479e8-70" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="de0647e31d0479e8-71" href="/cx/4.9/adding-agent-extensions-for-cx-voice" >Adding Agent Extensions for CX Voice</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="de0647e31d0479e8-72" href="/cx/4.9/updating-cim-environment-variables-for-cx-voice" >Updating AgentDesk Environment Variables for CX Voice</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="de0647e31d0479e8-73" href="/cx/4.9/voice-channel-configuration-limitations-issues" >Voice Channel Configuration Limitations/Issues</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-74"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-74" href="/cx/4.9/troubleshooting-for-cx-voice" >Troubleshooting for CX Voice</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-76"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-76" href="/cx/4.9/cx-voice-upgrade-guides" >CX Voice Upgrade Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="de0647e31d0479e8-78" href="/cx/4.9/cx-voice-limitations" >CX-Voice Limitations</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-79"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-79" href="/cx/4.9/channel-connector-developer-guide" >Channel Connector Developer Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="de0647e31d0479e8-81" href="/cx/4.9/channel-related-terms" >Channel related terms</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-82"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-82" href="/cx/4.9/nlu-digital-bots" >NLU / Digital Bots</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-84"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-84" href="/cx/4.9/cx-events-and-activity-types" >CX-Activities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-86"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-86" href="/cx/4.9/solution-architecture" >Solution Architecture</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-88"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-88" href="/cx/4.9/expertflow-etl-data-platform" >Expertflow ETL - Data Platform</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-90"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-90" href="/cx/4.9/agent-capabilities" >Agent Capabilities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-92"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-92" href="/cx/4.9/supervisor-controls" >Supervisor Controls</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-94"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-94" href="/cx/4.9/deployment-guides" >Deployment Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-96"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-96" href="/cx/4.9/developer-guides" >Developer Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-98"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-98" href="/cx/4.9/unified-admin-guide" >Unified Admin Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-100"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-100" href="/cx/4.9/integrations" >Integrations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-102"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-102" href="/cx/4.9/security" >Security</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-104"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-104" href="/cx/4.9/voice-recording-solution" >Voice Recording Solution</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="de0647e31d0479e8-106" href="/cx/4.9/compatibility-guides" >Compatibility Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="de0647e31d0479e8-107" href="/cx/4.9/list-of-open-source-software" >List of Open-source Software</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-108"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-108" href="/cx/4.9/business-calendars" >Business Calendars</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-110"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-110" href="/cx/4.9/outbound-campaigns" >Outbound Campaigns</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-112"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-112" href="/cx/4.9/cx-surveys" >CX Surveys</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-114"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-114" href="/cx/4.9/reports" >Reports</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-116"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-116" href="/cx/4.9/superset-deployment-for-reporting" >Superset Deployment for Reporting</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="de0647e31d0479e8-118" href="/cx/4.9/reporting-database-schema-vcx-4-3" >Reporting Database Schema</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="de0647e31d0479e8-119" href="/cx/4.9/cx-historical-reports-supporting-tables" >CX Historical Reports- Supporting Tables</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="de0647e31d0479e8-120"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="de0647e31d0479e8-120" href="/cx/4.9/key-reporting-concepts" >Key Reporting Concepts</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="de0647e31d0479e8-122" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="de0647e31d0479e8-122">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.9">
+										Expertflow CX
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.9/customer-channels">
+										Channels
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.9/cx-voice">
+										Voice and Video
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="de0647e31d0479e8-123">
+			<h2 class="toc-heading" id="de0647e31d0479e8-123">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>CX Voice Configuration Guide</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+	
+	
+	
+
+
+	
+	
+	
+	
+		
+	
+	
+	
+	
+
+	
+			
+	
+	
+
+		
+	
+	
+	
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<h2 id="Recommendations"><span id="CXVoiceConfigurationGuide-Recommendations"></span>Recommendations
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-voice-configuration-guide#Recommendations">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<ul>
+ <li>
+  <p><em>Media Server and Expertflow CX Server </em><em><strong>Time </strong></em><em>should be synced.</em></p>
+ </li>
+</ul>
+<div data-component="panel" role="note" data-appearance="warning">
+ <div class="panel-content">
+  <h3 id="Limitations"><span id="CXVoiceConfigurationGuide-Limitations"></span>Limitations
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-voice-configuration-guide#Limitations">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <ul>
+   <li>
+    <p>The limitations of the multi-channel are mentioned <a href="/cx/4.9/cx-voice-limitations" data-scope="internal">here</a>.</p>
+   </li>
+   <li>
+    <p>Direct ext-to-ext calls are not supported.&nbsp;</p>
+   </li>
+   <li>
+    <p>Any private browser window is not supported, as the system is using the browser cache for state maintenance.</p>
+   </li>
+  </ul>
+ </div>
+</div>
+<h2 id="System-Configurations"><span id="CXVoiceConfigurationGuide-SystemConfigurations"></span>System Configurations
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-voice-configuration-guide#System-Configurations">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<ul>
+ <li>
+  <p>To update the CTI config variables added in the unified-agent config map, follow&nbsp;this <a href="/cx/4.9/updating-cim-environment-variables-for-cx-voice" data-scope="internal">guide</a>.</p>
+ </li>
+ <li>
+  <p>For user extension configuration, follow this <a href="/cx/4.9/adding-agent-extensions-for-cx-voice" data-scope="internal">guide</a>.</p>
+ </li>
+</ul>
+<h2 id="Unified-Admin-Configurations"><span id="CXVoiceConfigurationGuide-UnifiedAdminConfigurations"></span>Unified Admin Configurations
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-voice-configuration-guide#Unified-Admin-Configurations">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="CX-Voice-Queue"><span id="CXVoiceConfigurationGuide-CXVoiceQueue"></span>CX Voice Queue
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-voice-configuration-guide#CX-Voice-Queue">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>Create a <strong>Routing Attribute</strong> called <strong>CX Voice</strong> with the type of <strong>Boolean</strong>.</p>
+ </li>
+</ul>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 818px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_fc9f107c1e733d7685ee478d2d868b869bdd2bea309cd25b8aa30f6b04367211/image-20240319-100706.png?cb=7039bc8e22c92dc3687919a2793c0914" alt="image-20240319-100706.png" data-scope="internal" width="1290" height="498">
+  </div>
+ </image-lightbox>
+</div>
+<ul>
+ <li>
+  <p>Create a <strong>CX Voice Queue</strong> with the following settings.</p>
+ </li>
+</ul>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 814px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_c3f43de85abe05f9cd3b22a844a78feb7321ad5705a0695924252dbb28b40456/image-20240319-100829.png?cb=d6546d649348c6ffb4ccb073ccf704e4" alt="image-20240319-100829.png" data-scope="internal" width="1286" height="538">
+  </div>
+ </image-lightbox>
+</div>
+<ul>
+ <li>
+  <p>Once queue is created click on drop-down then click on <strong>Add Step</strong> and set the following steps</p>
+ </li>
+</ul>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 814px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_5df13688ba94ef59858811192230c1a826599789e28e367ed3902996f7744032/image-20240319-100951.png?cb=1133a7c18b06eab50cb50b4771eada3e" alt="image-20240319-100951.png" data-scope="internal" width="1278" height="454">
+  </div>
+ </image-lightbox>
+</div>
+<ul>
+ <li>
+  <p>Open the <strong>Agent Attributes</strong> section and assign the <strong>CX Voice attribute</strong> to your desired agent.</p>
+ </li>
+</ul>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 828px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_46f8e0b98ddb96abe34661c55d9ec41846a9481ecb983ba618f6d16abc23c913/image-20240319-101113.png?cb=aea71996215760bd32b195a9a03efacd" alt="image-20240319-101113.png" data-scope="internal" width="1298" height="292">
+  </div>
+ </image-lightbox>
+</div>
+<h3 id="Channel-Manager-Config"><span id="CXVoiceConfigurationGuide-ChannelManagerConfig"></span>Channel Manager Config
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-voice-configuration-guide#Channel-Manager-Config">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>The following variables need to be added in the <em>channel provider</em> for the <em><strong>CX_VOICE</strong></em>&nbsp;channel type on the&nbsp;unified-admin<strong>.&nbsp;</strong></p>
+  <ul>
+   <li>
+    <p>The provider webhook is required in this case and is the callback URL exposed by the <strong>Voice</strong> connector in the format: <strong>http://VC-IP:VC-PORT/ccm-msg/receive</strong></p>
+   </li>
+  </ul>
+ </li>
+</ul>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_b80655431642cf20d7b6663664e005e6f28af39b8d0a91eb5edef961214db7dc/image2023-6-12_17-12-53.png?cb=4a41f2b914098d9a4824c0f536eadb2c" alt="image2023-6-12_17-12-53.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<ul>
+ <li>
+  <p>Add a channel connector&nbsp;for the <em>provider</em> configured above for the<strong> </strong><em><strong>CX_VOICE</strong></em><strong>&nbsp;</strong>channel type on the unified-admin.</p>
+ </li>
+</ul>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_0d381613563ef18928fb84fe1214e2395500b8bccbf5d5ce96a94fd9320fc316/image2023-6-12_17-15-21.png?cb=0c0aeaeeefafb60e327266d82c370b5a" alt="image2023-6-12_17-15-21.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<ul>
+ <li>
+  <p>Add a channel for <em><strong>CX_VOICE</strong></em><strong>&nbsp;</strong>channel type on the unified-admin.</p>
+  <ul>
+   <li>
+    <p>Add the desired channel name.</p>
+   </li>
+   <li>
+    <p>Add the configured DN(Dial Number) for the contact center(the same as that set in Media Server <a href="/cx/4.9/media-server-configurations-for-cx-voice#CxIVR-Dialplan" data-scope="internal">for inbound IVR</a>) as a <em><strong>Service identifier</strong></em> for the channel.</p>
+   </li>
+   <li>
+    <p>Select the configured Bot.</p>
+   </li>
+   <li>
+    <p>Select the configured channel connector.</p>
+   </li>
+   <li>
+    <p>Select Channel Mode i.e. <em>HYBRID. </em>(supported by the system as of yet.)</p>
+   </li>
+   <li>
+    <p>Select Agent Selection Policy i.e. <em>LONGEST AVAILABLE </em>(supported by the system as of yet.)</p>
+   </li>
+   <li>
+    <p>Configure the activity timeout. &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>
+   </li>
+   <li>
+    <p>Set <em><strong>Routing Mode</strong></em><em> to PUSH</em>
+     <br>
+     <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 91px;"> <img src="/__attachments/a_e4dcb5f454f3ea5846805fd7a0d7738323d88840a642417b9f80b207344d115d/image2023-6-12_17-17-55.png?cb=630e8055c52635ad4fc620f0e2a0eb97" alt="image2023-6-12_17-17-55.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+   </li>
+   <li>
+    <p>Select the queue that is associated with the <span style="--color: #686868"><em>CX VOICE</em></span><span style="--color: #686868"> MRD.</span></p>
+   </li>
+   <li>
+    <p>Configure the <em>Agent Request TTL</em>.</p>
+   </li>
+   <li>
+    <p>To configure Outbound conversation, enable <strong>Default Outbound Channel </strong>for the CX Voice channel being used.&nbsp;
+     <br>
+     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>
+    <div class="theme-block-image">
+     <image-lightbox>
+      <div class="block-image" style="--width: 553px" data-component="image" data-align="align-start">
+       <img src="/__attachments/a_ab081122ab23a2bff1a55c8580b167fffbffbbd2736c5c00fa45bf919502c1fd/image2023-2-16_10-15-18.png?cb=8a7e38581f5289525aff0aaf54c0868f" alt="image2023-2-16_10-15-18.png" data-scope="internal" width="496" height="71">
+      </div>
+     </image-lightbox>
+    </div>
+   </li>
+  </ul>
+ </li>
+</ul>
+<div data-component="panel" role="note" data-appearance="warning">
+ <div class="panel-content">
+  <p>The recommended value for the <em><strong>customer inactivity timeout </strong></em>and <em><strong>Agent Request TTL </strong></em>should be greater than the configured for a call in the contact center if any, otherwise, 1 hour (3600 sec) should be set as a minimum value, after which the session expires in our system.&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>
+ </div>
+</div>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="de0647e31d0479e8-124" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="de0647e31d0479e8-124">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/cx/4.9/media-server-deployment-and-configuration-guide--1">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Media Server Deployment and Configuration Guide (With Google Transcription Support)</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/cx/4.9/adding-agent-extensions-for-cx-voice">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Adding Agent Extensions for CX Voice</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

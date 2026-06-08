@@ -1,0 +1,3366 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_8996f79404d875f825cbf128231b8c63d8c9a1a7f1e018467c3e9285a8c2d415" data-confluence-content-id="6326115"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/cx/4.3/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="CX">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>Script to Upgrade the realm with users being intact | Expertflow CX</title>
+		<meta property="og:title" content="Script to Upgrade the realm with users being intact | Expertflow CX">
+		<meta property="twitter:title" content="Script to Upgrade the realm with users being intact | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/cx/4.3/script-to-upgrade-the-realm-with-users-being-intac">
+		<meta property="og:url" content="https://docs.expertflow.com/cx/4.3/script-to-upgrade-the-realm-with-users-being-intac">
+
+		<meta name="description" content="Problem Statement: Whenever there are some changes in keycloak implementation of our application, we need to upgrade our current keycloak realm with the upgrad…">
+		<meta property="og:description" content="Problem Statement: Whenever there are some changes in keycloak implementation of our application, we need to upgrade our current keycloak realm with the upgrad…">
+		<meta property="twitter:description" content="Problem Statement: Whenever there are some changes in keycloak implementation of our application, we need to upgrade our current keycloak realm with the upgrad…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2023-11-14T10:57:12.623Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": true
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.js"></script>
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="4a6a80b9e60fa305-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="4a6a80b9e60fa305-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="4a6a80b9e60fa305-19">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="4a6a80b9e60fa305-19" name="version" onchange="self.location.assign(this.value)" >
+				<option id="4a6a80b9e60fa305-3"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="4a6a80b9e60fa305-4"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="4a6a80b9e60fa305-5"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="4a6a80b9e60fa305-6"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="4a6a80b9e60fa305-7"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="4a6a80b9e60fa305-8"  value="/cx/4.10"  >
+					4.10
+				</option>
+				<option id="4a6a80b9e60fa305-9"  value="/cx/4.9"  >
+					4.9
+				</option>
+				<option id="4a6a80b9e60fa305-10"  value="/cx/4.8"  >
+					4.8
+				</option>
+				<option id="4a6a80b9e60fa305-11"  value="/cx/4.7"  >
+					4.7
+				</option>
+				<option id="4a6a80b9e60fa305-12"  value="/cx/4.6"  >
+					4.6
+				</option>
+				<option id="4a6a80b9e60fa305-13"  value="/cx/4.5.3"  >
+					4.5.3
+				</option>
+				<option id="4a6a80b9e60fa305-14"  value="/cx/4.5.2"  >
+					4.5.2
+				</option>
+				<option id="4a6a80b9e60fa305-15"  value="/cx/4.5.1"  >
+					4.5.1
+				</option>
+				<option id="4a6a80b9e60fa305-16"  value="/cx/4.5"  >
+					4.5
+				</option>
+				<option id="4a6a80b9e60fa305-17"  value="/cx/4.4"  >
+					4.4
+				</option>
+				<option id="4a6a80b9e60fa305-18"  value="/cx/4.3/script-to-upgrade-the-realm-with-users-being-intac"  selected="">
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('4a6a80b9e60fa305-19');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-4a6a80b9e60fa305-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-4a6a80b9e60fa305-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-4a6a80b9e60fa305-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="4a6a80b9e60fa305-20" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="4a6a80b9e60fa305-20">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-4a6a80b9e60fa305-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-4a6a80b9e60fa305-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="4a6a80b9e60fa305-37">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="4a6a80b9e60fa305-37" name="version" onchange="self.location.assign(this.value)" >
+				<option id="4a6a80b9e60fa305-21"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="4a6a80b9e60fa305-22"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="4a6a80b9e60fa305-23"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="4a6a80b9e60fa305-24"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="4a6a80b9e60fa305-25"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="4a6a80b9e60fa305-26"  value="/cx/4.10"  >
+					4.10
+				</option>
+				<option id="4a6a80b9e60fa305-27"  value="/cx/4.9"  >
+					4.9
+				</option>
+				<option id="4a6a80b9e60fa305-28"  value="/cx/4.8"  >
+					4.8
+				</option>
+				<option id="4a6a80b9e60fa305-29"  value="/cx/4.7"  >
+					4.7
+				</option>
+				<option id="4a6a80b9e60fa305-30"  value="/cx/4.6"  >
+					4.6
+				</option>
+				<option id="4a6a80b9e60fa305-31"  value="/cx/4.5.3"  >
+					4.5.3
+				</option>
+				<option id="4a6a80b9e60fa305-32"  value="/cx/4.5.2"  >
+					4.5.2
+				</option>
+				<option id="4a6a80b9e60fa305-33"  value="/cx/4.5.1"  >
+					4.5.1
+				</option>
+				<option id="4a6a80b9e60fa305-34"  value="/cx/4.5"  >
+					4.5
+				</option>
+				<option id="4a6a80b9e60fa305-35"  value="/cx/4.4"  >
+					4.4
+				</option>
+				<option id="4a6a80b9e60fa305-36"  value="/cx/4.3/script-to-upgrade-the-realm-with-users-being-intac"  selected="">
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('4a6a80b9e60fa305-37');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-38" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-39" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-40" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-41" href="/cx/4.3/key-concepts" >Key Concepts</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a6a80b9e60fa305-42"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a6a80b9e60fa305-42" href="/cx/4.3/customer-channels" >Customer Channels</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a6a80b9e60fa305-44"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a6a80b9e60fa305-44" href="/cx/4.3/agent-controls" >Agent Controls</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a6a80b9e60fa305-46"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a6a80b9e60fa305-46" href="/cx/4.3/supervisor-controls" >Supervisor Controls</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a6a80b9e60fa305-48"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a6a80b9e60fa305-48" href="/cx/4.3/conversation-control" >Conversation Control</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a6a80b9e60fa305-50"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a6a80b9e60fa305-50" href="/cx/4.3/cx-activities" >CX Activities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a6a80b9e60fa305-52"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a6a80b9e60fa305-52" href="/cx/4.3/routing-engine" >Routing Engine</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-54" href="/cx/4.3/solution-architecture" >Solution Architecture</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a6a80b9e60fa305-55"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a6a80b9e60fa305-55" href="/cx/4.3/developer-guides" >Developer Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="4a6a80b9e60fa305-58"						aria-labelledby="4a6a80b9e60fa305-57"
+					></button>
+				<a id="4a6a80b9e60fa305-57" href="/cx/4.3/deployment-guides" >Deployment Guides</a>
+			</div>
+
+<ul  id="4a6a80b9e60fa305-58" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-59" href="/cx/4.3/deployment-architecture" >Deployment Architecture</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a6a80b9e60fa305-60"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a6a80b9e60fa305-60" href="/cx/4.3/kubernetes-deployment-getting-started" >Kubernetes Deployment - Getting Started</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-62" href="/cx/4.3/storage-solution-getting-started-vcx-4-3" >Storage Solution - Getting Started</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a6a80b9e60fa305-63"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a6a80b9e60fa305-63" href="/cx/4.3/longhorn-deployment-guide" >Longhorn Deployment Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a6a80b9e60fa305-65"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a6a80b9e60fa305-65" href="/cx/4.3/cloud-native-storage-solution-for-kubernetes-using" >Cloud Native Storage Solution for Kubernetes using Rook/Ceph</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-67" href="/cx/4.3/openebs-local-storage-solution" >OpenEBS Local Storage Solution</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a6a80b9e60fa305-68"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a6a80b9e60fa305-68" href="/cx/4.3/expertflow-cx-deployment-on-kubernetes" >Expertflow CX Deployment on Kubernetes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a6a80b9e60fa305-70"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a6a80b9e60fa305-70" href="/cx/4.3/post-deployment-administration" >Post Deployment Administration</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="4a6a80b9e60fa305-73"						aria-labelledby="4a6a80b9e60fa305-72"
+					></button>
+				<a id="4a6a80b9e60fa305-72" href="/cx/4.3/upgrade-guide" >Upgrade Guide</a>
+			</div>
+
+<ul  id="4a6a80b9e60fa305-73" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-74" href="/cx/4.3/expertflow-cx-upgrade-guide-4-2-to-4-3" >Expertflow CX Upgrade Guide 4.2 to 4.3</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-75" href="/cx/4.3/expertflow-cx-upgrade-guide-cx-4-1-cx4-2" >Expertflow CX Upgrade Guide CX-4.1- CX4.2</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="4a6a80b9e60fa305-77"						aria-labelledby="4a6a80b9e60fa305-76"
+					></button>
+				<a id="4a6a80b9e60fa305-76" href="/cx/4.3/expertflow-cx-upgrade-guide-4-0-4-1" >Expertflow CX Upgrade Guide 4.0-4.1</a>
+			</div>
+
+<ul  id="4a6a80b9e60fa305-77" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-78" href="/cx/4.3/script-to-upgrade-permissions-in-existing-realm" >Script to upgrade Permissions in existing realm</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-79" href="/cx/4.3/script-to-upgrade-the-realm-with-users-being-intac" aria-current="page">Script to Upgrade the realm with users being intact</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-80" href="/cx/4.3/expertflow-cx-upgrade-guide-cx-4-3-to-cx-4-3_f-cim" >Expertflow CX Upgrade Guide CX-4.3 to CX-4.3_f-CIM-8242</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-81" href="/cx/4.3/expertflow-cx-upgrade-guide" >Expertflow Cx Upgrade Guide</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-82" href="/cx/4.3/deployment-of-solution-monitoring-components" >Deployment of Solution Monitoring Components</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-83" href="/cx/4.3/kubernetes-backup-restore-using-velero-vcx-4-3" >Kubernetes Backup/Restore using Velero</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-84" href="/cx/4.3/kong-konga-deployment" >KONG &amp; KONGA Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a6a80b9e60fa305-85"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a6a80b9e60fa305-85" href="/cx/4.3/argocd" >ArgoCD</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-87" href="/cx/4.3/geographical-disaster-recovery-for-ef-cx-on-kubern" >Geographical Disaster Recovery for EF-CX on Kubernetes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-88" href="/cx/4.3/helm-deployment-of-grafana-loki" >Helm Deployment of Grafana-Loki</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-89" href="/cx/4.3/goto-partnercloud-inception" >GoTo PartnerCloud Inception</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-90" href="/cx/4.3/deployment-of-postgres-as-a-streaming-standby-with" >Deployment of Postgres as a Streaming Standby with an External Repo</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-91" href="/cx/4.3/continuous-integration-ci-jobs-for-maven-and-node-" >Continuous Integration (CI) Jobs for Maven and Node.js Projects</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a6a80b9e60fa305-92"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a6a80b9e60fa305-92" href="/cx/4.3/geographical-deployment-of-expertflow-cx-with-redu" >Geographical Deployment of Expertflow CX with Redundancy</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-94" href="/cx/4.3/ha-testing-obsevations" >HA Testing Obsevations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-95" href="/cx/4.3/expertflow-cx-deployment-kubernetes-on-digital-oce" >Expertflow CX Deployment Kubernetes on Digital Ocean</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-96" href="/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete" >Expertflow CX Deployment on DigitalOcean Kubernetes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-97" href="/cx/4.3/mongo-postgresql-backup-restore-procedure-for-ef-c" >Mongo, PostgreSQL Backup/Restore Procedure for EF-CX on Kubernetes ( manual procedure )</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a6a80b9e60fa305-98"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a6a80b9e60fa305-98" href="/cx/4.3/benzai-logging" >Benzai Logging</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-100" href="/cx/4.3/deploying-grafana" >Deploying Grafana</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a6a80b9e60fa305-101"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a6a80b9e60fa305-101" href="/cx/4.3/system-administration-guides" >System Administration Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a6a80b9e60fa305-103"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a6a80b9e60fa305-103" href="/cx/4.3/user-guides" >User Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a6a80b9e60fa305-105"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a6a80b9e60fa305-105" href="/cx/4.3/reports" >Reports</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a6a80b9e60fa305-107"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a6a80b9e60fa305-107" href="/cx/4.3/security" >Security</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a6a80b9e60fa305-109"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a6a80b9e60fa305-109" href="/cx/4.3/forms" >Forms</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-111" href="/cx/4.3/expertflow-cx-data-sheet" >Expertflow CX Data Sheet</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-112" href="/cx/4.3/scheduled-activities-solution-design-vcx-4-3" >Scheduled Activities - Solution Design</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a6a80b9e60fa305-113"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a6a80b9e60fa305-113" href="/cx/4.3/integrations" >Integrations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-115" href="/cx/4.3/hc-3-x-vs-expertflow-cx-features-comparison" >HC 3.x vs Expertflow CX - Features Comparison</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a6a80b9e60fa305-116" href="/cx/4.3/cx-release-history" >CX Release History</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a6a80b9e60fa305-117"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a6a80b9e60fa305-117" href="/cx/4.3/cx-release-notes" >CX Release Notes</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="4a6a80b9e60fa305-119" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="4a6a80b9e60fa305-119">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.3">
+										Expertflow CX
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.3/deployment-guides">
+										Deployment Guides
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.3/upgrade-guide">
+										Upgrade Guide
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.3/expertflow-cx-upgrade-guide-4-0-4-1">
+										Expertflow CX Upgrade Guide 4.0-4.1
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="4a6a80b9e60fa305-120">
+			<h2 class="toc-heading" id="4a6a80b9e60fa305-120">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>Script to Upgrade the realm with users being intact</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+	
+	
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+	
+
+
+	
+	
+	
+	
+	
+	
+			
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+		
+	
+	
+	
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<h3 id="id-(4.3)ScripttoUpgradetherealmwithusersbeingintact-ProblemStatement:"><span id="ScripttoUpgradetherealmwithusersbeingintact-ProblemStatement:"></span><strong>Problem Statement:</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/script-to-upgrade-the-realm-with-users-being-intac#id-(4.3)ScripttoUpgradetherealmwithusersbeingintact-ProblemStatement:">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>&nbsp; &nbsp; &nbsp; Whenever there are some changes in keycloak implementation of our application, we need to upgrade our current keycloak realm with the upgraded realm. <span style="--color: var(--bold-gray, #172b4d);">we need to import Realm.json file that import all the information regarding the keycloak realm including clients, roles, groups etc.&nbsp;</span> We can do it by simply deleting the old realm and importing the new realm using realm.json. But doing so, we delete the users of realm that we can not recover and has to create all the users manually again since realm.json <span style="--color: var(--bold-gray, #172b4d);">file doesn't contain keycloak-users hence Users are not exported by using the exported Realm.json file.</span></p>
+<p>
+ <br>
+</p>
+<p><strong>Solution:</strong></p>
+<p>&nbsp; &nbsp; To avoid creation of users again manually, we have formalized a way to upgrade the realm while keeping users intact using the process, the process is explained below.</p>
+<p>
+ <br>
+</p>
+<p><strong>Steps for the Upgradation of Realm:</strong></p>
+<p><strong>&nbsp; &nbsp; </strong>Following are the steps for the upgradation of realm to newer version (containing new permissions, groups, roles etc) without losing its users.</p>
+<ol>
+ <li>
+  <p>Run a script inside keycloak container in our k8s deployment to export the targeted realm and its users.</p>
+ </li>
+ <li>
+  <p>Use the Secure Copy command (scp command) to copy the exported realm and its users to the local machine.</p>
+ </li>
+ <li>
+  <p>Go to the admin console of targeted keycloak instance and delete the old realm.</p>
+ </li>
+ <li>
+  <p>Create the new instance of realm using import function and import realm using realm.json file.</p>
+ </li>
+ <li>
+  <p>Import the old realm users using the realm-user.json file that we copied using scp command, import of users can be done using the partial-import feature.</p>
+ </li>
+ <li>
+  <p>Run the postgreSql transaction block inside keycloak db to assign groups to keycloak users according to their roles. <code><strong>Make sure that no user has any group assigned to it before running this script.</strong></code></p>
+ </li>
+</ol>
+<p>
+ <br>
+</p>
+<p><strong>Detailed Steps:</strong></p>
+<p><strong>Run a script inside keycloak container in our k8s deployment to export the targeted realm and its users:</strong></p>
+<p>&nbsp; &nbsp; &nbsp; Exec into the keycloak POD&nbsp; &nbsp; &nbsp;</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>kubectl -n ef-external exec -ti keycloak-0 -- kc.sh export &nbsp;--realm &nbsp;expertflow --dir /tmp/kc_
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>&nbsp;this command generates a lot of DEBUG output, which can be ignored safely.</p>
+<p>After running this script for exporting realm, the following files are generated in /tmp/kc_&nbsp; folder of your keycloak instance&nbsp;</p>
+<ul>
+ <li>
+  <ul>
+   <li>
+    <p>&lt;realm-name&gt;-realm.json (File containing the current realm).</p>
+   </li>
+   <li>
+    <p>&lt;realm-name&gt;-users-0.json (File containing all the users of current realm).</p>
+   </li>
+  </ul>
+ </li>
+</ul>
+<p>&nbsp;&nbsp;</p>
+<p><strong>Copy the exported realm and its users to the local file:</strong></p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp;Since, we now have the targeted realm file and its users file exported to the keycloak instance machine. We can import it to our local machine for the purpose of manual import of realm using Keycloak Admin Console.</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp;To copy the exported realm and its users to local machine, use the secure copy command on your local machine:</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
+<code-snippet class="theme-code-snippet">
+ <div class="theme-code-snippet-header">PowerShell</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="powershell">
+   <pre><code>kubectl -n ef-external cp  keycloak-0:/tmp/kc_/expertflow-users-0.json $HOME/expertflow-users-0.json
+kubectl -n ef-external cp  keycloak-0:/tmp/kc_/expertflow-realm.json   $HOME/expertflow-realm.json
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>&nbsp; &nbsp; &nbsp; &nbsp;In the above commands, we copied the &lt;realm&gt;-realm.json and &lt;realm&gt;-users-0.json from deployment machine to the home directory of the user.</p>
+<p>
+ <br>
+</p>
+<p><strong>Go to the admin console of targeted keycloak instance and delete the old realm:</strong></p>
+<p><strong>&nbsp; &nbsp; &nbsp;</strong>After copying the realm and realm-users file to local machine, we can now keep the &lt;realm-name&gt;-realm.json in backup for future use and replace it with our upgraded realm file i.e &lt;realm-name&gt;-new-realm.json. Before importing the new realm file, we need to delete the old realm manually. To delete the old realm, follow these steps:</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1:&nbsp; &nbsp;Login to the desired keycloak instance where your realm to upgrade exists. You can access keycloak instance by going to its url which is in this format: <a href="https://cim-demo.expertflow.com/auth/" data-scope="external" rel="external noreferrer">https://CIM-FQDN/auth/</a> . Once you access the URL this screen will appear:</p>
+<p>
+ <br>
+</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 540px;"> <img src="/__attachments/a_2a768fa9bf07045c1215c66f74f55b7ed318d5ed18f21c191df8043165d476b8/Screenshot%20from%202023-05-22%2014-26-18.png?cb=135d983d6fea334767c053e7fb2fb0c1" alt="Screenshot from 2023-05-22 14-26-18.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>
+ <br>
+</p>
+<p>&nbsp; &nbsp; &nbsp; 2:&nbsp; Click on <strong>Administration Console</strong>, you will be routed to the login page, provide the admin credentials i.e <strong>username</strong>: admin &amp; <strong>password</strong>: admin and click on sign-in.</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 540px;"> <img src="/__attachments/a_7215d94f13e3b11d05a16f3116d463bc3019431a42f68ccf03f7f206b5091c67/Screenshot%20from%202023-05-22%2014-26-51.png?cb=b18694d7f9fd9e96147056e70c2b224a" alt="Screenshot from 2023-05-22 14-26-51.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>&nbsp; &nbsp; &nbsp;3:&nbsp; Once you are logged-in, you will be routed to the <strong>master</strong> realm, you can click on the top drop down to see all the realms available. In our case the realm is <strong>Expertflow</strong> so click on it.</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 540px;"> <img src="/__attachments/a_768016cbcd9a8d98a77df7eab29633b30f5587e78377a6957542baa63fdb561e/Screenshot%20from%202023-05-22%2014-30-22.png?cb=49d29ce4ad54236e74a05489b54608da" alt="Screenshot from 2023-05-22 14-30-22.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>&nbsp; &nbsp; 4: Once we are in <strong>Expertflow</strong> realm (In your case, select your desired realm), Click on <strong>Realm Settings</strong> in Configure menu in Left Panel, you'll be taken to the realm settings. Now, click on <strong>Action</strong> drop-down. The drop-down has several options like partial-import, partial-export and delete. Click on <strong>Delete</strong> to delete realm.</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 540px;"> <img src="/__attachments/a_95dd5c7af2eac69b2af3576a8e314032aafa8cd5c8edc6f3c85ab991260cc6d2/Screenshot%20from%202023-05-22%2014-31-04.png?cb=1d534f2b1f3e288bd6693c61b3f327a0" alt="Screenshot from 2023-05-22 14-31-04.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>
+ <br>
+</p>
+<p><strong>Create the new instance of realm using import function and import realm using </strong><a href="https://docs.expertflow.com/download/attachments/195855208/realm-export-4.1-onwards.json?version=1&amp;modificationDate=1684964000467&amp;api=v2" data-scope="external" rel="external noreferrer"><strong> realm.json </strong></a><strong>file:&nbsp;</strong></p>
+<p>
+ <br>
+</p>
+<p><strong>&nbsp; </strong><code><strong>Note: Before importing the upgraded realm.json file to create new realm. Make sure that file doesn't contain any default resource, default permission and default policy. Also, all the roles/groups that previous realm had must exist in upgraded realm file too.</strong></code></p>
+<p><strong>&nbsp; &nbsp; &nbsp;</strong>Once the old realm is deleted, we now import the upgraded realm using realm.json file. To import a new realm click on realm drop-down at top of the left-side menu and click on <strong>Create Realm</strong>:</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 540px;"> <img src="/__attachments/a_0144ec98b6265db154048a4f0075c3d7a55ef3fc9c7692e82c85e7f7ff74864b/Screenshot%20from%202023-05-22%2014-46-18.png?cb=e6cd6b1d368b39f816afd483c743d1fa" alt="Screenshot from 2023-05-22 14-46-18.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>&nbsp; Now, we are routed to create realm menu. Since, we want to import realm, hence we click on <strong>Browse</strong> and select the upgraded-realm.json file.</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 540px;"> <img src="/__attachments/a_3771659c690bb98cc589080d8d9c8187a59803d4815fcbbf4d91a93cb143b2af/Screenshot%20from%202023-05-22%2014-47-18.png?cb=439342b7fee7c7cbc33a3b6559f287ad" alt="Screenshot from 2023-05-22 14-47-18.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>&nbsp; Once file is selected, we can see the content of file. Click on <strong>Create</strong> button and wait until realm is created and you are routed to the menu page of new realm. <code><strong>Dont click on Create button again and again during time of creation of realm as realm-creation is an async process hence it might be running in background and will take some time to complete.</strong></code></p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp;  <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 540px;"> <img src="/__attachments/a_e3ded2da542fc7bebf9d98c0e260a83c715913a2aef62ec4f3c2411485577a69/Screenshot%20from%202023-05-22%2014-47-33.png?cb=a37e9c0508a557468aadf6ba99a0eb9a" alt="Screenshot from 2023-05-22 14-47-33.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>
+ <br>
+</p>
+<p><strong>Import the users using the &lt;realm&gt;-realm-user.json file that we copied&nbsp; in step , import of users can be done using the partial-import feature:</strong></p>
+<p><strong>&nbsp; &nbsp;</strong>Once upgraded realm is imported we import the user. To import users, we go to the <strong>Realm Settings</strong> in Config menu located on left-side pane. Once we click on Realm Settings we are taken to Settings menu. Click on <strong>Action</strong> drop-down and we can see multiple options. Click on <strong>Partial-Import</strong> to import users.</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp;  <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 540px;"> <img src="/__attachments/a_95dd5c7af2eac69b2af3576a8e314032aafa8cd5c8edc6f3c85ab991260cc6d2/Screenshot%20from%202023-05-22%2014-31-04.png?cb=1d534f2b1f3e288bd6693c61b3f327a0" alt="Screenshot from 2023-05-22 14-31-04.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>
+ <br>
+</p>
+<p>Once we click on Partial-Import. A new window opens, click on <strong>Browse</strong> and select the file containing all the users.</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp;  <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 540px;"> <img src="/__attachments/a_c9c42cf36ccb320080012b0ce8404f3a04fc4ea08b07d5e2d98360a107d6a4ac/Screenshot%20from%202023-05-22%2014-59-35.png?cb=fe88a747d626a279c3023fc3827caae9" alt="Screenshot from 2023-05-22 14-59-35.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>
+ <br>
+</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 540px;"> <img src="/__attachments/a_3943e32d68a70d5be69e6ac52c265ed94f32f9f5de1e9cf60c9ea12662001353/Screenshot%20from%202023-05-22%2015-00-03.png?cb=5c00cc34b57003bac2345104c25e15d1" alt="Screenshot from 2023-05-22 15-00-03.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>
+ <br>
+</p>
+<p>Once we select the file containing all the users, it will automatically generate the statement regarding number of users present to be exported. Check the button against number of users to be imported. Also change "If a resource already exists, specify what should be done" to <strong>Skip&nbsp;</strong>(This will skip any user that already exists) and then click on import.</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 540px;"> <img src="/__attachments/a_f45cbfb1ea41f76687f32b8d612163a1e9c7b6fe0471c97f98ea3e9f59e2c47d/Screenshot%20from%202023-05-22%2015-00-59.png?cb=a70a86d029777ad09930659d484ef70e" alt="Screenshot from 2023-05-22 15-00-59.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>Once users are exported, we will be shown all the users that are skipped during this process and all the users created.</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 540px;"> <img src="/__attachments/a_9c8cb397b1c8f8e3f11f3ab48874325b8d623c599c28fe4b868cc0f09e88b213/Screenshot%20from%202023-05-22%2015-01-24.png?cb=d7af92c50bc142cea5e03ef2aa9f00b2" alt="Screenshot from 2023-05-22 15-01-24.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>
+ <br>
+</p>
+<p>Download the Keycloak DB upgrade file from this&nbsp;<a href="/__attachments/a_f6a193a340f07b598cbbb09c9a2e4094f488d561dbba3c3d02afb91866434ac8/keycloak_upgrade.sql?cb=4e84b888f4d8aa3b81710020c3b0f9f0" data-scope="internal">keycloak_upgrade.sql</a></p>
+<p>
+ <br>
+</p>
+<p>Copy the SQL Script inside the PostgreSQL Server POD using&nbsp;</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>kubectl -n ef-external cp $HOME/keycloak_upgrade.sql ef-postgresql-0:/tmp/keycloak_upgrade.sql
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>
+ <br>
+</p>
+<p>Copy the current password for your postgresql server pod</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>kubectl get secret --namespace ef-external ef-postgresql -o jsonpath="{.data.password}" | base64 -d
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>you will need this password in next command as POSTGRES User's password to connect and run the SQL Script.</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>kubectl  -n ef-external exec  -ti ef-postgresql-0 -- /opt/bitnami/scripts/postgresql/entrypoint.sh /bin/bash -c "psql --host localhost -U sa -d keycloak_db -p 5432 -f /tmp/keycloak_upgrade.sql"
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>when prompted for the password, enter the password retrieved in previous step.</p>
+<p><strong>Run the postgreSql transaction block inside keycloak db: (Linking Agent-desk Permission Groups to Old Users)</strong></p>
+<p>&nbsp; &nbsp; After the importing of new realm and old-realm-users. We now sync the groups created for AgentDesk Permissions i.e <strong>agents_permission</strong> &amp; <strong>senior_agents_permission</strong> to the users according to their assigned roles i.e <strong>agent, supervisor,admin</strong>. Also, we assign <strong>default</strong> group to all the users for Keycloak Teams implementation. Run this query inside keycloak db of the targeted k8s deployment. The query to run is as follow:</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>BEGIN;
+
+--- admin groups assignment against roles
+INSERT INTO USER_GROUP_MEMBERSHIP (Group_ID, USER_ID)
+SELECT DISTINCT (SELECT ID FROM KEYCLOAK_GROUP WHERE NAME = 'default') AS Group_ID, rm.USER_ID
+FROM KEYCLOAK_ROLE r
+INNER JOIN USER_ROLE_MAPPING rm ON r.ID = rm.ROLE_ID
+WHERE r.REALM_ID = 'expertflow' AND r.CLIENT_ROLE = 'f' AND r.NAME = 'admin'
+ON CONFLICT DO NOTHING;
+
+--- supervisor groups assignment against role
+INSERT INTO USER_GROUP_MEMBERSHIP (Group_ID, USER_ID)
+SELECT DISTINCT (SELECT ID FROM KEYCLOAK_GROUP WHERE NAME = 'default') AS Group_ID, rm.USER_ID
+FROM KEYCLOAK_ROLE r
+INNER JOIN USER_ROLE_MAPPING rm ON r.ID = rm.ROLE_ID
+WHERE r.REALM_ID = 'expertflow' AND r.CLIENT_ROLE = 'f' AND r.NAME = 'supervisor'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO USER_GROUP_MEMBERSHIP (Group_ID, USER_ID)
+SELECT DISTINCT (SELECT ID FROM KEYCLOAK_GROUP WHERE NAME = 'agents_permission') AS Group_ID, rm.USER_ID
+FROM KEYCLOAK_ROLE r
+INNER JOIN USER_ROLE_MAPPING rm ON r.ID = rm.ROLE_ID
+WHERE r.REALM_ID = 'expertflow' AND r.CLIENT_ROLE = 'f' AND r.NAME = 'supervisor'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO USER_GROUP_MEMBERSHIP (Group_ID, USER_ID)
+SELECT DISTINCT (SELECT ID FROM KEYCLOAK_GROUP WHERE NAME = 'senior_agents_permission') AS Group_ID, rm.USER_ID
+FROM KEYCLOAK_ROLE r
+INNER JOIN USER_ROLE_MAPPING rm ON r.ID = rm.ROLE_ID
+WHERE r.REALM_ID = 'expertflow' AND r.CLIENT_ROLE = 'f' AND r.NAME = 'supervisor'
+ON CONFLICT DO NOTHING;
+
+--- agents group assignment.
+INSERT INTO USER_GROUP_MEMBERSHIP (Group_ID, USER_ID)
+SELECT DISTINCT (SELECT ID FROM KEYCLOAK_GROUP WHERE NAME = 'default') AS Group_ID, rm.USER_ID
+FROM KEYCLOAK_ROLE r
+INNER JOIN USER_ROLE_MAPPING rm ON r.ID = rm.ROLE_ID
+WHERE r.REALM_ID = 'expertflow' AND r.CLIENT_ROLE = 'f' AND r.NAME = 'agent'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO USER_GROUP_MEMBERSHIP (Group_ID, USER_ID)
+SELECT DISTINCT (SELECT ID FROM KEYCLOAK_GROUP WHERE NAME = 'agents_permission') AS Group_ID, rm.USER_ID
+FROM KEYCLOAK_ROLE r
+INNER JOIN USER_ROLE_MAPPING rm ON r.ID = rm.ROLE_ID
+WHERE r.REALM_ID = 'expertflow' AND r.CLIENT_ROLE = 'f' AND r.NAME = 'agent'
+ON CONFLICT DO NOTHING;
+
+
+COMMIT;
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>Once Queries are run successfully, our upgrade process is complete.</p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="4a6a80b9e60fa305-121" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="4a6a80b9e60fa305-121">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/cx/4.3/script-to-upgrade-permissions-in-existing-realm">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Script to upgrade Permissions in existing realm</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/cx/4.3/expertflow-cx-upgrade-guide-cx-4-3-to-cx-4-3_f-cim">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Expertflow CX Upgrade Guide CX-4.3 to CX-4.3_f-CIM-8242</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

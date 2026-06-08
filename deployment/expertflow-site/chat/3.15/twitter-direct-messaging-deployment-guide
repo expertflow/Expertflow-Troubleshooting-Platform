@@ -1,0 +1,2878 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_4a340cf513d072557bd43f5f6f30664626d0b6ca333b3bc884c62330884cce58" data-confluence-content-id="34481777"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/chat/3.15/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="CHAT">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>Twitter Direct Messaging Deployment Guide | Expertflow CX</title>
+		<meta property="og:title" content="Twitter Direct Messaging Deployment Guide | Expertflow CX">
+		<meta property="twitter:title" content="Twitter Direct Messaging Deployment Guide | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/chat/3.15/twitter-direct-messaging-deployment-guide">
+		<meta property="og:url" content="https://docs.expertflow.com/chat/3.15/twitter-direct-messaging-deployment-guide">
+
+		<meta name="description" content="Get access to Twitter Developer Account (with Standard API Access) To develop or deploy any Twitter integrations, you must have a Twitter Developer account, wh…">
+		<meta property="og:description" content="Get access to Twitter Developer Account (with Standard API Access) To develop or deploy any Twitter integrations, you must have a Twitter Developer account, wh…">
+		<meta property="twitter:description" content="Get access to Twitter Developer Account (with Standard API Access) To develop or deploy any Twitter integrations, you must have a Twitter Developer account, wh…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2023-12-12T11:18:41.084Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": true
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="01c8a48b5e902197-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="01c8a48b5e902197-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-01c8a48b5e902197-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-01c8a48b5e902197-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-01c8a48b5e902197-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="01c8a48b5e902197-3" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="01c8a48b5e902197-3">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-01c8a48b5e902197-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-01c8a48b5e902197-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="01c8a48b5e902197-4" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="01c8a48b5e902197-5" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="01c8a48b5e902197-6" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="01c8a48b5e902197-7" href="/chat/3.15/release-notes" >Release Notes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="01c8a48b5e902197-8"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="01c8a48b5e902197-8" href="/chat/3.15/user-guides" >User Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="01c8a48b5e902197-10"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="01c8a48b5e902197-10" href="/chat/3.15/agent-platforms" >Agent Platforms</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="01c8a48b5e902197-13"						aria-labelledby="01c8a48b5e902197-12"
+					></button>
+				<a id="01c8a48b5e902197-12" href="/chat/3.15/media-channels" >Media Channels</a>
+			</div>
+
+<ul  id="01c8a48b5e902197-13" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="01c8a48b5e902197-14"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="01c8a48b5e902197-14" href="/chat/3.15/web-chat" >Web-chat</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="01c8a48b5e902197-16"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="01c8a48b5e902197-16" href="/chat/3.15/sms" >SMS</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="01c8a48b5e902197-18" href="/chat/3.15/360dialog-integration-guide" >360Dialog Integration Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="01c8a48b5e902197-19" href="/chat/3.15/viber" >Viber</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="01c8a48b5e902197-20" href="/chat/3.15/facebook" >Facebook</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="01c8a48b5e902197-21" href="/chat/3.15/webrtc-video" >WebRTC Video</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="01c8a48b5e902197-22" href="/chat/3.15/customer-channel-api" >Customer Channel API</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="01c8a48b5e902197-23" href="/chat/3.15/facebook-page-comments" >Facebook Page Comments</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="01c8a48b5e902197-24" href="/chat/3.15/twitter-direct-messaging-deployment-guide" aria-current="page">Twitter Direct Messaging Deployment Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="01c8a48b5e902197-25" href="/chat/3.15/whatsapp" >WhatsApp</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="01c8a48b5e902197-26" href="/chat/3.15/digital-channels" >Digital Channels</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="01c8a48b5e902197-27" href="/chat/3.15/rich-media-messaging" >Rich Media Messaging</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="01c8a48b5e902197-28"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="01c8a48b5e902197-28" href="/chat/3.15/bots" >Bots</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="01c8a48b5e902197-30"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="01c8a48b5e902197-30" href="/chat/3.15/reports" >Reports</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="01c8a48b5e902197-32"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="01c8a48b5e902197-32" href="/chat/3.15/docker-based-deployment" >Docker-based Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="01c8a48b5e902197-34"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="01c8a48b5e902197-34" href="/chat/3.15/security-and-compliance" >Security and Compliance</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="01c8a48b5e902197-36" href="/chat/3.15/solution-components" >Solution Components</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="01c8a48b5e902197-37" href="/chat/3.15/channel-manager" >Channel Manager</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="01c8a48b5e902197-38" href="/chat/3.15/sms-connector-apis-documentation" >SMS Connector APIs Documentation</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="01c8a48b5e902197-39"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="01c8a48b5e902197-39" href="/chat/3.15/routing-engine" >Routing Engine</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="01c8a48b5e902197-41"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="01c8a48b5e902197-41" href="/chat/3.15/hybrid-chat-deployment" >Hybrid Chat Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="01c8a48b5e902197-43"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="01c8a48b5e902197-43" href="/chat/3.15/system-limitations" >System Limitations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="01c8a48b5e902197-45"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="01c8a48b5e902197-45" href="/chat/3.15/api-reference" >API Reference</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="01c8a48b5e902197-47"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="01c8a48b5e902197-47" href="/chat/3.15/troubleshooting-and-maintenance" >Troubleshooting and Maintenance</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="01c8a48b5e902197-49"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="01c8a48b5e902197-49" href="/chat/3.15/demo-environment" >Demo Environment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="01c8a48b5e902197-51" href="/chat/3.15/faqs" >FAQs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="01c8a48b5e902197-52" href="/chat/3.15/conversation-message-object" >Conversation Message Object</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="01c8a48b5e902197-53" href="/chat/3.15/sitemap-xml" >sitemap.xml</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="01c8a48b5e902197-54" href="/chat/3.15/list-of-open-source-software" >List of Open-source Software</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="01c8a48b5e902197-55" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="01c8a48b5e902197-55">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/chat/3.15">
+										Hybrid Chat
+								</a>
+							</li>
+							<li>
+								<a href="/chat/3.15/media-channels">
+										Media Channels
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="01c8a48b5e902197-56">
+			<h2 class="toc-heading" id="01c8a48b5e902197-56">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>Twitter Direct Messaging Deployment Guide</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+	
+	
+	
+
+
+	
+	
+	
+	
+	
+	
+			
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+		
+	
+	
+	
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<h2 id="id-(3.15)TwitterDirectMessagingDeploymentGuide-GetaccesstoTwitterDeveloperAccount(withStandardAPIAccess)"><span id="TwitterDirectMessagingDeploymentGuide-GetaccesstoTwitterDeveloperAccount(withStandardAPIAccess)"></span>Get access to Twitter Developer Account (with Standard API Access)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/twitter-direct-messaging-deployment-guide#id-(3.15)TwitterDirectMessagingDeploymentGuide-GetaccesstoTwitterDeveloperAccount(withStandardAPIAccess)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>To develop or deploy any Twitter integrations, you must have a Twitter Developer account, where you will set up a Twitter App upon which you will integrate your backend system - the application that is to interact with the Twitter Platform. Follow <a href="https://developer.twitter.com/en/docs/twitter-api/getting-started/getting-access-to-the-twitter-api" data-scope="external" rel="external noreferrer">Twitter Getting Started</a> to apply for a developer account to integrate HC with Twitter API.</p>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <p>The review feedback will be sent to the email you provided during the application process. Once the API access application has been approved, you can proceed to the below step for App Creation In Twitter Developer Account.</p>
+ </div>
+</div>
+<h2 id="id-(3.15)TwitterDirectMessagingDeploymentGuide-AppCreationonTwitterDeveloperAccount"><span id="TwitterDirectMessagingDeploymentGuide-AppCreationonTwitterDeveloperAccount"></span><span style="--color: #000">App Creation on Twitter Developer Account </span>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/twitter-direct-messaging-deployment-guide#id-(3.15)TwitterDirectMessagingDeploymentGuide-AppCreationonTwitterDeveloperAccount">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<ol>
+ <li>
+  <p>Log in to Twitter Developer Account <a href="https://developer.twitter.com/en/portal/dashboard" data-scope="external" rel="external noreferrer">https://developer.twitter.com/en/portal/dashboard</a></p>
+ </li>
+ <li>
+  <p>&nbsp;Create a Project and then create an app. i.e. provide a name for the app, like for example “<strong>EF-Twitter-App</strong>”.</p>
+ </li>
+ <li>
+  <p>Generate the Keys and Access Tokens from the “Key and Tokens” Tab as shown in the screenshot below:&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_adaa59b7cf3478c5e11975985e4aa7655a9d17249ef02167d7f920fbe091bf87/image2021-6-28_17-21-48.png?cb=1c35997f51ed8e77781e608b62e29cb4" alt="image2021-6-28_17-21-48.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+</ol>
+<p>&nbsp; &nbsp; &nbsp;</p>
+<p>4. Generate Consumer Key, Consumer Secret, and access tokens. Make sure to save these keys somewhere save as you will need to configure them in the CCM (Channel-Manager variable.env file)</p>
+<p>&nbsp; &nbsp;&nbsp;</p>
+<p>&nbsp; &nbsp; &nbsp; <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 400px;"> <img src="/__attachments/a_695ed1f7c7bb918a288db88f1472dfed819e3931fbf3fc23cc32c464f217741a/image2021-6-28_17-26-39.png?cb=a27dd688cab8ed153e4a1bc03f4943c7" alt="image2021-6-28_17-26-39.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>5. After you've created the APP and Generated the Keys &amp; Tokens. Navigate to the following tab “<strong>Settings</strong>” and change the App permissions to <strong>Read+Write+Direct Messages. </strong>To do this, click on “<strong>Edit</strong>”.</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>&nbsp; &nbsp; &nbsp; <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 400px;"> <img src="/__attachments/a_fe323423c6cbb096488e802b45326b918f42188a051c26fdb0ce01558d1470dd/image2021-6-29_11-14-37.png?cb=03123615cbed1efbfa5535ed7ccff829" alt="image2021-6-29_11-14-37.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>
+ <br>
+</p>
+<p>6. Copy The Keys &amp; Access Tokens you generated in <strong>Step 3 </strong>into a secure location for future reference.</p>
+<p>7. Create a Lab Environment where you will access your app, Navigate as follows</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 400px;"> <img src="/__attachments/a_60699e7d6eac5d22503a81ceee192c1d1ab1a9afea1ed10a1f1400a86c4b3e00/image2021-6-29_11-32-7.png?cb=ece8c8c994e29a6e4fac2ce8f5b0f5d7" alt="image2021-6-29_11-32-7.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>Then Create the environment as follow:</p>
+<p>&nbsp; &nbsp; &nbsp;&nbsp; <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 724px;"> <img src="/__attachments/a_a7576638680d0ee2b57b481bd173c05aac0bf98cb4297e2788bd64bafa64e785/image2021-6-29_11-33-34.png?cb=c46041ea27326abcef8fdf599fbf260c" alt="image2021-6-29_11-33-34.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>
+ <br>
+</p>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <p>Keep <strong>Note </strong>of this environment <strong>name, </strong>as you will need it when registering CCM’s Twitter webhook with Twitter.</p>
+ </div>
+</div>
+<p>
+ <br>
+</p>
+<h2 id="id-(3.15)TwitterDirectMessagingDeploymentGuide-IntegratingtheTwitterAppwithEFChannelManagerApplication"><span id="TwitterDirectMessagingDeploymentGuide-IntegratingtheTwitterAppwithEFChannelManagerApplication"></span><span style="--color: #000">Integrating the Twitter App with EF Channel Manager Application</span>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/twitter-direct-messaging-deployment-guide#id-(3.15)TwitterDirectMessagingDeploymentGuide-IntegratingtheTwitterAppwithEFChannelManagerApplication">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>Since Twitter is cloud-based, to integrate it with CCM, the Twitter endpoint inside the CCM MUST be accessible publicly and MUST also be hosted in a secure host with a valid SSL certificate.</p>
+<p>The Twitter endpoint in CCM will be as follows: <a href="https://stqa.expertflow.com/ccm/webhook/twitter" data-scope="external" rel="external noreferrer">https://FQDN/ccm/webhook/twitter</a></p>
+<p>Before integrating this endpoint to Twitter for us to receive Live Twitter Direct Messaging Events, we need to configure the Keys and Access Tokens we generated above in the&nbsp;<a href="/chat/3.15/twitter-direct-messaging-deployment-guide#_kwveee5hut7" data-scope="internal">App creation</a> Section. Copy and Paste Keys/Access token in ccm environment_variable.env file as following;</p>
+<p>&nbsp;</p>
+<h4 id="id-(3.15)TwitterDirectMessagingDeploymentGuide-1.TwitterConfigurationinCCM.envfile"><span id="TwitterDirectMessagingDeploymentGuide-1.TwitterConfigurationinCCM.envfile"></span>&nbsp;1.&nbsp;Twitter Configuration in CCM .env file
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/twitter-direct-messaging-deployment-guide#id-(3.15)TwitterDirectMessagingDeploymentGuide-1.TwitterConfigurationinCCM.envfile">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>#Section for Twitter Settings</p>
+<p>#Twitter Consumer secret that you generate from your twitter developer account: <a href="https://developer.twitter.com/en/portal/dashboard" data-scope="external" rel="external noreferrer">https://developer.twitter.com/en/portal/dashboard</a></p>
+<p>TWITTER_CONSUMER_SECRET= {<strong>ENTER_CONSUMER_SECRET</strong>}</p>
+<p>#Twitter Consumer key that you generate from your twitter developer account: <a href="https://developer.twitter.com/en/portal/dashboard" data-scope="external" rel="external noreferrer">https://developer.twitter.com/en/portal/dashboard</a></p>
+<p>TWITTER_CONSUMER_KEY= {<strong>ENTER_CONSUMER_KEY</strong>}</p>
+<p>#Twitter Access Token that you generate from your twitter developer account: <a href="https://developer.twitter.com/en/portal/dashboard" data-scope="external" rel="external noreferrer">https://developer.twitter.com/en/portal/dashboard</a></p>
+<p>TWITTER_ACCESS_TOKEN={<strong>ENTER_ACCESS_TOKEN</strong>}</p>
+<p>#Twitter Access Secret that you generate from your twitter developer account: <a href="https://developer.twitter.com/en/portal/dashboard" data-scope="external" rel="external noreferrer">https://developer.twitter.com/en/portal/dashboard</a></p>
+<p>TWITTER_ACCESS_SECRET={<strong>ENTER_ACCESS_SECRET</strong>}</p>
+<p>&nbsp;TWITTER_ACCOUNT_ID={<strong>ENTER_TWITTER_USERID</strong>}&nbsp; See <a href="/chat/3.15/twitter-direct-messaging-deployment-guide#_5gjm79hnkjvx" data-scope="internal">here </a>how to generate THE<strong> TWITTER_ACCOUNT_ID </strong>to map to this variable.</p>
+<p>&nbsp;</p>
+<p>
+ <br>
+</p>
+<h4 id="id-(3.15)TwitterDirectMessagingDeploymentGuide-GenerateyourTWITTER_ACCOUNT_IDfromTwitterAPI"><span id="TwitterDirectMessagingDeploymentGuide-GenerateyourTWITTER_ACCOUNT_IDfromTwitterAPI"></span><span style="--color: #000">Generate your </span><span style="--color: #000"><strong>TWITTER_ACCOUNT_ID</strong></span><span style="--color: #000"> from Twitter API</span>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/twitter-direct-messaging-deployment-guide#id-(3.15)TwitterDirectMessagingDeploymentGuide-GenerateyourTWITTER_ACCOUNT_IDfromTwitterAPI">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<ol></ol>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 147px;"> <img src="/__attachments/a_2737fdce8e346475dd1368ae4e58fbd6a75995d6880f3ac3fceaaffb6b7f07df/image2021-6-29_11-48-22.png?cb=b0a9a0e6516dc01d4f97dde013a5041d" alt="image2021-6-29_11-48-22.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>
+ <br>
+</p>
+<h4 id="id-(3.15)TwitterDirectMessagingDeploymentGuide-2.CCM’sTwitterEndpointIntegrationwithTwitter"><span id="TwitterDirectMessagingDeploymentGuide-2.CCM’sTwitterEndpointIntegrationwithTwitter"></span>&nbsp;2.&nbsp;CCM’s Twitter Endpoint Integration with Twitter
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/twitter-direct-messaging-deployment-guide#id-(3.15)TwitterDirectMessagingDeploymentGuide-2.CCM’sTwitterEndpointIntegrationwithTwitter">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>The CCM’s Twitter endpoint <a href="https://stqa.expertflow.com/ccm/webhook/twitter" data-scope="external" rel="external noreferrer">https://FQDN/ccm/webhook/twitter</a> is the webhook that will receive the twitter events. So twitter should be conjured to send all messaging events related to our Twitter Account to these endpoints.</p>
+<p>&nbsp;</p>
+<p>However, Twitter doesn’t accept the absolute URL as it is, so we need to Encode the URL. You can use any encoding tool available or you can use Postman to encode this URL.</p>
+<p>&nbsp;</p>
+<p>To encode the URL using the <strong>Postman Tool</strong>. Paste the URL on the address bar in Postman, and then select the “encode” option by clicking the <strong>3 dots </strong>shown in the screenshot below.</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 190px;"> <img src="/__attachments/a_6e8fcabe0c7a996b9300178c018a2c32fb302ba985eed728b31f1cf0316e8e17/image2021-6-29_11-51-21.png?cb=8b4621fde45192a109cd55efc554bc14" alt="image2021-6-29_11-51-21.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>The encoded URL will look similar to this :&nbsp; https%3A%2F%2FFQDN%2Fccm%2Fwebhook%2Ftwitter</p>
+<h5 id="id-(3.15)TwitterDirectMessagingDeploymentGuide-A.RegisteringtheCCM’sTwitterendpoint(asawebhook)inTwitter"><span id="TwitterDirectMessagingDeploymentGuide-A.RegisteringtheCCM’sTwitterendpoint(asawebhook)inTwitter"></span><span style="--color: #000">A.&nbsp;&nbsp;&nbsp;Registering the CCM’s Twitter endpoint (as a webhook) in Twitter</span>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/twitter-direct-messaging-deployment-guide#id-(3.15)TwitterDirectMessagingDeploymentGuide-A.RegisteringtheCCM’sTwitterendpoint(asawebhook)inTwitter">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<p>To register a webhook, you can use&nbsp;<strong>Insomnia too,</strong>&nbsp;you can find it <a href="https://insomnia.rest/" data-scope="external" rel="external noreferrer">here</a>. Once you install then you may proceed as follows;</p>
+<ol>
+ <li>
+  <p>Create a POST request</p>
+ </li>
+ <li>
+  <p>Paste URL: <a href="https://api.twitter.com/1.1/account_activity/all/research/webhooks.json?url=https%3A%2F%2F2f9ac4d60faa.ngrok.io%2Fwebhook%2Ftwitterchat" data-scope="external" rel="external noreferrer">https://api.twitter.com/1.1/account_activity/all</a><a href="https://api.twitter.com/1.1/account_activity/all/research/webhooks.json?url=https%3A%2F%2F2f9ac4d60faa.ngrok.io%2Fwebhook%2Ftwitterchat" data-scope="external" rel="external noreferrer">/research</a><a href="https://api.twitter.com/1.1/account_activity/all/research/webhooks.json?url=https%3A%2F%2F2f9ac4d60faa.ngrok.io%2Fwebhook%2Ftwitterchat" data-scope="external" rel="external noreferrer">/webhooks.json?url=</a><a href="https://api.twitter.com/1.1/account_activity/all/research/webhooks.json?url=https%3A%2F%2F2f9ac4d60faa.ngrok.io%2Fwebhook%2Ftwitterchat" data-scope="external" rel="external noreferrer">https%3A%2F%2F2f9ac4d60faa.ngrok.io%2Fwebhook%2Ftwittercha</a><a href="https://api.twitter.com/1.1/account_activity/all/research/webhooks.json?url=https%3A%2F%2F2f9ac4d60faa.ngrok.io%2Fwebhook%2Ftwitterchat" data-scope="external" rel="external noreferrer">t</a> ..</p>
+ </li>
+</ol>
+<p>&nbsp;</p>
+<p>Replace “research” with the Development Environment Label that you created on the&nbsp;<a href="https://developer.twitter.com/en/account/environments" data-scope="external" rel="external noreferrer">Twitter developer platform</a>.</p>
+<p>&nbsp;</p>
+<p>Replace the second highlighted part of the <strong>URL </strong>with the <a href="/chat/3.15/twitter-direct-messaging-deployment-guide#_jr230y5lgude" data-scope="internal">Encoded webhook URL </a></p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp;3.&nbsp;Choose Body as “JSON”</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp;4. Authentication as “OAuth 1.0”&nbsp;</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 400px;"> <img src="/__attachments/a_e5a0e1b8873f8659161546cd9c50f9159b2a9cdbf4bea590c9e11db13457c0ac/image2021-6-29_11-53-3.png?cb=b146e473b1387c0a37261639a56db362" alt="image2021-6-29_11-53-3.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>
+ <br>
+</p>
+<p><strong>Replace:</strong></p>
+<p><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </strong></p>
+<ul>
+ <li>
+  <p>Consumer key: with the “API key” (you generated for the app)&nbsp;</p>
+ </li>
+ <li>
+  <p>Consumer secret: with the “API secret”</p>
+ </li>
+ <li>
+  <p>Token: with the “access token”</p>
+ </li>
+ <li>
+  <p>Token Secret: with the “Access secret”</p>
+ </li>
+ <li>
+  <p>Choose SIGNATURE METHOD as “HMAC-SHA1”</p>
+ </li>
+</ul>
+<p>Leave the rest of the field in default values.</p>
+<p>Then click <strong>send</strong>.</p>
+<p>&nbsp;</p>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <p><strong>Note:</strong> Make sure to copy and save the <strong>id </strong>returned in the response body, as you may need it for troubleshooting in the future troubleshooting steps.</p>
+ </div>
+</div>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_40b77de38362f0e7b12bddaa568523879b5e4fb20444cbfd1bb91b2464554e78/image2021-6-29_11-53-54.png?cb=ac276ee2714ca3ca8bf4e0540f8fe03d" alt="image2021-6-29_11-53-54.png" data-scope="internal"> </span> </image-lightbox> </span> &nbsp;</p>
+<p>
+ <br>
+</p>
+<h5 id="id-(3.15)TwitterDirectMessagingDeploymentGuide-B.Subscribingthewebhookevents"><span id="TwitterDirectMessagingDeploymentGuide-B.Subscribingthewebhookevents"></span>B.&nbsp;Subscribing the webhook events
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/twitter-direct-messaging-deployment-guide#id-(3.15)TwitterDirectMessagingDeploymentGuide-B.Subscribingthewebhookevents">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<p>This part will activate the webhook to receive the messaging events from Twitter.</p>
+<p>&nbsp;</p>
+<ol>
+ <li>
+  <p>Create a POST request</p>
+ </li>
+ <li>
+  <p>Paste URL: <a href="https://api.twitter.com/1.1/account_activity/all/research/subscriptions.json" data-scope="external" rel="external noreferrer">https://api.twitter.com/1.1/account_activity/all/</a><a href="https://api.twitter.com/1.1/account_activity/all/research/subscriptions.json" data-scope="external" rel="external noreferrer">research</a><a href="https://api.twitter.com/1.1/account_activity/all/research/subscriptions.json" data-scope="external" rel="external noreferrer">/subscriptions.json</a></p>
+ </li>
+</ol>
+<p>&nbsp;</p>
+<p>&nbsp;Replace “research” with the Development Environment Label that you created on the&nbsp;<a href="https://developer.twitter.com/en/account/environments" data-scope="external" rel="external noreferrer">Twitter developer platform</a>.</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp;3. Choose Body as “JSON”</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp;4. Authentication as “OAuth 1.0”</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_c16db63a991c43b7b00f6759691367cb9aea7dc15a93a1cf217d95eafdd62f84/image2021-6-29_11-54-53.png?cb=f18bbfe7a349e7d686223bf806271cc1" alt="image2021-6-29_11-54-53.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>
+ <br>
+</p>
+<p>&nbsp; <strong>Replace:</strong></p>
+<p><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </strong></p>
+<ul>
+ <li>
+  <p>Consumer key: with the “API key” (you generated for the app)&nbsp;</p>
+ </li>
+ <li>
+  <p>Consumer secret: with the “API secret”</p>
+ </li>
+ <li>
+  <p>Token: with the “access token”</p>
+ </li>
+ <li>
+  <p>Token Secret: with the “Access secret”</p>
+ </li>
+ <li>
+  <p>Choose SIGNATURE METHOD as “HMAC-SHA1”</p>
+ </li>
+</ul>
+<p>&nbsp;Leave the rest of the field in the default value</p>
+<p><strong>&nbsp;</strong><strong>For Success Result:&nbsp;&nbsp;</strong>Status code: 201 - Created.</p>
+<p><strong>&nbsp;</strong></p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="01c8a48b5e902197-57" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="01c8a48b5e902197-57">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/chat/3.15/facebook-page-comments">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Facebook Page Comments</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/chat/3.15/whatsapp">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">WhatsApp</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

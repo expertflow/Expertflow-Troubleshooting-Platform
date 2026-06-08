@@ -1,0 +1,3877 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_d95bc49968d1b73939135896e65bcc39519ed67821d18cf95df97992a3e5edc4" data-confluence-content-id="2531378"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/cx-knowledgebase/latest/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="SBT">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>CX Customer Widget Embedding Guide | Expertflow CX</title>
+		<meta property="og:title" content="CX Customer Widget Embedding Guide | Expertflow CX">
+		<meta property="twitter:title" content="CX Customer Widget Embedding Guide | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide">
+		<meta property="og:url" content="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide">
+
+		<meta name="description" content="This guide provides step-by-step instructions for embedding the Expertflow Live Chat Web Widget into a website. The widget can be integrated using Google Tag M…">
+		<meta property="og:description" content="This guide provides step-by-step instructions for embedding the Expertflow Live Chat Web Widget into a website. The widget can be integrated using Google Tag M…">
+		<meta property="twitter:description" content="This guide provides step-by-step instructions for embedding the Expertflow Live Chat Web Widget into a website. The widget can be integrated using Google Tag M…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__attachments/a_7950c523acd8a0d8ad31c844da3fa61283cf8070166fad2675675fca6ec777c5/5.png?cb=745645b1eac5d8126b96241c6730a39e">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__attachments/a_7950c523acd8a0d8ad31c844da3fa61283cf8070166fad2675675fca6ec777c5/5.png?cb=745645b1eac5d8126b96241c6730a39e">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2026-01-05T07:57:15.218Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": true
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.js"></script>
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="57794afe5c3ffd1f-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="57794afe5c3ffd1f-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-57794afe5c3ffd1f-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-57794afe5c3ffd1f-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-57794afe5c3ffd1f-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="57794afe5c3ffd1f-3" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="57794afe5c3ffd1f-3">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-57794afe5c3ffd1f-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-57794afe5c3ffd1f-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="57794afe5c3ffd1f-4" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="57794afe5c3ffd1f-5" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="57794afe5c3ffd1f-6" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-7"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-7" href="/cx-knowledgebase/latest/expertflow-cx-overview" >ExpertFlow CX Overview</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-9"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-9" href="/cx-knowledgebase/latest/expertflow-cx-platform-overview" >Expertflow CX Platform Overview</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="57794afe5c3ffd1f-12"						aria-labelledby="57794afe5c3ffd1f-11"
+					></button>
+				<a id="57794afe5c3ffd1f-11" href="/cx-knowledgebase/latest/solutions" >Solutions</a>
+			</div>
+
+<ul  id="57794afe5c3ffd1f-12" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="57794afe5c3ffd1f-14"						aria-labelledby="57794afe5c3ffd1f-13"
+					></button>
+				<a id="57794afe5c3ffd1f-13" href="/cx-knowledgebase/latest/customer-channels" >Omnichannel Engagement</a>
+			</div>
+
+<ul  id="57794afe5c3ffd1f-14" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="57794afe5c3ffd1f-16"						aria-labelledby="57794afe5c3ffd1f-15"
+					></button>
+				<a id="57794afe5c3ffd1f-15" href="/cx-knowledgebase/latest/digital-channels" >Digital Channels</a>
+			</div>
+
+<ul  id="57794afe5c3ffd1f-16" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="57794afe5c3ffd1f-18"						aria-labelledby="57794afe5c3ffd1f-17"
+					></button>
+				<a id="57794afe5c3ffd1f-17" href="/cx-knowledgebase/latest/webrtc" >Customer Widget</a>
+			</div>
+
+<ul  id="57794afe5c3ffd1f-18" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="57794afe5c3ffd1f-19" href="/cx-knowledgebase/latest/add-a-web-widget" >Add a Customer Widget</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="57794afe5c3ffd1f-20" href="/cx-knowledgebase/latest/web-init-widget-deployment-guide" aria-current="page">CX Customer Widget Embedding Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-21"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-21" href="/cx-knowledgebase/latest/cx-customer-widget-configurations" >Customer Widget Configuration and Translation Management</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="57794afe5c3ffd1f-23" href="/cx-knowledgebase/latest/customer-widget-admin-guide" >Customer Widget Admin Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="57794afe5c3ffd1f-24" href="/cx-knowledgebase/latest/cx-customer-widget" >Customer Widget – Features and Capabilities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="57794afe5c3ffd1f-25" href="/cx-knowledgebase/latest/web-init-widget-deployment" >Customer Widget Deployment Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-26"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-26" href="/cx-knowledgebase/latest/developer-guide-of-customer-widget" >Developer Guide of Customer Widget</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="57794afe5c3ffd1f-28" href="/cx-knowledgebase/latest/webrtc-to-sip" >WebRTC to SIP</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-29"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-29" href="/cx-knowledgebase/latest/whatsapp" >WhatsApp</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-31"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-31" href="/cx-knowledgebase/latest/sms-mms-via-twillio" >Twilio</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-33"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-33" href="/cx-knowledgebase/latest/360-channel-integration" >360</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-35"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-35" href="/cx-knowledgebase/latest/facebook-channel-integration" >Facebook</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-37"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-37" href="/cx-knowledgebase/latest/instagram-channel-integration" >Instagram</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-39"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-39" href="/cx-knowledgebase/latest/twitter" >Twitter</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-41"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-41" href="/cx-knowledgebase/latest/linkedin-social-media" >LinkedIn</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-43"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-43" href="/cx-knowledgebase/latest/youtube-connector-feature-guide" >YouTube</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-45"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-45" href="/cx-knowledgebase/latest/sms-via-smpp" >SMPP</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-47"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-47" href="/cx-knowledgebase/latest/viber" >Viber</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-49"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-49" href="/cx-knowledgebase/latest/telegram-connector-configuration-guide" >Telegram</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-51"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-51" href="/cx-knowledgebase/latest/google-play-store" >Google Play Store</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-53"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-53" href="/cx-knowledgebase/latest/email" >Email</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-55"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-55" href="/cx-knowledgebase/latest/cx-voice" >Voice and Video</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-57"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-57" href="/cx-knowledgebase/latest/channel-connector-developer-guide" >Channel Connector Developer Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-59"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-59" href="/cx-knowledgebase/latest/nlu-digital-bots" >NLU / Digital Bots</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="57794afe5c3ffd1f-61" href="/cx-knowledgebase/latest/ai-self-service" >AI &amp; Self-Service</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="57794afe5c3ffd1f-62" href="/cx-knowledgebase/latest/agent-ai-assistance" >Agent Assistance</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-63"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-63" href="/cx-knowledgebase/latest/quality-management" >Quality Management</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-65"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-65" href="/cx-knowledgebase/latest/cx-surveys" >Surveys</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-67"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-67" href="/cx-knowledgebase/latest/browser-based-calling" >Browser-Based Calling</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="57794afe5c3ffd1f-69" href="/cx-knowledgebase/latest/untitled-live-doc-2026-04-13" >Untitled live doc 2026-04-13</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-70"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-70" href="/cx-knowledgebase/latest/platform" >Platform</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-72"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-72" href="/cx-knowledgebase/latest/deployment-installation" >Deployment &amp; Installation</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-74"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-74" href="/cx-knowledgebase/latest/reports" >Reports and Analytics</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-76"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-76" href="/cx-knowledgebase/latest/resources" >Resources</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="57794afe5c3ffd1f-78"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="57794afe5c3ffd1f-78" href="/cx-knowledgebase/latest/contact-center-personas" >Contact Center Personas</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="57794afe5c3ffd1f-80" href="/cx-knowledgebase/latest/user-inactivity-logout" >User Inactivity Logout</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="57794afe5c3ffd1f-81" href="/cx-knowledgebase/latest/agent-desk-release-strategy" >Agent Desk Release Strategy</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="57794afe5c3ffd1f-82" href="/cx-knowledgebase/latest/channels-integration-onboarding-guide-s" >Channels Integration - Onboarding guide(s)</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="57794afe5c3ffd1f-83" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="57794afe5c3ffd1f-83">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest">
+										Expertflow CX
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest/solutions">
+										Solutions
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest/customer-channels">
+										Omnichannel Engagement
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest/digital-channels">
+										Digital Channels
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest/webrtc">
+										Customer Widget
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="57794afe5c3ffd1f-84">
+			<h2 class="toc-heading" id="57794afe5c3ffd1f-84">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>CX Customer Widget Embedding Guide</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+
+	
+
+
+	
+		
+
+
+
+	
+
+	
+
+
+	
+	
+	
+	
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+		
+		
+	
+	
+	
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+
+		
+
+
+
+
+	
+	
+	
+	<p>This guide provides step-by-step instructions for embedding the Expertflow Live Chat Web Widget into a website. The widget can be integrated using <strong>Google Tag Manager (GTM)</strong> or by <strong>directly embedding the script into the website’s HTML</strong>, depending on your deployment preference and level of control.</p>
+<p><strong>Audience:</strong> Webmasters, developers, or administrators who want to add the chat widget to their site without modifying the site’s source code</p>
+<h4 id="1:-Embedding-via-Google-Tag-Manager-(GTM)" style=""><span id="CXCustomerWidgetEmbeddingGuide-1:EmbeddingviaGoogleTagManager(GTM)"></span>1: Embedding via Google Tag Manager (GTM)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#1:-Embedding-via-Google-Tag-Manager-(GTM)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>When using GTM, the widget can be embedded in the following ways:</p>
+<ul>
+ <li>
+  <p><strong>Using the official Tag Template (Recommended)</strong></p>
+ </li>
+ <li>
+  <p><strong>Importing the Template from GitHub</strong> (if not available in the GTM Community Gallery)</p>
+ </li>
+ <li>
+  <p><strong>Embedding via a Custom HTML Tag</strong></p>
+ </li>
+</ul>
+<h4 id="2:-Direct-Website-Embedding" style=""><span id="CXCustomerWidgetEmbeddingGuide-2:DirectWebsiteEmbedding"></span>2: Direct Website Embedding
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#2:-Direct-Website-Embedding">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>Alternatively, the widget can be embedded by <strong>directly adding the widget script to the website’s HTML</strong>, within the <code>&lt;head&gt;</code> section.</p>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <p>For direct embedding, scroll down to this.
+   <br>
+   <a href="/cx-knowledgebase/latest/web-init-widget-deployment-guide#2:-Embed-in-Website" data-scope="internal">CX Customer Widget Embedding Guide | 2: Embed in Website</a></p>
+ </div>
+</div>
+<h2 id="1:-Embedding-via-Google-Tag-Manager-(GTM).1" style=""><span id="CXCustomerWidgetEmbeddingGuide-1:EmbeddingviaGoogleTagManager(GTM)"></span>1: Embedding via Google Tag Manager (GTM)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#1:-Embedding-via-Google-Tag-Manager-(GTM).1">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h5 id="Prerequisite" style=""><span id="CXCustomerWidgetEmbeddingGuide-Prerequisite"></span>Prerequisite
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#Prerequisite">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<p>Before embedding the widget:</p>
+<ul>
+ <li>
+  <p>Ensure you have a <strong>Google Tag Manager account</strong> and <strong>container</strong> created.</p>
+ </li>
+</ul>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <p>Follow the official steps here: <a href="https://support.google.com/tagmanager/answer/6103696?hl=en" data-scope="external" rel="external noreferrer">Create a GTM Account and Container</a></p>
+ </div>
+</div>
+<ul>
+ <li>
+  <p>The <strong>Expertflow Customer Widget</strong> should already be <strong>deployed and publicly accessible</strong> on your CX server (e.g., <code>https://yourdomain.com/customer-widget</code>).</p>
+ </li>
+</ul>
+<h3 id="Option-1:-Emed-via-Tag-Template-(Recommended)" style=""><span id="CXCustomerWidgetEmbeddingGuide-Option1:EmedviaTagTemplate(Recommended)"></span>Option 1: Emed via Tag Template <em>(Recommended)</em>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#Option-1:-Emed-via-Tag-Template-(Recommended)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Use a custom tag template to set up Expertflow live chat on your website, connecting customers to the business for inbound, outbound, and self-service interactions.</p>
+<h4 id="Expertflow-Live-Chat-Template-Installation" style=""><span id="CXCustomerWidgetEmbeddingGuide-ExpertflowLiveChatTemplateInstallation"></span>Expertflow Live Chat Template Installation
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#Expertflow-Live-Chat-Template-Installation">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<h5 id="Installation" style=""><span id="CXCustomerWidgetEmbeddingGuide-Installation"></span>Installation
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#Installation">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<ol>
+ <li>
+  <p>Log in to GTM → Open your <strong>Workspace</strong>.</p>
+ </li>
+ <li>
+  <p>In Google Tag Manager, click Workspace. Near the top of the window, find your container ID, formatted as GTM-XXXXXX. Click your container ID to launch the Install Tag Manager window.</p>
+ </li>
+ <li>
+  <p>Copy and install the GTM container code on your website (inside the <code>&lt;head&gt;</code> tag).</p>
+ </li>
+ <li>
+  <p><strong>Publish</strong> Your container. For more information, <a href="https://developers.google.com/tag-platform/tag-manager/web" data-scope="external" rel="external noreferrer"><u>click here</u></a>.</p>
+ </li>
+</ol>
+<h5 id="Search-Tag-Template:" style=""><span id="CXCustomerWidgetEmbeddingGuide-SearchTagTemplate:"></span>Search Tag Template:
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#Search-Tag-Template:">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<p>Once the GTM account and container are created and configured on your site.</p>
+<ol>
+ <li>
+  <p>In GTM, navigate to <strong>Templates → Tag Templates → Search Gallery</strong>.</p>
+ </li>
+ <li>
+  <p>Search “Expertflow” in the search bar, and this will filter the template from the Gallery.</p>
+ </li>
+ <li>
+  <p>Click on theThe&nbsp; <strong>Expertflow Live Chat</strong> template and it will navigate to the Template Details Section.</p>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 510px" data-component="image" data-align="align-start">
+     <img src="/__attachments/a_7950c523acd8a0d8ad31c844da3fa61283cf8070166fad2675675fca6ec777c5/5.png?cb=745645b1eac5d8126b96241c6730a39e" alt="5.png" data-scope="internal" width="512" height="173">
+    </div>
+   </image-lightbox>
+  </div>
+ </li>
+ <li>
+  <p>Click on the <strong>Add to Workspace</strong> button to install it on the Current Workspace.</p>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 510px" data-component="image" data-align="align-start">
+     <img src="/__attachments/a_30967bdf7d1d491f6cfd12f4fb187d30103af5a1c9f40d2dcb144c907f6ec91e/6.png?cb=17ec6379ebe3d0163f7c5614f1001cac" alt="6.png" data-scope="internal" width="512" height="241">
+    </div>
+   </image-lightbox>
+  </div>
+ </li>
+ <li>
+  <p>Read the third-party policies and click on the <strong>Add</strong> button.</p>
+ </li>
+ <li>
+  <p>After adding to the workspace, the Tag Template will be visible in the templates section.</p>
+ </li>
+ <li>
+  <p>Click on the template to open it in Template Editor. Navigate to the <strong>Permissions</strong> section and replace the [Hostname] with the Init-Widget Url (FQDN).</p>
+ </li>
+ <li>
+  <p>Click on the Refresh and then the Save button to save the Template.</p>
+ </li>
+</ol>
+<div data-component="panel" role="note" data-appearance="warning">
+ <div class="panel-content">
+  <p>Make sure the Template Editor's Console is error-free before saving the Template.</p>
+ </div>
+</div>
+<p><strong>The Expertflow Live Chat</strong> template is added to your current workspace.</p>
+<h3 id="Option-2:-Importing-the-Template-from-GitHub" style=""><span id="CXCustomerWidgetEmbeddingGuide-Option2:ImportingtheTemplatefromGitHub"></span>Option 2: <strong>Importing the Template from GitHub</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#Option-2:-Importing-the-Template-from-GitHub">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>You can also import the Expertflow Live Chat template from the Github Repository, in case you don’t find it in the Community Gallery of Tag Manager.</p>
+<h4 id="Import-from-GitHub-Repository" style=""><span id="CXCustomerWidgetEmbeddingGuide-ImportfromGitHubRepository"></span>Import from GitHub Repository
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#Import-from-GitHub-Repository">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<ol>
+ <li>
+  <p>Download the Tag template source code from <a href="https://github.com/expertflow/expertflow-cim-tag-template/tree/develop" data-scope="external" rel="external noreferrer"><u>here</u></a>.</p>
+ </li>
+ <li>
+  <p>Extract files in a folder and make sure the folder contains the <strong>template.tpl</strong> file.</p>
+ </li>
+ <li>
+  <p>Open Google Tag Manager, navigate to the templates section from the sidebar, and click on the <strong>New</strong> button as shown in the figure below.</p>
+ </li>
+ <li>
+  <p>Template Editor will open up, click on the three-dot icon at the top right corner to select the <strong>import</strong> Option from the dropdown as shown in the figure below.</p>
+ </li>
+ <li>
+  <p>Select the template.tpl file from the source code folder to open it in the Template Editor.</p>
+ </li>
+ <li>
+  <p>Click on the template to open it in Template Editor. Navigate to the <strong>Permissions</strong> section and replace the [Hostname] with the Init-Widget Url (FQDN).</p>
+ </li>
+ <li>
+  <p>Click on the Refresh and then the Save button to save the Template.</p>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 442px" data-component="image" data-align="align-start">
+     <img src="/__attachments/a_4eac1df2e763fd8a101163a19bef295136fe84cc7bbf07ef5e46f83dab2fa2e5/save.png?cb=924e02de976f5bfd67fb3e48aef85f9a" alt="save.png" data-scope="internal" width="455" height="107">
+    </div>
+   </image-lightbox>
+  </div>
+ </li>
+</ol>
+<p>&nbsp;</p>
+<div data-component="panel" role="note" data-appearance="warning">
+ <div class="panel-content">
+  <p>Make sure the Template Editor's Console is error-free before saving the Template.</p>
+ </div>
+</div>
+<p><strong>The Expertflow Live Chat</strong> The template is added to your current workspace.</p>
+<h4 id="Create-a-Tag-and-a-Trigger-for-the-Template" style=""><span id="CXCustomerWidgetEmbeddingGuide-CreateaTagandaTriggerfortheTemplate"></span>Create a Tag and a Trigger for the Template
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#Create-a-Tag-and-a-Trigger-for-the-Template">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<ol>
+ <li>
+  <p>Navigate to the <strong>Tag </strong>section and click on the <strong>New</strong> button to add a new Tag.</p>
+ </li>
+ <li>
+  <p>Name the tag and add Tag Configuration.</p>
+ </li>
+ <li>
+  <p>Choose the Tag Type =&gt; Expertflow Live Chat template under the Custom headings.</p>
+ </li>
+ <li>
+  <p>Fill in the required fields with valid configurations.</p>
+ </li>
+ <li>
+  <p>Once configurations are filled, the final step is to add the trigger to fire the tag on the page view.</p>
+ </li>
+ <li>
+  <p>Finally, the Tag will look like this:</p>
+ </li>
+ <li>
+  <p>Click on the <strong>Save </strong>button.</p>
+ </li>
+</ol>
+<h3 id="Preview-Before-Publish" style=""><span id="CXCustomerWidgetEmbeddingGuide-PreviewBeforePublish"></span>Preview Before Publish
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#Preview-Before-Publish">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>To enable preview and debug mode for the current workspace:&nbsp;</p>
+<ol>
+ <li>
+  <p>Click Preview in the top right of your workspace.&nbsp;</p>
+ </li>
+ <li>
+  <p>Enter your site's URL.&nbsp;</p>
+ </li>
+ <li>
+  <p>Click Connect. Your site opens in a new window and displays as Connected in the bottom right.</p>
+ </li>
+ <li>
+  <p>Click back on the Tag Assistant tab and click Continue to access the debug interface.</p>
+ </li>
+ <li>
+  <p>You can monitor fired tags in <strong>Tag Assistant.</strong>
+   <br>
+   &nbsp;</p>
+ </li>
+</ol>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <p>For more information regarding Preview and Debug Mode: <a href="https://support.google.com/tagmanager/answer/6107056" data-scope="external" rel="external noreferrer"><u>Click Here</u></a></p>
+ </div>
+</div>
+<p>Click<strong> Submit</strong> button to <strong>Publish the Container</strong> online. Refresh the target website to see the <strong>Expertflow Live Chat</strong> widget.&nbsp;</p>
+<p>Unknown Attachment</p>
+<h2 id="Embed-Widget-&amp;-Pushing-Browser-Information-as-CX-Activity-via-GTM" style=""><span id="CXCustomerWidgetEmbeddingGuide-EmbedWidget&amp;amp;PushingBrowserInformationasCXActivityviaGTM"></span>Embed Widget &amp; Pushing Browser Information as CX Activity via GTM
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#Embed-Widget-&amp;amp;-Pushing-Browser-Information-as-CX-Activity-via-GTM">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h4 id="Prerequisite.1" style=""><span id="CXCustomerWidgetEmbeddingGuide-Prerequisite"></span>Prerequisite
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#Prerequisite.1">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>Make sure you have already created the&nbsp;<strong>Google Tag Manager</strong>&nbsp;account and container. For details on how to create a Google Tag Manager account and container, follow the steps listed in&nbsp;<a href="https://support.google.com/tagmanager/answer/6103696?hl=en" data-scope="external" rel="external noreferrer"><u>this</u></a>&nbsp;guide.</p>
+<p>Clone/Download this repository <a href="https://github.com/expertflow/GTM-Browser-CX-Activity" data-scope="external" rel="external noreferrer"><u>expertflow/GTM-Browser-CX-Activity</u></a>&nbsp;</p>
+<p>On Google Tag Manager's home page, click on the admin tab.</p>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 680px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_bdd778819c373d9f5479fc0005f1e8bcc72db2e812f3641f75c89b0ed913eee2/image2025-5-6_12-46-30.png?cb=2991a49b23f3f829ff55477399d07f82" alt="image2025-5-6_12-46-30.png" data-scope="internal" width="929" height="323">
+  </div>
+ </image-lightbox>
+</div>
+<p>Click on the Import Container to import the workspace.json file downloaded from the above repository.</p>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 523px" data-component="image" data-align="align-start">
+   <img src="/__attachments/a_a4abcfaaa90f2dd9f46c42633d9973745e98d3f9b44298eaf815f5c83e551956/image2025-5-6_12-52-13.png?cb=f6af9fbb76ca57761de31f3d86882abd" alt="image2025-5-6_12-52-13.png" data-scope="internal" width="992" height="461">
+  </div>
+ </image-lightbox>
+</div>
+<p>Select the workspace.json file from the locally cloned repository, Also, one can decide whether to override or merge the importing container. Recommended to use merge option to avoid any existing tag lost.&nbsp;</p>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 476px" data-component="image" data-align="align-start">
+   <img src="/__attachments/a_0497d8fcf459ff2179abab323b0c0814aa6e6778745228b4df100177dec9c73a/image2025-5-6_12-55-27.png?cb=c26c27615cb944cbcde5e1cba4891c58" alt="image2025-5-6_12-55-27.png" data-scope="internal" width="1375" height="712">
+  </div>
+ </image-lightbox>
+</div>
+<p>Once selected, it will list all the imported tags and triggers in the preview mode.</p>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 476px" data-component="image" data-align="align-start">
+   <img src="/__attachments/a_504c376fe8d27114e3deae1957884b66f0be960b987186c9798a07c8edc6f712/image2025-5-6_13-3-26.png?cb=29a2a748f233b9b67a7387719d98393c" alt="image2025-5-6_13-3-26.png" data-scope="internal" width="945" height="495">
+  </div>
+ </image-lightbox>
+</div>
+<p>&nbsp;</p>
+<p>Once the import is complete, navigate to the tag section and click on the cx-activity tag, and update the FQDN as per the preferred EFCX Server Deployment.</p>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 462px" data-component="image" data-align="align-start">
+   <img src="/__attachments/a_357c36f0a02dc1de584119cc8de075624255721c98874b931749f8618fe45f3b/image2025-5-6_13-10-37.png?cb=223d804caa18437ed2623949c17b1aed" alt="image2025-5-6_13-10-37.png" data-scope="internal" width="1714" height="906">
+  </div>
+ </image-lightbox>
+</div>
+<p>Once all FQDNs are updated in all tags, save the changes.</p>
+<h3 id="Preview-Before-Publish.1" style=""><span id="CXCustomerWidgetEmbeddingGuide-PreviewBeforePublish"></span>Preview Before Publish
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#Preview-Before-Publish.1">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>To enable preview and debug mode for the current workspace:&nbsp;</p>
+<ol>
+ <li>
+  <p>Click Preview in the top right of your workspace.&nbsp;</p>
+ </li>
+ <li>
+  <p>Enter your site's URL.&nbsp;</p>
+ </li>
+ <li>
+  <p>Click Connect. Your site opens in a new window and displays as Connected in the bottom right.</p>
+ </li>
+ <li>
+  <p>Click back on the Tag Assistant tab and click Continue to access the debug interface.</p>
+ </li>
+ <li>
+  <p>You can monitor fired tags in <strong>Tag Assistant.</strong></p>
+  <p>
+   <br>
+  </p>
+  <p>
+   <br>
+  </p>
+  <p>
+   <br>
+  </p>
+ </li>
+</ol>
+<p>&nbsp;</p>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <p>For more information regarding Preview and Debug Mode: <a href="https://support.google.com/tagmanager/answer/6107056" data-scope="external" rel="external noreferrer"><u>Click Here</u></a></p>
+ </div>
+</div>
+<p>Click<strong> Submit</strong> button to <strong>Publish the Container</strong> online. Refresh the target website to see the <strong>Expertflow Live Chat</strong> widget.&nbsp;</p>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 251px" data-component="image" data-align="align-start">
+   <img src="/__attachments/a_f8ef5979ce37c930519c3e2d44e9cea89f9881a84849c1f81bfb3e141cb5ad3b/image2025-3-27_15-32-27.png?cb=f438979e8eb3fc5a3756b13ad8da845a" alt="image2025-3-27_15-32-27.png" data-scope="internal" width="310" height="295">
+  </div>
+ </image-lightbox>
+</div>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <p><strong>Note:</strong> If using the above-provided repository to embed and push the cx activity, then the web widget deployment tag is also part of this container, so no need to import it separately.</p>
+ </div>
+</div>
+<h3 id="Option-3:-Embed-via-Script-in-Google-Tag-Manager" style=""><span id="CXCustomerWidgetEmbeddingGuide-Option3:EmbedviaScriptinGoogleTagManager"></span>Option 3: Embed via Script in Google Tag Manager
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#Option-3:-Embed-via-Script-in-Google-Tag-Manager">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<h4 id="Use-this-if-you-prefer-manual-control-or-want-to-copy-paste-the-code-directly." style=""><span id="CXCustomerWidgetEmbeddingGuide-Usethisifyouprefermanualcontrolorwanttocopy-pastethecodedirectly."></span>Use this if you prefer manual control or want to copy-paste the code directly.
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#Use-this-if-you-prefer-manual-control-or-want-to-copy-paste-the-code-directly.">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<ol>
+ <li>
+  <p>Go to <strong>Tags → New → Custom HTML</strong>.</p>
+ </li>
+ <li>
+  <p>Paste this script and edit the values accordingly:</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>&lt;!-- CIM Script Tags --&gt;
+&lt;script type="text/javascript"&gt;
+&nbsp; &nbsp; &nbsp; var __cim = __cim || {};
+ &nbsp; &nbsp; &nbsp;__cim.customerWidgetUrl = "&lt;Public FQDN&gt;/customer-widget"; //Url where Customer Widget is Deployed&nbsp;
+&nbsp; &nbsp; &nbsp; __cim.widgetIdentifier = "web"; //Widget Identifier (Case Sensitive)
+&nbsp; &nbsp; &nbsp; __cim.serviceIdentifier = "+921218"; //Service Identifier
+&nbsp; &nbsp; &nbsp; (function () {
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;var __cimScript = document.createElement("script"),
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;__cimScriptTag = document.getElementsByTagName("script")[0];
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;__cimScript.src = __cim.customerWidgetUrl + "/widget-assets/widget/init_widget.js";
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;__cimScript.charset = "UTF-8";
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;__cimScriptTag.parentNode.insertBefore(__cimScript, __cimScriptTag);
+&nbsp; &nbsp; &nbsp; &nbsp;})();
+&lt;/script&gt;
+&lt;!-- End CIM Script Tags --&gt;
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+  <p>&nbsp;</p>
+  <p>Change the configurations in the script before adding the tag.</p>
+  <ul>
+   <li>
+    <p><strong>Customer Widget URL</strong> is the IP or FQDN of the server where the Customer Widget is hosted.</p>
+   </li>
+   <li>
+    <p>The <strong>widget Identifier</strong> is the web identifier for CIM chat. Make sure the widget identifier is the same as used in Unified Admin and it's case-sensitive.</p>
+   </li>
+   <li>
+    <p><strong>Service Identifier</strong> is the service identifier for CIM chat.</p>
+   </li>
+  </ul>
+  <p><strong>You can also embed this script directly into the head tags of your origin site html file.</strong></p>
+  <p>&nbsp;</p>
+ </li>
+ <li>
+  <p>Add a trigger to fire on <strong>All Pages (Page View)</strong>.</p>
+ </li>
+ <li>
+  <p>Click on the Save and then Submit button to publish the container online.</p>
+ </li>
+</ol>
+<p>The final view of the tag looks like this:</p>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 408px" data-component="image" data-align="align-start">
+   <img src="/__attachments/a_b2f86e8f8b1efb2f16151b039102aad57d834811438ed69765d12ec0f9674ec8/19.png?cb=1f142a0974e488fe500027da9290d95d" alt="19.png" data-scope="internal" width="512" height="305">
+  </div>
+ </image-lightbox>
+</div>
+<p>Once the custom HTML tag is created and saved, follow the same <a href="https://expertflow-docs.atlassian.net/wiki/pages/resumedraft.action?draftId=2531544#CustomerWidgetDeployment-Installation" data-scope="external" rel="external noreferrer"><u>installation</u></a> The step given above shows the widget on the target website.</p>
+<p>&nbsp;</p>
+<p>
+ <br>
+</p>
+<h2 id="Enabling-Customer-Identification-via-Google-Analytics" style=""><span id="CXCustomerWidgetEmbeddingGuide-EnablingCustomerIdentificationviaGoogleAnalytics"></span>Enabling Customer Identification via Google Analytics
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#Enabling-Customer-Identification-via-Google-Analytics">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>To identify returning customers, the widget can use the <strong>Google Analytics Unique ID (GA _gid)</strong> stored in the browser cookie.</p>
+<h4 id="How-It-Works" style=""><span id="CXCustomerWidgetEmbeddingGuide-HowItWorks"></span>How It Works
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#How-It-Works">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<ul>
+ <li>
+  <p>When a visitor lands on your site, Google Analytics assigns a unique <strong>_gid</strong> or <strong>_ga</strong> value.</p>
+ </li>
+ <li>
+  <p>The Expertflow widget automatically reads this value and uses it as the <strong>Customer Channel Identifier</strong>.</p>
+ </li>
+ <li>
+  <p>This allows the system to recognize returning visitors and maintain chat continuity.</p>
+ </li>
+</ul>
+<p><strong>Setting Up Google Analytics</strong></p>
+<p>You can integrate Google Analytics in <strong>two ways</strong>, depending on your setup preference:</p>
+<h3 id="Option-1:-Direct-Embedding-GA-Tracking-Script" style=""><span id="CXCustomerWidgetEmbeddingGuide-Option1:DirectEmbeddingGATrackingScript"></span>Option 1: Direct Embedding GA Tracking Script
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#Option-1:-Direct-Embedding-GA-Tracking-Script">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ol>
+ <li>
+  <p><strong>Universal Analytics</strong></p>
+  <ol>
+   <li>
+    <p>Assuming that you already have a Google Analytics <strong>Account</strong>, <strong>Property</strong> and <strong>View</strong> Created, if not <a href="https://cxl.com/blog/google-analytics-setup-101/" data-scope="external" rel="external noreferrer"><u>Click Here</u></a>.&nbsp;</p>
+   </li>
+   <li>
+    <p>Navigate to Admin &gt; Account &gt; Property Section and click on the Tracking Code Option to get the Tracking Script to embed into the website</p>
+    <div class="theme-block-image">
+     <image-lightbox>
+      <div class="block-image" style="--width: 578px" data-component="image" data-align="align-start">
+       <img src="/__attachments/a_8290783c16aebedaf369e29c5989478d854a01805cbc73a8d743e99d7406d26e/image2022-2-10_0-41-21.png?cb=f04a90eb11e23218b695fbd7413c8a2d" alt="image2022-2-10_0-41-21.png" data-scope="internal" width="937" height="405">
+      </div>
+     </image-lightbox>
+    </div>
+   </li>
+   <li>
+    <p>&nbsp;Once Tracking Code is embedded into your site, GA Unique ID is now available on that browser's cookies.</p>
+    <div class="theme-block-image">
+     <image-lightbox>
+      <div class="block-image" style="--width: 442px" data-component="image" data-align="align-start">
+       <img src="/__attachments/a_54f8e7e59f5299fc02e62a0cb6f87dc15759a0f93d334f78d471c6796ce8e19a/image2022-2-10_0-48-59.png?cb=f6fae82f57a5e2e50609e2043bea56ca" alt="image2022-2-10_0-48-59.png" data-scope="internal" width="450" height="177">
+      </div>
+     </image-lightbox>
+    </div>
+   </li>
+   <li>
+    <p>Now customer widget can automatically fetch the <strong>_gid&nbsp;</strong>as a Customer Channel Identifier.</p>
+   </li>
+  </ol>
+ </li>
+ <li>
+  <p><strong>Google Analytics 4 (GA4)</strong></p>
+  <ol>
+   <li>
+    <p>Assuming that you already have a Google Analytics account <strong>Account</strong>, <strong>Property</strong> and <strong>Data Streams</strong> Created, if not <a href="https://www.datadrivenu.com/understanding-data-streams-google-analytics-4/" data-scope="external" rel="external noreferrer"><u>Click Here</u></a>.&nbsp;</p>
+   </li>
+   <li>
+    <p>Navigate to Admin &gt; Account &gt; Property Section &gt; Data Streams and click on the Data Stream Option to get the <strong>Measurement ID</strong> to embed into the website or GTM Tag.</p>
+    <div class="theme-block-image">
+     <image-lightbox>
+      <div class="block-image" style="--width: 1280px" data-component="image" data-align="align-center">
+       <img src="/__attachments/a_cb93f6f1d84ae2d4c98bb39d89b196c8d8d49c0ca5d70be34fc934ebb3145693/image2022-10-20_13-35-28.png?cb=ee44a1863ade69178a97a91f916f0d6d" alt="image2022-10-20_13-35-28.png" data-scope="internal" width="1280" height="416">
+      </div>
+     </image-lightbox>
+    </div>
+   </li>
+   <li>
+    <p>&nbsp;Once Tracking Code is embedded into your site, GA Unique ID is now available on that browser's cookies.</p>
+    <p>Unknown Attachment</p>
+   </li>
+   <li>
+    <p>Now customer widget can automatically fetch the <strong>_gid&nbsp;</strong>as a Customer Channel Identifier.</p>
+   </li>
+  </ol>
+ </li>
+</ol>
+<h3 id="Option-2:-Add-Google-Analytics-via-Google-Tag-Manager-(Recommended)" style=""><span id="CXCustomerWidgetEmbeddingGuide-Option2:AddGoogleAnalyticsviaGoogleTagManager(Recommended)"></span>Option 2: Add Google Analytics via Google Tag Manager (Recommended)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#Option-2:-Add-Google-Analytics-via-Google-Tag-Manager-(Recommended)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ol>
+ <li>
+  <p><strong>Universal Analytics</strong></p>
+  <ol>
+   <li>
+    <p>Assuming that you already have a Google Analytics account <strong>Account</strong>, <strong>Property,</strong>&nbsp;<strong>View,</strong> and GTM account created, if not <a href="https://cxl.com/blog/google-analytics-setup-101/" data-scope="external" rel="external noreferrer"><u>Click Here</u></a>.</p>
+   </li>
+   <li>
+    <p>Navigate to Admin &gt; Account &gt; Property Section and click on the Tracking Code Option to get the Tracking ID from the script to use in GTM.</p>
+    <div class="theme-block-image">
+     <image-lightbox>
+      <div class="block-image" style="--width: 578px" data-component="image" data-align="align-start">
+       <img src="/__attachments/a_0ea1a1030a0267cf82cfbb6d3450d0f891ed3d6090b55b91eea6d4dc093b485f/image2022-2-10_0-57-41.png?cb=d1391a8351f89b5fe661d5a09b90d764" alt="image2022-2-10_0-57-41.png" data-scope="internal" width="911" height="394">
+      </div>
+     </image-lightbox>
+    </div>
+   </li>
+   <li>
+    <p>Now open the GTM account and create a new variable, <strong>name</strong> it, add <strong>variable type</strong> as Google Analytics settings and add that <strong>Tracking ID</strong> Copy from the GA tracking script, then click the Save button to save the variable.</p>
+    <div class="theme-block-image">
+     <image-lightbox>
+      <div class="block-image" style="--width: 340px" data-component="image" data-align="align-start">
+       <img src="/__attachments/a_95dae1be077554e563cc3fa99333a7f21a2ee8c0ace43d5395c9e3f5b0e78e42/image2022-2-10_1-3-59.png?cb=5d62267363e601c19997a31c3ab0d182" alt="image2022-2-10_1-3-59.png" data-scope="internal" width="513" height="375">
+      </div>
+     </image-lightbox>
+    </div>
+   </li>
+   <li>
+    <p>Create <strong>New</strong> Tag, <strong>Name</strong> The tag, select <strong>Tag Type</strong> "Google Analytics: Universal Analytics", select <strong>Track Type</strong> as Page View, select the GA variable previously created in <strong>Google Analytics Settings </strong>and&nbsp;fire the tag on <strong>Page View</strong> Trigger.</p>
+    <div class="theme-block-image">
+     <image-lightbox>
+      <div class="block-image" style="--width: 476px" data-component="image" data-align="align-start">
+       <img src="/__attachments/a_50c98183ab0d9fef51f13c9724bcc9f8ea7828813b5999a3f8ae8d444a6ccb74/image2022-2-10_1-7-27.png?cb=8fc2f168f8e45d91ff00b64840641e66" alt="image2022-2-10_1-7-27.png" data-scope="internal" width="1148" height="598">
+      </div>
+     </image-lightbox>
+    </div>
+   </li>
+   <li>
+    <p>Click the Save button and publish the Container of GTM to sync GTM with your website.</p>
+   </li>
+   <li>
+    <p>&nbsp;Once the container is synced into your site, the GA Unique ID is now available on that browser's cookies.</p>
+    <div class="theme-block-image">
+     <image-lightbox>
+      <div class="block-image" style="--width: 442px" data-component="image" data-align="align-start">
+       <img src="/__attachments/a_54f8e7e59f5299fc02e62a0cb6f87dc15759a0f93d334f78d471c6796ce8e19a/image2022-2-10_0-48-59.png?cb=f6fae82f57a5e2e50609e2043bea56ca" alt="image2022-2-10_0-48-59.png" data-scope="internal" width="450" height="177">
+      </div>
+     </image-lightbox>
+    </div>
+   </li>
+   <li>
+    <p>Now customer widget can automatically fetch the <strong>_gid&nbsp;</strong>as a Customer Channel Identifier.</p>
+   </li>
+  </ol>
+ </li>
+ <li>
+  <p><strong>Google Analytics (GA4)</strong></p>
+  <ol>
+   <li>
+    <p>Assuming that you already have a Google Analytics <strong>Account</strong>, <strong>Property,</strong>&nbsp;<strong>Data Streams,</strong> and GTM account created, if not <a href="https://searchengineland.com/how-to-set-up-google-analytics-4-using-google-tag-manager-374584#:~:text=Step%201%3A%20To%20start%20setting,to%20enter%20your%20Measurement%20ID." data-scope="external" rel="external noreferrer"><u>Click Here</u></a>.</p>
+   </li>
+   <li>
+    <p>Navigate to Admin &gt; Account &gt; Property Section and click on the Data Streams Option to get the Measurement ID from the script to use in GTM.</p>
+    <div class="theme-block-image">
+     <image-lightbox>
+      <div class="block-image" style="--width: 1280px" data-component="image" data-align="align-center">
+       <img src="/__attachments/a_5d225563ccf9d561d300fc265b4e1540c2a25efa9506b0435a1080becb7539f0/image2022-10-20_14-41-48.png?cb=ee44a1863ade69178a97a91f916f0d6d" alt="image2022-10-20_14-41-48.png" data-scope="internal" width="1280" height="416">
+      </div>
+     </image-lightbox>
+    </div>
+   </li>
+   <li>
+    <p>Create <strong>New</strong> Tag, <strong>Name</strong> the tag, select <strong>Tag Type</strong> "Google Analytics: GA4 Configuration", add Measurement Id from the GA4 account and also check the check box of page view event and&nbsp;fire the tag on <strong>Page View</strong> Trigger.</p>
+    <div class="theme-block-image">
+     <image-lightbox>
+      <div class="block-image" style="--width: 564px" data-component="image" data-align="align-start">
+       <img src="/__attachments/a_2b0bf992879f0ce959f18630583fa5734ab0a5cb3ddb8c6bd50b399472b6264b/image2022-10-20_14-56-41.png?cb=ff98e30cc5e79e597f8714b98f4c3856" alt="image2022-10-20_14-56-41.png" data-scope="internal" width="985" height="427">
+      </div>
+     </image-lightbox>
+    </div>
+   </li>
+   <li>
+    <p>Final view of the tag would look like this:</p>
+    <div class="theme-block-image">
+     <image-lightbox>
+      <div class="block-image" style="--width: 326px" data-component="image" data-align="align-start">
+       <img src="/__attachments/a_a4c54c029ea7f2109a99499f74dae37b171c307b45f6912e49cdc90cd4925f0c/image2022-10-20_15-1-31.png?cb=bccb008846175bf02541a6c7dd85e3d0" alt="image2022-10-20_15-1-31.png" data-scope="internal" width="688" height="509">
+      </div>
+     </image-lightbox>
+    </div>
+   </li>
+   <li>
+    <p>Click the Save button and publish the Container of GTM to sync GTM with your website.</p>
+   </li>
+   <li>
+    <p>&nbsp;Once the container is synced into your site, the GA Unique ID is now available on that browser's cookies.</p>
+    <div class="theme-block-image">
+     <image-lightbox>
+      <div class="block-image" style="--width: 442px" data-component="image" data-align="align-start">
+       <img src="/__attachments/a_54f8e7e59f5299fc02e62a0cb6f87dc15759a0f93d334f78d471c6796ce8e19a/image2022-2-10_0-48-59.png?cb=f6fae82f57a5e2e50609e2043bea56ca" alt="image2022-2-10_0-48-59.png" data-scope="internal" width="450" height="177">
+      </div>
+     </image-lightbox>
+    </div>
+   </li>
+   <li>
+    <p>Now customer widget can automatically fetch the <strong>_gid&nbsp;</strong>as a Customer Channel Identifier.</p>
+   </li>
+  </ol>
+ </li>
+</ol>
+<p>Once the GTM container is published and synced, GA cookies will be available on your site, and the widget will automatically use them for customer identification.Once the GTM container is published and synced, GA cookies will be available on your site, and the widget will automatically use them for customer identification.</p>
+<h2 id="2:-Direct-Website-Embedding.1" style=""><span id="CXCustomerWidgetEmbeddingGuide-2:DirectWebsiteEmbedding"></span>2: Direct Website Embedding
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#2:-Direct-Website-Embedding.1">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>The Web Widget can be embedded in any third-party website to enable web widget capabilities.</p>
+<h4 id="Prerequisites" style=""><span id="CXCustomerWidgetEmbeddingGuide-Prerequisites"></span>Prerequisites
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#Prerequisites">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p><span style="--color: var(--bold-gray, #172b4d);">Make sure you have the following things available before embedding:</span></p>
+<ol>
+ <li>
+  <p><span style="--color: var(--bold-gray, #172b4d);">Configured Web Widget </span><a href="https://docs.expertflow.com/cx/4.7/unified-admin-guide#id-(4.7)UnifiedAdminGuide-OtherConfigurations" data-scope="external" rel="external noreferrer"><span style="--color: var(--bold-gray, #172b4d);">Click here</span></a><span style="--color: var(--bold-gray, #172b4d);">.</span></p>
+ </li>
+ <li>
+  <p><span style="--color: var(--bold-gray, #172b4d);">Any website that serves as a host, where you can embed the widget.</span></p>
+ </li>
+ <li>
+  <p><span style="--color: var(--bold-gray, #172b4d);">Widget Embedding Script with all the required credentials explained below.</span></p>
+ </li>
+</ol>
+<h5 id="Installation.1" style=""><span id="CXCustomerWidgetEmbeddingGuide-Installation"></span>Installation
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#Installation.1">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<p>Follow these steps to embed the web widget on your host site:</p>
+<ol>
+ <li>
+  <p>Once the web widget is properly configured. Update the configuration details as per the table given below.</p>
+ </li>
+ <li>
+  <p>Once the configuration is updated, add that script at the top in the Head tag &lt;head&gt; of the HTML Code of the target web application script provided below.&nbsp;</p>
+ </li>
+</ol>
+<h4 id="Script" style=""><span id="CXCustomerWidgetEmbeddingGuide-Script"></span>Script
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#Script">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<ol>
+ <li>
+  <p>Update the following configuration in the script.</p>
+ </li>
+</ol>
+<div class="theme-table" style="--width: 1022px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="align-start" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 293px">
+       <col style="width: 729px">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p><strong>Config Parameter</strong></p>
+        </th>
+        <th>
+         <p><strong>Description</strong></p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p>customerWidgetUrl</p>
+        </td>
+        <td>
+         <p>IP or FQDN of the server where the Customer Widget is hosted.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>widgetIdentifier</p>
+        </td>
+        <td>
+         <p>The widget identifier of the web widget instance is defined in the Unified Admin.&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>serviceIdentifier</p>
+        </td>
+        <td>
+         <p>This is the service identifier of the web channel defined in the Unified Admin.</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<ol start="2">
+ <li>
+  <p>Add the script in the head section of the target web application.</p>
+ </li>
+</ol>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">JavaScript</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="javascript" data-align="wide">
+   <pre><code>&lt;!-- CIM Script Tags --&gt;
+&lt;script type="text/javascript"&gt;
+  var __cim = __cim || {};
+  __cim.customerWidgetUrl = "https://[HostName]/customer-widget"; //Customer Widget Url 
+  __cim.widgetIdentifier = "web"; //Widget Identifier
+  __cim.serviceIdentifier = "+921218"; //Service Identifier
+
+  (function () {
+    var __cimScript = document.createElement("script"),
+        __cimScriptTag = document.getElementsByTagName("script")[0];
+    __cimScript.src = __cim.customerWidgetUrl + "/widget-assets/widget/init_widget.js";
+    __cimScript.charset = "UTF-8";
+    __cimScriptTag.parentNode.insertBefore(__cimScript, __cimScriptTag);
+  })();
+&lt;/script&gt;
+&lt;!-- End CIM Script Tags --&gt;
+
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>After embedding the script and deploying, the widget will be visible on the website.</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<h3 id="" style="">&nbsp;
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/web-init-widget-deployment-guide#">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="57794afe5c3ffd1f-85" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="57794afe5c3ffd1f-85">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/cx-knowledgebase/latest/add-a-web-widget">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Add a Customer Widget</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/cx-knowledgebase/latest/cx-customer-widget-configurations">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Customer Widget Configuration and Translation Management</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

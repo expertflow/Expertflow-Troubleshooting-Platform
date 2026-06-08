@@ -1,0 +1,3986 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_d0adcba4771aeb84c0df0b8b402707a561431bf510a730755018b05013ad22bb" data-confluence-content-id="6326047"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/cx/4.3/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="CX">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>Expertflow CX Deployment on DigitalOcean Kubernetes | Expertflow CX</title>
+		<meta property="og:title" content="Expertflow CX Deployment on DigitalOcean Kubernetes | Expertflow CX">
+		<meta property="twitter:title" content="Expertflow CX Deployment on DigitalOcean Kubernetes | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete">
+		<meta property="og:url" content="https://docs.expertflow.com/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete">
+
+		<meta name="description" content="This document explains how to deploy Expertflow CX using DigitalOcean Managed Kubernetes service.">
+		<meta property="og:description" content="This document explains how to deploy Expertflow CX using DigitalOcean Managed Kubernetes service.">
+		<meta property="twitter:description" content="This document explains how to deploy Expertflow CX using DigitalOcean Managed Kubernetes service.">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2023-11-14T10:56:25.039Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": true
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.js"></script>
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="634e0a60b6ceeafe-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="634e0a60b6ceeafe-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="634e0a60b6ceeafe-19">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="634e0a60b6ceeafe-19" name="version" onchange="self.location.assign(this.value)" >
+				<option id="634e0a60b6ceeafe-3"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="634e0a60b6ceeafe-4"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="634e0a60b6ceeafe-5"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="634e0a60b6ceeafe-6"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="634e0a60b6ceeafe-7"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="634e0a60b6ceeafe-8"  value="/cx/4.10"  >
+					4.10
+				</option>
+				<option id="634e0a60b6ceeafe-9"  value="/cx/4.9"  >
+					4.9
+				</option>
+				<option id="634e0a60b6ceeafe-10"  value="/cx/4.8"  >
+					4.8
+				</option>
+				<option id="634e0a60b6ceeafe-11"  value="/cx/4.7"  >
+					4.7
+				</option>
+				<option id="634e0a60b6ceeafe-12"  value="/cx/4.6"  >
+					4.6
+				</option>
+				<option id="634e0a60b6ceeafe-13"  value="/cx/4.5.3"  >
+					4.5.3
+				</option>
+				<option id="634e0a60b6ceeafe-14"  value="/cx/4.5.2"  >
+					4.5.2
+				</option>
+				<option id="634e0a60b6ceeafe-15"  value="/cx/4.5.1"  >
+					4.5.1
+				</option>
+				<option id="634e0a60b6ceeafe-16"  value="/cx/4.5"  >
+					4.5
+				</option>
+				<option id="634e0a60b6ceeafe-17"  value="/cx/4.4"  >
+					4.4
+				</option>
+				<option id="634e0a60b6ceeafe-18"  value="/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete"  selected="">
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('634e0a60b6ceeafe-19');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-634e0a60b6ceeafe-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-634e0a60b6ceeafe-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-634e0a60b6ceeafe-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="634e0a60b6ceeafe-20" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="634e0a60b6ceeafe-20">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-634e0a60b6ceeafe-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-634e0a60b6ceeafe-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="634e0a60b6ceeafe-37">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="634e0a60b6ceeafe-37" name="version" onchange="self.location.assign(this.value)" >
+				<option id="634e0a60b6ceeafe-21"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="634e0a60b6ceeafe-22"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="634e0a60b6ceeafe-23"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="634e0a60b6ceeafe-24"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="634e0a60b6ceeafe-25"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="634e0a60b6ceeafe-26"  value="/cx/4.10"  >
+					4.10
+				</option>
+				<option id="634e0a60b6ceeafe-27"  value="/cx/4.9"  >
+					4.9
+				</option>
+				<option id="634e0a60b6ceeafe-28"  value="/cx/4.8"  >
+					4.8
+				</option>
+				<option id="634e0a60b6ceeafe-29"  value="/cx/4.7"  >
+					4.7
+				</option>
+				<option id="634e0a60b6ceeafe-30"  value="/cx/4.6"  >
+					4.6
+				</option>
+				<option id="634e0a60b6ceeafe-31"  value="/cx/4.5.3"  >
+					4.5.3
+				</option>
+				<option id="634e0a60b6ceeafe-32"  value="/cx/4.5.2"  >
+					4.5.2
+				</option>
+				<option id="634e0a60b6ceeafe-33"  value="/cx/4.5.1"  >
+					4.5.1
+				</option>
+				<option id="634e0a60b6ceeafe-34"  value="/cx/4.5"  >
+					4.5
+				</option>
+				<option id="634e0a60b6ceeafe-35"  value="/cx/4.4"  >
+					4.4
+				</option>
+				<option id="634e0a60b6ceeafe-36"  value="/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete"  selected="">
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('634e0a60b6ceeafe-37');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-38" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-39" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-40" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-41" href="/cx/4.3/key-concepts" >Key Concepts</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="634e0a60b6ceeafe-42"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="634e0a60b6ceeafe-42" href="/cx/4.3/customer-channels" >Customer Channels</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="634e0a60b6ceeafe-44"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="634e0a60b6ceeafe-44" href="/cx/4.3/agent-controls" >Agent Controls</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="634e0a60b6ceeafe-46"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="634e0a60b6ceeafe-46" href="/cx/4.3/supervisor-controls" >Supervisor Controls</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="634e0a60b6ceeafe-48"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="634e0a60b6ceeafe-48" href="/cx/4.3/conversation-control" >Conversation Control</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="634e0a60b6ceeafe-50"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="634e0a60b6ceeafe-50" href="/cx/4.3/cx-activities" >CX Activities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="634e0a60b6ceeafe-52"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="634e0a60b6ceeafe-52" href="/cx/4.3/routing-engine" >Routing Engine</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-54" href="/cx/4.3/solution-architecture" >Solution Architecture</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="634e0a60b6ceeafe-55"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="634e0a60b6ceeafe-55" href="/cx/4.3/developer-guides" >Developer Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="634e0a60b6ceeafe-58"						aria-labelledby="634e0a60b6ceeafe-57"
+					></button>
+				<a id="634e0a60b6ceeafe-57" href="/cx/4.3/deployment-guides" >Deployment Guides</a>
+			</div>
+
+<ul  id="634e0a60b6ceeafe-58" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-59" href="/cx/4.3/deployment-architecture" >Deployment Architecture</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="634e0a60b6ceeafe-60"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="634e0a60b6ceeafe-60" href="/cx/4.3/kubernetes-deployment-getting-started" >Kubernetes Deployment - Getting Started</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-62" href="/cx/4.3/storage-solution-getting-started-vcx-4-3" >Storage Solution - Getting Started</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="634e0a60b6ceeafe-63"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="634e0a60b6ceeafe-63" href="/cx/4.3/longhorn-deployment-guide" >Longhorn Deployment Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="634e0a60b6ceeafe-65"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="634e0a60b6ceeafe-65" href="/cx/4.3/cloud-native-storage-solution-for-kubernetes-using" >Cloud Native Storage Solution for Kubernetes using Rook/Ceph</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-67" href="/cx/4.3/openebs-local-storage-solution" >OpenEBS Local Storage Solution</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="634e0a60b6ceeafe-68"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="634e0a60b6ceeafe-68" href="/cx/4.3/expertflow-cx-deployment-on-kubernetes" >Expertflow CX Deployment on Kubernetes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="634e0a60b6ceeafe-70"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="634e0a60b6ceeafe-70" href="/cx/4.3/post-deployment-administration" >Post Deployment Administration</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="634e0a60b6ceeafe-72"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="634e0a60b6ceeafe-72" href="/cx/4.3/upgrade-guide" >Upgrade Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-74" href="/cx/4.3/deployment-of-solution-monitoring-components" >Deployment of Solution Monitoring Components</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-75" href="/cx/4.3/kubernetes-backup-restore-using-velero-vcx-4-3" >Kubernetes Backup/Restore using Velero</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-76" href="/cx/4.3/kong-konga-deployment" >KONG &amp; KONGA Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="634e0a60b6ceeafe-77"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="634e0a60b6ceeafe-77" href="/cx/4.3/argocd" >ArgoCD</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-79" href="/cx/4.3/geographical-disaster-recovery-for-ef-cx-on-kubern" >Geographical Disaster Recovery for EF-CX on Kubernetes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-80" href="/cx/4.3/helm-deployment-of-grafana-loki" >Helm Deployment of Grafana-Loki</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-81" href="/cx/4.3/goto-partnercloud-inception" >GoTo PartnerCloud Inception</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-82" href="/cx/4.3/deployment-of-postgres-as-a-streaming-standby-with" >Deployment of Postgres as a Streaming Standby with an External Repo</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-83" href="/cx/4.3/continuous-integration-ci-jobs-for-maven-and-node-" >Continuous Integration (CI) Jobs for Maven and Node.js Projects</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="634e0a60b6ceeafe-84"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="634e0a60b6ceeafe-84" href="/cx/4.3/geographical-deployment-of-expertflow-cx-with-redu" >Geographical Deployment of Expertflow CX with Redundancy</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-86" href="/cx/4.3/ha-testing-obsevations" >HA Testing Obsevations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-87" href="/cx/4.3/expertflow-cx-deployment-kubernetes-on-digital-oce" >Expertflow CX Deployment Kubernetes on Digital Ocean</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-88" href="/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete" aria-current="page">Expertflow CX Deployment on DigitalOcean Kubernetes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-89" href="/cx/4.3/mongo-postgresql-backup-restore-procedure-for-ef-c" >Mongo, PostgreSQL Backup/Restore Procedure for EF-CX on Kubernetes ( manual procedure )</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="634e0a60b6ceeafe-90"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="634e0a60b6ceeafe-90" href="/cx/4.3/benzai-logging" >Benzai Logging</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-92" href="/cx/4.3/deploying-grafana" >Deploying Grafana</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="634e0a60b6ceeafe-93"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="634e0a60b6ceeafe-93" href="/cx/4.3/system-administration-guides" >System Administration Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="634e0a60b6ceeafe-95"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="634e0a60b6ceeafe-95" href="/cx/4.3/user-guides" >User Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="634e0a60b6ceeafe-97"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="634e0a60b6ceeafe-97" href="/cx/4.3/reports" >Reports</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="634e0a60b6ceeafe-99"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="634e0a60b6ceeafe-99" href="/cx/4.3/security" >Security</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="634e0a60b6ceeafe-101"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="634e0a60b6ceeafe-101" href="/cx/4.3/forms" >Forms</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-103" href="/cx/4.3/expertflow-cx-data-sheet" >Expertflow CX Data Sheet</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-104" href="/cx/4.3/scheduled-activities-solution-design-vcx-4-3" >Scheduled Activities - Solution Design</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="634e0a60b6ceeafe-105"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="634e0a60b6ceeafe-105" href="/cx/4.3/integrations" >Integrations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-107" href="/cx/4.3/hc-3-x-vs-expertflow-cx-features-comparison" >HC 3.x vs Expertflow CX - Features Comparison</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="634e0a60b6ceeafe-108" href="/cx/4.3/cx-release-history" >CX Release History</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="634e0a60b6ceeafe-109"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="634e0a60b6ceeafe-109" href="/cx/4.3/cx-release-notes" >CX Release Notes</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="634e0a60b6ceeafe-111" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="634e0a60b6ceeafe-111">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.3">
+										Expertflow CX
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.3/deployment-guides">
+										Deployment Guides
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="634e0a60b6ceeafe-112">
+			<h2 class="toc-heading" id="634e0a60b6ceeafe-112">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>Expertflow CX Deployment on DigitalOcean Kubernetes</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+	
+	
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+	
+
+
+	
+	
+	
+	
+	
+	
+		
+		
+	
+	
+	
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+
+
+
+		
+
+	
+	<div data-component="layout-section" class="layout-section" style="--columns: 2fr 1fr;">
+ <div class="layout-cell">
+  <p>
+   <br>
+  </p>
+  <p>This document explains how to deploy Expertflow CX using DigitalOcean Managed Kubernetes service.</p>
+  <p>When we use DigitalOceann (DO) Kubernetes, the cluster is managed by the DO. It means that we don't not have to worry about the Control Plane deployment. Customer is required to select relevant size of Worker nodes which are suitable for the workload type.&nbsp; The storage class and the network load balancer are provisioned automatically. Once the cluster is in Running state, its ready to deploy the workload on top of it.</p>
+  <p>Important points to remember are:</p>
+  <ul>
+   <li>
+    <p>No Control Plane Nodes required.&nbsp;</p>
+   </li>
+   <li>
+    <p>built-in type of cloud native storage class available&nbsp;</p>
+   </li>
+   <li>
+    <p>Network load balancer available to instantly launch the services.</p>
+   </li>
+  </ul>
+  <h2 id="id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-TechnicalOverview"><span id="ExpertflowCXDeploymentonDigitalOceanKubernetes-TechnicalOverview"></span>Technical Overview
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete#id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-TechnicalOverview">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h2>
+  <p>The following diagram explains the architecture of the DigitalOcean (DO) Managed Kubernetes. It describes.....</p>
+  <p><span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image confluence-external-resource" src="/__attachments/a_c632b48d6890575dbdf0887f33e0fb88ffdc4b5b1d526187710cca9a41bbd9d0/DigitalOcean%20Kubernetes.png?cb=222ba0ea80494c253aed2686a217bee0" data-image-src="/wiki/download/attachments/6326047/DigitalOcean%20Kubernetes.png?api=v2" loading="lazy"></span></p>
+  <p>
+   <br>
+  </p>
+  <p>
+   <br>
+  </p>
+  <p>
+   <br>
+  </p>
+  <p>
+   <br>
+  </p>
+ </div>
+ <div class="layout-cell"></div>
+</div>
+<h2 id="id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-EF-CXDeploymentonDOKubernetesEngine."><span id="ExpertflowCXDeploymentonDigitalOceanKubernetes-EF-CXDeploymentonDOKubernetesEngine."></span>EF-CX Deployment on DO Kubernetes Engine.
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete#id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-EF-CXDeploymentonDOKubernetesEngine.">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<h3 id="id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-Requirements:"><span id="ExpertflowCXDeploymentonDigitalOceanKubernetes-Requirements:"></span>Requirements:
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete#id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-Requirements:">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>A local system ( Windows or Linux ) with access to the internet&nbsp; will be required for remotely managing the&nbsp; kubernetes cluster and other VMs. This is where you will be required to clone and modify everything , but it will implemented on your DO based kubernetes cluster.&nbsp;&nbsp;</p>
+<p>
+ <br>
+</p>
+<p>Step1: Create DO Kubernetes Cluster</p>
+<ul>
+ <li>
+  <p>Login to the DO portal and create a kubernetes cluster with 2 worker nodes ( 8GB ,4vCPU ) in your preferred availability zone ( e.g SF02 ). It approximately takes 10-15 minutes for creating a new cluster.&nbsp;</p>
+ </li>
+ <li>
+  <p>Once the cluster is created, you will have to download the <code>&lt;cluster-name&gt;-kubeconfig.yaml</code>&nbsp; file for the same cluster.&nbsp;</p>
+ </li>
+ <li>
+  <p>Download the kubeconfig.yaml file to your local system&nbsp; so that it can be used to interact with the newly created cluster.</p>
+ </li>
+</ul>
+<h3 id="id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-LogintoCluster"><span id="ExpertflowCXDeploymentonDigitalOceanKubernetes-LogintoCluster"></span>Login to Cluster
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete#id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-LogintoCluster">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>1.&nbsp;Download <code>kubectl</code>&nbsp; and <code>helm</code>&nbsp; for your system. You can follow steps mentioned <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/" data-scope="external" rel="external noreferrer">here</a> for kubectl and <a href="https://helm.sh/docs/intro/install/" data-scope="external" rel="external noreferrer">here</a> to install helm.</p>
+<div data-component="panel" role="note" data-appearance="warning">
+ <div class="panel-content">
+  <p>If you already have these utilities already installed on your local console system, then proceed to step 2.</p>
+ </div>
+</div>
+<p>2. Save the kubeconfig.yaml file created earlier and set environment variable to its absolute path&nbsp;</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>export KUBECONFIG=/path/to/download/kubeconfig.yaml&nbsp;
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>3. Run the command at your terminal to list the nodes:</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>kubectl get nodes -o wide 
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>&nbsp;The output looks like this:</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>NAME             STATUS   ROLES    AGE   VERSION    INTERNAL-IP   EXTERNAL-IP      OS-IMAGE                         KERNEL-VERSION           CONTAINER-RUNTIME
+resident-ygu6e   Ready    &lt;none&gt;   29h   v1.25.12   10.120.0.2    134.209.48.14    Debian GNU/Linux 11 (bullseye)   5.18.0-0.deb11.4-amd64   containerd://1.4.13
+resident-ygu6g   Ready    &lt;none&gt;   29h   v1.25.12   10.120.0.3    134.209.48.240   Debian GNU/Linux 11 (bullseye)   5.18.0-0.deb11.4-amd64   containerd://1.4.13
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>
+ <br>
+</p>
+<div data-component="panel" role="note" data-appearance="warning">
+ <div class="panel-content">
+  <p>If the command returns a list of nodes with their corresponding details, you are successfully connected to the DO kubernetes cluster. However, if this is not the case, please talk to Expertflow CX Support Personnel for further guidance.&nbsp;</p>
+ </div>
+</div>
+<p>Limitations</p>
+<ul>
+ <li>
+  <p>DigitalOcean managed Kubernetes cluster&nbsp; doesn't allow you to directly access your worker Nodes using SSH or any other mechanism. this means you can't access or change anything on the worker nodes directly.</p>
+ </li>
+ <li>
+  <p>to access the nodePort based services, use the IP of any worker Node. please do not use FQDN. The FQDN is solely used for the ingress purposes or any other services that you configure of the type LoadBalancer.</p>
+ </li>
+</ul>
+<h3 id="id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-SecurityConcerns"><span id="ExpertflowCXDeploymentonDigitalOceanKubernetes-SecurityConcerns"></span>Security Concerns
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete#id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-SecurityConcerns">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Any kubernetes cluster with production deployments exposed to general public, must be secured to avoid any threat provocations by the hackers. to avoid such scenarios, consider</p>
+<ul>
+ <li>
+  <p>limited approach to nodePorts&nbsp;</p>
+ </li>
+ <li>
+  <p>if nodePorts are still required, consider networkPolicy implementations or</p>
+ </li>
+ <li>
+  <p>restricting the access to your nodePort services to only a limited set of IP ranges . this <a href="https://kubernetes.io/docs/tutorials/services/source-ip/" data-scope="external" rel="external noreferrer">link</a> and <a href="https://oteemo.com/think-nodeport-kubernetes/" data-scope="external" rel="external noreferrer">link</a> can give more details about exposing services on nodePorts.</p>
+ </li>
+ <li>
+  <p>change default and easy to guess user/password pairs so that the brute force attackers find it hard to decode them.&nbsp;</p>
+ </li>
+ <li>
+  <p>always use complex passwords with at least 2-4 alphanumeric, lower-upper case and digits. Expertflow123 is easy to type, but easy to guess whereas Exp3r$f(0#123&nbsp; might take longer enough to break.</p>
+ </li>
+ <li>
+  <p>implement rate-limits on your public services for DDOS preventions. see&nbsp;<a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#rate-limiting" data-scope="external" rel="external noreferrer">here for details.</a></p>
+ </li>
+ <li>
+  <p>implementation of <a href="https://owasp.org/www-project-application-security-verification-standard/" data-scope="external" rel="external noreferrer"> OWASP </a>and similar standards to protect data integrity</p>
+ </li>
+ <li>
+  <p>Backups are completely preserved in an isolated site. This <a href="https://docs.expertflow.com/x/-QKID" data-scope="external" rel="external noreferrer">link</a> provides details on backups management.</p>
+ </li>
+</ul>
+<p>
+ <br>
+</p>
+<h3 id="id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-Exceptions"><span id="ExpertflowCXDeploymentonDigitalOceanKubernetes-Exceptions"></span>Exceptions
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete#id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-Exceptions">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>The DO managed kubernetes is fully compatible with on-prem based&nbsp; RKE2 or K3s based deployment but some exceptions should be handled due to its managed and cloud-native nature.&nbsp;</p>
+<h3 id="id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-Step2:DefaultStorageClass"><span id="ExpertflowCXDeploymentonDigitalOceanKubernetes-Step2:DefaultStorageClass"></span>Step 2: Default StorageClass&nbsp;
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete#id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-Step2:DefaultStorageClass">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>By default, DO Kubernetes provisions 4 different type of storageClass definitions to manage with one of these selected as the default. We will change the default class to a preferred one with the XFS as file-system type. This is required as most of the components in <code>ef-external</code>&nbsp; namespace are required to have XFS based volumes.</p>
+<p>1. Get the default list of storageClass available:</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>root@auto:~# k get sc
+NAME                                    PROVISIONER                 RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+do-block-storage (default) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;dobs.csi.digitalocean.com   Delete          Immediate           true                   24h
+do-block-storage-retain                 dobs.csi.digitalocean.com   Retain          Immediate           true                   24h
+do-block-storage-xfs                    dobs.csi.digitalocean.com   Delete          Immediate           true                   24h
+do-block-storage-xfs-retain             dobs.csi.digitalocean.com   Retain          Immediate           true                   24h
+root@auto:~#
+
+
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>2. We will have to disable the current default <code>do-block-storage</code>&nbsp; and make the <code>do-block-storage-xfs-retain</code>&nbsp; as default. Disable default flag on the <code>do-block-storage:</code>&nbsp;&nbsp;</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>kubectl patch storageclass  do-block-storage   -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>3. Enable the <code>do-block-storage-xfs-retain</code>&nbsp; as default storage class by running the following command:</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>kubectl patch storageclass  do-block-storage-xfs-retain   -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>4. After these operations list of storage class will be like below:</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code># k get sc
+NAME                                    PROVISIONER                 RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+do-block-storage                        dobs.csi.digitalocean.com   Delete          Immediate           true                   24h
+do-block-storage-retain                 dobs.csi.digitalocean.com   Retain          Immediate           true                   24h
+do-block-storage-xfs                    dobs.csi.digitalocean.com   Delete          Immediate           true                   24h
+do-block-storage-xfs-retain (default)   dobs.csi.digitalocean.com   Retain          Immediate           true                   24h
+root@auto:~/DO/cim-solution/kubernetes#
+
+
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Step 3: Install the Nginx Ingress controller</p>
+<p>On DO managed kubernetes, there is no default ingress controller available( as compared to on-premise RKE2 or K3s ). Nginx based ingress controller is required for the EF-CX solution to work.</p>
+<p>1. Add the helm repo:</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>2. Create a file on your local system with below given contents <code>(ingress-nginx-overrides.yaml</code>):</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>## Starter Kit nginx configuration
+## Ref: https://github.com/kubernetes/ingress-nginx/tree/helm-chart-4.0.13/charts/ingress-nginx
+##
+
+controller:
+  replicaCount: 2
+  resources:
+    requests:
+      cpu: 100m
+      memory: 90Mi
+  service:
+    type: LoadBalancer
+    annotations:
+  #     # Enable proxy protocol
+       service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "true"
+  #     # Specify whether the DigitalOcean Load Balancer should pass encrypted data to backend droplets
+  #     service.beta.kubernetes.io/do-loadbalancer-tls-passthrough: "true"
+  #     # You can keep your existing LB when migrating to a new DOKS cluster, or when reinstalling AES
+  #     kubernetes.digitalocean.com/load-balancer-id: "&lt;YOUR_DO_LB_ID_HERE&gt;"
+  #     service.kubernetes.io/do-loadbalancer-disown: false
+
+  ## Will add custom configuration options to Nginx https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/
+  config:
+     use-proxy-protocol: "true"
+     keep-alive-requests: "10000"
+     upstream-keepalive-requests: "1000"
+     worker-processes: "auto"
+     max-worker-connections: "65535"
+     use-gzip: "true"
+  # # Enable the metrics of the NGINX Ingress controller https://kubernetes.github.io/ingress-nginx/user-guide/monitoring/
+  # metrics:
+  #   enabled: true
+  # podAnnotations:
+  #   controller:
+  #     metrics:
+  #       service:
+  #         servicePort: "9090"
+  #   prometheus.io/port: "10254"
+  #   prometheus.io/scrape: "true"
+
+
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>3. Install the nginx ingress controller using:</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>helm install ingress-nginx ingress-nginx/ingress-nginx --version "4.7.1"   --namespace ingress-nginx   --create-namespace   -f ingress-nginx-overrides.yaml
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>4. Check the status of all the components in <code>ingress-nginx</code>&nbsp; namespace:</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code># kubectl get all -n ingress-nginx
+NAME                                           READY   STATUS    RESTARTS   AGE
+pod/ingress-nginx-controller-7687f9d45-bw5fm   1/1     Running   0          24h
+pod/ingress-nginx-controller-7687f9d45-gk4cr   1/1     Running   0          24h
+
+NAME                                         TYPE           CLUSTER-IP       EXTERNAL-IP            PORT(S)                      AGE
+service/ingress-nginx-controller             LoadBalancer   10.245.121.151 &nbsp; 134.209.140.189 &nbsp; 80:31070/TCP,443:31950/TCP   24h
+service/ingress-nginx-controller-admission   ClusterIP      10.245.73.141    &lt;none&gt;                 443/TCP                      24h
+
+NAME                                       READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/ingress-nginx-controller   2/2     2            2           24h
+
+NAME                                                 DESIRED   CURRENT   READY   AGE
+replicaset.apps/ingress-nginx-controller-7687f9d45   2         2         2       24h
+
+
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>5. Extract the publicly accessible IP address assigned to your NGINX ingress controller. This IP will be used by the FQDN to route the EF-CX traffic.</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>kubectl get svc -n ingress-nginx ingress-nginx-controller --output jsonpath='{.status.loadBalancer.ingress[0].hostname}'
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>6. Note down the IP address and share with the customer to point their domain's A record to the IP address that we have got from above command.</p>
+<h3 id="id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-Step4:DeploytheEF-CXSolution"><span id="ExpertflowCXDeploymentonDigitalOceanKubernetes-Step4:DeploytheEF-CXSolution"></span>Step 4: Deploy the EF-CX Solution
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete#id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-Step4:DeploytheEF-CXSolution">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Please follow this <a href="https://docs.expertflow.com/x/64KsCw" data-scope="external" rel="external noreferrer">link &nbsp;</a>to gradually deploy solution on top your DO kubernetes cluster, <span style="--color: #f00"><u><strong>except deploying Ingresses for the solution</strong></u></span>. These ingress routes will be added in next steps.</p>
+<h3 id="id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-Step5:SSLCertificates."><span id="ExpertflowCXDeploymentonDigitalOceanKubernetes-Step5:SSLCertificates."></span>Step 5: SSL Certificates.
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete#id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-Step5:SSLCertificates.">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>When using DO managed Kubernetes engine, its possible to use either of 3 different types of SSL certificates, depending upon the requirement.</p>
+<h3 id="id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-1.Self-SignedorCommercialSSLCertificates"><span id="ExpertflowCXDeploymentonDigitalOceanKubernetes-1.Self-SignedorCommercialSSLCertificates"></span>1.&nbsp;Self-Signed or Commercial SSL Certificates
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete#id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-1.Self-SignedorCommercialSSLCertificates">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Self-signed and commercial SSL Certificates fall in the same category and&nbsp; exactly same steps can be followed as mentioned in the EF-CX deployment guide ( <a href="https://docs.expertflow.com/x/64KsCw" data-scope="external" rel="external noreferrer">https://docs.expertflow.com/x/64KsCw</a>). Once the solution is deployed , skip to the <a href="/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete#id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-deploy" data-scope="internal">Deploy Ingress Routes</a> section below.</p>
+<h3 id="id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-2.LetsEncryptSSLCertificate"><span id="ExpertflowCXDeploymentonDigitalOceanKubernetes-2.LetsEncryptSSLCertificate"></span>2. LetsEncrypt SSL Certificate
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete#id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-2.LetsEncryptSSLCertificate">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<h4 id="id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-Pre-requisites"><span id="ExpertflowCXDeploymentonDigitalOceanKubernetes-Pre-requisites"></span>Pre-requisites
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete#id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-Pre-requisites">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<ol>
+ <li>
+  <p>FQDN to IP Resolution:&nbsp;&nbsp;This LE based SSL certificate provisioning requires that the&nbsp; FQDN is already pointing to the&nbsp; IP Address of the NGINX ingress controller service ( mentioned above ) and its resolvable across the globe so the LE authentication service is able to reach the service end serve the SSL certificate accurately.</p>
+ </li>
+ <li>
+  <p>&nbsp;NGINX Service Modification: This is required to work the LE based SSL certificate issuance, as the default NGINX controller service doesn't allow inter-pod communication when using the FQDN from within the cluster. Follow below given steps to resolve this problem.</p>
+ </li>
+</ol>
+<h4 id="id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-LetsEncryptNGINXServiceEnhancementforDOKubernetesEngine"><span id="ExpertflowCXDeploymentonDigitalOceanKubernetes-LetsEncryptNGINXServiceEnhancementforDOKubernetesEngine"></span>LetsEncrypt NGINX Service Enhancement for DO Kubernetes Engine
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete#id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-LetsEncryptNGINXServiceEnhancementforDOKubernetesEngine">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>1. Extract the current service manifest of the nginx ingress controller by running</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>k -n ingress-nginx get  svc ingress-nginx-controller -o yaml &gt; /tmp/nginx-svc.yaml
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>2. Add the below&nbsp; given annotation to the Service&nbsp;</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>service.beta.kubernetes.io/do-loadbalancer-hostname: "cloud.expertflow.com"
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Please do not change anything else in this file. Just add the annotation mentioned above to already existing annotations.&nbsp;</p>
+<div data-component="panel" role="note" data-appearance="warning">
+ <div class="panel-content">
+  <p>`<a href="http://cloud.expertflow.com/" data-scope="external" rel="external noreferrer"><strong>cloud.expertflow.com</strong></a><strong>`&nbsp;</strong> is the example FQDN used for demonstration, change it to your FQDN.</p>
+ </div>
+</div>
+<p>3. Save the changes and apply&nbsp;</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>k apply -f /tmp/nginx-svc.yaml
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-3.CreateLEbasedSSLCertificate"><span id="ExpertflowCXDeploymentonDigitalOceanKubernetes-3.CreateLEbasedSSLCertificate"></span>3. Create LE based SSL Certificate
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete#id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-3.CreateLEbasedSSLCertificate">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>In order to use LE based SSL certificates, please follow these steps:</p>
+<p>1. Make sure the cert-manager is installed in the cluster. verify the cert-manager deployment by running the following command:</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code># kubectl get pods --namespace cert-manager
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>the output will look like something below:</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>NAME                                       READY   STATUS    RESTARTS   AGE
+cert-manager-578cd6d964-hr5v2              1/1     Running   0          99s
+cert-manager-cainjector-5ffff9dd7c-f46gf   1/1     Running   0          100s
+cert-manager-webhook-556b9d7dfd-wd5l6      1/1     Running   0          99s
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>However, if the cert-manager is not deployed, you can deploy it using steps mentioned in the EF-CX deployment guide ( <a href="https://docs.expertflow.com/x/64KsCw" data-scope="external" rel="external noreferrer">https://docs.expertflow.com/x/64KsCw</a> )</p>
+<p>2. Create a Cluster Issuer Resource:</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>kubectl apply -f -&lt;&lt;EOF
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+  namespace: cert-manager
+spec:
+  acme:
+    # The ACME server URL
+    server: https://acme-v02.api.letsencrypt.org/directory
+    # Email address used for ACME registration
+    email: nasir.mehmood@expertflow.com
+    # Name of a secret used to store the ACME account private key
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    # Enable the HTTP-01 challenge provider
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+EOF
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>3. Verify the cluster Issuer status:</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code># kubectl get ClusterIssuer
+NAME               READY   AGE
+letsencrypt-prod   True    18h
+root@auto:~/DO#
+
+
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>the READY column will be True if the cert-manager is able to communicate and get the SSL certificate verified.</p>
+<h3 id="id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-Step6:DeployIngressRoutesLET'SENCRYPTSSL"><span id="ExpertflowCXDeploymentonDigitalOceanKubernetes-Step6:DeployIngressRoutesLet&amp;#39;sEncryptSSL"></span><span id="id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-deploy"></span>Step 6: Deploy Ingress Routes <span class="status" data-component="status" data-color="red">Let'sEncryptSSL</span>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete#id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-Step6:DeployIngressRoutesLET&amp;#39;SENCRYPTSSL">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>1. Add the below given annotation to add the ingress manifests in <code>cim/Ingresses/nginx/*.yaml</code>&nbsp;&nbsp;</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>cert-manager.io/cluster-issuer: "letsencrypt-prod"
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>
+ <br>
+</p>
+<div data-component="panel" role="note" data-appearance="warning">
+ <div class="panel-content">
+  <p>you can use sed to add this annotation to all the ingress manifests.</p>
+  <p>For this to work programmatically, create a file e.g <code>/tmp/nginx.temp</code>&nbsp; with the above mentioned contents and proper spacing added before the line ( normally 4 white spaces are required ) , then issue below given command to add in all YAMLfiles.</p>
+  <p>step1:&nbsp;</p>
+  <p># <code>echo " &nbsp; &nbsp; </code><a href="http://cert-manager.io/cluster-issuer" data-scope="external" rel="external noreferrer"><code>cert-manager.io/cluster-issuer</code></a><code>: \"letsencrypt-prod\"" &gt; /tmp/nginx.temp</code>&nbsp;&nbsp;</p>
+  <p>step-2:</p>
+  <p><code>#&nbsp;sed -i '/annotations\:$/ r /tmp/nginx.temp' cim/Ingresses/nginx/*</code> &nbsp;</p>
+ </div>
+</div>
+<p>2. Apply all the ingresses:</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>kubectl apply -f cim/Ingresses/nginx/
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>3. When applying ingress manifests, warning messages like can be ignored safely.</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>Warning: path /360connector(/|$)(.*) cannot be used with pathType Prefix
+ingress.networking.k8s.io/360connector created
+Warning: path /agent-manager(/|$)(.*) cannot be used with pathType Prefix
+ingress.networking.k8s.io/agent-manager created
+Warning: path /bot-framework(/|$)(.*) cannot be used with pathType Prefix
+ingress.networking.k8s.io/bot-framework created
+Warning: path /business-calendar(/|$)(.*) cannot be used with pathType Prefix
+ingress.networking.k8s.io/business-calendar created
+Warning: path /ccm(/|$)(.*) cannot be used with pathType Prefix
+
+
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p><span style="--color: #5e6c84">&nbsp;</span></p>
+<p>4. Verify the Ingresses are assigned correctly and there is properly assigned FQDN to all the ingress. Below given is the list of ingresses for FQDN <a href="http://cloud.expertflow.com/" data-scope="external" rel="external noreferrer"><code>cloud.expertflow.com</code></a>&nbsp;</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code># k get ing -A
+NAMESPACE     NAME                   CLASS    HOSTS                  ADDRESS                PORTS     AGE
+ef-external   ef-grafana             &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+ef-external   keycloak               &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+expertflow    360connector           &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+expertflow    agent-manager          &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+expertflow    bot-framework          &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+expertflow    business-calendar      &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+expertflow    ccm                    &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+expertflow    cim-customer           &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+expertflow    conversation-manager   &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+expertflow    customer-widget        &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+expertflow    default                &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+expertflow    facebook-connector     &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+expertflow    file-engine            &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+expertflow    instagram-connector    &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+expertflow    license-manager        &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+expertflow    realtime-reports       &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+expertflow    routing-engine         &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+expertflow    smpp-connector         &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+expertflow    team-announcement      &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+expertflow    twilio-connector       &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+expertflow    unified-admin          &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+expertflow    unified-agent          &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+expertflow    unified-agent-assets   &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+expertflow    web-channel-manager    &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+expertflow    web-widget             &lt;none&gt;   cloud.expertflow.com   cloud.expertflow.com   80, 443   18h
+
+
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h5 id="id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-5.Accessyoursolutionathttps://{{FQND}}/whichshouldpresenttheunified-adminpage."><span id="ExpertflowCXDeploymentonDigitalOceanKubernetes-5.Accessyoursolutionathttps://{{FQND}}/whichshouldpresenttheunified-adminpage."></span>5. Access your solution at https://{{FQND}}/ which should present the unified-admin page .
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete#id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-5.Accessyoursolutionathttps://{{FQND}}/whichshouldpresenttheunified-adminpage.">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<h3 id="id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-Step7:FreeswitchDeployment"><span id="ExpertflowCXDeploymentonDigitalOceanKubernetes-Step7:FreeswitchDeployment"></span>Step 7: Freeswitch Deployment
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete#id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-Step7:FreeswitchDeployment">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>For FreeSwitch deployment, please follow steps as below</p>
+<p>
+ <br>
+</p>
+<p>.1 Create a new VM&nbsp; ( droplet ) in the DO portal. The VM should be created separately from the DO managed Kubernetes cluster, as the kubernetes based deployments of the FreeSwitch are not yet available.&nbsp;</p>
+<p>.2 Once the VM is ready, SSH into the IP address assigned to the VM and use the password that you provided during creation process of the VM (public key method is also available in case password is not used )</p>
+<p>3. Follow the steps mentioned in <a href="https://docs.expertflow.com/x/pA1kD" data-scope="external" rel="external noreferrer">FreeSwitch deployment Guide</a></p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<h3 id="id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-References"><span id="ExpertflowCXDeploymentonDigitalOceanKubernetes-References"></span><strong>References</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/expertflow-cx-deployment-on-digitalocean-kubernete#id-(4.3)ExpertflowCXDeploymentonDigitalOceanKubernetes-References">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>1. <a href="https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-with-cert-manager-on-digitalocean-kubernetes" data-scope="external" rel="external noreferrer">https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-with-cert-manager-on-digitalocean-kubernetes</a></p>
+<p>2. <a href="https://stackoverflow.com/questions/72220278/waiting-for-http-01-challenge-propagation-failed-to-perform-self-check-get-requ/77054407#77054407" data-scope="external" rel="external noreferrer">https://stackoverflow.com/questions/72220278/waiting-for-http-01-challenge-propagation-failed-to-perform-self-check-get-requ/77054407#77054407</a></p>
+<p>
+ <br>
+</p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="634e0a60b6ceeafe-113" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="634e0a60b6ceeafe-113">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/cx/4.3/expertflow-cx-deployment-kubernetes-on-digital-oce">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Expertflow CX Deployment Kubernetes on Digital Ocean</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/cx/4.3/mongo-postgresql-backup-restore-procedure-for-ef-c">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Mongo, PostgreSQL Backup/Restore Procedure for EF-CX on Kubernetes ( manual procedure )</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

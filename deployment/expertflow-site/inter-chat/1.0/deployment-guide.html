@@ -1,0 +1,3590 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_36af018a466c4164a56172683540c3f8806c918f77e0aea838faa3c4cf5f92f5" data-confluence-content-id="37617993"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/inter-chat/1.0/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="ICFG">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>Deployment Guide | Expertflow CX</title>
+		<meta property="og:title" content="Deployment Guide | Expertflow CX">
+		<meta property="twitter:title" content="Deployment Guide | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/inter-chat/1.0/deployment-guide">
+		<meta property="og:url" content="https://docs.expertflow.com/inter-chat/1.0/deployment-guide">
+
+		<meta name="description" content="Overview EF chat gadget gives call center users the ability to communicate internally with other agents and supervisors. Agents are arranged according to their…">
+		<meta property="og:description" content="Overview EF chat gadget gives call center users the ability to communicate internally with other agents and supervisors. Agents are arranged according to their…">
+		<meta property="twitter:description" content="Overview EF chat gadget gives call center users the ability to communicate internally with other agents and supervisors. Agents are arranged according to their…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__attachments/a_35e70e5a20d39cd7e8dc07781dc46dbf7c8cde2e44d09e20f970526833b63a09/dg14.jpg?cb=adff7385715700d1e0f099e8acf3b8f0">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__attachments/a_35e70e5a20d39cd7e8dc07781dc46dbf7c8cde2e44d09e20f970526833b63a09/dg14.jpg?cb=adff7385715700d1e0f099e8acf3b8f0">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2023-12-14T11:41:27.378Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": true
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="94ed24bcdad66c4d-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="94ed24bcdad66c4d-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-94ed24bcdad66c4d-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-94ed24bcdad66c4d-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-94ed24bcdad66c4d-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="94ed24bcdad66c4d-3" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="94ed24bcdad66c4d-3">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-94ed24bcdad66c4d-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-94ed24bcdad66c4d-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="94ed24bcdad66c4d-4" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="94ed24bcdad66c4d-5" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="94ed24bcdad66c4d-6" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="94ed24bcdad66c4d-7" href="/inter-chat/1.0/solution-reference" >Solution Reference</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="94ed24bcdad66c4d-8" href="/inter-chat/1.0/user-guide" >User Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="94ed24bcdad66c4d-9" href="/inter-chat/1.0/deployment-guide" aria-current="page">Deployment Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="94ed24bcdad66c4d-10" href="/inter-chat/1.0/sitemap-xml" >sitemap.xml</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="94ed24bcdad66c4d-11" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="94ed24bcdad66c4d-11">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/inter-chat/1.0">
+										Internal Chat Finesse Gadget
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="94ed24bcdad66c4d-12">
+			<h2 class="toc-heading" id="94ed24bcdad66c4d-12">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>Deployment Guide</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+
+	
+	
+
+
+	
+	
+	
+	
+		
+
+	
+			
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+		
+	
+	
+	
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<h2 id="id-(1.0)DeploymentGuide-Overview" style=""><span id="DeploymentGuide-Overview"></span><strong>Overview</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-Overview">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>EF chat gadget gives call center users the ability to communicate internally with other agents and supervisors. Agents are arranged according to their teams and an icon represents live agent status. To initiate a chat, an agent clicks another agent’s profile which opens a chat window. The gadget will work with HTTP.</p>
+<h2 id="id-(1.0)DeploymentGuide-ChatGadgetDeploymentPlanning" style=""><span id="DeploymentGuide-ChatGadgetDeploymentPlanning"></span><strong>Chat Gadget Deployment Planning</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-ChatGadgetDeploymentPlanning">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>The chat application is a combination of 3 components.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Solution Components</p>
+        </td>
+        <td>
+         <p>Description</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Chat Application</strong></p>
+        </td>
+        <td>
+         <p>This is an IIS based web application that requires a windows server machine to be deployed on.&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>API Service</strong></p>
+        </td>
+        <td>
+         <p>This is a WCF based web-service that requires IIS to run</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Chat Gadget for Finesse</strong></p>
+        </td>
+        <td>
+         <p>A finesse gadget which renders Chat application frontend inside Cisco Finesse.</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<h2 id="id-(1.0)DeploymentGuide-Prerequisites" style=""><span id="DeploymentGuide-Prerequisites"></span><strong>Prerequisites</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-Prerequisites">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>Following are the mandatory prerequisites for a smooth installation.</p>
+<h3 id="id-(1.0)DeploymentGuide-HardwareRequirements" style=""><span id="DeploymentGuide-HardwareRequirements"></span><strong>Hardware Requirements</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-HardwareRequirements">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>These requirements suffice for a deployment with 300 agents or less.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <tbody>
+       <tr>
+        <td>
+         <p>Item</p>
+        </td>
+        <td>
+         <p>Recommended</p>
+        </td>
+        <td>
+         <p>Notes</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>CPU</strong></p>
+        </td>
+        <td>
+         <p>2 vCPU</p>
+        </td>
+        <td>
+         <p>Can be co-hosted</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Memory</strong></p>
+        </td>
+        <td>
+         <p>4 GB</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Disk Space</strong></p>
+        </td>
+        <td>
+         <p>30 GB&nbsp;</p>
+        </td>
+        <td>
+         <p>Minimum disk space requirement is 5 GB. The recommendation is to account for transactional storage and logs.</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p>The gadget can be co-hosted with other Expertflow or third party products.</p>
+<p>Redundancy is only supported on Cisco Finesse side, i.e., a single chat application will be deployed along with a finesse gadget on each of the two Cisco Finesse servers.&nbsp;</p>
+<h3 id="id-(1.0)DeploymentGuide-SoftwareRequirements" style=""><span id="DeploymentGuide-SoftwareRequirements"></span><strong>Software Requirements</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-SoftwareRequirements">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>
+ <br>
+</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <tbody>
+       <tr>
+        <td>
+         <p>Item</p>
+        </td>
+        <td>
+         <p>Recommended</p>
+        </td>
+        <td>
+         <p>Notes</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Operating System</strong></p>
+        </td>
+        <td>
+         <ul>
+          <li>
+           <p>Windows Server 2012 Standard Edition (x64)</p>
+          </li>
+          <li>
+           <p>Windows Server 2014 Standard Edition (x64)</p>
+          </li>
+         </ul>
+        </td>
+        <td>
+         <p>supported on these operating systems</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Database Server</strong></p>
+        </td>
+        <td>
+         <ul>
+          <li>
+           <p>SQL Server (2008 and onwards)</p>
+          </li>
+         </ul>
+        </td>
+        <td>
+         <p>A separate SQL Server installation is not a requirement. A separate database can be created on already installed SQL Server.</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<h4 id="id-(1.0)DeploymentGuide-PortUtilizationRequirements" style=""><span id="DeploymentGuide-PortUtilizationRequirements"></span><strong>Port Utilization Requirements</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-PortUtilizationRequirements">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>Chat application deployed&nbsp; in IIS.Any available port can be assigned to the application. Default port is 80. Local &amp; network security policy should allow communication on configured port.</p>
+<h3 id="id-(1.0)DeploymentGuide-SystemAccessRequirements" style=""><span id="DeploymentGuide-SystemAccessRequirements"></span><strong>System Access Requirements</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-SystemAccessRequirements">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>IIS
+   <br>
+   Users with Admin rights can perform chat application installation along with Api service&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; deployment.&nbsp;</p>
+ </li>
+</ul>
+<ul>
+ <li>
+  <p>Cisco Finesse Administration access</p>
+ </li>
+ <li>
+  <p>Finesse Administration credentials.</p>
+ </li>
+ <li>
+  <p>Cisco Finesse agent desktop/supervisor desktop access</p>
+ </li>
+ <li>
+  <p>Finesse agent\supervisor configured properly with team(s) assigned.</p>
+ </li>
+ <li>
+  <p>SQL Server DB credentials username\password&nbsp;</p>
+ </li>
+</ul>
+<p>
+ <br>
+</p>
+<h3 id="id-(1.0)DeploymentGuide-TimeSynchronizationRequirements" style=""><span id="DeploymentGuide-TimeSynchronizationRequirements"></span><strong>Time Synchronization Requirements</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-TimeSynchronizationRequirements">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>If the system dates and time are not synchronized the system can produce unpredictable results. Therefore, please make every effort to adhere to the following time synchronization guidelines:</p>
+<p>The server machine and Cisco Finesse should have their Time Zone and time configured properly according to the geographic region and synchronized. To configure the time zone, please see the instructions from the hardware or software manufacturer of NTP server. The application servers should be synchronized to the second. This synchronization should be maintained continuously and validated on a regular basis. For security reasons, Network Time Protocol (NTP) V 4.1+ is recommended.</p>
+<h3 id="id-(1.0)DeploymentGuide-Compatibility" style=""><span id="DeploymentGuide-Compatibility"></span><strong>Compatibility</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-Compatibility">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>
+ <br>
+</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Item</p>
+        </th>
+        <th>
+         <p>Recommended versions</p>
+        </th>
+        <th>
+         <p>Notes</p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>UCCE</strong></p>
+        </td>
+        <td>
+         <p>11.5</p>
+        </td>
+        <td>
+         <p>Tested on version 11.5</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<h3 id="id-(1.0)DeploymentGuide-BrowserCompatibility" style=""><span id="DeploymentGuide-BrowserCompatibility"></span><strong>Browser Compatibility</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-BrowserCompatibility">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>See how browser requirements are mentioned by some other vendors:</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Item</p>
+        </th>
+        <th>
+         <p>Recommended versions</p>
+        </th>
+        <th>
+         <p>Notes</p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Firefox</strong></p>
+        </td>
+        <td>
+         <p>Recent versions</p>
+        </td>
+        <td>
+         <p>Tested on version 54.0.1 (64- bit)</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Chrome</strong></p>
+        </td>
+        <td>
+         <p>Recent versions</p>
+        </td>
+        <td>
+         <p>Not tested&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Internet Explorer</strong></p>
+        </td>
+        <td>
+         <p>Recent versions</p>
+        </td>
+        <td>
+         <p>Not tested</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<h2 id="id-(1.0)DeploymentGuide-ChatApplicationBrowserSettings(Firefox)" style=""><span id="DeploymentGuide-ChatApplicationBrowserSettings(Firefox)"></span><strong>Chat Application Browser Settings (Firefox)</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-ChatApplicationBrowserSettings(Firefox)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>Open browser.Type <strong>about:config </strong>in the address bar.</p>
+<p>Click on the button captioned <strong>I accept the risk.</strong></p>
+<p>In the search bar type <strong>security.mixed_content.block_active_content </strong>Property.</p>
+<p>Make sure it’s value set to <strong>False.</strong></p>
+<h2 id="id-(1.0)DeploymentGuide-ChatApplicationBrowserSettings(Chrome)" style=""><span id="DeploymentGuide-ChatApplicationBrowserSettings(Chrome)"></span><strong>Chat Application Browser Settings (Chrome)</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-ChatApplicationBrowserSettings(Chrome)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>&nbsp;When a website page has insecure content, the following shield icon will appear in the address bar and click on the shield icon to open the menu options.</p>
+<ol>
+ <li>
+  <p>At this point, there could be 2 different messages:&nbsp; "Load Anyway" or "Load unsafe script". Click on either 'Load Anyway' or 'Load unsafe script' links to successfully load the video or other media content.</p>
+ </li>
+ <li>
+  <p>Click on the Done button to exit the menu.</p>
+ </li>
+</ol>
+<p>NOTE:&nbsp; The URL in the address bar will show a line through HTTPS:// to indicate that the page is not fully secure, but the webpage will load the content.</p>
+<h2 id="id-(1.0)DeploymentGuide-ChatApplicationBrowserSettings(InternetExplorer)" style=""><span id="DeploymentGuide-ChatApplicationBrowserSettings(InternetExplorer)"></span><strong>Chat Application Browser Settings (Internet Explorer)</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-ChatApplicationBrowserSettings(InternetExplorer)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<ol>
+ <li>
+  <p>Open <em>Internet Options </em>and click on the Security tab</p>
+ </li>
+ <li>
+  <p>Click on the Custom level.button</p>
+ </li>
+ <li>
+  <p>In the new window, scroll down to the <em>Miscellaneous area</em>, and under the <em>Display mixed conten</em>t option, click on the enable option to <em>display mixed content</em>.</p>
+ </li>
+ <li>
+  <p>When finished, click on the OK button</p>
+ </li>
+ <li>
+  <p>You will need to restart IE to completely enable the new settings.&nbsp; Now, nonsecure content (http://) used inside Blackboard courses will always be displayed on your screen.</p>
+ </li>
+</ol>
+<h3 id="id-(1.0)DeploymentGuide-DeploymentModes" style=""><span id="DeploymentGuide-DeploymentModes"></span><strong>Deployment Modes</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-DeploymentModes">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Component</p>
+        </th>
+        <th>
+         <p>Cisco Finesse</p>
+        </th>
+        <th>
+         <p>IIS</p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Chat Application</strong></p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+        <td>
+         <p>☑</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>API Service</strong></p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+        <td>
+         <p>☑</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Chat Gadget for Finesse</strong></p>
+        </td>
+        <td>
+         <p>☑</p>
+        </td>
+        <td>
+         <p>☑</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h2 id="id-(1.0)DeploymentGuide-Deployment" style=""><span id="DeploymentGuide-Deployment"></span><strong>Deployment&nbsp;</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-Deployment">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>Download the latest copies of <a href="https://drive.google.com/open?id=1F5to5y8jfd3eFCAgjpsKgnpu9ptYw5OZ" data-scope="external" rel="external noreferrer">chat gadget</a>, <a href="https://drive.google.com/open?id=1ak_em8fSHYvmTaUZKTS1umQz_jdgq0WE" data-scope="external" rel="external noreferrer">chat app</a> and <a href="https://drive.google.com/open?id=1VNjx1c8TcgjW4U209JCKzWY4_uOnqqxu" data-scope="external" rel="external noreferrer">FileUploadAPI</a> from gdrive and extract the zip folders.&nbsp;</p>
+<p>&nbsp;Follow the steps listed below.</p>
+<h3 id="id-(1.0)DeploymentGuide-WCFServiceInstallation" style=""><span id="DeploymentGuide-WCFServiceInstallation"></span><strong>WCF Service Installation</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-WCFServiceInstallation">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Make sure that WCF services are properly installed. For installation follow these steps</p>
+<ul>
+ <li>
+  <p>Run Server Manager</p>
+ </li>
+ <li>
+  <p>Select All servers</p>
+ </li>
+ <li>
+  <p>Click on Manage and select Add Roles and Features</p>
+ </li>
+ <li>
+  <p>Click Next twice</p>
+ </li>
+ <li>
+  <p>Select Features</p>
+ </li>
+ <li>
+  <p>Expand .Net 4.5 features (Installed)</p>
+ </li>
+ <li>
+  <p>WCF Services box should be checked if not then check the box</p>
+ </li>
+ <li>
+  <p>Click on Install
+   <br>
+   <br>
+   <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 700px;"> <img src="/__attachments/a_dc2cfb5ef9761435f1525c93d529ac17c77619f31c9b7a4d807fee9968cb68b7/dg1.JPG?cb=4b2315757e108831a5623d5be30bc2b8" alt="dg1.JPG" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+</ul>
+<h3 id="id-(1.0)DeploymentGuide-ChatApplicationDeployment" style=""><span id="DeploymentGuide-ChatApplicationDeployment"></span><strong>Chat&nbsp; Application Deployment&nbsp;</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-ChatApplicationDeployment">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>For application deployment follow these steps</p>
+<h3 id="id-(1.0)DeploymentGuide-CreateServerCertificate" style=""><span id="DeploymentGuide-CreateServerCertificate"></span><strong>Create Server Certificate</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-CreateServerCertificate">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ol>
+ <li>
+  <p>Press window+R, write <strong>inetmgr </strong>and click <strong>OK</strong>. It will run&nbsp; IIS Manager.&nbsp;</p>
+ </li>
+ <li>
+  <p>Click on the PC Name, double click on the server certificates&nbsp; from the IIS portion, as shown in the figure below
+   <br>
+   <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 700px;"> <img src="/__attachments/a_39cb72f1356a56dbaeccda12b7eeb931cdb2fd5ae9e045704e65e4fa27373eaa/dg2.png?cb=0291b183c6576dc1b80cf58ea14e4643" alt="dg2.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+ <li>
+  <p>A new window will open. As shown in the figure below.</p>
+ </li>
+ <li>
+  <p>Select the Create Self-Signed Certificate.</p>
+ </li>
+ <li>
+  <p>Write any name, e.g. chat and click OK
+   <br>
+   <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_6a15b2d82eeadc24a642965fe9579f8087d83b1a4733c9a725771ad012874d48/dg3.png?cb=7bcdf33f2108f5edb091ceb0a1baa504" alt="dg3.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+</ol>
+<h3 id="id-(1.0)DeploymentGuide-CreateaNewWebsite" style=""><span id="DeploymentGuide-CreateaNewWebsite"></span><strong>Create a New Website</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-CreateaNewWebsite">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ol>
+ <li>
+  <p>Create directory with name <strong>ChatApp</strong> in c:\inetpub\wwwroot folder.&nbsp;</p>
+ </li>
+ <li>
+  <p>Right-click on <strong>Sites </strong>and select <strong>Add Web Site</strong></p>
+ </li>
+ <li>
+  <p>Set the following values in the following fields as shown in the picture below and click <strong>OK</strong>.</p>
+ </li>
+</ol>
+<h3 id="id-(1.0)DeploymentGuide-UpdateBindingsforhttps" style=""><span id="DeploymentGuide-UpdateBindingsforhttps"></span><strong>Update Bindings for https</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-UpdateBindingsforhttps">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ol>
+ <li>
+  <p>In IIS Manager, Click on the newly added site</p>
+ </li>
+ <li>
+  <p>Select binding for the top-left corner as shown in the figure below</p>
+ </li>
+ <li>
+  <p>Click on Add</p>
+ </li>
+ <li>
+  <p>Set the values in the window</p>
+ </li>
+</ol>
+<h3 id="id-(1.0)DeploymentGuide-CreateDatabase" style=""><span id="DeploymentGuide-CreateDatabase"></span><strong>Create Database</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-CreateDatabase">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>First, create the database using the following steps.</p>
+<ol>
+ <li>
+  <p>Run SQL Server and create a new database named <strong>ChatDB</strong>. You can choose any other name as well.&nbsp;</p>
+ </li>
+ <li>
+  <p>Copy scripts</p>
+  <a href="https://drive.google.com/open?id=1SFqK9VIb9UplzOtybmtD9aBUPlrKxawF" data-scope="external" rel="external noreferrer">
+   <p>s<strong>cript.sql</strong></p>
+  </a>
+  <p>into sql window</p>
+ </li>
+ <li>
+  <p>In scripts, update the database name in <strong>Use [ChatDB]</strong></p>
+ </li>
+ <li>
+  <p>Execute the commands&nbsp;&nbsp;</p>
+ </li>
+</ol>
+<p>
+ <br>
+</p>
+<h3 id="id-(1.0)DeploymentGuide-FileUploadAPIdeployment" style=""><span id="DeploymentGuide-FileUploadAPIdeployment"></span><strong>File Upload API deployment&nbsp;</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-FileUploadAPIdeployment">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Extract the zip (downloaded under “<a href="https://docs.google.com/document/d/1dNUoXEs1gimv18kNU60JCPVTbP5HJXTqPjwzLmNPrw0/edit#heading=h.xmkumaob22vh" data-scope="external" rel="external noreferrer"><strong>Deployment</strong></a>” section above) and create a folder on C:\inetpub\wwwroot by name, Fileupload and copy the extracted content into it. Add another folder within this folder and give it a name “Uploads” and grant read/write access to local admin user and IIS as shown below</p>
+<p>
+ <br>
+ <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 700px;"> <img src="/__attachments/a_61f5f94007cec46c7940d66259432b68e595d433e4dbaf4a13bcc2d43226cadd/dg6.png?cb=dc062a237dd5c6e3662cbe0646db5147" alt="dg6.png" data-scope="internal"> </span> </image-lightbox> </span>
+ <br>
+</p>
+<h3 id="id-(1.0)DeploymentGuide-HostingFileUploadAPIonIIS" style=""><span id="DeploymentGuide-HostingFileUploadAPIonIIS"></span><strong>Hosting FileUpload API on IIS</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-HostingFileUploadAPIonIIS">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ol>
+ <li>
+  <p>Right click on <strong>Sites </strong>and select <strong>Add Web Site</strong></p>
+ </li>
+ <li>
+  <p>Set following values in the following fields as shown in the picture below and click <strong>OK</strong>.</p>
+  <ol>
+   <li>
+    <p>Type: https</p>
+   </li>
+   <li>
+    <p>IP Address: where site is deployed&nbsp; e.g. 192.168.1.36&nbsp;</p>
+   </li>
+   <li>
+    <p>Port: default is 443 you can set any available port number</p>
+   </li>
+   <li>
+    <p>SSL Certificate: select SSL certificate which was created</p>
+    <a href="https://docs.google.com/document/d/1BpWpv0UE0Cg1YcQDF4B1EVKD1wCcOi2BAT6Cv583nzY/edit#heading=h.by2cpagt3nqx" data-scope="external" rel="external noreferrer">
+     <p>earlier</p>
+    </a>
+   </li>
+  </ol>
+ </li>
+</ol>
+<h3 id="id-(1.0)DeploymentGuide-UpdateBindingsforhttps.1" style=""><span id="DeploymentGuide-UpdateBindingsforhttps"></span><strong>Update Bindings for https</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-UpdateBindingsforhttps.1">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ol>
+ <li>
+  <p>In IIS Manager, Click on the newly added site</p>
+ </li>
+ <li>
+  <p>Select binding for the top-left corner as shown in the figure below</p>
+ </li>
+ <li>
+  <p>Click on Add</p>
+ </li>
+ <li>
+  <p>Set the values in the window</p>
+ </li>
+</ol>
+<p>
+ <br>
+</p>
+<h3 id="id-(1.0)DeploymentGuide-PostDeploymentUpdates" style=""><span id="DeploymentGuide-PostDeploymentUpdates"></span><strong>Post Deployment Updates</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-PostDeploymentUpdates">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ol>
+ <li>
+  <p>Open the config.js file in editor (notepad/notepad++) and update the web services links according to the newly deployed chat application.
+   <br>
+   <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 700px;"> <img src="/__attachments/a_f40950d52a930615b4bc6e4b07ed0c523bad33a2b9de983e58438d1375c16db5/dg8.png?cb=ecec59e5ec98aff854a7cf32ed29ea0d" alt="dg8.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+ <li>
+  <p>Open the web.config file present in c:\inetpub\wwwroot\ChatApp.</p>
+ </li>
+ <li>
+  <p>Update following higlighted fields for; Datasource, FileUPload API (provide the link to Uploads folder), finesse credentials.</p>
+ </li>
+</ol>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 700px;"> <img src="/__attachments/a_5dd84fcae4713fea8085226392fba66b7582c50c4a6a9680e05ebeaff9ece0ef/dg9.png?cb=3f356ab05e690a0994e6064dad6a2ca6" alt="dg9.png" data-scope="internal"> </span> </image-lightbox> </span>
+ <br>
+ <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 700px;"> <img src="/__attachments/a_aee49b5d6a1b64d499c1ecf6751daabbb505972cd0e5f2b5b870f1d71048ee7f/dg10.png?cb=3737a905878cb432be95177a72dc0b73" alt="dg10.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>4. Go back to Chat App site, and add another <strong>http</strong> binding. This new http port will be used by below highlighted API. <strong>*Please note*</strong>, you can only do this, if you <strong>baseURL </strong>&amp; <strong>dbBaseURL </strong>APIs are running on <strong>https</strong>&nbsp;
+ <br>
+ <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 700px;"> <img src="/__attachments/a_af3e767a7089b78ba8440871da0bb2c05e67ab32ecf378492da9b35f9b3db64e/dg11.png?cb=6bef9165a980c3539083cf018bb017f6" alt="dg11.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<h3 id="id-(1.0)DeploymentGuide-ApplicationLogs" style=""><span id="DeploymentGuide-ApplicationLogs"></span><strong>Application Logs</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-ApplicationLogs">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Application logs are made in <strong>c:\log\ChatApplication.log</strong> file. Make sure that the log folder has read and write permissions. In order to enable permissions, follow <a href="https://docs.google.com/document/d/1dNUoXEs1gimv18kNU60JCPVTbP5HJXTqPjwzLmNPrw0/edit#heading=h.7mdcwsp2rg1z" data-scope="external" rel="external noreferrer">these</a> steps for log folder.</p>
+<h3 id="id-(1.0)DeploymentGuide-FinesseGadgetConfiguration" style=""><span id="DeploymentGuide-FinesseGadgetConfiguration"></span><strong>Finesse Gadget Configuration</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-FinesseGadgetConfiguration">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Go to the <strong>Gadget </strong>directory which is downloaded above and open<strong> finesse-chat-10.5.js </strong>file. Set the chat gadget application link according to the deployment as shown in the image below.</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 700px;"> <img src="/__attachments/a_d49ce95b39337981ffd2c0085fcbc051199353cdd9a2e7c981d5dcf80389574e/dg12.png?cb=d4db1b7b7220f78b659b48fdc8e9b561" alt="dg12.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>
+ <br>
+</p>
+<h4 id="id-(1.0)DeploymentGuide-FinesseGadgetDeployment" style=""><span id="DeploymentGuide-FinesseGadgetDeployment"></span><strong>Finesse Gadget Deployment</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-FinesseGadgetDeployment">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>Gadgets can be installed on your own web server or directly on the Finesse server. In order to install on the Finesse server follow these steps:</p>
+<ol>
+ <li>
+  <p>Run FileZila and login to finesse with following credentials&nbsp;</p>
+ </li>
+ <li>
+  <p>Create a folder e.g. <strong>chatgadget </strong>into the files directory on finesse server
+   <br>
+   <br>
+   <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 700px;"> <img src="/__attachments/a_144f862f1a068c488ed80f266569ca8e66f05805ccf576504b49ca8a1845cc6d/dg13.JPG?cb=1c2de81c63efacd81dfce4afa6df55ac" alt="dg13.JPG" data-scope="internal"> </span> </image-lightbox> </span> </p>
+ </li>
+ <li>
+  <p>Upload the gadget files which was downloaded</p>
+  <a href="https://docs.google.com/document/d/1dNUoXEs1gimv18kNU60JCPVTbP5HJXTqPjwzLmNPrw0/edit#heading=h.s72ainsacr21" data-scope="external" rel="external noreferrer">
+   <p>here</p>
+  </a>
+  <p>
+   <br>
+   <br>
+  </p>
+ </li>
+ <li>
+  <p>Next we will update the Finesse layout to point to the new gadget. Load the Finesse administration by going to: https://&lt;hostname or ip&gt;:8445/cfadmin/</p>
+ </li>
+</ol>
+<ul>
+ <li>
+  <p>If your team’s are utilizing the default layout, Click on the desktop layout tab. Otherwise,&nbsp; &nbsp; click on the Team Resources tab to edit a specific team's layout.</p>
+ </li>
+</ul>
+<ul>
+ <li>
+  <p>&nbsp;Where you place the Chat Gadget is your preference. In this example I am placing the gadget under the HOME tab in a column. If you uploaded the gadget as a instructed above, you can copy the following lines:</p>
+ </li>
+</ul>
+<p><strong>Add SSL to Browser</strong></p>
+<p>This step should be done on the browser of each agent/supervisor.</p>
+<p>Open the deployed chat application address in firefox&nbsp; e.g.</p>
+<p><a href="https://192.168.1.36:321/index.html" data-scope="external" rel="external noreferrer">https://192.168.1.36:321/chat-messages.html</a> and add the exception to the browser. <strong>&nbsp;&nbsp;</strong></p>
+<h2 id="id-(1.0)DeploymentGuide-Troubleshooting" style=""><span id="DeploymentGuide-Troubleshooting"></span><strong>Troubleshooting&nbsp;</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-Troubleshooting">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>
+ <br>
+</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Issue</p>
+        </th>
+        <th>
+         <p>Summary</p>
+        </th>
+        <th>
+         <p>Alternative</p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Gadget not loaded.</strong></p>
+        </td>
+        <td>
+         <p>Gadget not loading issue.</p>
+        </td>
+        <td>
+         <p><strong>IIS server stopped. Make sure servers up &amp; running.</strong></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Application .war file not deployed.</strong></p>
+        </td>
+        <td>
+         <p>Application not deployed on server.</p>
+        </td>
+        <td>
+         <p><strong>Make sure application deployed on tomcat.</strong></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Application running but no data loaded in dropdown.</strong></p>
+        </td>
+        <td>
+         <p><strong>Application running but no data loaded in dropdown.</strong></p>
+        </td>
+        <td>
+         <p><strong>Make sure proper credentials in application config file.</strong></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>History not loading.&nbsp;</strong></p>
+        </td>
+        <td>
+         <p>Agent history could not be displayed.</p>
+        </td>
+        <td>
+         <p><strong>Make sure SQL Server is up &amp; running.</strong></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Gadget Not appearing in Finesse.</strong></p>
+        </td>
+        <td>
+         <p><strong>Gadget Not loading in Finesse due to wrong web application url.</strong></p>
+        </td>
+        <td>
+         <p><strong>Make sure proper url entered in gadget file.</strong></p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<h3 id="id-(1.0)DeploymentGuide-UnabletoDownloadHistory" style=""><span id="DeploymentGuide-UnabletoDownloadHistory"></span><strong>Unable to Download History</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/inter-chat/1.0/deployment-guide#id-(1.0)DeploymentGuide-UnabletoDownloadHistory">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Follow the following steps</p>
+<ol>
+ <li>
+  <p>Go to gadget directory where gadget is deployed e.g. c:\inetpub\wwwroot\ChatApp</p>
+ </li>
+ <li>
+  <p>Right-click on <em>Downloads </em>folder→ properties→ security→ edit→Add</p>
+ </li>
+ <li>
+  <p>Write “everyone” inside<em> Select Users and Groups</em> window</p>
+ </li>
+ <li>
+  <p>Click on <em>Check Names, </em>Your screen should look alike following figure</p>
+ </li>
+</ol>
+<ol>
+ <li>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 700px" data-component="image" data-align="unset">
+     <img src="/__attachments/a_35e70e5a20d39cd7e8dc07781dc46dbf7c8cde2e44d09e20f970526833b63a09/dg14.jpg?cb=adff7385715700d1e0f099e8acf3b8f0" alt="dg14.jpg" data-scope="internal">
+    </div>
+   </image-lightbox>
+  </div>
+ </li>
+</ol>
+<p>5. Select <em>OK</em></p>
+<p>6. Now in <em>Permissions for Downloads </em>window select the checkbox in front of <em>Write </em>as shown in the following figure</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 700px;"> <img src="/__attachments/a_abe09d3c633f8aef761025ee29c4ee82f84f775ad24ba4ec1dd8b117141d999d/dg15.jpg?cb=5028e53c310249cf831f2bdb726a34e7" alt="dg15.jpg" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>7.&nbsp;click→ Apply → OK→ OK&nbsp;</p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="94ed24bcdad66c4d-13" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="94ed24bcdad66c4d-13">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/inter-chat/1.0/user-guide">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">User Guide</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/inter-chat/1.0/sitemap-xml">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">sitemap.xml</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

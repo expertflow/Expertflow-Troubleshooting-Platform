@@ -1,0 +1,3512 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_9da66912569afdbe5e843fa5d6beefd263a61bcbac51c5669ff1156155742d8b" data-confluence-content-id="750911551"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/cx-knowledgebase/latest/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="SBT">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>Logging and Tracing Architecture | Expertflow CX</title>
+		<meta property="og:title" content="Logging and Tracing Architecture | Expertflow CX">
+		<meta property="twitter:title" content="Logging and Tracing Architecture | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture">
+		<meta property="og:url" content="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture">
+
+		<meta name="description" content="Overview Logging and tracing are foundational pillars of observability in modern distributed systems. In a microservices-based architecture, where services com…">
+		<meta property="og:description" content="Overview Logging and tracing are foundational pillars of observability in modern distributed systems. In a microservices-based architecture, where services com…">
+		<meta property="twitter:description" content="Overview Logging and tracing are foundational pillars of observability in modern distributed systems. In a microservices-based architecture, where services com…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__attachments/a_75d2fd692b958e1286e1f9e6d8724acf4f4c8eaf35ec50970834ec71a454b5c2/audit%20logs.drawio.png?cb=eaede2552583d992caf52182e5f418a4">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__attachments/a_75d2fd692b958e1286e1f9e6d8724acf4f4c8eaf35ec50970834ec71a454b5c2/audit%20logs.drawio.png?cb=eaede2552583d992caf52182e5f418a4">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2026-04-21T11:14:10.032Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": true
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.js"></script>
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="ab4b7594d3b99533-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="ab4b7594d3b99533-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-ab4b7594d3b99533-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-ab4b7594d3b99533-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-ab4b7594d3b99533-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="ab4b7594d3b99533-3" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="ab4b7594d3b99533-3">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-ab4b7594d3b99533-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-ab4b7594d3b99533-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ab4b7594d3b99533-4" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ab4b7594d3b99533-5" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ab4b7594d3b99533-6" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ab4b7594d3b99533-7"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ab4b7594d3b99533-7" href="/cx-knowledgebase/latest/expertflow-cx-overview" >ExpertFlow CX Overview</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="ab4b7594d3b99533-10"						aria-labelledby="ab4b7594d3b99533-9"
+					></button>
+				<a id="ab4b7594d3b99533-9" href="/cx-knowledgebase/latest/expertflow-cx-platform-overview" >Expertflow CX Platform Overview</a>
+			</div>
+
+<ul  id="ab4b7594d3b99533-10" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="ab4b7594d3b99533-12"						aria-labelledby="ab4b7594d3b99533-11"
+					></button>
+				<a id="ab4b7594d3b99533-11" href="/cx-knowledgebase/latest/expertflow-cx-system-architecture" >Expertflow CX System Architecture</a>
+			</div>
+
+<ul  id="ab4b7594d3b99533-12" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ab4b7594d3b99533-13" href="/cx-knowledgebase/latest/solution-architecture" >Platform Architecture</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ab4b7594d3b99533-14" href="/cx-knowledgebase/latest/logging-and-tracing-architechture" aria-current="page">Logging and Tracing Architecture</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ab4b7594d3b99533-15" href="/cx-knowledgebase/latest/cx-core-and-voice-components-architecture" >CX Core and Voice Components Architecture</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ab4b7594d3b99533-16" href="/cx-knowledgebase/latest/integration-architecture" >Integration Architecture</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ab4b7594d3b99533-17" href="/cx-knowledgebase/latest/solution-diagram-media-recording" >Solution Diagram-Media Recording</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ab4b7594d3b99533-18" href="/cx-knowledgebase/latest/solution-architecture-wfm" >Solution Architecture - WFM</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ab4b7594d3b99533-19" href="/cx-knowledgebase/latest/solution-architecture-cx-campaigns" >Solution Architecture - CX Campaigns</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ab4b7594d3b99533-20"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ab4b7594d3b99533-20" href="/cx-knowledgebase/latest/solutions" >Solutions</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ab4b7594d3b99533-22"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ab4b7594d3b99533-22" href="/cx-knowledgebase/latest/platform" >Platform</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ab4b7594d3b99533-24"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ab4b7594d3b99533-24" href="/cx-knowledgebase/latest/deployment-installation" >Deployment &amp; Installation</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ab4b7594d3b99533-26"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ab4b7594d3b99533-26" href="/cx-knowledgebase/latest/reports" >Reports and Analytics</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ab4b7594d3b99533-28"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ab4b7594d3b99533-28" href="/cx-knowledgebase/latest/resources" >Resources</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ab4b7594d3b99533-30"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ab4b7594d3b99533-30" href="/cx-knowledgebase/latest/contact-center-personas" >Contact Center Personas</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ab4b7594d3b99533-32" href="/cx-knowledgebase/latest/user-inactivity-logout" >User Inactivity Logout</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ab4b7594d3b99533-33" href="/cx-knowledgebase/latest/agent-desk-release-strategy" >Agent Desk Release Strategy</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ab4b7594d3b99533-34" href="/cx-knowledgebase/latest/channels-integration-onboarding-guide-s" >Channels Integration - Onboarding guide(s)</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="ab4b7594d3b99533-35" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="ab4b7594d3b99533-35">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest">
+										Expertflow CX
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest/expertflow-cx-platform-overview">
+										Expertflow CX Platform Overview
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest/expertflow-cx-system-architecture">
+										Expertflow CX System Architecture
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="ab4b7594d3b99533-36">
+			<h2 class="toc-heading" id="ab4b7594d3b99533-36">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>Logging and Tracing Architecture</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+	
+
+	
+	
+
+	
+
+			
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+
+	
+
+
+	
+	
+	
+	
+		
+
+	
+		
+		
+	
+	
+	
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<h2 id="Overview"><span id="LoggingandTracingArchitecture-Overview"></span>Overview
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture#Overview">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>Logging and tracing are foundational pillars of observability in modern distributed systems. In a microservices-based architecture, where services communicate across network and process boundaries, traditional debugging approaches are insufficient.</p>
+<p><strong>Logging</strong> captures discrete events, state changes, errors, and operational metadata generated by services over time.
+ <br>
+ <strong>Tracing</strong> provides an end-to-end, time-ordered view of a request as it propagates across multiple services, enabling visibility into latency, dependencies, and execution paths.</p>
+<p>In distributed environments where services interact synchronously and asynchronously, observability must provide:</p>
+<ul>
+ <li>
+  <p>Deep visibility into runtime behavior</p>
+ </li>
+ <li>
+  <p>End-to-end request tracking</p>
+ </li>
+ <li>
+  <p>Operational intelligence for proactive monitoring</p>
+ </li>
+ <li>
+  <p>Forensic capability for audits and incident analysis</p>
+ </li>
+</ul>
+<p>This document describes the centralized logging and tracing architecture implemented using <strong>OpenTelemetry (OTLP)</strong> as the standard telemetry format, <strong>Fluent Bit</strong> as the collection and forwarding agent, and <strong>OpenSearch</strong> for indexing, storage, and analytics.</p>
+<p>The architecture ensures standardized telemetry ingestion, structured indexing, and cross-service correlation across the platform.
+ <br></p>
+<p>
+ <br>
+</p>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 601px" data-component="image" data-align="unset">
+   <img src="/__attachments/a_75d2fd692b958e1286e1f9e6d8724acf4f4c8eaf35ec50970834ec71a454b5c2/audit%20logs.drawio.png?cb=eaede2552583d992caf52182e5f418a4" alt="audit logs.drawio.png" data-scope="internal">
+  </div>
+ </image-lightbox>
+</div>
+<div data-component="panel" role="note" data-appearance="note">
+ <div class="panel-content">
+  <p>As needed, data can be routed to:</p>
+  <ul>
+   <li>
+    <p><strong>External/ Third SIEMs</strong>: e.g., Splunk</p>
+   </li>
+   <li>
+    <p><strong>EF Log Monitor</strong>: Requires custom backend, custom frontend and query layer.</p>
+   </li>
+  </ul>
+ </div>
+</div>
+<h2 id="Architecture"><span id="LoggingandTracingArchitecture-Architecture"></span>Architecture
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture#Architecture">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>Our observability architecture captures and routes log and trace data using a structured, modular pipeline:</p>
+<h3 id="Audit-Log-Generation-in-the-Application"><span id="LoggingandTracingArchitecture-AuditLogGenerationintheApplication"></span>Audit Log Generation in the Application
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture#Audit-Log-Generation-in-the-Application">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Application components emit logs and traces in <strong>standardized OTLP JSON format</strong>., which are automatically collected using Kubernetes-native logging mechanisms and forwarded to a central logging system. Audit logs are kept logically separate from standard application logs to allow independent access control, easier review by operations teams, and separate retention policies. Audit events are generated by the application in a structured JSON format. Each audit log includes mandatory attributes to ensure traceability and consistency.</p>
+<h3 id="Logging-in-Kubernetes-Pods"><span id="LoggingandTracingArchitecture-LogginginKubernetesPods"></span>Logging in Kubernetes Pods
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture#Logging-in-Kubernetes-Pods">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Application containers write logs to standard output. Kubernetes handles log persistence at the node level. No audit logs are stored locally inside containers, reducing the risk of loss or tampering due to container restarts.</p>
+<h3 id="Log-Collection-Using-Fluent-Bit"><span id="LoggingandTracingArchitecture-LogCollectionUsingFluentBit"></span>Log Collection Using Fluent Bit
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture#Log-Collection-Using-Fluent-Bit">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Fluent Bit is deployed as a DaemonSet within the Kubernetes cluster. This ensures:</p>
+<ul>
+ <li>
+  <p>Logs are collected consistently from all application pods</p>
+ </li>
+ <li>
+  <p>Centralized control over log collection and processing</p>
+ </li>
+</ul>
+<h4 id="Log-Identification-&amp;-Filtering"><span id="LoggingandTracingArchitecture-LogIdentification&amp;amp;Filtering"></span>Log Identification &amp; Filtering
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture#Log-Identification-&amp;amp;-Filtering">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>Audit logs are identified using a deterministic field:</p>
+<p><code>"type": "audit_logging"</code></p>
+<p>Tracing logs are identified using a deterministic field:</p>
+<p><code>"type": "tracing"</code></p>
+<h4 id="Filtering-Logic"><span id="LoggingandTracingArchitecture-FilteringLogic"></span>Filtering Logic
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture#Filtering-Logic">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<ul>
+ <li>
+  <p>All container logs are collected</p>
+ </li>
+ <li>
+  <p>Logs with <code>type="audit_logging"</code> are filtered into the audit pipeline</p>
+ </li>
+ <li>
+  <p>Logs with <code>type="tracing"</code> are filtered into the tracing pipeline</p>
+ </li>
+</ul>
+<h4 id="Routing-Logs-to-Destinations"><span id="LoggingandTracingArchitecture-RoutingLogstoDestinations"></span>Routing Logs to Destinations
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture#Routing-Logs-to-Destinations">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<div class="theme-table" style="--width: 497px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="align-start" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 141px">
+       <col style="width: 356px">
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <h5 id="Log-Type"><span id="LoggingandTracingArchitecture-LogType"></span><strong>Log Type</strong>
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture#Log-Type">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h5>
+        </td>
+        <td>
+         <h5 id="Destination"><span id="LoggingandTracingArchitecture-Destination"></span><strong>Destination</strong>
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture#Destination">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h5>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Audit Logs</p>
+        </td>
+        <td>
+         <p>Dedicated audit index / stream</p>
+         <ul>
+          <li>
+           <p><code>audit_log_index</code></p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Tracing Logs</p>
+        </td>
+        <td>
+         <p>Dedicated tracing index / stream</p>
+         <ul>
+          <li>
+           <p><code>tracing_index</code></p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="Storage-&amp;-Indexing---OpenSearch"><span id="LoggingandTracingArchitecture-Storage&amp;amp;Indexing-OpenSearch"></span>Storage &amp; Indexing - OpenSearch
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture#Storage-&amp;amp;-Indexing---OpenSearch">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>OpenSearch acts as the <strong>centralized operational data store</strong> for logs.</p>
+<p>It provides:</p>
+<ul>
+ <li>
+  <p>Scalable storage for high-volume log and trace data.</p>
+ </li>
+ <li>
+  <p>Efficient indexing for fast searches during incidents.</p>
+ </li>
+ <li>
+  <p>Support for high-cardinality fields such as trace IDs and request IDs.</p>
+ </li>
+ <li>
+  <p>Reliable retention and access to historical data for post-incident analysis.</p>
+ </li>
+</ul>
+<h3 id="Visualization-&amp;-Analysis---OpenSearch-Dashboards"><span id="LoggingandTracingArchitecture-Visualization&amp;amp;Analysis-OpenSearchDashboards"></span>Visualization &amp; Analysis - OpenSearch Dashboards
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture#Visualization-&amp;amp;-Analysis---OpenSearch-Dashboards">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>OpenSearch Dashboards serves as the primary interface to monitor and analyze system behavior. Operational use cases include:</p>
+<ul>
+ <li>
+  <p>Searching and filtering logs in real time.</p>
+ </li>
+ <li>
+  <p>Correlating logs, traces, and audit records using <code>traceId</code>.</p>
+ </li>
+</ul>
+<p>Dashboards can be customized to align with operational workflows and on-call requirements.</p>
+<h3 id="Data-Retention-and-Governance"><span id="LoggingandTracingArchitecture-DataRetentionandGovernance"></span>Data Retention and Governance
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture#Data-Retention-and-Governance">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>The platform does not enforce data retention policies. All retention, archival, and deletion rules are governed by the destination system (such as OpenSearch or the organization’s SIEM), allowing organizations to align data governance with regulatory, legal, and internal requirements.</p>
+<h3 id="Extensibility"><span id="LoggingandTracingArchitecture-Extensibility"></span>Extensibility
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture#Extensibility">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>The architecture supports:</p>
+<ul>
+ <li>
+  <p>Exporting audit logs to external SIEM platforms</p>
+ </li>
+ <li>
+  <p>Supporting multiple destinations in parallel</p>
+ </li>
+</ul>
+<div data-component="panel" role="note" data-appearance="warning">
+ <div class="panel-content">
+  <p>Testing and visualization are done using <strong>OpenSearch Dashboards</strong>.</p>
+ </div>
+</div>
+<div data-component="panel" role="note" data-appearance="note">
+ <div class="panel-content">
+  <ul>
+   <li>
+    <p>Fluentbit can temporarily store events on disk if OpenSearch is unavailable.</p>
+   </li>
+   <li>
+    <p>Once OpenSearch is back, it automatically forwards the stored data.</p>
+   </li>
+   <li>
+    <p>Good for log-based event ingestion.</p>
+   </li>
+  </ul>
+ </div>
+</div>
+<h2 id="Logging-Format"><span id="LoggingandTracingArchitecture-LoggingFormat"></span>Logging Format
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture#Logging-Format">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="Data-to-be-Logged"><span id="LoggingandTracingArchitecture-DatatobeLogged"></span>Data to be Logged
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture#Data-to-be-Logged">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>For each CRUD operation on a configuration item, the following information will be logged:</p>
+<div class="theme-table" style="--width: 1400px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="align-start" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 291px">
+       <col style="width: 233px">
+       <col style="width: 874px">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Field</p>
+        </th>
+        <th>
+         <p>Type</p>
+        </th>
+        <th>
+         <p>Description</p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p><code>timestamp</code></p>
+        </td>
+        <td>
+         <p>ISO 8601 date</p>
+        </td>
+        <td>
+         <p>When the event occurred</p>
+         <p>(UTC timestamps in ISO 8601 format recommended). Example: <code>2024-11-28T09:00:00Z</code></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>user_id</code></p>
+        </td>
+        <td>
+         <p>UUID</p>
+        </td>
+        <td>
+         <p>Unique identifier of the user who performed the action</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>user_name</code></p>
+        </td>
+        <td>
+         <p>string</p>
+        </td>
+        <td>
+         <p>Display name of the user</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>action</code></p>
+        </td>
+        <td>
+         <p>keyword</p>
+        </td>
+        <td>
+         <p>Operation performed: <code>CREATE</code>, <code>UPDATE</code>, or <code>DELETE</code></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>resource</code></p>
+        </td>
+        <td>
+         <p>keyword</p>
+        </td>
+        <td>
+         <p>Entity acted upon, e.g. <code>teams</code>, <code>reasonCode</code></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>resource_id</code></p>
+        </td>
+        <td>
+         <p>UUID</p>
+        </td>
+        <td>
+         <p>Unique identifier of the affected resource</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>source_ip_address</code></p>
+        </td>
+        <td>
+         <p>IP</p>
+        </td>
+        <td>
+         <p>IP address of the user at the time of the action</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>attributes.service</code></p>
+        </td>
+        <td>
+         <p>keyword</p>
+        </td>
+        <td>
+         <p>Name of the service that emitted the log e.g <code>UNIFIED_ADMIN</code></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>attributes.tenantId</code></p>
+        </td>
+        <td>
+         <p>keyword</p>
+        </td>
+        <td>
+         <p>Tenant identifier</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>attributes.updated_data</code></p>
+        </td>
+        <td>
+         <p>object</p>
+        </td>
+        <td>
+         <p>Snapshot of the changed data (not searchable by design)</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>type</code></p>
+        </td>
+        <td>
+         <p>keyword</p>
+        </td>
+        <td>
+         <p>Log category: <code>audit_logging</code> or <code>tracing</code></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>level</code></p>
+        </td>
+        <td>
+         <p>keyword</p>
+        </td>
+        <td>
+         <p>Severity level, e.g. <code>info</code></p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="Example-log-entry:"><span id="LoggingandTracingArchitecture-Examplelogentry:"></span><strong>Example log entry:</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture#Example-log-entry:">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Audit logs will be stored in JSON format. This format is chosen for its flexibility, ease of parsing, and compatibility with OpenSearch.</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">JSON</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="json" data-align="wide">
+   <pre><code>{
+  "timestamp": "2024-11-28T09:00:00Z",
+  "user_id": "c7a904cc-262f-41f3-988a-351f6326e004",
+  "user_name": "john doe",
+  "action": "UPDATE",
+  "resource": "teams",
+  "resource_id": "3e0b50a2-64fa-4051-8d16-3db6408fddec",
+  "source_ip_address": "192.168.1.100",
+  "attributes": {
+    "service": "unified_admin",
+    "tenantId": "expertflow",
+    "updated_data": {
+      "team_name": "Test team",
+      "description": "team for testing teams feature"
+    }
+  },
+  "type": "audit_logging" 
+}
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<div data-component="panel" role="note" data-appearance="note">
+ <div class="panel-content">
+  <p>All the above information is mandatory for logging</p>
+ </div>
+</div>
+<h2 id="Tracing-Format"><span id="LoggingandTracingArchitecture-TracingFormat"></span>Tracing Format
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture#Tracing-Format">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="Data-to-be-Logged.1"><span id="LoggingandTracingArchitecture-DatatobeLogged"></span>Data to be Logged
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture#Data-to-be-Logged.1">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>For each CRUD operation on a configuration item, the following information will be logged:</p>
+<div class="theme-table" style="--width: 1400px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="align-start" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 291px">
+       <col style="width: 233px">
+       <col style="width: 874px">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Field</p>
+        </th>
+        <th>
+         <p>Type</p>
+        </th>
+        <th>
+         <p>Description</p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p><code>timestamp</code></p>
+        </td>
+        <td>
+         <p>ISO 8601 date</p>
+        </td>
+        <td>
+         <p>When the event occurred</p>
+         <p>(UTC timestamps in ISO 8601 format recommended). Example: <code>2024-11-28T09:00:00Z</code></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>trace_id</code></p>
+        </td>
+        <td>
+         <p>UUID</p>
+        </td>
+        <td>
+         <p>Unique identifier for a tracing (in our case corelation Id).</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>parent_span_id</code></p>
+        </td>
+        <td>
+         <p>UUID</p>
+        </td>
+        <td>
+         <p>This field indicates the <code>span_id</code> of the operation that created the current span.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>span_id</code></p>
+        </td>
+        <td>
+         <p>UUID</p>
+        </td>
+        <td>
+         <p>Unique identifier for a single operation (a "span") within a trace.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>status</code></p>
+        </td>
+        <td>
+         <p>keyword</p>
+        </td>
+        <td>
+         <p>Status of the log: <code>OK</code>, <code>ERROR</code></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>tenantId</code></p>
+        </td>
+        <td>
+         <p>keyword</p>
+        </td>
+        <td>
+         <p>Tenant identifier</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>resource</code></p>
+        </td>
+        <td>
+         <p>keyword</p>
+        </td>
+        <td>
+         <p>Entity acted upon, e.g. <code>teams</code>, <code>reasonCode</code></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>service</code></p>
+        </td>
+        <td>
+         <p>keyword</p>
+        </td>
+        <td>
+         <p>Name of the service that emitted the log e.g <code>UNIFIED_ADMIN</code></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>attributes.user_id</code></p>
+        </td>
+        <td>
+         <p>UUID</p>
+        </td>
+        <td>
+         <p>Unique identifier of the user who performed the action</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>attributes.user_name</code></p>
+        </td>
+        <td>
+         <p>string</p>
+        </td>
+        <td>
+         <p>Display name of the user</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>attributes.resource_id</code></p>
+        </td>
+        <td>
+         <p>UUID</p>
+        </td>
+        <td>
+         <p>Unique identifier of the affected resource</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>attributes.source_ip_address</code></p>
+        </td>
+        <td>
+         <p>IP</p>
+        </td>
+        <td>
+         <p>IP address of the user at the time of the action</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>attributes.method_name</code></p>
+        </td>
+        <td>
+         <p>string</p>
+        </td>
+        <td>
+         <p>Function name where the action occurs</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>type</code></p>
+        </td>
+        <td>
+         <p>keyword</p>
+        </td>
+        <td>
+         <p>Log category: <code>audit_logging</code> or <code>tracing</code></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>log_level</code></p>
+        </td>
+        <td>
+         <p>keyword</p>
+        </td>
+        <td>
+         <p>Severity level, e.g. <code>INFO</code>, <code>DEBUG</code>, <code>ERROR</code></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>message</code></p>
+        </td>
+        <td>
+         <p>string</p>
+        </td>
+        <td>
+         <p>Description of the event.</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="Example-log-entry:.1"><span id="LoggingandTracingArchitecture-Examplelogentry:"></span><strong>Example log entry:</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture#Example-log-entry:.1">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">JSON</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="json" data-align="wide">
+   <pre><code>{
+  "timestamp": "2024-11-28T09:00:00Z",
+  "trace_id": "abcdef1234567890abcdef1234567890",
+  "span_id": "1234567890abcdef", /optional
+  "parent_span_id": "abcdef1234567890", /optional
+  "service": "unified-admin",
+  "tenantId": "expertflow",
+  "operation": "create-team",
+  "log_level": "INFO",  (INFO, DEBUG, ERROR)
+  "message": "Team is saved successfully",
+  "status": "OK",   (OK, ERROR)
+  "attributes": {
+    "source_ip_address": "192.168.1.100",
+    "resource_id": "3e0b50a2-64fa-4051-8d16-3db6408fddec",
+    "user_id": "user-123",
+    "user_name": "test-agent",
+    "method_name": "addMemberInTeam"
+  },
+  "error": {
+    "error_code": "MONGO_CONNECT_TIMEOUT",
+    "message": "Error occured while saving the team's agent",
+    "stack_trace": "Error at saveAgent (teamService.js:45)",
+    "cause": "Timeout while communicating with mongoDB"
+  },
+  "type": "tracing"
+}
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<div data-component="panel" role="note" data-appearance="note">
+ <div class="panel-content">
+  <p>timestamp, trace_id, service, message, log_level, status, type are mandatory for tracing</p>
+ </div>
+</div>
+<h2 id="Metrics-Format"><span id="LoggingandTracingArchitecture-MetricsFormat"></span>Metrics Format
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture#Metrics-Format">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="Data-to-be-Logged.2"><span id="LoggingandTracingArchitecture-DatatobeLogged"></span>Data to be Logged
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture#Data-to-be-Logged.2">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>For each CRUD operation on a configuration item, the following information will be logged:</p>
+<ul>
+ <li>
+  <p><strong>name</strong>: The metric being recorded (<code>cpu_usage</code>, <code>http_request</code>).</p>
+ </li>
+ <li>
+  <p><strong>unit</strong>: Measurement unit (e.g., <code>%</code>, <code>ms</code>, <code>bytes</code>).</p>
+ </li>
+ <li>
+  <p><strong>data_points</strong>: List of recorded values (each metric can have multiple timestamps).</p>
+  <ul>
+   <li>
+    <p><strong>timestamp</strong>: When the data point was captured (UTC timestamps in ISO 8601 format recommended). Example: <code>2024-11-28T09:00:00Z</code></p>
+   </li>
+   <li>
+    <p><strong>value</strong>: The metric’s actual value (75.5% CPU usage).</p>
+   </li>
+   <li>
+    <p><strong>attributes</strong>: Extra labels like <code>host.name</code> or <code>container_id</code>.</p>
+   </li>
+   <li>
+    <p><strong>resource</strong>: Identifies the system or service that generated the metric (<code>system-monitor</code>, <code>web-app</code>)</p>
+   </li>
+  </ul>
+ </li>
+</ul>
+<h3 id="Format"><span id="LoggingandTracingArchitecture-Format"></span>Format
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/logging-and-tracing-architechture#Format">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">JSON</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="json" data-align="wide">
+   <pre><code>{
+  "name": "cpu_usage",
+  "unit": "%",
+  "data_points": [
+    {
+      "timestamp": "2024-10-27T10:00:00Z",
+      "value": 75.5,
+      "attributes": {
+        "host.name": "expertflow-test"
+      },
+      "resource": {
+        "service.name": "system-monitor"
+      }
+    }
+  ],
+  "type": "metrics"
+}
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<div data-component="panel" role="note" data-appearance="note">
+ <div class="panel-content">
+  <p>OpenTelemetry Collector, Zipkin, Jaeger, New Relic and Datadog are using the above three JSON for collecting logging, tracing and metrics information.</p>
+ </div>
+</div>
+<div data-component="panel" role="note" data-appearance="warning">
+ <div class="panel-content">
+  <p>name, unit and at least one data-point is mandatory for metrics</p>
+ </div>
+</div>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="ab4b7594d3b99533-37" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="ab4b7594d3b99533-37">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/cx-knowledgebase/latest/solution-architecture">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Platform Architecture</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/cx-knowledgebase/latest/cx-core-and-voice-components-architecture">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">CX Core and Voice Components Architecture</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

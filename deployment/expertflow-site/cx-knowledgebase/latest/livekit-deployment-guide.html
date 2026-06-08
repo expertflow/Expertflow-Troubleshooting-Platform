@@ -1,0 +1,4461 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_32c3240c1850550cec58d45ac9e444d953226a32e7bf78e6cb55895bfe532034" data-confluence-content-id="1786740744"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/cx-knowledgebase/latest/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="SBT">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>LiveKit - Deployment Guide | Expertflow CX</title>
+		<meta property="og:title" content="LiveKit - Deployment Guide | Expertflow CX">
+		<meta property="twitter:title" content="LiveKit - Deployment Guide | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide">
+		<meta property="og:url" content="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide">
+
+		<meta name="description" content="1. Prerequisites 1.1 System Requirements Requirement Specification Operating System Debian 12 (Bookworm) CPU Minimum 4 cores (8 cores recommended) RAM Minimum …">
+		<meta property="og:description" content="1. Prerequisites 1.1 System Requirements Requirement Specification Operating System Debian 12 (Bookworm) CPU Minimum 4 cores (8 cores recommended) RAM Minimum …">
+		<meta property="twitter:description" content="1. Prerequisites 1.1 System Requirements Requirement Specification Operating System Debian 12 (Bookworm) CPU Minimum 4 cores (8 cores recommended) RAM Minimum …">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__attachments/a_2d2fd283b9c12e3cd08823985819562c420ad310b40a3d2ed8da7a81514f0281/image-20260311-072343.png?cb=c7fc518556a945a35c992ed243bb30d5">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__attachments/a_2d2fd283b9c12e3cd08823985819562c420ad310b40a3d2ed8da7a81514f0281/image-20260311-072343.png?cb=c7fc518556a945a35c992ed243bb30d5">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2026-03-31T08:26:03.367Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": true
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.js"></script>
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="0e8f7f813f5c2bf2-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="0e8f7f813f5c2bf2-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-0e8f7f813f5c2bf2-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-0e8f7f813f5c2bf2-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-0e8f7f813f5c2bf2-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="0e8f7f813f5c2bf2-3" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="0e8f7f813f5c2bf2-3">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-0e8f7f813f5c2bf2-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-0e8f7f813f5c2bf2-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="0e8f7f813f5c2bf2-4" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="0e8f7f813f5c2bf2-5" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="0e8f7f813f5c2bf2-6" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="0e8f7f813f5c2bf2-7"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="0e8f7f813f5c2bf2-7" href="/cx-knowledgebase/latest/expertflow-cx-overview" >ExpertFlow CX Overview</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="0e8f7f813f5c2bf2-9"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="0e8f7f813f5c2bf2-9" href="/cx-knowledgebase/latest/expertflow-cx-platform-overview" >Expertflow CX Platform Overview</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="0e8f7f813f5c2bf2-12"						aria-labelledby="0e8f7f813f5c2bf2-11"
+					></button>
+				<a id="0e8f7f813f5c2bf2-11" href="/cx-knowledgebase/latest/solutions" >Solutions</a>
+			</div>
+
+<ul  id="0e8f7f813f5c2bf2-12" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="0e8f7f813f5c2bf2-14"						aria-labelledby="0e8f7f813f5c2bf2-13"
+					></button>
+				<a id="0e8f7f813f5c2bf2-13" href="/cx-knowledgebase/latest/customer-channels" >Omnichannel Engagement</a>
+			</div>
+
+<ul  id="0e8f7f813f5c2bf2-14" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="0e8f7f813f5c2bf2-15"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="0e8f7f813f5c2bf2-15" href="/cx-knowledgebase/latest/digital-channels" >Digital Channels</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="0e8f7f813f5c2bf2-17"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="0e8f7f813f5c2bf2-17" href="/cx-knowledgebase/latest/email" >Email</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="0e8f7f813f5c2bf2-20"						aria-labelledby="0e8f7f813f5c2bf2-19"
+					></button>
+				<a id="0e8f7f813f5c2bf2-19" href="/cx-knowledgebase/latest/cx-voice" >Voice and Video</a>
+			</div>
+
+<ul  id="0e8f7f813f5c2bf2-20" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="0e8f7f813f5c2bf2-21"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="0e8f7f813f5c2bf2-21" href="/cx-knowledgebase/latest/voice-calls-in-expertflow-cx-overview" >Voice Calls in Expertflow CX Overview</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="0e8f7f813f5c2bf2-23" href="/cx-knowledgebase/latest/web-app-calls" >Web &amp; App Calls</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="0e8f7f813f5c2bf2-24"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="0e8f7f813f5c2bf2-24" href="/cx-knowledgebase/latest/cx-sip-proxy" >CX SIP Proxy</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="0e8f7f813f5c2bf2-26"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="0e8f7f813f5c2bf2-26" href="/cx-knowledgebase/latest/cx-media-server" >CX Media Server</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="0e8f7f813f5c2bf2-28" href="/cx-knowledgebase/latest/call-forking-concepts" >Call Forking Concepts</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="0e8f7f813f5c2bf2-29"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="0e8f7f813f5c2bf2-29" href="/cx-knowledgebase/latest/ef-dialer-release-notes" >CX Dialer</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="0e8f7f813f5c2bf2-31"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="0e8f7f813f5c2bf2-31" href="/cx-knowledgebase/latest/cx-voice-deployment" >CX Voice Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="0e8f7f813f5c2bf2-33"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="0e8f7f813f5c2bf2-33" href="/cx-knowledgebase/latest/cx-voice-configuration-guide" >CX Voice Channel Configuration Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="0e8f7f813f5c2bf2-35"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="0e8f7f813f5c2bf2-35" href="/cx-knowledgebase/latest/troubleshooting-for-cx-voice" >Troubleshooting for CX Voice</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="0e8f7f813f5c2bf2-37"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="0e8f7f813f5c2bf2-37" href="/cx-knowledgebase/latest/cx-voice-upgrade-guides" >CX Voice Upgrade Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="0e8f7f813f5c2bf2-39" href="/cx-knowledgebase/latest/cx-voice-limitations" >CX-Voice Limitations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="0e8f7f813f5c2bf2-40" href="/cx-knowledgebase/latest/livekit-deployment-guide" aria-current="page">LiveKit - Deployment Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="0e8f7f813f5c2bf2-41" href="/cx-knowledgebase/latest/ai-voice-agent-system-livekit-automated-call-handling-intelligent-routing" >AI Voice Agent System (LiveKit) — Automated Call Handling &amp; Intelligent Routing</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="0e8f7f813f5c2bf2-42"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="0e8f7f813f5c2bf2-42" href="/cx-knowledgebase/latest/channel-connector-developer-guide" >Channel Connector Developer Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="0e8f7f813f5c2bf2-44"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="0e8f7f813f5c2bf2-44" href="/cx-knowledgebase/latest/nlu-digital-bots" >NLU / Digital Bots</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="0e8f7f813f5c2bf2-46" href="/cx-knowledgebase/latest/ai-self-service" >AI &amp; Self-Service</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="0e8f7f813f5c2bf2-47" href="/cx-knowledgebase/latest/agent-ai-assistance" >Agent Assistance</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="0e8f7f813f5c2bf2-48"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="0e8f7f813f5c2bf2-48" href="/cx-knowledgebase/latest/quality-management" >Quality Management</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="0e8f7f813f5c2bf2-50"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="0e8f7f813f5c2bf2-50" href="/cx-knowledgebase/latest/cx-surveys" >Surveys</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="0e8f7f813f5c2bf2-52"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="0e8f7f813f5c2bf2-52" href="/cx-knowledgebase/latest/browser-based-calling" >Browser-Based Calling</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="0e8f7f813f5c2bf2-54" href="/cx-knowledgebase/latest/untitled-live-doc-2026-04-13" >Untitled live doc 2026-04-13</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="0e8f7f813f5c2bf2-55"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="0e8f7f813f5c2bf2-55" href="/cx-knowledgebase/latest/platform" >Platform</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="0e8f7f813f5c2bf2-57"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="0e8f7f813f5c2bf2-57" href="/cx-knowledgebase/latest/deployment-installation" >Deployment &amp; Installation</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="0e8f7f813f5c2bf2-59"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="0e8f7f813f5c2bf2-59" href="/cx-knowledgebase/latest/reports" >Reports and Analytics</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="0e8f7f813f5c2bf2-61"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="0e8f7f813f5c2bf2-61" href="/cx-knowledgebase/latest/resources" >Resources</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="0e8f7f813f5c2bf2-63"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="0e8f7f813f5c2bf2-63" href="/cx-knowledgebase/latest/contact-center-personas" >Contact Center Personas</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="0e8f7f813f5c2bf2-65" href="/cx-knowledgebase/latest/user-inactivity-logout" >User Inactivity Logout</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="0e8f7f813f5c2bf2-66" href="/cx-knowledgebase/latest/agent-desk-release-strategy" >Agent Desk Release Strategy</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="0e8f7f813f5c2bf2-67" href="/cx-knowledgebase/latest/channels-integration-onboarding-guide-s" >Channels Integration - Onboarding guide(s)</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="0e8f7f813f5c2bf2-68" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="0e8f7f813f5c2bf2-68">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest">
+										Expertflow CX
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest/solutions">
+										Solutions
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest/customer-channels">
+										Omnichannel Engagement
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest/cx-voice">
+										Voice and Video
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="0e8f7f813f5c2bf2-69">
+			<h2 class="toc-heading" id="0e8f7f813f5c2bf2-69">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>LiveKit - Deployment Guide</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+	
+
+	
+	
+
+	
+
+			
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+
+	
+
+
+	
+	
+	
+	
+		
+	
+	
+	
+	
+	
+	
+
+	
+		
+		
+	
+	
+	
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<h2 id="1.-Prerequisites"><span id="LiveKit-DeploymentGuide-1.Prerequisites"></span>1. Prerequisites
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#1.-Prerequisites">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="1.1-System-Requirements"><span id="LiveKit-DeploymentGuide-1.1SystemRequirements"></span>1.1 System Requirements
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#1.1-System-Requirements">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<div class="theme-table" style="--width: 1080px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="center" data-number-column="false">
+     <table>
+      <tbody>
+       <tr>
+        <th>
+         <p><strong>Requirement</strong></p>
+        </th>
+        <th>
+         <p><strong>Specification</strong></p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Operating System</strong></p>
+        </td>
+        <td>
+         <p>Debian 12 (Bookworm)</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>CPU</strong></p>
+        </td>
+        <td>
+         <p>Minimum 4 cores (8 cores recommended)</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>RAM</strong></p>
+        </td>
+        <td>
+         <p>Minimum 8GB (16GB recommended)</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Storage</strong></p>
+        </td>
+        <td>
+         <p>Minimum 50GB free space</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="1.2-Required-Software"><span id="LiveKit-DeploymentGuide-1.2RequiredSoftware"></span>1.2 Required Software
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#1.2-Required-Software">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>Docker (Version 24.0+)</p>
+ </li>
+ <li>
+  <p>Docker Compose (Version 2.20+)</p>
+ </li>
+ <li>
+  <p>Git (For Cloning Repo)</p>
+ </li>
+</ul>
+<h3 id="1.3-External-Dependencies"><span id="LiveKit-DeploymentGuide-1.3ExternalDependencies"></span>1.3 External Dependencies
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#1.3-External-Dependencies">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>FusionPBX Server (can be on separate VM)</p>
+ </li>
+ <li>
+  <p>OpenAI API Key with Realtime API access</p>
+ </li>
+ <li>
+  <p>CCM Endpoint (Expertflow Unified Agent tenant)</p>
+ </li>
+</ul>
+<h3 id="1.4-Required-Ports"><span id="LiveKit-DeploymentGuide-1.4RequiredPorts"></span>1.4 Required Ports
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#1.4-Required-Ports">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<div class="theme-table" style="--width: 1074px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="center" data-number-column="false">
+     <table>
+      <tbody>
+       <tr>
+        <th>
+         <p><strong>Services</strong></p>
+        </th>
+        <th>
+         <p><strong>Ports</strong></p>
+        </th>
+        <th>
+         <p><strong>Protocol</strong></p>
+        </th>
+        <th>
+         <p><strong>Description</strong></p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p>LiveKit Server</p>
+        </td>
+        <td>
+         <p>7880, 7881</p>
+        </td>
+        <td>
+         <p>TCP</p>
+        </td>
+        <td>
+         <p>WebSocket/HTTP API</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>LiveKit RTC</p>
+        </td>
+        <td>
+         <p>50000-50200</p>
+        </td>
+        <td>
+         <p>UDP</p>
+        </td>
+        <td>
+         <p>WebRTC media streams</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>SIP Service</p>
+        </td>
+        <td>
+         <p>5060</p>
+        </td>
+        <td>
+         <p>TCP/UDP</p>
+        </td>
+        <td>
+         <p>SIP signalling</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>RTP Media</p>
+        </td>
+        <td>
+         <p>10000-10200</p>
+        </td>
+        <td>
+         <p>UDP</p>
+        </td>
+        <td>
+         <p>Voice/media streams</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Redis</p>
+        </td>
+        <td>
+         <p>6379</p>
+        </td>
+        <td>
+         <p>TCP</p>
+        </td>
+        <td>
+         <p>State management (internal)</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Dashboard</p>
+        </td>
+        <td>
+         <p>8000</p>
+        </td>
+        <td>
+         <p>TCP</p>
+        </td>
+        <td>
+         <p>Web interface</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>SSH</p>
+        </td>
+        <td>
+         <p>22</p>
+        </td>
+        <td>
+         <p>TCP</p>
+        </td>
+        <td>
+         <p>Remote access (If needed)</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<hr>
+<h2 id="2.-Installation-Steps"><span id="LiveKit-DeploymentGuide-2.InstallationSteps"></span>2. Installation Steps
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#2.-Installation-Steps">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="Step-1:-Install-Docker"><span id="LiveKit-DeploymentGuide-Step1:InstallDocker"></span>Step 1: Install Docker
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#Step-1:-Install-Docker">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p><strong>Check if Docker is already installed:</strong></p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>docker --version
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>If Docker is installed, you'll see version information. <strong>Skip to Step 2.</strong></p>
+<p>If not installed, run the following:</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code># Update system packages
+sudo apt update &amp;&amp; sudo apt upgrade -y
+
+# Install required packages
+sudo apt install -y ca-certificates curl
+
+# Add Docker's official GPG key
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add Docker repository
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian $(. /etc/os-release &amp;&amp; echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null
+
+# Update package index
+sudo apt update
+
+# Install Docker
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# Add current user to docker group
+sudo usermod -aG docker $USER
+
+# Apply group changes
+newgrp docker
+
+# Verify installation
+docker --version
+docker compose version
+```
+
+**Expected output:**
+```
+Docker version 24.x.x
+Docker Compose version 2.x.x
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="Step-2:-Configure-Firewall-(Iptables)"><span id="LiveKit-DeploymentGuide-Step2:ConfigureFirewall(Iptables)"></span>Step 2: Configure Firewall (Iptables)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#Step-2:-Configure-Firewall-(Iptables)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code># Allow SSH (IMPORTANT: Don't lock yourself out!)
+sudo iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+
+# Allow LiveKit Server (WebSocket/HTTP)
+sudo iptables -A INPUT -p tcp --dport 7880 -j ACCEPT
+sudo iptables -A INPUT -p tcp --dport 7881 -j ACCEPT
+
+# Allow LiveKit RTC (WebRTC media)
+sudo iptables -A INPUT -p udp --dport 50000:50200 -j ACCEPT
+
+# Allow SIP Service
+sudo iptables -A INPUT -p tcp --dport 5060 -j ACCEPT
+sudo iptables -A INPUT -p udp --dport 5060 -j ACCEPT
+
+# Allow RTP Media
+sudo iptables -A INPUT -p udp --dport 10000:10200 -j ACCEPT
+
+# Allow Dashboard
+sudo iptables -A INPUT -p tcp --dport 8000 -j ACCEPT
+
+# Allow established connections
+sudo iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# Allow loopback
+sudo iptables -A INPUT -i lo -j ACCEPT
+
+# Save iptables rules
+sudo apt install -y iptables-persistent
+sudo netfilter-persistent save
+
+# Verify rules
+sudo iptables -L -n -v
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="Step-3:-Clone-Repository"><span id="LiveKit-DeploymentGuide-Step3:CloneRepository"></span>Step 3: Clone Repository
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#Step-3:-Clone-Repository">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code># Navigate to home directory
+cd ~
+
+# Install git if not already installed
+sudo apt update
+sudo apt install -y git
+
+# Clone repository
+git clone -b develop https://efcx:RecRpsuH34yqp56YRFUb@gitlab.expertflow.com/rtc/livekit.git livekit-project
+
+# Navigate to project
+cd livekit-project
+
+# Verify directory structure
+ls -la
+```
+
+**Expected output:**
+```
+agent/
+dashboard/
+infrastructure/
+dispatch-rule.json
+README.md
+requirements-linux.txt
+requirements-window.txt
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="Step-4:-Configure-Infrastructure"><span id="LiveKit-DeploymentGuide-Step4:ConfigureInfrastructure"></span>Step 4: Configure Infrastructure
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#Step-4:-Configure-Infrastructure">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<h4 id="4.1-Update-SIP-Service-External-IP-and-Port-(If-needed)"><span id="LiveKit-DeploymentGuide-4.1UpdateSIPServiceExternalIPandPort(Ifneeded)"></span>4.1 Update SIP Service External IP and Port (If needed)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#4.1-Update-SIP-Service-External-IP-and-Port-(If-needed)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>cd ~/livekit-project/infrastructure
+nano docker-compose.yaml
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Find this line:</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>external_ip: "192.168.1.161"
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Change to your VM actual IP address:</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>external_ip: "YOUR_VM_IP_ADDRESS"
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>If Media server is already on same vm (5060), then you should also edit these two ports in docker-compose.yaml so sip service use 5070 port.</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>sip_port: 5070
+
+
+ ports:
+      - "5070:5070/udp"
+      - "5070:5070/tcp"
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Save and exit (Ctrl+X, Y, Enter)</p>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <p>The <code>livekit-config.yaml</code> file does <strong>NOT</strong> require any changes. The infrastructure <code>docker-compose.yaml</code> creates the network automatically, so no manual network creation is needed.</p>
+ </div>
+</div>
+<h4 id="4.2-Start-Infrastructure-Containers"><span id="LiveKit-DeploymentGuide-4.2StartInfrastructureContainers"></span>4.2 Start Infrastructure Containers
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#4.2-Start-Infrastructure-Containers">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<ul>
+ <li>
+  <p>If already media server is running on VM then it already using 5060 port so we need to map port for using sip service in docker compose file that we did above otherwise sip service container will through error.</p>
+ </li>
+</ul>
+<p>
+ <br>
+</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>cd ~/livekit-project/infrastructure
+
+# Start all infrastructure services
+docker compose up -d --build
+
+# Verify containers are running
+docker ps
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>
+ <br>
+</p>
+<h3 id="Step-5:-Configure-Dashboard"><span id="LiveKit-DeploymentGuide-Step5:ConfigureDashboard"></span>Step 5: Configure Dashboard
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#Step-5:-Configure-Dashboard">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<h4 id="5.1-Update-Dashboard-Environment"><span id="LiveKit-DeploymentGuide-5.1UpdateDashboardEnvironment"></span>5.1 Update Dashboard Environment
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#5.1-Update-Dashboard-Environment">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<ul>
+ <li>
+  <p>Change vm healthcheck ip in docker-compose.yml file.</p>
+ </li>
+</ul>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>cd ~/livekit-project/dashboard
+
+#change ip in health check line
+nano docker-compose.yml
+
+#save and exit ctrl+x,y,Enter
+#create file using below command
+nano .env
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<ul>
+ <li>
+  <p><strong>Paste this below by making relevant changes</strong></p>
+ </li>
+ <li>
+  <p>Change LiveKit server URL with your vm ip on which LiveKit is running, API KEY and API SECRET (api credentials from sip server docker-compose.yml in infrastructure directory).</p>
+ </li>
+</ul>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code># LiveKit Server Configuration
+LIVEKIT_URL=http://192.168.1.161:7880
+LIVEKIT_API_KEY=devkey
+LIVEKIT_API_SECRET=h1J2kL3mN4pQ5rS6tU7vW8xY9zA0bC1d
+
+# Admin Authentication
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=shahzaib123
+
+# Application Settings - USE ANY APP_SECRET_KEY THIS IS RANDOM KEY
+APP_SECRET_KEY=A3F7D9E2C1B8F4E6D5A9C7F3E2D1B4C8F6E5D9A7C3F1E4D8B2C6F5E9D7A1C3F8
+DEBUG=false
+HOST=0.0.0.0
+PORT=8000
+
+# Feature Flags
+ENABLE_SIP=true
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>All other settings are pre-configured and do not need changes.</p>
+<ul>
+ <li>
+  <p><strong>Save and exit</strong> if you made changes (Ctrl+X, Y, Enter)</p>
+ </li>
+</ul>
+<h4 id="5.2-Start-Dashboard-Container"><span id="LiveKit-DeploymentGuide-5.2StartDashboardContainer"></span>5.2 Start Dashboard Container
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#5.2-Start-Dashboard-Container">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>cd ~/livekit-project/dashboard
+
+# Start dashboard
+docker compose up -d
+
+# Verify container is running
+docker ps | grep dashboard
+
+# Check logs
+docker logs livekit-dashboard --tail 50
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>You can access dashboard on &lt;<a href="http://192.168.1.161:8000/" data-scope="external" rel="external noreferrer">your vm ip&gt; :8000</a></p>
+<h3 id="Step-6:-Configure-AI-Agent"><span id="LiveKit-DeploymentGuide-Step6:ConfigureAIAgent"></span>Step 6: Configure AI Agent
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#Step-6:-Configure-AI-Agent">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<h4 id="6.1-Update-Agent-Environment-Variables"><span id="LiveKit-DeploymentGuide-6.1UpdateAgentEnvironmentVariables"></span>6.1 Update Agent Environment Variables
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#6.1-Update-Agent-Environment-Variables">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>cd ~/livekit-project/agent/src
+#Create .env file
+nano .env
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<ul>
+ <li>
+  <p><strong>Paste this below by making relevant changes</strong></p>
+ </li>
+ <li>
+  <p>Change LiveKit server URL with your vm ip on which LiveKit is running, API KEY and API SECRET (api credentials from sip server docker-compose.yml in infrastructure directory)</p>
+ </li>
+ <li>
+  <p>For now we are using OpenAI Realtime API so we don’t need any other vendor to add.</p>
+ </li>
+</ul>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>#--------------------------------- LIVEKIT AGENT env CONFIGURATION ------------------------
+
+LIVEKIT_URL=" http://192.168.1.161:7880"
+LIVEKIT_API_KEY=devkey
+LIVEKIT_API_SECRET=h1J2kL3mN4pQ5rS6tU7vW8xY9zA0bC1d
+
+#DEEPGRAM_API_KEY=2032fb4af64455ed37f58822e59f489f53fe6eb1
+#ELEVENLABS_API_KEY=sk_4b397d08a5c52179b94766c4f3ba6c98fbe2d30d37584468
+#OPENAI_API_KEY=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
+
+OPENAI_API_KEY=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
+#DEEPGRAM_API_KEY=65d9a15e1b1f9f43329d1342d2071043a60d372a
+LIVEKIT_ENABLE_TRANSCRIPTION=true
+
+#This api used for Elevenlabs agent integration with LiveKit as LiveKit directly does not support Speach to Speach for elevenlabs.
+
+#ELEVEN_API_KEY=sk_147c1d306073aea0ca26683a2aca97b355a0185d9dd53826
+#ELEVENLABS_AGENT_ID=agent_7401kh37vjbsepjrfgq0q06y8wxg
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>
+ <br>
+</p>
+<div data-component="panel" role="note" data-appearance="warning">
+ <div class="panel-content">
+  <p>Without valid API keys, the agent will fail silently. Ensure you have valid keys before proceeding.</p>
+ </div>
+</div>
+<p>(Ctrl+X ,y,Enter) Save and exit.</p>
+<h4 id="6.2-Update-Agent-Configuration"><span id="LiveKit-DeploymentGuide-6.2UpdateAgentConfiguration"></span><strong>6.2 Update Agent Configuration</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#6.2-Update-Agent-Configuration">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>cd ~/livekit-project/agent/src
+nano complete_flow_agent.py
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Find these lines (around line 360-390) and update:</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code># ⚠️ UPDATE THESE VALUES FOR TRANSFER TO AGENT:
+fusionpbx_ip = "192.168.1.17"          # Your FusionPBX Server IP
+agent_extension = "99900"              # Extension that routes to human agent Inbound route on FusionPBX.
+service_identifier = "1122"            # Your service identifier should be same as you channel in Unified Admin
+
+# ⚠️ UPDATE CCM ENDPOINT:
+CCM_URL = "https://YOUR-TENANT.expertflow.com/ccm/message/receive"
+# Example: "https://efcx-dev2.expertflow.com/ccm/message/receive"
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Update:</p>
+<ul>
+ <li>
+  <p><code>fusionpbx_ip</code>: Your FusionPBX server IP address</p>
+ </li>
+ <li>
+  <p><code>CCM_URL</code>: Your CCM tenant URL</p>
+ </li>
+</ul>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <p>We'll update the <code>outbound_trunk_id</code> after creating the trunk in Step 7.</p>
+ </div>
+</div>
+<p>Save and exit.</p>
+<h2 id="Configuration"><span id="LiveKit-DeploymentGuide-Configuration"></span>Configuration
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#Configuration">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="Step-7:-Configure-SIP-Trunks-and-Dispatch-Rules"><span id="LiveKit-DeploymentGuide-Step7:ConfigureSIPTrunksandDispatchRules"></span>Step 7: Configure SIP Trunks and Dispatch Rules
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#Step-7:-Configure-SIP-Trunks-and-Dispatch-Rules">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<h4 id="7.1-Install-LiveKit-CLI"><span id="LiveKit-DeploymentGuide-7.1InstallLiveKitCLI"></span>7.1 Install LiveKit CLI
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#7.1-Install-LiveKit-CLI">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>sudo apt update
+sudo apt install -y jq
+
+curl -sSL https://get.livekit.io/cli | bash
+# Verify installation
+lk --version
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Connect LiveKit CLI to server so we can manage trunks,dispatch rules etc form lk cli as well.</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code># Configure CLI environment
+export LIVEKIT_URL=http://localhost:7880
+export LIVEKIT_API_KEY=devkey
+export LIVEKIT_API_SECRET=h1J2kL3mN4pQ5rS6tU7vW8xY9zA0bC1d
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <p>These <code>LIVEKIT_API_KEY</code> and <code>LIVEKIT_API_SECRET</code> are set in <code>docker-compose.yml</code>. When you run these <code>export</code> commands, you're setting <strong>environment variables</strong> in your current terminal session. These tell the LiveKit CLI (<code>lk</code> command) <strong>where to connect</strong> and <strong>how to authenticate</strong>.</p>
+ </div>
+</div>
+<p>
+ <br>
+</p>
+<h4 id="7.2-Create-Inbound-Trunk-(FusionPBX-→-LiveKit)"><span id="LiveKit-DeploymentGuide-7.2CreateInboundTrunk(FusionPBX→LiveKit)"></span>7.2 Create Inbound Trunk (FusionPBX → LiveKit)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#7.2-Create-Inbound-Trunk-(FusionPBX-→-LiveKit)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>Now we need to create inbound,outbound trunks and dispatch rules for our LiveKit agent. We will create inbound trunk using <code>lk cli</code> but for dispatch rules and outbound trunks we will use dashboard for ease.</p>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <p><strong>Why lk cli for inbound trunk?</strong> The dashboard doesn't support custom header mapping, which is required for passing caller information to the agent.</p>
+ </div>
+</div>
+<p>Create trunk configuration file:</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>cd ~/livekit-project
+nano inbound-trunk.json
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Add this content:</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>   {
+  "trunk": {
+    "name": "Testing Trunk",
+    "numbers": ["10005"],
+    "headers_to_attributes": {
+      "P-Asserted-Identity": "caller_id",
+      "From": "from_header",
+      "X-Caller-Extension": "caller_extension"
+    },
+    "include_headers": 1,
+    "allowed_addresses": ["192.168.1.17"]
+  }
+}
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p><strong>Update:</strong></p>
+<ul>
+ <li>
+  <p><code>allowed_addresses</code>: Your FusionPBX server IP (e.g., <code>"192.168.1.17"</code>).</p>
+ </li>
+ <li>
+  <p><code>numbers</code>: Extension that customers dial to reach the AI (e.g., <code>["10005"]</code>)</p>
+ </li>
+</ul>
+<p>Save and exit.</p>
+<p><strong>Create the trunk:</strong></p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>lk sip inbound create inbound-trunk.json
+
+**Expected output:**
+Created trunk: ST_&lt;GENERATED_TRUNK_ID&gt;
+
+**SAVE THIS TRUNK ID** - you'll need it for the dispatch rule.
+
+#### 7.3 Access Dashboard and Create Outbound Trunk
+
+**Open your browser and navigate to:**
+```
+http://YOUR_VM_IP:8000
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Example: <code>http://192.168.1.161:8000</code></p>
+<p><strong>Login credentials:</strong></p>
+<ul>
+ <li>
+  <p>Username: <code>admin</code> (or what you set in <code>.env</code>of dashboard)</p>
+ </li>
+ <li>
+  <p>Password: (what you set in dashboard <code>.env</code>)</p>
+ </li>
+</ul>
+<h4 id="7.3-Create-Outbound-Trunk"><span id="LiveKit-DeploymentGuide-7.3CreateOutboundTrunk"></span><strong>7.3 Create Outbound Trunk</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#7.3-Create-Outbound-Trunk">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>Now we create outbound trunk easily from dashboard, go to Outbound calls form left side bar and then click create new trunk you and add details manually. Then copy trunk id.</p>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 1377px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_2d2fd283b9c12e3cd08823985819562c420ad310b40a3d2ed8da7a81514f0281/image-20260311-072343.png?cb=c7fc518556a945a35c992ed243bb30d5" alt="image-20260311-072343.png" data-scope="internal" width="1528" height="770">
+  </div>
+ </image-lightbox>
+</div>
+<p>Copy the Trunk ID (starts with <code>ST_...</code>)</p>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <p>SAVE THIS OUTBOUND TRUNK ID - you need to update the agent code with it.</p>
+ </div>
+</div>
+<h4 id="7.4-Update-Agent-with-Outbound-Trunk-ID"><span id="LiveKit-DeploymentGuide-7.4UpdateAgentwithOutboundTrunkID"></span><strong>7.4 Update Agent with Outbound Trunk ID</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#7.4-Update-Agent-with-Outbound-Trunk-ID">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>cd ~/livekit-project/agent/src
+nano complete_flow_agent.py
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Find this line (around line 380-385):</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>outbound_trunk_id = "ST_W7jqvDFA2VgG"
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Replace with your new outbound trunk ID:</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>outbound_trunk_id = "ST_YOUR_NEW_TRUNK_ID"
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Save and exit.</p>
+<h4 id="7.5-Build-and-Start-Agent-Container"><span id="LiveKit-DeploymentGuide-7.5BuildandStartAgentContainer"></span>7.5 Build and Start Agent Container
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#7.5-Build-and-Start-Agent-Container">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>Be patience initially <strong>it will take time</strong> to build.</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>cd ~/livekit-project/agent
+
+# Build the agent Docker image
+docker compose build
+
+# Start the agent
+docker compose up -d --build
+
+# Verify agent is running
+docker ps | grep agent
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h4 id="7.5-Create-Dispatch-Rule-(via-Dashboard)"><span id="LiveKit-DeploymentGuide-7.5CreateDispatchRule(viaDashboard)"></span><strong>7.5 Create Dispatch Rule (via Dashboard)</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#7.5-Create-Dispatch-Rule-(via-Dashboard)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p><strong>In the Dashboard:</strong></p>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 1377px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_bc18055fdc2695338dd1e267203054d85f5179ed121ded2295279626fa75c6d8/image-20260305-075449.png?cb=290d5e35082c6653bf5bbee4046f8978" alt="image-20260305-075449.png" data-scope="internal" width="1534" height="770">
+  </div>
+ </image-lightbox>
+</div>
+<ol>
+ <li>
+  <p>Navigate to left sidebar <strong>Inbound Rules → Dispatch Rules</strong></p>
+ </li>
+ <li>
+  <p>Click <strong>"Create Rule"</strong></p>
+ </li>
+ <li>
+  <p>Fill in the form <strong>or </strong>you can switch to json and write json as well.</p>
+  <ul>
+   <li>
+    <p><strong>Name:</strong> <code>Main Dispatch Rule</code></p>
+   </li>
+   <li>
+    <p><strong>Trunk:</strong> Select your <strong>inbound trunk </strong> (FusionPBX Inbound Trunk)</p>
+   </li>
+   <li>
+    <p><strong>Room Prefix:</strong> <code>_FreeSWITCH_</code> (Optional)</p>
+   </li>
+   <li>
+    <p><strong>Agent Name:</strong> Leave blank (for automatic dispatch)</p>
+   </li>
+  </ul>
+ </li>
+ <li>
+  <p>Click <strong>"Create"</strong></p>
+ </li>
+</ol>
+<p>
+ <br>
+</p>
+<hr>
+<h2 id="FusionPBX-Setup"><span id="LiveKit-DeploymentGuide-FusionPBXSetup"></span>FusionPBX Setup
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#FusionPBX-Setup">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="1.-Create-extension-in-FusionPBX"><span id="LiveKit-DeploymentGuide-1.CreateextensioninFusionPBX"></span>1. Create extension in FusionPBX
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#1.-Create-extension-in-FusionPBX">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>Should select relevant tenant domain from right side of media server.</p>
+ </li>
+ <li>
+  <p>Hover on accounts and then go to extensions click Add.</p>
+ </li>
+</ul>
+<h3 id="2.-Outbound-Route-(FusionPBX-→-LiveKit)"><span id="LiveKit-DeploymentGuide-2.OutboundRoute(FusionPBX→LiveKit)"></span>2. Outbound Route (FusionPBX → LiveKit)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#2.-Outbound-Route-(FusionPBX-→-LiveKit)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p><strong>Configuration:</strong></p>
+<ul>
+ <li>
+  <p><strong>Go to:</strong> Dialplan → Outbound Routes → Add</p>
+ </li>
+ <li>
+  <p><strong>Gateway Setup: </strong></p>
+ </li>
+ <li>
+  <p>When creating the gateway in FusionPBX:</p>
+  <p><strong>Gateway Address:</strong> <code>194.146.13.204:5070</code></p>
+  <p>Because:</p>
+  <ul>
+   <li>
+    <p>FreeSWITCH's default SIP port is 5060 (already in use by FreeSWITCH itself)</p>
+   </li>
+   <li>
+    <p>LiveKit SIP service is mapped to host port <strong>5070</strong> (which internally is 5060 in the container)</p>
+   </li>
+   <li>
+    <p>So FusionPBX must send calls to <strong>5070</strong> to reach LiveKit</p>
+   </li>
+  </ul>
+ </li>
+</ul>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 1137px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_c82f8b7b0f933a00c223283eefe19f652d887eba9c11131ea7049352659b3498/image-20260316-060943.png?cb=67964546aaee7ee73bba1dc77bdf70c3" alt="image-20260316-060943.png" data-scope="internal" width="1521" height="772">
+  </div>
+ </image-lightbox>
+</div>
+<ul>
+ <li>
+  <p>Create a new gateway pointing to: <code>YOUR_LIVEKIT_VM_IP:5070</code></p>
+ </li>
+ <li>
+  <p>Example: <code>192.168.1.161:5070</code></p>
+ </li>
+ <li>
+  <p><strong>Route Configuration:</strong></p>
+  <ul>
+   <li>
+    <p><strong>Create any Destination Number:</strong> <code>99900</code></p>
+    <div class="theme-block-image">
+     <image-lightbox>
+      <div class="block-image" style="--width: 1329px" data-component="image" data-align="align-center">
+       <img src="/__attachments/a_e4e44198bc55d917a47f359d60bbb56c970418f6c44b60b7816680e5c4594947/image-20260305-080440.png?cb=965b23febc62000ce769de1c11bcbc35" alt="image-20260305-080440.png" data-scope="internal" width="1522" height="772">
+      </div>
+     </image-lightbox>
+    </div>
+   </li>
+   <li>
+    <p><strong>Outbound Route:</strong> Select the LiveKit gateway created above and create outbound route</p>
+   </li>
+   <li>
+    <code-snippet class="theme-code-snippet">
+     <div class="theme-code-snippet-header">XML</div>
+     <scroll-shadow>
+      <div data-component="code" data-language="xml">
+       <pre><code>&lt;extension name="Livekit_Sip_for_1.161.1234" continue="false" uuid="ea8f0d57-6ed8-429b-b932-6b5f2077b707"&gt;
+	&lt;condition field="${user_exists}" expression="false"/&gt;
+	&lt;condition field="destination_number" expression="^(10005)$"&gt;
+		&lt;action application="log" data="--------------------------------------Shahzaib LiveKit---------------------------------------------------------"/&gt;
+		&lt;action application="export" data="call_direction=outbound" inline="true"/&gt;
+		&lt;action application="unset" data="call_timeout"/&gt;
+		&lt;action application="set" data="hangup_after_bridge=true"/&gt;
+		&lt;action application="set" data="effective_caller_id_name=${caller_id_name}"/&gt;
+		&lt;action application="set" data="effective_caller_id_number=${caller_id_number}"/&gt;
+		&lt;action application="set" data="inherit_codec=true"/&gt;
+		&lt;action application="set" data="ignore_display_updates=true"/&gt;
+		&lt;action application="set" data="callee_id_number=$1"/&gt;
+		&lt;action application="set" data="continue_on_fail=1,2,3,6,18,21,27,28,31,34,38,41,42,44,58,88,111,403,501,602,607,809"/&gt;
+		&lt;action application="set" data="sip_h_P-Asserted-Identity=sip:${caller_id_number}@${domain_name}"/&gt;
+		&lt;action application="bridge" data="sofia/gateway/a77c367f-b043-4407-9187-d5b1850bad08/$1"/&gt;
+	&lt;/condition&gt;
+&lt;/extension&gt;
+</code></pre>
+      </div>
+     </scroll-shadow>
+     <copy-clipboard class="theme-code-snippet-copy">
+      <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+       <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+      </svg>
+     </copy-clipboard>
+    </code-snippet>
+    <div class="theme-block-image">
+     <image-lightbox>
+      <div class="block-image" style="--width: 1329px" data-component="image" data-align="align-center">
+       <img src="/__attachments/a_9331bf4be74209c4af47f334854566bf9d115225c2cdefd33eae65c26db470b9/image-20260305-080658.png?cb=312d40a036bc2e4b8d22630ed3a4e05a" alt="image-20260305-080658.png" data-scope="internal" width="1530" height="776">
+      </div>
+     </image-lightbox>
+    </div>
+   </li>
+  </ul>
+ </li>
+</ul>
+<div data-component="panel" role="note" data-appearance="warning">
+ <div class="panel-content">
+  <p>All headers Variables in Outbound route should be same as it is just change your gateway in last line.</p>
+ </div>
+</div>
+<h3 id="Inbound-Route-(LiveKit-→-FusionPBX)"><span id="LiveKit-DeploymentGuide-InboundRoute(LiveKit→FusionPBX)"></span>Inbound Route (LiveKit → FusionPBX)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#Inbound-Route-(LiveKit-→-FusionPBX)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p><strong>Purpose:</strong> When LiveKit transfers a call to extension <code>99900</code>, route it to a human agent.</p>
+<p><strong>Configuration:</strong></p>
+<ol>
+ <li>
+  <p><strong>Go to:</strong> Dialplan → Public → Add</p>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 1353px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_7c7e6020b8c4b2ab3dce409181cf480333e466d1b0bc08746f74ade486dde032/image-20260305-081343.png?cb=32824af758b4adf7b5033cd4814b1dbc" alt="image-20260305-081343.png" data-scope="internal" width="1529" height="777">
+    </div>
+   </image-lightbox>
+  </div>
+ </li>
+</ol>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <p>1122 is internal DN there which is our channel id in Unified Admin.</p>
+ </div>
+</div>
+<p>
+ <br>
+</p>
+<ol start="2">
+ <li>
+  <p><strong>Go to Dialplan:</strong></p>
+ </li>
+</ol>
+<p>Add a dialplan for connecting to Voice Connector. Number should be same as you service identifier is in unified admin side.</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">XML</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="xml" data-align="wide">
+   <pre><code>&lt;extension name="cxIvr-1122" continue="false" uuid="0024d96f-ab8e-4fd1-822b-38f5f2bcf97d"&gt;
+	&lt;condition field="destination_number" expression="^1122$"&gt;
+		&lt;action application="set" data="caller_id_number=${sip_h_X-Customer-Number}"/&gt;
+		&lt;action application="log" data="...........call land on ${caller_id_number}"/&gt;
+		&lt;action application="set" data="effective_caller_id_number=${sip_h_X-Customer-Number}"/&gt;
+		&lt;action application="set" data="effective_caller_id_name=${sip_h_X-Customer-Number}"/&gt;
+		&lt;action application="lua" data="vcApi.lua"/&gt;
+	&lt;/condition&gt;
+&lt;/extension&gt;
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 1377px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_87a00320b206213cb6caaa6398a8e728f58a8341f24794e5ded162a7f5a51364/image-20260309-061337.png?cb=49bac49e5ce4e0bd703fa55b47dd1feb" alt="image-20260309-061337.png" data-scope="internal" width="1513" height="777">
+  </div>
+ </image-lightbox>
+</div>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <p>After making changes, reload the dialplan from FusionPBX interface or run <code>reloadxml</code> in FreeSwitch CLI.</p>
+ </div>
+</div>
+<hr>
+<h2 id="Testing"><span id="LiveKit-DeploymentGuide-Testing"></span>Testing
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#Testing">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="Verify-All-Containers"><span id="LiveKit-DeploymentGuide-VerifyAllContainers"></span>Verify All Containers
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/livekit-deployment-guide#Verify-All-Containers">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>docker ps
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p><strong>Expected output - 5 running containers:</strong></p>
+<div class="theme-table" style="--width: 1800px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <tbody>
+       <tr>
+        <th>
+         <p>Container Name</p>
+        </th>
+        <th>
+         <p>Image</p>
+        </th>
+        <th>
+         <p>Status</p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p>livekit-agent</p>
+        </td>
+        <td>
+         <p>agent-livekit-agent</p>
+        </td>
+        <td>
+         <p>Up</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>livekit-dashboard</p>
+        </td>
+        <td>
+         <p>dashboard-dashboard</p>
+        </td>
+        <td>
+         <p>Up</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>infrastructure-sip-1</p>
+        </td>
+        <td>
+         <p>livekit/sip:latest</p>
+        </td>
+        <td>
+         <p>Up</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>infrastructure-livekit-1</p>
+        </td>
+        <td>
+         <p>livekit/livekit-server:latest</p>
+        </td>
+        <td>
+         <p>Up</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>infrastructure-redis-1</p>
+        </td>
+        <td>
+         <p>redis:7-alpine</p>
+        </td>
+        <td>
+         <p>Up</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="0e8f7f813f5c2bf2-70" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="0e8f7f813f5c2bf2-70">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/cx-knowledgebase/latest/cx-voice-limitations">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">CX-Voice Limitations</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/cx-knowledgebase/latest/ai-voice-agent-system-livekit-automated-call-handling-intelligent-routing">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">AI Voice Agent System (LiveKit) — Automated Call Handling &amp; Intelligent Routing</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

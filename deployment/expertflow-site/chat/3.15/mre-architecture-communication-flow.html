@@ -1,0 +1,3355 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_5218b15275b2ab5fed63d375991c8e8bf10cb7d8d9e8a1413d34087f81e0fc5b" data-confluence-content-id="35226083"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/chat/3.15/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="CHAT">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>MRE Architecture &amp; Communication Flow | Expertflow CX</title>
+		<meta property="og:title" content="MRE Architecture &amp; Communication Flow | Expertflow CX">
+		<meta property="twitter:title" content="MRE Architecture &amp; Communication Flow | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow">
+		<meta property="og:url" content="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow">
+
+		<meta name="description" content="Getting Started This guide describes the concept of Precision Queue, its contributing elements, and configuration. MRE triggers (getting newly created agents f…">
+		<meta property="og:description" content="Getting Started This guide describes the concept of Precision Queue, its contributing elements, and configuration. MRE triggers (getting newly created agents f…">
+		<meta property="twitter:description" content="Getting Started This guide describes the concept of Precision Queue, its contributing elements, and configuration. MRE triggers (getting newly created agents f…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2023-12-12T13:37:54.743Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": true
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="69da8ce921997ac4-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="69da8ce921997ac4-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-69da8ce921997ac4-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-69da8ce921997ac4-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-69da8ce921997ac4-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="69da8ce921997ac4-3" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="69da8ce921997ac4-3">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-69da8ce921997ac4-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-69da8ce921997ac4-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="69da8ce921997ac4-4" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="69da8ce921997ac4-5" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="69da8ce921997ac4-6" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="69da8ce921997ac4-7" href="/chat/3.15/release-notes" >Release Notes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="69da8ce921997ac4-8"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="69da8ce921997ac4-8" href="/chat/3.15/user-guides" >User Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="69da8ce921997ac4-10"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="69da8ce921997ac4-10" href="/chat/3.15/agent-platforms" >Agent Platforms</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="69da8ce921997ac4-12"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="69da8ce921997ac4-12" href="/chat/3.15/media-channels" >Media Channels</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="69da8ce921997ac4-14" href="/chat/3.15/rich-media-messaging" >Rich Media Messaging</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="69da8ce921997ac4-15"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="69da8ce921997ac4-15" href="/chat/3.15/bots" >Bots</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="69da8ce921997ac4-17"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="69da8ce921997ac4-17" href="/chat/3.15/reports" >Reports</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="69da8ce921997ac4-19"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="69da8ce921997ac4-19" href="/chat/3.15/docker-based-deployment" >Docker-based Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="69da8ce921997ac4-21"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="69da8ce921997ac4-21" href="/chat/3.15/security-and-compliance" >Security and Compliance</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="69da8ce921997ac4-23" href="/chat/3.15/solution-components" >Solution Components</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="69da8ce921997ac4-24" href="/chat/3.15/channel-manager" >Channel Manager</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="69da8ce921997ac4-25" href="/chat/3.15/sms-connector-apis-documentation" >SMS Connector APIs Documentation</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="69da8ce921997ac4-27"						aria-labelledby="69da8ce921997ac4-26"
+					></button>
+				<a id="69da8ce921997ac4-26" href="/chat/3.15/routing-engine" >Routing Engine</a>
+			</div>
+
+<ul  id="69da8ce921997ac4-27" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="69da8ce921997ac4-28" href="/chat/3.15/mre-architecture-communication-flow" aria-current="page">MRE Architecture &amp; Communication Flow</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="69da8ce921997ac4-29" href="/chat/3.15/how-estimated-wait-time-works" >How Estimated Wait Time Works</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="69da8ce921997ac4-30"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="69da8ce921997ac4-30" href="/chat/3.15/priority-routing" >Priority Routing</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="69da8ce921997ac4-32"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="69da8ce921997ac4-32" href="/chat/3.15/media-routing-api" >Media Routing API</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="69da8ce921997ac4-34" href="/chat/3.15/mre-environment-variables" >MRE Environment Variables</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="69da8ce921997ac4-35" href="/chat/3.15/mre-microservice-environment-variables" >MRE-Microservice Environment Variables</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="69da8ce921997ac4-36" href="/chat/3.15/mre-ui-environment-variables" >MRE-UI Environment Variables</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="69da8ce921997ac4-37"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="69da8ce921997ac4-37" href="/chat/3.15/hybrid-chat-deployment" >Hybrid Chat Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="69da8ce921997ac4-39"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="69da8ce921997ac4-39" href="/chat/3.15/system-limitations" >System Limitations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="69da8ce921997ac4-41"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="69da8ce921997ac4-41" href="/chat/3.15/api-reference" >API Reference</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="69da8ce921997ac4-43"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="69da8ce921997ac4-43" href="/chat/3.15/troubleshooting-and-maintenance" >Troubleshooting and Maintenance</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="69da8ce921997ac4-45"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="69da8ce921997ac4-45" href="/chat/3.15/demo-environment" >Demo Environment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="69da8ce921997ac4-47" href="/chat/3.15/faqs" >FAQs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="69da8ce921997ac4-48" href="/chat/3.15/conversation-message-object" >Conversation Message Object</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="69da8ce921997ac4-49" href="/chat/3.15/sitemap-xml" >sitemap.xml</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="69da8ce921997ac4-50" href="/chat/3.15/list-of-open-source-software" >List of Open-source Software</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="69da8ce921997ac4-51" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="69da8ce921997ac4-51">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/chat/3.15">
+										Hybrid Chat
+								</a>
+							</li>
+							<li>
+								<a href="/chat/3.15/routing-engine">
+										Routing Engine
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="69da8ce921997ac4-52">
+			<h2 class="toc-heading" id="69da8ce921997ac4-52">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>MRE Architecture &amp; Communication Flow</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+
+	
+	
+
+
+	
+	
+	
+	
+	
+	
+		
+		
+	
+	
+	
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<h2 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-GettingStarted" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-GettingStarted"></span>Getting Started
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-GettingStarted">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>This guide describes the concept of Precision Queue, its contributing elements, and configuration. MRE triggers (getting newly created agents from UMM, new configuration application in MRE, task selection triggers in MRE) and limitations of MRE (MRE, Mre Microservice &amp; Mre UI).</p>
+<h3 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-ArchitectureandCommunicationFlow" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-ArchitectureandCommunicationFlow"></span><strong>Architecture and Communication Flow</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-ArchitectureandCommunicationFlow">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Following components are involved in MRE:</p>
+<p><strong>MRE</strong></p>
+<p>Mre is a Java-based backend service that routes tasks to agents. MRE contains routing logic, when a new task is initiated, this task is enqueued in a precision queue in MRE which routes this task to Longest Available Agent</p>
+<h4 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-Mre-Microservice" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-Mre-Microservice"></span><strong>Mre-Microservice</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-Mre-Microservice">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>Mre-microservice is Node.js based backend API which is directly connected to MongoDB and stores the following configurations in the database:</p>
+<ul>
+ <li>
+  <p>Agents (replica of UMM agents)</p>
+ </li>
+ <li>
+  <p>Attributes</p>
+ </li>
+ <li>
+  <p>MRDs</p>
+ </li>
+ <li>
+  <p>Precision Queues</p>
+ </li>
+</ul>
+<p>MRE Microservice exposes APIs for CRUD of mentioned configurations</p>
+<h4 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-MRE-UI" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-MRE-UI"></span><strong>MRE-UI</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-MRE-UI">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>Mre-UI is UI part of Mre-Microservice which consumes these APIs and is used to CRUD operations of these configurations. MRE-UI connects to Mre-Microservice via UMM (UMM is middleware for microservice architecture).</p>
+<p>
+ <br>
+</p>
+<h4 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-UMM" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-UMM"></span><strong>UMM</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-UMM">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>User Management Module stores agents in its database which is accessible via its APIs.</p>
+<p>The following diagram shows the flow of communication between these components.</p>
+<p><span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image confluence-external-resource" src="/__attachments/a_ef0d0202b9aed7d18a71968eb6d9951fc6656768dba8e38d7a159a0175750e66/Mre%20Architecture%20Diagram.png?cb=c4da072be576ddbb244ebffbf8e8369f" data-image-src="/wiki/download/attachments/35226083/Mre%20Architecture%20Diagram.png?api=v2" loading="lazy"></span>&nbsp;</p>
+<p>
+ <br>
+</p>
+<p>In this image, green-colored boxes represent ActiveMQ queues, and other boxes represent Media Routing Engine components.</p>
+<p>The communication flow is as follows:</p>
+<ol>
+ <li>
+  <p>Administrator logs into MRE-UI, this request is sent to UMM for authentication</p>
+ </li>
+ <li>
+  <p>MRE-UI fetches data from Mre-Microservice via UMM</p>
+ </li>
+ <li>
+  <p>When clicked on the Agents tab, MRE-Microservice fetches agents from UMM to sync if any new agent is added in UMM, Agents list takes some time to load in MRE-UI and this is the reason for its slowness</p>
+ </li>
+ <li>
+  <p>When / if new agents are added, Mre-Microservice pushes this information to the “routing engine” queue, MRE listens to this queue and receives that information</p>
+ </li>
+ <li>
+  <p>Mre updates its agent list</p>
+ </li>
+ <li>
+  <p>When an attribute / mrd/ precision queue is added is Mre-UI, Mre-microservice pushes this information to “routing engine” queue from where MRE gets this information and acts accordingly</p>
+ </li>
+</ol>
+<h4 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-MREStart/RestartSteps" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-MREStart/RestartSteps"></span><strong>MRE Start / Restart Steps</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-MREStart/RestartSteps">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>When MRE is restarted/started, the following steps are performed:</p>
+<ol>
+ <li>
+  <p>MRE calls UMM API to get all agents (depending upon user type i.e. CC or DB)</p>
+ </li>
+ <li>
+  <p>MRE associate all agents with</p>
+  <a href="https://expertflow-docs.atlassian.net/wiki/display/CHAT/(3.15+)+.MRE+Architecture+%26+Communication+Flow+v3.10.1" data-scope="external" rel="external noreferrer">
+   <p>Default Precision Queue</p>
+  </a>
+ </li>
+ <li>
+  <p>MRE pushes the following commands to the mre-microservice queue in the same order as written below</p>
+ </li>
+ <li>
+  <p>Mre-Microservice consumes messages from the mre-microservice queue, gets the information from DB according to a command received, and pushes data to the “routing engine” queue.</p>
+ </li>
+ <li>
+  <p>MRE receives configuration events from the “routing engine” queue and acts accordingly</p>
+ </li>
+</ol>
+<h3 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-HowMediaRoutingWorks" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-HowMediaRoutingWorks"></span>How Media Routing Works
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-HowMediaRoutingWorks">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<h4 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-MediaRoutingFeatures&amp;Definitions" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-MediaRoutingFeatures&amp;amp;Definitions"></span><strong>Media Routing Features &amp; Definitions </strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-MediaRoutingFeatures&amp;amp;Definitions">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<h5 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-MRD(MediaRoutingDomain)" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-MRD(MediaRoutingDomain)"></span><strong>MRD (Media Routing Domain)</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-MRD(MediaRoutingDomain)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<p>MRD organizes how requests for each communication medium are routed to agents. An MRD for each media channel is configured in deployment.</p>
+<h5 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-TypesofMRDs" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-TypesofMRDs"></span><strong>Types of MRDs</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-TypesofMRDs">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<p>These are major categories:</p>
+<ul>
+ <li>
+  <p>Interactive/Non-Interactive MRDs</p>
+ </li>
+ <li>
+  <p>Interruptible/Non-Interruptible MRDs</p>
+ </li>
+</ul>
+<p>
+ <br>
+</p>
+<h5 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-Interactive/Non-InteractiveMRDs" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-Interactive/Non-InteractiveMRDs"></span><strong>Interactive/Non-Interactive MRDs</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-Interactive/Non-InteractiveMRDs">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<p>Interactive &nbsp;MRDs maintain a session b/w customer and agent, in which both communicate in real-time. E.g. chat, SMS, etc.</p>
+<p>Non-interactive MRDs do not maintain a session. E.g. eMail. These tasks are <em>asynchronous </em>as customers can send an eMail, close the window, and check back later for a response.</p>
+<h5 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-InterruptibleandNon-InterruptibleMRDs" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-InterruptibleandNon-InterruptibleMRDs"></span><strong>Interruptible and Non-Interruptible MRDs</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-InterruptibleandNon-InterruptibleMRDs">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<ul>
+ <li>
+  <p><strong>Interruptible:</strong> Agents handling tasks in the MRD can be interrupted by tasks from other MRDs. Non-interactive MRDs, such as an email MRD, are typically interruptible.</p>
+ </li>
+ <li>
+  <p><strong>Non-Interruptible:</strong> &nbsp;Agents handling tasks in the MRD cannot be interrupted by tasks from other MRDs. The agents can be assigned tasks in the same MRD, up to their maximum task limits.</p>
+ </li>
+</ul>
+<p>
+ <br>
+</p>
+<div data-component="panel" role="note" data-appearance="error">
+ <div class="panel-content">
+  <p>MRE only supports Interruptible &amp; Interactive MRDs until this version. Non-Interactive &amp; Non-interruptible MRDs support is still in pipeline</p>
+ </div>
+</div>
+<p>
+ <br>
+</p>
+<h4 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-EngineComponents" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-EngineComponents"></span>Engine Components
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-EngineComponents">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>Media Routing Engine consists of two components:</p>
+<ol>
+ <li>
+  <p>Communication Server</p>
+ </li>
+ <li>
+  <p>Routing Engine</p>
+ </li>
+</ol>
+<p>Following is a brief introduction of both components:</p>
+<h4 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-CommunicationServer" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-CommunicationServer"></span><strong>Communication Server</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-CommunicationServer">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>Communication Server manages the Agent States &amp; Task States for non-voice MRDs. Communications Server subscribes to Finesse notifications for Agent &amp; Dialogs Voice MRD states. It enables the Communication Server to provide Media Blending.</p>
+<h4 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-RoutingEngine" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-RoutingEngine"></span><strong>Routing Engine</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-RoutingEngine">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<ul>
+ <li>
+  <p>n-interruptible chat tasks; if the agent is currently handling two chat tasks, the media routing engine can assign the agent another chat, but cannot interrupt the agent with an email. Interactive MRDs, such as a chat MRD, are typically non-interruptible. Voice is non-interruptible.</p>
+ </li>
+ <li>
+  <p><strong>Mixed</strong>: agent's active chat sessions will remain active while he'll continue to receive the inbound call as well because MRE will not change the agent's Finesse state.</p>
+ </li>
+</ul>
+<h5 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-Handlinginterrupts" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-Handlinginterrupts"></span><strong>Handling interrupts</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-Handlinginterrupts">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<p>Following approaches are used to handle interrupts:</p>
+<ul>
+ <li>
+  <p><strong>Accept Interrupts</strong></p>
+  <ul>
+   <li>
+    <p>When an agent is interrupted by a task from a non-interruptible MRD while working on a task in an interruptible MRD, an interrupt event is accepted.</p>
+   </li>
+   <li>
+    <p>The agent state in the interrupted MRD change to INTERRUPTED.</p>
+   </li>
+   <li>
+    <p>The agent cannot perform dialog actions while a task is interrupted.</p>
+   </li>
+  </ul>
+ </li>
+ <li>
+  <p><strong>Ignore Interrupts</strong></p>
+  <ul>
+   <li>
+    <p>When an agent is interrupted by another task while working on a task in an interruptible MRD, the interrupt event is ignored.</p>
+   </li>
+   <li>
+    <p>The new task does not affect any of the agent's other assigned tasks. The agent state &amp; task dialog state in the interrupted MRD does not change.</p>
+   </li>
+  </ul>
+ </li>
+</ul>
+<div data-component="panel" role="note" data-appearance="error">
+ <div class="panel-content">
+  <p><strong>Mixed-mode</strong> for routing is not supported as per this release, so is <strong>Ignore Interrupts.</strong></p>
+ </div>
+</div>
+<p>
+ <br>
+</p>
+<p>The agent can perform dialog actions on original task and the interrupting task at the same time. The agent's time on the original task does not stop while the agent is handling the interrupting task.</p>
+<p>Example: An agent has an email task for 20 minutes, and is interrupted for 3 of those minutes with a chat task. The handled time for the email task is 20 minutes, and the handled time for the chat task is 3 minutes. This means that during a 20-minute interval, the agent handled tasks for 23 minutes.</p>
+<h5 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-MaxConcurrentTasksperagentperMRD" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-MaxConcurrentTasksperagentperMRD"></span><strong>Max Concurrent Tasks per agent per MRD</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-MaxConcurrentTasksperagentperMRD">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<p>Hybrid Chat allows you to configure the maximum number of chat sessions an agent can handle at any given point. Max Concurrent Tasks Limit can be configured in <a href="http://docs.expertflow.com/display/CHAT/.Comm+Server+Environment+Variables+v3.13" data-scope="external" rel="external noreferrer">Communication Server properties</a>. However, the default max concurrent tasks limit is 5.</p>
+<h5 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-TasksRoutingtoAgent" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-TasksRoutingtoAgent"></span><strong>Tasks Routing to Agent</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-TasksRoutingtoAgent">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<p>It depends upon:</p>
+<ol>
+ <li>
+  <p><strong>Agent State:</strong> Agent’s state in MRD. Following are agent states</p>
+ </li>
+</ol>
+<p>* Every MRD has its <em>own state</em></p>
+<h5 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-Conditionsforatasktoberouted" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-Conditionsforatasktoberouted"></span><strong>Conditions for a task to be routed</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-Conditionsforatasktoberouted">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<p>The task is routed to the agent if ALL these conditions are TRUE:</p>
+<ol>
+ <li>
+  <p>The agent is in the ready state, AND</p>
+ </li>
+ <li>
+  <p>The agent has not reached Max task limit in MRD, AND</p>
+ </li>
+ <li>
+  <p>The agent is NOT working on a task in a different Non-Interruptible MRD.</p>
+  <div class="theme-table" style="--width: 86.6558%;">
+   <table-expand>
+    <scroll-shadow>
+     <table-sort>
+      <div data-component="table" data-align="unset" data-number-column="false">
+       <table>
+        <colgroup>
+         <col style="width: 24.812%">
+         <col style="width: 14.1917%">
+         <col style="width: 60.9962%">
+        </colgroup>
+        <tbody>
+         <tr>
+          <th>
+           <p>Scenario</p>
+          </th>
+          <th colspan="1">
+           <p>State</p>
+          </th>
+          <th>
+           <p>Description</p>
+          </th>
+         </tr>
+         <tr>
+          <td>
+           <p>If the agent is in between a conversation but the state is pending not ready</p>
+          </td>
+          <td colspan="1">
+           <p>PENDING_NOT_READY</p>
+          </td>
+          <td>
+           <p>No more tasks will be routed to the agent until he changes his state from pending not ready to the ready state.</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>If the agent is in an active state and has reached Max task limit</p>
+          </td>
+          <td colspan="1">
+           <p>ACTIVE</p>
+          </td>
+          <td>
+           <p>No more tasks will be routed to the agent, as he is already handling a number of chats and has reached the limit of Max task limit, and the state will be changed to busy.</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>If the state is ready and Max task limited has not reached</p>
+          </td>
+          <td colspan="1">
+           <p>READY</p>
+          </td>
+          <td>
+           <p>The task will be routed to the agents.</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>If the agent is in an interrupted state</p>
+          </td>
+          <td colspan="1">
+           <p>INTERRUPTED</p>
+          </td>
+          <td colspan="1">
+           <p><span style="--color: var(--bold-gray, #172b4d);">No chat will be routed to that agent in the INTERRUPTED state, agent chat state will be restored when the voice call ends.</span></p>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </table-sort>
+    </scroll-shadow>
+   </table-expand>
+  </div>
+  <p>
+   <br>
+  </p>
+ </li>
+</ol>
+<p>
+ <br>
+</p>
+<h5 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-AgentSelectionCriteria" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-AgentSelectionCriteria"></span><strong>Agent Selection Criteria</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-AgentSelectionCriteria">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<p>The agent is selected on the following criteria:</p>
+<ul>
+ <li>
+  <p><strong>Longest Available</strong>: The task is routed to an agent who was available for the longest time i.e.</p>
+ </li>
+</ul>
+<h3 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-PrecisionQueueRouting" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-PrecisionQueueRouting"></span><strong>Precision Queue Routing</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-PrecisionQueueRouting">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Precision routing offers a multidimensional alternative to skill group routing. Routing Engine runs on precision queues.</p>
+<p>To configure Precision Routing, you must do the following in Media Routing Engine Administration:</p>
+<ol>
+ <li>
+  <p>Create attributes. Attributes are characteristics that can be assigned a True | False value or a Proficiency rating from 1 to 10.</p>
+ </li>
+ <li>
+  <p>Assign attributes to agents. Routing Engine fetches agents from EF User Management Module.</p>
+ </li>
+ <li>
+  <p>Create precision queues. Create Expressions and Steps while creating Precision Queues.</p>
+ </li>
+</ol>
+<p>There is no need to add an agent to a precision queue; agents become members of precision queues automatically based on their attributes. If a precision queue requires an agent who lives in Boston, who speaks fluent Spanish, and who is proficient in troubleshooting a specific piece of equipment, an agent with the attributes <em>Boston = True</em>, <em>Spanish = True</em>, and <em>Repair = 10</em> is automatically part of the precision queue. A Spanish caller in Boston who needs help with equipment is routed to that agent.</p>
+<p>A precision queue includes:</p>
+<ul>
+ <li>
+  <p><strong>Terms:</strong> A term compares an attribute against a value. For example, the administrator can create the following term: Spanish == 10. The term of the attribute is the highest proficiency in Spanish. Each precision queue can have multiple attributes, and these attributes can be used in multiple terms. For example, to select an agent with a Spanish proficiency value between 5 and 10, one term for Spanish &gt; 5 and another for Spanish &lt; 10 would be created.</p>
+ </li>
+ <li>
+  <p><strong>Expressions:</strong> An expression is a collection of one or more terms. The terms in an expression must share the same operator—they must all be AND or must all be OR relationships.</p>
+ </li>
+</ul>
+<ul>
+ <li>
+  <p><strong>Steps:</strong> A precision queue step is a time-based routing point within the precision queue. A step is a collection of one or more expressions. A step may also include wait time. Use wait time to assign a maximum amount of time to wait for an available agent.</p>
+ </li>
+</ul>
+<p>The default queue used for Task Routing is the FIFO queue.</p>
+<h4 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-FIFOQueue" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-FIFOQueue"></span><strong>FIFO Queue</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-FIFOQueue">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>This is the default queue used in the Routing Engine. The first task to enter the queue is the first to be served. Precision Routing uses FIFO queues.</p>
+<h4 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-TaskScheduler" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-TaskScheduler"></span><strong>Task Scheduler</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-TaskScheduler">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>The Task Scheduler decides which of the available agents is to be allocated the next task after a&nbsp;&nbsp;<a href="https://expertflow-docs.atlassian.net/wiki/display/CHAT/(3.15+)+.MRE+Architecture+%26+Communication+Flow+v3.10.1" data-scope="external" rel="external noreferrer">signal or property change</a>.</p>
+<h5 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-TaskSchedulerInvocation" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-TaskSchedulerInvocation"></span><span id="id-(3.15)MREArchitecture&amp;CommunicationFlow-TaskSchedulerInvocation"></span>Task Scheduler Invocation
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-TaskSchedulerInvocation">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<p>Here are events/signals/property changes which invoke Task Scheduler for a specific queue in an MRD:</p>
+<ul>
+ <li>
+  <p>An agent changes state to READY for the MRD</p>
+ </li>
+ <li>
+  <p>A new task arrives for the MRD</p>
+  <ul>
+   <li>
+    <p>Possibility of an unattended task in queue remains in this scenario e.g. Single agent handling tasks, voice call interrupts tasks, new tasks arrived and agent state was INTERRUPTED so he was not selected on new task arrived trigger, and after end of voice call, agent becomes ACTIVE/READY. Trigger in following bullet states this issue.</p>
+   </li>
+  </ul>
+ </li>
+ <li>
+  <p>Agent state transition from INTERRUPTED to ACTIVE/READY for the MRD</p>
+ </li>
+ <li>
+  <p>Agent state transition from BUSY to ACTIVE for the MRD</p>
+ </li>
+</ul>
+<p>Every queue in an MRD has its own Task Scheduler.</p>
+<h4 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-FIFOQueue.1" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-FIFOQueue"></span><strong>FIFO Queue</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-FIFOQueue.1">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>This is the default queue used in Routing Engine. First task to enter queue is the first to be served. Precision Routing uses FIFO queues.</p>
+<h3 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-DefaultPrecisionQueue" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-DefaultPrecisionQueue"></span><span id="id-(3.15)MREArchitecture&amp;CommunicationFlow-DefaultPrecisionQueue"></span><strong>Default Precision Queue</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-DefaultPrecisionQueue">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Upon startup, MRE fetches all agents from UMM with the MRE_Agent role. MRE creates a precision queue named <strong>DefaultPrecisionQueue</strong> and associates all agents with this queue. Meaning any task submitted to this queue will be routed to any available agent.</p>
+<h3 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-" style=""><span id="id-(3.15)MREArchitecture&amp;CommunicationFlow-Limitations"></span>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<h3 id="id-(3.15)MREArchitecture&amp;CommunicationFlow-Limitations" style=""><span id="MREArchitecture&amp;amp;CommunicationFlow-Limitations"></span><strong>Limitations</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/mre-architecture-communication-flow#id-(3.15)MREArchitecture&amp;amp;CommunicationFlow-Limitations">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>As per current release, here are limitations regarding MRE, Mre-Microservice &amp; MRE-UI:</p>
+<ul>
+ <li>
+  <p>Attributes must not be deleted in MRE-UI, otherwise unexpected behavior cannot be avoided</p>
+ </li>
+ <li>
+  <p>Precision queues can be updated but not be deleted in MRE-UI, if a precision queue is deleted, MRE will need to be restarted to take effect</p>
+ </li>
+</ul>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="69da8ce921997ac4-53" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="69da8ce921997ac4-53">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/chat/3.15/routing-engine">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Routing Engine</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/chat/3.15/how-estimated-wait-time-works">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">How Estimated Wait Time Works</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

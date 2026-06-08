@@ -1,0 +1,4094 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_d806de24a6e9bb84b3823094bfcc47e7baecd9d50e7a03e36f829fdb8bc0604c" data-confluence-content-id="832471712"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/cx/4.7/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="CX">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>Longhorn Deployment Guide | Expertflow CX</title>
+		<meta property="og:title" content="Longhorn Deployment Guide | Expertflow CX">
+		<meta property="twitter:title" content="Longhorn Deployment Guide | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide">
+		<meta property="og:url" content="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide">
+
+		<meta name="description" content="This guide illustrates the procedure to deploy and configure Longhorn for K3s, which will be used a Storage manager for the CIM Solution. https://longhorn.io/d…">
+		<meta property="og:description" content="This guide illustrates the procedure to deploy and configure Longhorn for K3s, which will be used a Storage manager for the CIM Solution. https://longhorn.io/d…">
+		<meta property="twitter:description" content="This guide illustrates the procedure to deploy and configure Longhorn for K3s, which will be used a Storage manager for the CIM Solution. https://longhorn.io/d…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2025-01-24T15:36:46.413Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": true
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.js"></script>
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="ccdd11e5104fc6a8-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="ccdd11e5104fc6a8-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="ccdd11e5104fc6a8-19">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="ccdd11e5104fc6a8-19" name="version" onchange="self.location.assign(this.value)" >
+				<option id="ccdd11e5104fc6a8-3"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="ccdd11e5104fc6a8-4"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="ccdd11e5104fc6a8-5"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="ccdd11e5104fc6a8-6"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="ccdd11e5104fc6a8-7"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="ccdd11e5104fc6a8-8"  value="/cx/4.10/longhorn-deployment-guide"  >
+					4.10
+				</option>
+				<option id="ccdd11e5104fc6a8-9"  value="/cx/4.9/longhorn-deployment-guide"  >
+					4.9
+				</option>
+				<option id="ccdd11e5104fc6a8-10"  value="/cx/4.8/longhorn-deployment-guide"  >
+					4.8
+				</option>
+				<option id="ccdd11e5104fc6a8-11"  value="/cx/4.7/longhorn-deployment-guide"  selected="">
+					4.7
+				</option>
+				<option id="ccdd11e5104fc6a8-12"  value="/cx/4.6/longhorn-deployment-guide"  >
+					4.6
+				</option>
+				<option id="ccdd11e5104fc6a8-13"  value="/cx/4.5.3/longhorn-deployment-guide"  >
+					4.5.3
+				</option>
+				<option id="ccdd11e5104fc6a8-14"  value="/cx/4.5.2/longhorn-deployment-guide"  >
+					4.5.2
+				</option>
+				<option id="ccdd11e5104fc6a8-15"  value="/cx/4.5.1/longhorn-deployment-guide"  >
+					4.5.1
+				</option>
+				<option id="ccdd11e5104fc6a8-16"  value="/cx/4.5/longhorn-deployment-guide"  >
+					4.5
+				</option>
+				<option id="ccdd11e5104fc6a8-17"  value="/cx/4.4/longhorn-deployment-guide"  >
+					4.4
+				</option>
+				<option id="ccdd11e5104fc6a8-18"  value="/cx/4.3/longhorn-deployment-guide"  >
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('ccdd11e5104fc6a8-19');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-ccdd11e5104fc6a8-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-ccdd11e5104fc6a8-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-ccdd11e5104fc6a8-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="ccdd11e5104fc6a8-20" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="ccdd11e5104fc6a8-20">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-ccdd11e5104fc6a8-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-ccdd11e5104fc6a8-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="ccdd11e5104fc6a8-37">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="ccdd11e5104fc6a8-37" name="version" onchange="self.location.assign(this.value)" >
+				<option id="ccdd11e5104fc6a8-21"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="ccdd11e5104fc6a8-22"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="ccdd11e5104fc6a8-23"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="ccdd11e5104fc6a8-24"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="ccdd11e5104fc6a8-25"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="ccdd11e5104fc6a8-26"  value="/cx/4.10/longhorn-deployment-guide"  >
+					4.10
+				</option>
+				<option id="ccdd11e5104fc6a8-27"  value="/cx/4.9/longhorn-deployment-guide"  >
+					4.9
+				</option>
+				<option id="ccdd11e5104fc6a8-28"  value="/cx/4.8/longhorn-deployment-guide"  >
+					4.8
+				</option>
+				<option id="ccdd11e5104fc6a8-29"  value="/cx/4.7/longhorn-deployment-guide"  selected="">
+					4.7
+				</option>
+				<option id="ccdd11e5104fc6a8-30"  value="/cx/4.6/longhorn-deployment-guide"  >
+					4.6
+				</option>
+				<option id="ccdd11e5104fc6a8-31"  value="/cx/4.5.3/longhorn-deployment-guide"  >
+					4.5.3
+				</option>
+				<option id="ccdd11e5104fc6a8-32"  value="/cx/4.5.2/longhorn-deployment-guide"  >
+					4.5.2
+				</option>
+				<option id="ccdd11e5104fc6a8-33"  value="/cx/4.5.1/longhorn-deployment-guide"  >
+					4.5.1
+				</option>
+				<option id="ccdd11e5104fc6a8-34"  value="/cx/4.5/longhorn-deployment-guide"  >
+					4.5
+				</option>
+				<option id="ccdd11e5104fc6a8-35"  value="/cx/4.4/longhorn-deployment-guide"  >
+					4.4
+				</option>
+				<option id="ccdd11e5104fc6a8-36"  value="/cx/4.3/longhorn-deployment-guide"  >
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('ccdd11e5104fc6a8-37');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-38" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-39" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-40" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-41" href="/cx/4.7/cx-release-history" >CX Release History</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-42"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-42" href="/cx/4.7/cx-release-notes" >CX Release Notes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-44" href="/cx/4.7/expertflow-cx-data-sheet" >CX Data Sheet</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-45" href="/cx/4.7/hc-3-x-vs-expertflow-cx-features-comparison" >HC 3.x vs Expertflow CX - Features Comparison</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-46"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-46" href="/cx/4.7/conversation-studio" >Conversation Studio</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-48" href="/cx/4.7/customer-identities" >Customer</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-49"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-49" href="/cx/4.7/conversation-control" >Conversation Objects</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-51" href="/cx/4.7/agent-team" >Agent Team</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-52"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-52" href="/cx/4.7/customer-channels" >Channels</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-54"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-54" href="/cx/4.7/cx-events-and-activity-types" >CX-Activities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-56"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-56" href="/cx/4.7/solution-architecture" >Solution Architecture</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-58"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-58" href="/cx/4.7/reporting" >Reporting</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-60"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-60" href="/cx/4.7/agent-capabilities" >Agent Capabilities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-62"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-62" href="/cx/4.7/supervisor-controls" >Supervisor Controls</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="ccdd11e5104fc6a8-65"						aria-labelledby="ccdd11e5104fc6a8-64"
+					></button>
+				<a id="ccdd11e5104fc6a8-64" href="/cx/4.7/deployment-guides" >Deployment Guides</a>
+			</div>
+
+<ul  id="ccdd11e5104fc6a8-65" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-66"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-66" href="/cx/4.7/kubernetes-deployment-getting-started" >Deployment Planning</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-68" href="/cx/4.7/rke2-single-node-deployment" >RKE2 Single Node Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-69"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-69" href="/cx/4.7/rke2-single-node-installation-without-ha" >RKE2 Control plane Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-71" href="/cx/4.7/air-gap-install-for-rke-2-kubernetes" >Air-Gap Install for RKE-2 Kubernetes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-72" href="/cx/4.7/rke2-multi-node-installation-without-ha" >Worker HA</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-73"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-73" href="/cx/4.7/rke2-high-availability-pre-deployment-installati-1" >Control Plane HA</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="ccdd11e5104fc6a8-76"						aria-labelledby="ccdd11e5104fc6a8-75"
+					></button>
+				<a id="ccdd11e5104fc6a8-75" href="/cx/4.7/storage-solution-getting-started" >Storage Solution - Getting Started</a>
+			</div>
+
+<ul  id="ccdd11e5104fc6a8-76" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-77" href="/cx/4.7/node-affinity-and-node-selector" >Node Affinity and Node Selector</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-78" href="/cx/4.7/cloud-native-storage-solution-for-kubernetes-using" >Deploying Rook/Ceph as a cloud-native storage</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="ccdd11e5104fc6a8-80"						aria-labelledby="ccdd11e5104fc6a8-79"
+					></button>
+				<a id="ccdd11e5104fc6a8-79" href="/cx/4.7/longhorn-deployment-guide" aria-current="page">Longhorn Deployment Guide</a>
+			</div>
+
+<ul  id="ccdd11e5104fc6a8-80" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-81" href="/cx/4.7/volume-cloning-procedure" >Volume Cloning Procedure</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-82" href="/cx/4.7/volume-expansion" >Volume Expansion</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-83" href="/cx/4.7/volume-detaching" >Volume Detaching</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-84" href="/cx/4.7/nfs-storage-service" >NFS Storage Service</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-85" href="/cx/4.7/openebs-local-storage-solution" >Setup OpenEBS for Local Volume Provisioning</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-86" href="/cx/4.7/using-managed-postgresql" >Using Managed PostgreSQL</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-87" href="/cx/4.7/using-managed-mongodb" >Using Managed MongoDB</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-88" href="/cx/4.7/using-managed-activemq" >Using Managed ActiveMQ</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-89" href="/cx/4.7/using-managed-redis" >Using Managed Redis</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-90"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-90" href="/cx/4.7/tls-enablement-for-redis-mongodb-postgresql-and--1" >TLS enablement for Redis, MongoDB , PostgreSQL and ActiveMQ</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-92"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-92" href="/cx/4.7/helm-based-deployment-for-expertflow-cx-solution" >Helm-based Deployment for Expertflow CX</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-94"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-94" href="/cx/4.7/deployment-of-solution-monitoring-components" >Monitoring Solution Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-96" href="/cx/4.7/data-migration-structural-changes-cx4-4-x-cx4-5" >Data Migration-Structural Changes (CX4.4.x-CX4.5)</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-97"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-97" href="/cx/4.7/cx-enhancements" >CX Enhancements</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-99"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-99" href="/cx/4.7/system-administration-guides" >System Administration Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-101"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-101" href="/cx/4.7/upgrade-guide" >Upgrade Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-103"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-103" href="/cx/4.7/geographical-deployment-of-expertflow-cx-with-redu" >Geographical Deployment of Expertflow CX with Redundancy</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-105" href="/cx/4.7/create-self-signed-certificates-for-ingress" >Create self-signed certificates for ingress</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-106" href="/cx/4.7/health-check-api-for-cx-components" >Health-Check API for CX Components</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-107"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-107" href="/cx/4.7/expertflow-cx-deployment-on-kubernetes" >CX Deployment on Kubernetes</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-109"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-109" href="/cx/4.7/developer-guides" >Developer Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-111"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-111" href="/cx/4.7/unified-admin-guide" >Unified Admin Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-113"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-113" href="/cx/4.7/security" >Security</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-115"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-115" href="/cx/4.7/integrations" >Integrations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ccdd11e5104fc6a8-117" href="/cx/4.7/compatibility-guides" >Compatibility Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-118"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-118" href="/cx/4.7/outbound-campaigns" >Outbound Campaigns</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ccdd11e5104fc6a8-120"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ccdd11e5104fc6a8-120" href="/cx/4.7/cx-surveys" >CX Surveys</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="ccdd11e5104fc6a8-122" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="ccdd11e5104fc6a8-122">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.7">
+										Expertflow CX
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.7/deployment-guides">
+										Deployment Guides
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.7/storage-solution-getting-started">
+										Storage Solution - Getting Started
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="ccdd11e5104fc6a8-123">
+			<h2 class="toc-heading" id="ccdd11e5104fc6a8-123">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>Longhorn Deployment Guide</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+
+	
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+	
+
+
+	
+	
+	
+	
+	
+	
+		
+		
+	
+	
+	
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<p>This guide illustrates the procedure to deploy and configure Longhorn for K3s, which will be used a Storage manager for the CIM Solution.</p>
+<p>
+ <br>
+</p>
+<div data-component="panel" role="note" data-appearance="note">
+ <div class="panel-content">
+  <p><a href="https://longhorn.io/docs" data-scope="external" rel="external noreferrer">https://longhorn.io/docs</a> should be consulted for latest release notes. This guide is developed for reference to deployment only and may be outdated.</p>
+ </div>
+</div>
+<h2 id="Installation-Requirements"><span id="LonghornDeploymentGuide-InstallationRequirements"></span>Installation Requirements
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#Installation-Requirements">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>Each node in the Kubernetes cluster where Longhorn is installed must fulfill the following requirements:</p>
+<ul>
+ <li>
+  <p>A container runtime compatible with Kubernetes (Docker v1.13+, containerd v1.3.7+, etc.)</p>
+ </li>
+ <li>
+  <p>Kubernetes &gt;= v1.21</p>
+ </li>
+ <li>
+  <p><code>open-iscsi</code>&nbsp;is installed, and the&nbsp;<code>iscsid</code>&nbsp;daemon is running on all the nodes. This is necessary, since Longhorn relies on&nbsp;<code>iscsiadm</code>&nbsp;on the host to provide persistent volumes to Kubernetes.&nbsp;</p>
+ </li>
+ <li>
+  <p>RWX support requires that each node has a NFSv4 client installed.</p>
+  <ul>
+   <li>
+    <p>For installing a NFSv4 client, refer below for Installing NFS client</p>
+   </li>
+  </ul>
+ </li>
+ <li>
+  <p>The host filesystem supports the&nbsp;<code>file extents</code>&nbsp;feature to store the data. Currently we support:</p>
+  <ul>
+   <li>
+    <p>ext4</p>
+   </li>
+   <li>
+    <p>XFS</p>
+   </li>
+  </ul>
+ </li>
+ <li>
+  <p><code>bash</code>,&nbsp;<code>curl</code>,&nbsp;<code>findmnt</code>,&nbsp;<code>grep</code>,&nbsp;<code>awk</code>,&nbsp;<code>blkid</code>,&nbsp;<code>lsblk</code>&nbsp;must be installed.</p>
+ </li>
+ <li>
+  <p>Mount propagation&nbsp;must be enabled.</p>
+ </li>
+</ul>
+<p>The Longhorn workloads must be able to run as root in order for Longhorn to be deployed and operated properly.</p>
+<p>
+ <br>
+</p>
+<h2 id="Install-Longhorn-Dependencies"><span id="LonghornDeploymentGuide-InstallLonghornDependencies"></span>Install Longhorn Dependencies
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#Install-Longhorn-Dependencies">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="Install-Open-ISCSI"><span id="LonghornDeploymentGuide-InstallOpen-ISCSI"></span>Install Open-ISCSI&nbsp;
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#Install-Open-ISCSI">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Make sure below given steps are executed on all the Nodes in cluster. <code>iscsid.service</code> must be running before.</p>
+<p>
+ <br>
+</p>
+<h4 id="For-Ubuntu-20.04-and-above"><span id="LonghornDeploymentGuide-ForUbuntu20.04andabove"></span><strong>For Ubuntu 20.04 and above</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#For-Ubuntu-20.04-and-above">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>apt-get install open-iscsi -y 
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>
+ <br>
+</p>
+<h4 id="For-RHEL-8.4"><span id="LonghornDeploymentGuide-ForRHEL8.4"></span><strong>For RHEL 8.4</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#For-RHEL-8.4">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>yum --setopt=tsflags=noscripts install iscsi-initiator-utils -y
+echo "InitiatorName=$(/sbin/iscsi-iname)" &gt; /etc/iscsi/initiatorname.iscsi
+systemctl enable iscsid
+systemctl start iscsid
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="Install-NFSv4-client"><span id="LonghornDeploymentGuide-InstallNFSv4client"></span>Install NFSv4 client
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#Install-NFSv4-client">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>In Longhorn system, backup feature requires NFSv4, v4.1 or v4.2, and ReadWriteMany (RWX) volume feature requires NFSv4.1. Before installing NFSv4 client userspace daemon and utilities, make sure the client kernel support is enabled on each Longhorn node.</p>
+<p>Check&nbsp;<code>NFSv4.1</code>&nbsp;support is enabled in kernel</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>cat /boot/config-`uname -r`| grep CONFIG_NFS_V4_1
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Check&nbsp;<code>NFSv4.2</code>&nbsp;support is enabled in kernel</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>cat /boot/config-`uname -r`| grep CONFIG_NFS_V4_2
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>The command used to install a NFSv4 client differs depending on the Linux distribution.</p>
+<p>For Debian and Ubuntu, use this command:&nbsp;</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>apt-get install nfs-common -y
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>For RHEL use this command.&nbsp;</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>yum install nfs-utils -y
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="Checking-the-Kubernetes-Version"><span id="LonghornDeploymentGuide-CheckingtheKubernetesVersion"></span>Checking the Kubernetes Version
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#Checking-the-Kubernetes-Version">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Use the following command to check your Kubernetes server version.&nbsp;</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>kubectl version
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Result:&nbsp;</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>Client Version: version.Info{Major:"1", Minor:"21", GitVersion:"v1.21.0", GitCommit:"cb303e613a121a29364f75cc67d3d580833a7479", GitTreeState:"clean", BuildDate:"2021-04-08T16:31:21Z", GoVersion:"go1.16.1", Compiler:"gc", Platform:"linux/amd64"}
+Server Version: version.Info{Major:"1", Minor:"21", GitVersion:"v1.21.0+k3s1", GitCommit:"2705431d9645d128441c578309574cd262285ae6", GitTreeState:"clean", BuildDate:"2021-04-26T21:45:52Z", GoVersion:"go1.16.2", Compiler:"gc", Platform:"linux/amd64"}
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p><code> </code></p>
+<p>The&nbsp;<code>Server Version</code>&nbsp;should be &gt;= v1.21.</p>
+<h2 id="Validate-the-Longhorn-Environment-(-only-on-Master-Node-)"><span id="LonghornDeploymentGuide-ValidatetheLonghornEnvironment(onlyonMasterNode)"></span>Validate the Longhorn Environment ( only on Master Node )
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#Validate-the-Longhorn-Environment-(-only-on-Master-Node-)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>This script&nbsp;can be used to check the Longhorn environment for potential issues.</p>
+<p>Install JQ utility for the script to function properly.</p>
+<p>RHEL Based System</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>yum install jq -y
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>
+ <br>
+</p>
+<p>Ubuntu/Debian&nbsp; Based Systems</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>apt-get install jq -y
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Run the validation script for Longhorn</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>curl -sSfL https://raw.githubusercontent.com/longhorn/longhorn/v1.4.0/scripts/environment_check.sh | bash
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>
+ <br>
+</p>
+<p>A sample successful completion of this script should look like&nbsp;</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>[INFO]  Required dependencies 'kubectl jq mktemp' are installed.
+[INFO]  Hostname uniqueness check is passed.
+[INFO]  Waiting for longhorn-environment-check pods to become ready (0/5)...
+[INFO]  Waiting for longhorn-environment-check pods to become ready (0/5)...
+[INFO]  Waiting for longhorn-environment-check pods to become ready (0/5)...
+[INFO]  Waiting for longhorn-environment-check pods to become ready (3/5)...
+[INFO]  Waiting for longhorn-environment-check pods to become ready (3/5)...
+[INFO]  All longhorn-environment-check pods are ready (5/5).
+[INFO]  Required packages are installed.
+[INFO]  Cleaning up longhorn-environment-check pods...
+[INFO]  Cleanup completed.
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>For the minimum recommended hardware, refer to the&nbsp;best practices guide below.</p>
+<p>
+ <br>
+</p>
+<p>these manifests can be used to install the longhorn dependencies if required</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>For iSCSI&nbsp; dependencies&nbsp;</p>
+<p>
+ <br>
+</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.4.0/deploy/prerequisite/longhorn-iscsi-installation.yaml
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>
+ <br>
+</p>
+<p>For NFS dependencies&nbsp;</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.4.0/deploy/prerequisite/longhorn-nfs-installation.yaml
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>For<strong> jq </strong>utility, you will have to deploy it manually.</p>
+<p>
+ <br>
+</p>
+<h3 id="Additional-utilities-for-Longhorn"><span id="LonghornDeploymentGuide-AdditionalutilitiesforLonghorn"></span>Additional utilities for Longhorn
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#Additional-utilities-for-Longhorn">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Make sure below given utilities are deployed on all nodes in the cluster.</p>
+<ul>
+ <li>
+  <p><code>bash</code>,&nbsp;</p>
+ </li>
+ <li>
+  <p><code>curl</code>,&nbsp;</p>
+ </li>
+ <li>
+  <p><code>findmnt</code>,&nbsp;</p>
+ </li>
+ <li>
+  <p><code>grep</code>,&nbsp;</p>
+ </li>
+ <li>
+  <p><code>awk</code>,&nbsp;</p>
+ </li>
+ <li>
+  <p><code>blkid</code>,&nbsp;</p>
+ </li>
+ <li>
+  <p><code>lsblk</code>&nbsp;</p>
+ </li>
+</ul>
+<p>
+ <br>
+</p>
+<p>You can also enable optional epel-release for these&nbsp; additional tools , if they are not already installed on all systems</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>subscription-manager repos --enable codeready-builder-for-rhel-8-$(arch)-rpms
+dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+/usr/bin/crb enable
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h2 id="Best-Practices"><span id="LonghornDeploymentGuide-BestPractices"></span>Best Practices
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#Best-Practices">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>We recommend the following setup for deploying Longhorn in production.</p>
+<h2 id="Minimum-Recommended-Hardware"><span id="LonghornDeploymentGuide-MinimumRecommendedHardware"></span>Minimum Recommended Hardware
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#Minimum-Recommended-Hardware">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<ul>
+ <li>
+  <p>3 nodes&nbsp;</p>
+ </li>
+ <li>
+  <p>4 vCPUs per node</p>
+ </li>
+ <li>
+  <p>4 GiB per node</p>
+ </li>
+ <li>
+  <p>SSD/NVMe or similar performance block device on the node for storage (<strong>recommended</strong>)</p>
+ </li>
+ <li>
+  <p>HDD/Spinning Disk or similar performance block device on the node for storage (verified)</p>
+  <ul>
+   <li>
+    <p>500/250 max IOPS per volume (1 MiB I/O)</p>
+   </li>
+   <li>
+    <p>500/250 max throughput per volume (MiB/s)</p>
+   </li>
+  </ul>
+ </li>
+</ul>
+<h2 id="Operating-System"><span id="LonghornDeploymentGuide-OperatingSystem"></span>Operating System
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#Operating-System">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>The below Linux OS distributions and versions have been verified during the v1.4.0 release testing, but it does not mean Longhorn only supports them. Basically, Longhorn should work well on any certified Kubernetes cluster running on Linux nodes with a most general-purpose operating system as below examples.</p>
+<div class="theme-table" style="--width: 760px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 173px">
+       <col style="width: 224px">
+       <col style="width: 361px">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p><strong>No.</strong></p>
+        </th>
+        <th>
+         <p><strong>OS</strong></p>
+        </th>
+        <th>
+         <p><strong>Versions</strong></p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p>1.</p>
+        </td>
+        <td>
+         <p>Ubuntu</p>
+        </td>
+        <td>
+         <p>20.04, 22.04</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>4.</p>
+        </td>
+        <td>
+         <p>RHEL</p>
+        </td>
+        <td>
+         <p>8.6</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="Unsupported-Operating-System"><span id="LonghornDeploymentGuide-UnsupportedOperatingSystem"></span>Unsupported Operating System
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#Unsupported-Operating-System">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Non-General Purpose OS or Container-Optimized OS due to lacking package manager or immutable system limitation.</p>
+<h2 id="Node-and-Disk-Setup"><span id="LonghornDeploymentGuide-NodeandDiskSetup"></span>Node and Disk Setup
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#Node-and-Disk-Setup">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>We recommend the following setup for nodes and disks.</p>
+<h3 id="Use-a-Dedicated-Disk"><span id="LonghornDeploymentGuide-UseaDedicatedDisk"></span>Use a Dedicated Disk
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#Use-a-Dedicated-Disk">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>It’s recommended to dedicate a disk for Longhorn storage for production, instead of using the root disk.</p>
+<h3 id="Minimal-Available-Storage-and-Over-provisioning"><span id="LonghornDeploymentGuide-MinimalAvailableStorageandOver-provisioning"></span>Minimal Available Storage and Over-provisioning
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#Minimal-Available-Storage-and-Over-provisioning">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>If you need to use the root disk, use the default&nbsp;<code>minimal available storage percentage</code>&nbsp;setup which is 25%, and set&nbsp;<code>overprovisioning percentage</code>&nbsp;to 200% to minimize the chance of DiskPressure.</p>
+<p>If you’re using a dedicated disk for Longhorn, you can lower the setting&nbsp;<code>minimal available storage percentage</code>&nbsp;to 10%.</p>
+<p>For the Over-provisioning percentage, it depends on how much space your volume uses on average. For example, if your workload only uses half of the available volume size, you can set the Over-provisioning percentage to&nbsp;<code>200</code>, which means Longhorn will consider the disk to have twice the schedulable size as its full size minus the reserved space.</p>
+<h3 id="Disk-Space-Management"><span id="LonghornDeploymentGuide-DiskSpaceManagement"></span>Disk Space Management
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#Disk-Space-Management">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Since Longhorn doesn’t currently support sharding between the different disks, we recommend using&nbsp;<a href="https://en.wikipedia.org/wiki/Logical_Volume_Manager_(Linux)" data-scope="external" rel="external noreferrer">LVM</a>&nbsp;to aggregate all the disks for Longhorn into a single partition, so it can be easily extended in the future.</p>
+<h3 id="Setting-up-Extra-Disks"><span id="LonghornDeploymentGuide-SettingupExtraDisks"></span>Setting up Extra Disks
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#Setting-up-Extra-Disks">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Any extra disks must be written in the&nbsp;<code>/etc/fstab</code>&nbsp;file to allow automatic mounting after the machine reboots.</p>
+<p>Don’t use a symbolic link for the extra disks. Use&nbsp;<code>mount --bind</code>&nbsp;instead of&nbsp;<code>ln -s</code>&nbsp;and make sure it’s in the&nbsp;<code>fstab</code>&nbsp;file. For details, see&nbsp;<a href="https://longhorn.io/docs/1.4.0/volumes-and-nodes/multidisk/#use-an-alternative-path-for-a-disk-on-the-node" data-scope="external" rel="external noreferrer">the section about multiple disk support.</a></p>
+<h2 id="Configuring-Default-Disks-Before-and-After-Installation"><span id="LonghornDeploymentGuide-ConfiguringDefaultDisksBeforeandAfterInstallation"></span>Configuring Default Disks Before and After Installation
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#Configuring-Default-Disks-Before-and-After-Installation">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>To use a directory other than the default&nbsp;<code>/var/lib/longhorn</code>&nbsp;for storage, the&nbsp;<code>Default Data Path</code>&nbsp;setting can be changed before installing the system. For details on changing pre-installation settings, refer to&nbsp;<a href="https://longhorn.io/docs/1.4.0/advanced-resources/deploy/customizing-default-settings" data-scope="external" rel="external noreferrer">this section.</a></p>
+<p>The&nbsp;<a href="https://longhorn.io/docs/1.4.0/advanced-resources/default-disk-and-node-config" data-scope="external" rel="external noreferrer">Default node/disk configuration</a>&nbsp;feature can be used to customize the default disk after installation. Customizing the default configurations for disks and nodes is useful for scaling the cluster because it eliminates the need to configure Longhorn manually for each new node if the node contains more than one disk, or if the disk configuration is different for new nodes. Remember to enable&nbsp;<code>Create default disk only on labeled node</code>&nbsp;if applicable.</p>
+<h2 id="Deploying-Workloads"><span id="LonghornDeploymentGuide-DeployingWorkloads"></span>Deploying Workloads
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#Deploying-Workloads">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>If you’re using&nbsp;<code>ext4</code>&nbsp;as the filesystem of the volume, we recommend adding a liveness check to workloads to help automatically recover from a network-caused interruption, a node reboot, or a Docker restart. See&nbsp;<a href="https://longhorn.io/docs/1.4.0/high-availability/recover-volume/" data-scope="external" rel="external noreferrer">this section</a>&nbsp;for details.</p>
+<h2 id="Volume-Maintenance"><span id="LonghornDeploymentGuide-VolumeMaintenance"></span>Volume Maintenance
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#Volume-Maintenance">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>We highly recommend using the built-in backup feature of Longhorn.</p>
+<p>For each volume, schedule at least one recurring backup. If you must run Longhorn in production without a backupstore, then schedule at least one recurring snapshot for each volume.</p>
+<p>Longhorn system will create snapshots automatically when rebuilding a replica. Recurring snapshots or backups can also automatically clean up the system-generated snapshot.</p>
+<h2 id="Guaranteed-Instance-Manager-CPU"><span id="LonghornDeploymentGuide-GuaranteedInstanceManagerCPU"></span>Guaranteed Instance Manager CPU
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#Guaranteed-Instance-Manager-CPU">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>We recommend allowing Longhorn to have CPU requests set for engine/replica manager pods.</p>
+<p>To be precise, you can set the percentage of a node total allocatable CPU reserved for all engine/replica manager pods by modifying settings&nbsp;<code>Guaranteed Engine Manager CPU</code>&nbsp;and&nbsp;<code>Guaranteed Replica Manager CPU</code>.</p>
+<p>If you want to set a concrete value (milli CPU amount) for engine/replica manager pods on a specific node, you can update the fields&nbsp;<code>Engine Manager CPU Request</code>&nbsp;or&nbsp;<code>Replica Manager CPU Request</code>&nbsp;of the node. Notice that these 2 fields will overwrite the above settings for the specific node.</p>
+<p>The setting&nbsp;<code>Guarantee Engine CPU</code>&nbsp;is deprecated. For the system upgraded from old versions, Longhorn v1.1.1 will set the node fields mentioned above automatically to the same value as the deprecated setting then clean up the setting.</p>
+<p>For details, refer to the settings references&nbsp;<a href="https://longhorn.io/docs/1.4.0/references/settings/#guaranteed-engine-manager-cpu" data-scope="external" rel="external noreferrer">Guaranteed Engine Manager CPU</a>&nbsp;and&nbsp;<a href="https://longhorn.io/docs/1.4.0/references/settings/#guaranteed-replica-manager-cpu" data-scope="external" rel="external noreferrer">Guaranteed Replica Manager CPU</a>.</p>
+<h2 id="StorageClass"><span id="LonghornDeploymentGuide-StorageClass"></span>StorageClass
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#StorageClass">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>We don’t recommend modifying the default StorageClass named&nbsp;<code>longhorn</code>, since the change of parameters might cause issues during an upgrade later. If you want to change the parameters set in the StorageClass, you can create a new StorageClass by referring to the&nbsp;<a href="https://longhorn.io/docs/1.4.0/references/examples/#storageclass" data-scope="external" rel="external noreferrer">StorageClass examples</a>.</p>
+<h2 id="Scheduling-Settings"><span id="LonghornDeploymentGuide-SchedulingSettings"></span>Scheduling Settings
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#Scheduling-Settings">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="Replica-Node-Level-Soft-Anti-Affinity"><span id="LonghornDeploymentGuide-ReplicaNodeLevelSoftAnti-Affinity"></span>Replica Node Level Soft Anti-Affinity
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#Replica-Node-Level-Soft-Anti-Affinity">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<blockquote>
+ <p>Recommend:&nbsp;<code>false</code></p>
+</blockquote>
+<p>This setting should be set to&nbsp;<code>false</code>&nbsp;in production environment to ensure the best availability of the volume. Otherwise, one node down event may bring down more than one replicas of a volume.</p>
+<h3 id="Allow-Volume-Creation-with-Degraded-Availability"><span id="LonghornDeploymentGuide-AllowVolumeCreationwithDegradedAvailability"></span>Allow Volume Creation with Degraded Availability
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#Allow-Volume-Creation-with-Degraded-Availability">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<blockquote>
+ <p>Recommend:&nbsp;<code>false</code></p>
+</blockquote>
+<p>This setting should be set to&nbsp;<code>false</code>&nbsp;in production environment to ensure every volume have the best availability when created. Because with the setting set to&nbsp;<code>true</code>, the volume creation won’t error out even there is only enough room to schedule one replica. So there is a risk that the cluster is running out of the spaces but the user won’t be made aware immediately.</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<h2 id="Installing-Longhorn"><span id="LonghornDeploymentGuide-InstallingLonghorn"></span>Installing Longhorn
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.7/longhorn-deployment-guide#Installing-Longhorn">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<ol>
+ <li>
+  <p>Install Longhorn on any Kubernetes cluster using this command:&nbsp;</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.4.0/deploy/longhorn.yaml
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+  <p>
+   <br>
+  </p>
+  <p>One way to monitor the progress of the installation is to watch pods being created in the&nbsp;<code>longhorn-system</code>&nbsp;namespace:&nbsp;</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>kubectl get pods \
+--namespace longhorn-system \
+--watch
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+  <p><sup> </sup></p>
+ </li>
+ <li>
+  <p>Check that the deployment was successful:&nbsp;</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>$ kubectl -n longhorn-system get pod
+NAME                                           READY   STATUS    RESTARTS   AGE
+longhorn-ui-b7c844b49-w25g5                    1/1     Running   0          2m41s
+longhorn-conversion-webhook-5dc58756b6-9d5w7   1/1     Running   0          2m41s
+longhorn-conversion-webhook-5dc58756b6-jp5fw   1/1     Running   0          2m41s
+longhorn-admission-webhook-8b7f74576-rbvft     1/1     Running   0          2m41s
+longhorn-admission-webhook-8b7f74576-pbxsv     1/1     Running   0          2m41s
+longhorn-manager-pzgsp                         1/1     Running   0          2m41s
+longhorn-driver-deployer-6bd59c9f76-lqczw      1/1     Running   0          2m41s
+longhorn-csi-plugin-mbwqz                      2/2     Running   0          100s
+csi-snapshotter-588457fcdf-22bqp               1/1     Running   0          100s
+csi-snapshotter-588457fcdf-2wd6g               1/1     Running   0          100s
+csi-provisioner-869bdc4b79-mzrwf               1/1     Running   0          101s
+csi-provisioner-869bdc4b79-klgfm               1/1     Running   0          101s
+csi-resizer-6d8cf5f99f-fd2ck                   1/1     Running   0          101s
+csi-provisioner-869bdc4b79-j46rx               1/1     Running   0          101s
+csi-snapshotter-588457fcdf-bvjdt               1/1     Running   0          100s
+csi-resizer-6d8cf5f99f-68cw7                   1/1     Running   0          101s
+csi-attacher-7bf4b7f996-df8v6                  1/1     Running   0          101s
+csi-attacher-7bf4b7f996-g9cwc                  1/1     Running   0          101s
+csi-attacher-7bf4b7f996-8l9sw                  1/1     Running   0          101s
+csi-resizer-6d8cf5f99f-smdjw                   1/1     Running   0          101s
+instance-manager-r-371b1b2e                    1/1     Running   0          114s
+instance-manager-e-7c5ac28d                    1/1     Running   0          114s
+engine-image-ei-df38d2e5-cv6nc                 1/1     Running   0          114s
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+  <p><sup> </sup></p>
+ </li>
+</ol>
+<blockquote>
+ <p><strong>Note</strong>: For Kubernetes &lt; v1.25, if your cluster still enables Pod Security Policy admission controller, need to apply the&nbsp;<a href="https://raw.githubusercontent.com/longhorn/longhorn/master/deploy/podsecuritypolicy.yaml" data-scope="external" rel="external noreferrer">podsecuritypolicy.yaml</a>&nbsp;manifest in addition to applying the&nbsp;<code>longhorn.yaml</code>&nbsp;manifests.</p>
+</blockquote>
+<p>
+ <br>
+</p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="ccdd11e5104fc6a8-124" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="ccdd11e5104fc6a8-124">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/cx/4.7/cloud-native-storage-solution-for-kubernetes-using">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Deploying Rook/Ceph as a cloud-native storage</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/cx/4.7/volume-cloning-procedure">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Volume Cloning Procedure</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

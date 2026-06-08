@@ -1,0 +1,3169 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_37a3633fb259998b830187e1401458bec7dc233f954be6979fa656a105105921" data-confluence-content-id="23823209"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/siebel/3.4.2.5/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="SCC">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>Agent Guide, Advanced Features | Expertflow CX</title>
+		<meta property="og:title" content="Agent Guide, Advanced Features | Expertflow CX">
+		<meta property="twitter:title" content="Agent Guide, Advanced Features | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/siebel/3.4.2.5/agent-guide-advanced-features">
+		<meta property="og:url" content="https://docs.expertflow.com/siebel/3.4.2.5/agent-guide-advanced-features">
+
+		<meta name="description" content="Overview This guide covers Siebel CTI Toolbar functionality provided by EF Siebel CTI Connector. Note Screenshots used in this document are captured on Siebel …">
+		<meta property="og:description" content="Overview This guide covers Siebel CTI Toolbar functionality provided by EF Siebel CTI Connector. Note Screenshots used in this document are captured on Siebel …">
+		<meta property="twitter:description" content="Overview This guide covers Siebel CTI Toolbar functionality provided by EF Siebel CTI Connector. Note Screenshots used in this document are captured on Siebel …">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2023-12-01T13:00:58.915Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": true
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="15d76800c5526195-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="15d76800c5526195-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-15d76800c5526195-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-15d76800c5526195-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-15d76800c5526195-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="15d76800c5526195-3" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="15d76800c5526195-3">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-15d76800c5526195-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-15d76800c5526195-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="15d76800c5526195-4" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="15d76800c5526195-5" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="15d76800c5526195-6" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="15d76800c5526195-7" href="/siebel/3.4.2.5/compatibility-guide" >Compatibility Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="15d76800c5526195-8"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="15d76800c5526195-8" href="/siebel/3.4.2.5/solution-components-and-architecture" >Solution Components and Architecture</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="15d76800c5526195-10"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="15d76800c5526195-10" href="/siebel/3.4.2.5/deployment-models" >Deployment Models</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="15d76800c5526195-12"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="15d76800c5526195-12" href="/siebel/3.4.2.5/solution-security" >Solution Security</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="15d76800c5526195-14" href="/siebel/3.4.2.5/solution-reference" >Solution Reference</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="15d76800c5526195-15" href="/siebel/3.4.2.5/business-features" >Business Features</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="15d76800c5526195-16" href="/siebel/3.4.2.5/solution-prerequisites" >Solution Prerequisites</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="15d76800c5526195-17" href="/siebel/3.4.2.5/release-notes-3-4-2-5" >Release Notes 3.4.2.5</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="15d76800c5526195-18" href="/siebel/3.4.2.5/agent-guide" >Agent Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="15d76800c5526195-19" href="/siebel/3.4.2.5/unexpected-scenarios" >Unexpected Scenarios</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="15d76800c5526195-20" href="/siebel/3.4.2.5/agent-guide-advanced-features" aria-current="page">Agent Guide, Advanced Features</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="15d76800c5526195-21" href="/siebel/3.4.2.5/user-acceptance-tests-uats" >User Acceptance Tests UATs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="15d76800c5526195-22" href="/siebel/3.4.2.5/datasheet" >Datasheet</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="15d76800c5526195-23" href="/siebel/3.4.2.5/administrator-guide" >Administrator Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="15d76800c5526195-24" href="/siebel/3.4.2.5/sitemap-xml" >sitemap.xml</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="15d76800c5526195-25" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="15d76800c5526195-25">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/siebel/3.4.2.5">
+										Siebel CRM CTI Connector for Cisco Contact Center
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="15d76800c5526195-26">
+			<h2 class="toc-heading" id="15d76800c5526195-26">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>Agent Guide, Advanced Features</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+	
+
+	
+	
+
+	
+
+	
+	
+
+
+	
+	
+	
+	
+	
+	
+			
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+		
+	
+	
+	
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<h2 id="id-(3.4.2.5)AgentGuide,AdvancedFeatures-Overview"><span id="AgentGuide,AdvancedFeatures-Overview"></span>Overview
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/siebel/3.4.2.5/agent-guide-advanced-features#id-(3.4.2.5)AgentGuide,AdvancedFeatures-Overview">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>This guide covers Siebel CTI Toolbar functionality provided by EF Siebel CTI Connector.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Note</p>
+        </td>
+        <td>
+         <p>Screenshots used in this document are captured on Siebel IP 2015 running in Open UI mode.</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<h2 id="id-(3.4.2.5)AgentGuide,AdvancedFeatures-SiebelCTIToolbarIntroduction"><span id="AgentGuide,AdvancedFeatures-SiebelCTIToolbarIntroduction"></span>Siebel CTI Toolbar Introduction
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/siebel/3.4.2.5/agent-guide-advanced-features#id-(3.4.2.5)AgentGuide,AdvancedFeatures-SiebelCTIToolbarIntroduction">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>Siebel CTI Toolbar is explained below:</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false"> <img src="/__attachments/a_3b06fbc029c620ac6261c925e77ea41a44903d95cc735cee91fbe07c98b55c50/1.png?cb=67781dd928fa5e8a919f7edf1c78aa2a" alt="1.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>All buttons/controls are listed below:</p>
+<p>Siebel CTI Toolbar Controls</p>
+<ol>
+ <li>
+  <p>Timer Indicator</p>
+ </li>
+</ol>
+<p>Enables when timer is enabled during call</p>
+<ol>
+ <li>
+  <p>Message Display</p>
+ </li>
+</ol>
+<p>This strip is used to display any messages to agent. These messages can be informative, warning or error messages.</p>
+<ol>
+ <li>
+  <p>Timer</p>
+ </li>
+</ol>
+<p>Timer starts when a call goes active. Upon call hold timer is set to 00:00:00 and on hold it shows call time plus hold time as well. If agent wants to view hold state time, he/she can refresh toolbar and time will be displayed on Message Display Strip (Informative Section # 1)</p>
+<ol>
+ <li>
+  <p>Work Edit</p>
+ </li>
+</ol>
+<p>Work Edit text box is used to provide extension to make call to. This is also used to login with an extension.</p>
+<ol>
+ <li>
+  <p>Make Call</p>
+ </li>
+</ol>
+<p>This button initiates a call to phone number that is entered in Work Edit text box.</p>
+<ol>
+ <li>
+  <p>Accept Call</p>
+ </li>
+</ol>
+<p>Accepts an incoming call.</p>
+<ol>
+ <li>
+  <p>Release Call</p>
+ </li>
+</ol>
+<p>Ends an active call.</p>
+<ol>
+ <li>
+  <p>Blind Transfer</p>
+ </li>
+</ol>
+<p>Blind transfer call to extension entered in Work Edit Box.</p>
+<ol>
+ <li>
+  <p>Change size/orientation of CTI Toolbar</p>
+ </li>
+</ol>
+<p>Toggling this button changes size of CTI Toolbar.</p>
+<ol>
+ <li>
+  <p>Consult Call/Transfer Finish</p>
+ </li>
+</ol>
+<p>This button is used to consult call to extension entered in Work Edit box. The same button is used to end consult call when consult call is active.</p>
+<ol>
+ <li>
+  <p>Dock/Undock</p>
+ </li>
+</ol>
+<p>Siebel CTI Toolbar can be undocked and can move freely within the browser page. After undocking, this button is used to dock CTI Toolbar again to its original position.</p>
+<ol>
+ <li>
+  <p>Conference Call</p>
+ </li>
+</ol>
+<p>Conference call can be made when consult call is active. This button is used to conference call.</p>
+<ol>
+ <li>
+  <p>Refresh Toolbar</p>
+ </li>
+</ol>
+<p>To refresh toolbar in case CTI Toolbar seems unresponsive or agent message is not being displayed on CTI Toolbar currently. This button is enabled for almost all states.</p>
+<ol>
+ <li>
+  <p>Hold/Resume Call</p>
+ </li>
+</ol>
+<p>This button is toggle button and isenabled when a call is active. Toggling this button holds/resumes call.</p>
+<ol>
+ <li>
+  <p>Work Edit List</p>
+ </li>
+</ol>
+<p>Work Edit List shows current work in progress e.g. call. When agent is in talking state, work listed is preceded by -&gt; sign in Work Edit List.</p>
+<ol>
+ <li>
+  <p>Unhold Call</p>
+ </li>
+</ol>
+<p>Unholds a currently held call.</p>
+<ol>
+ <li>
+  <p>Set ready state</p>
+ </li>
+</ol>
+<p>Used to set ready state.</p>
+<ol>
+ <li>
+  <p>Set Not-Ready State</p>
+ </li>
+</ol>
+<p>Used to set not ready with/without reason code</p>
+<ol>
+ <li>
+  <p>Login</p>
+ </li>
+</ol>
+<p>Agent enters his/her extension in Work Edit box and press login button to login.</p>
+<ol>
+ <li>
+  <p>Logout</p>
+ </li>
+</ol>
+<p>This button is enabled only in not ready state. Used to logout from Siebel CTI Toolbar.</p>
+<ol>
+ <li>
+  <p>Wrapup Call</p>
+ </li>
+</ol>
+<p>Active during call only. Used to submit WORK → READY request</p>
+<ol>
+ <li>
+  <p>Hide/Show extended buttons</p>
+ </li>
+</ol>
+<p>Upon contraction of Siebel CTI Toolbar using this button, only most used buttons are shown in toolbar. Upon expansion using this button, full CTI Toolbar is shown.</p>
+<ol>
+ <li>
+  <p>Hide show Call Variables section</p>
+ </li>
+</ol>
+<p>Call variables section can be hid using this button or it can be shown by this button.</p>
+<ol>
+ <li>
+  <p>Go to</p>
+ </li>
+</ol>
+<p>Agent can select a value from drop down list and navigate to selected menu using this button. For example user selects “activities” from drop down list and presses this button, he/she will be directed to activities screen.</p>
+<ol>
+ <li>
+  <p>Update Call Variables Values</p>
+ </li>
+</ol>
+<p>Normally call variables are updated upon new call arrival. If not, agent can check for call variables by using this update button.</p>
+<ol>
+ <li>
+  <p>Call Variables</p>
+ </li>
+</ol>
+<p>All call variables are populated in this section. Your local implementation can be difference from snapshot. Please contact your supervisor for further details.</p>
+<h2 id="id-(3.4.2.5)AgentGuide,AdvancedFeatures-Agentstates&amp;SiebelCTIToolbarControls"><span id="AgentGuide,AdvancedFeatures-Agentstates&amp;amp;SiebelCTIToolbarControls"></span>Agent states &amp; Siebel CTI Toolbar Controls
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/siebel/3.4.2.5/agent-guide-advanced-features#id-(3.4.2.5)AgentGuide,AdvancedFeatures-Agentstates&amp;amp;SiebelCTIToolbarControls">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>Below are agent states and available CTI toolbar controls against every state</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>State Name</p>
+        </td>
+        <td>
+         <p>Controls</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>NOT READY</p>
+        </td>
+        <td>
+         <ul>
+          <li>
+           <p>Change ready state</p>
+          </li>
+          <li>
+           <p>Change not-ready - reason code state</p>
+          </li>
+          <li>
+           <p>Make Call</p>
+          </li>
+          <li>
+           <p>Refresh Toolbar</p>
+          </li>
+          <li>
+           <p>Logout</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>READY</p>
+        </td>
+        <td>
+         <ul>
+          <li>
+           <p>Change not ready state</p>
+          </li>
+          <li>
+           <p>Refresh Toolbar</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>CALL ALERTING</p>
+        </td>
+        <td>
+         <ul>
+          <li>
+           <p>Answer Call</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>OUTBOUND CALL ALERTING</p>
+        </td>
+        <td>
+         <ul>
+          <li>
+           <p>Release Call</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>CALL ACTIVE</p>
+        </td>
+        <td>
+         <ul>
+          <li>
+           <p>Release Call</p>
+          </li>
+          <li>
+           <p>Blind Call Transfer to Extension</p>
+          </li>
+          <li>
+           <p>Consultative Transfer</p>
+          </li>
+          <li>
+           <p>Refresh Toolbar</p>
+          </li>
+          <li>
+           <p>Hold/Resume Call</p>
+          </li>
+          <li>
+           <p>Change Pending state</p>
+          </li>
+          <li>
+           <p>Work → Ready</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>CALL HELD</p>
+        </td>
+        <td>
+         <ul>
+          <li>
+           <p>Release Call</p>
+          </li>
+          <li>
+           <p>Refresh Toolbar</p>
+          </li>
+          <li>
+           <p>Unhold Call</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>CONSULT CALL ACTIVE</p>
+        </td>
+        <td>
+         <ul>
+          <li>
+           <p>Refresh Toolbar</p>
+          </li>
+          <li>
+           <p>Release Call</p>
+          </li>
+          <li>
+           <p>Conference Call</p>
+          </li>
+          <li>
+           <p>Transfer Finish</p>
+          </li>
+          <li>
+           <p>Hold/Resume Call</p>
+          </li>
+          <li>
+           <p>Change Pending state</p>
+          </li>
+          <li>
+           <p>Work → Ready</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>CONFERENCE CALL</p>
+        </td>
+        <td>
+         <ul>
+          <li>
+           <p>Release Call</p>
+          </li>
+          <li>
+           <p>Blind Call Transfer to Extension</p>
+          </li>
+          <li>
+           <p>Consultative Transfer Finish</p>
+          </li>
+          <li>
+           <p>Refresh Toolbar</p>
+          </li>
+          <li>
+           <p>Hold/Resume Call</p>
+          </li>
+          <li>
+           <p>Change Pending state</p>
+          </li>
+          <li>
+           <p>Work → Ready</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>RESERVED STATE (for Outbound Campaigns)</p>
+        </td>
+        <td>
+         <ul>
+          <li>
+           <p>Refresh Toolbar</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>WRAP-UP STATE</p>
+        </td>
+        <td>
+         <ul>
+          <li>
+           <p>Change ready/not-ready State</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>LOGGED OUT STATE</p>
+        </td>
+        <td>
+         <ul>
+          <li>
+           <p>Login</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<h2 id="id-(3.4.2.5)AgentGuide,AdvancedFeatures-ShortcutKeys"><span id="AgentGuide,AdvancedFeatures-ShortcutKeys"></span>Shortcut Keys
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/siebel/3.4.2.5/agent-guide-advanced-features#id-(3.4.2.5)AgentGuide,AdvancedFeatures-ShortcutKeys">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>Shortcut keys are listed for commands below:</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Command</p>
+        </td>
+        <td>
+         <p>Shortcut Key</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Refresh Toolbar</p>
+        </td>
+        <td>
+         <p>Ctrl+R</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Ready</p>
+        </td>
+        <td>
+         <p>Ctrl+Shift+R</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Not Ready</p>
+        </td>
+        <td>
+         <p>Ctrl+Shift+N</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Conference Call</p>
+        </td>
+        <td>
+         <p>Ctrl+Shift+C</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Hold Call</p>
+        </td>
+        <td>
+         <p>Ctrl+Shift+H</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Resume Call</p>
+        </td>
+        <td>
+         <p>Ctrl+Shift+J</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p>Note: These shortcut keys are tested for Mozilla Firefox version up-to 50.1.0.</p>
+<h2 id="id-(3.4.2.5)AgentGuide,AdvancedFeatures-EnablingSiebelCTIToolbar"><span id="AgentGuide,AdvancedFeatures-EnablingSiebelCTIToolbar"></span>Enabling Siebel CTI Toolbar
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/siebel/3.4.2.5/agent-guide-advanced-features#id-(3.4.2.5)AgentGuide,AdvancedFeatures-EnablingSiebelCTIToolbar">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>After logging into Siebel Call Center web application, a chat icon can be seen on upper right side of page. This icon is white at very first but then turns red after a while. Red color says middleware loading process is complete by now (either successful loading or unsuccessful one).</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 600px;"> <img src="/__attachments/a_956850fbcec78aaa61dc74f4cc7747b063dd1df2bc18bfa749123ba71aa99224/2.png?cb=f52b18879b5a66e9e83aeb3e6cd2cc53" alt="2.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<h3 id="id-(3.4.2.5)AgentGuide,AdvancedFeatures-LogintoCTIToolbar"><span id="AgentGuide,AdvancedFeatures-LogintoCTIToolbar"></span>Login to CTI Toolbar
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/siebel/3.4.2.5/agent-guide-advanced-features#id-(3.4.2.5)AgentGuide,AdvancedFeatures-LogintoCTIToolbar">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Upon clicking enable CTI Toolbar button, Siebel CTI Toolbar appears as shown below:</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 600px;"> <img src="/__attachments/a_f7f14d3a8c103ba83f6715a6200e1f6d6d269411d2b8648f66e7619811cac133/3.png?cb=f23c250821b7b8faf104eae5237f8613" alt="3.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>Agent enters extension in Work Edit box and clicks login button to log into CTI Toolbar. Agent goes to not ready state as shown below:</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 600px;"> <img src="/__attachments/a_793bd80e558b36384c5d9bd7877d56e8f0f6517cf31b82c0baa31b2befec0914/4.png?cb=10a1a02c7f7a487639995b962863a9a2" alt="4.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>Now only that controls are visible which should be in Not Ready state.</p>
+<h3 id="id-(3.4.2.5)AgentGuide,AdvancedFeatures-MakingCall"><span id="AgentGuide,AdvancedFeatures-MakingCall"></span>Making Call
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/siebel/3.4.2.5/agent-guide-advanced-features#id-(3.4.2.5)AgentGuide,AdvancedFeatures-MakingCall">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>In Not Ready state, agent can make a call to another extension. Enter this extension in Work Edit box and click “Make Call” button. Now CTI toolbar looks as follows:</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 600px;"> <img src="/__attachments/a_edaf5406f0484fabbaa68964808016e18b0538d258adf843594d3693c41f09a8/5.png?cb=6ffac4fb03afd8b64a1f0afb9c0d3474" alt="5.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>
+ <br>
+ Agent can only release call when call is initiating. When call is received by other end, CTI toolbar looks like follows:
+</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 600px;"> <img src="/__attachments/a_f29a86e404c83615e56c5109283febf61662670c9542f3206b0005055c115c64/6.png?cb=c348aca9348c9196a884ab353502d9b4" alt="6.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>Please note “Work Edit List” shows current work in progression. Also it shows “-&gt;” sign with active call i.e. in talking state.</p>
+<h4 id="id-(3.4.2.5)AgentGuide,AdvancedFeatures-Hold&amp;UnholdCall"><span id="AgentGuide,AdvancedFeatures-Hold&amp;amp;UnholdCall"></span>Hold &amp; Unhold Call
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/siebel/3.4.2.5/agent-guide-advanced-features#id-(3.4.2.5)AgentGuide,AdvancedFeatures-Hold&amp;amp;UnholdCall">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>When a call is active, agent can hold call by clicking “Hold Call” button. When a call is held, CTI Toolbar looks as follows:</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 600px;"> <img src="/__attachments/a_cd7dd09ebf01af992be6f4b6228102ba0baf5b99d9b6b635989b6193feb408f2/7.png?cb=09d99d8d5433b5318bae5a89001181ce" alt="7.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>Now agent can click hold call button again which is in pressed state nor, to unhold the call. Please note there is no “-&gt;” sign in Work Edit List at the moment as agent is not in talking state.</p>
+<p>Agent can manually submit wrapup during active call using Wrapup call button, wrapup button is enabled during active call no matter what state is i.e. hold, Unhold, active etc.</p>
+<h4 id="id-(3.4.2.5)AgentGuide,AdvancedFeatures-ReleaseCall"><span id="AgentGuide,AdvancedFeatures-ReleaseCall"></span>Release Call
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/siebel/3.4.2.5/agent-guide-advanced-features#id-(3.4.2.5)AgentGuide,AdvancedFeatures-ReleaseCall">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>During an active call (either agent is in talking or in held state), agent can release call.. If agent release call, he/she goes to same state he/she was in before making call. Normally this is “Not Ready” state as agent can make call only in not ready state. Not ready reason code is shown on CTI toolbar message as follows:</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 600px;"> <img src="/__attachments/a_83527bd9859f9b0659e6ef6465a06f8797a83253a007624220c696e4552aaa89/8.png?cb=6ac15510d4cd020a23e595e10090cac3" alt="8.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>Upon refresh toolbar button click, CTI toolbar displays user time elapsed in this state as follows:</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 600px;"> <img src="/__attachments/a_f8c33f904584394100d811ac3c7d3e41e06255641ebdb3c5bdd3b3d94f5a8250/9.png?cb=8ff33c4c344de7f1f132a816cbd34f4e" alt="9.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>Now user goes to ready state by toggling not ready/ ready button.</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 600px;"> <img src="/__attachments/a_f52d8cf55292cc1b1206d4419cd705bfabd124165da5683d7e29897b024d0498/10.png?cb=2bad80f7f6bde534d0a1cf0207392ce3" alt="10.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<h3 id="id-(3.4.2.5)AgentGuide,AdvancedFeatures-ReceiveIncomingCall"><span id="AgentGuide,AdvancedFeatures-ReceiveIncomingCall"></span>Receive Incoming Call
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/siebel/3.4.2.5/agent-guide-advanced-features#id-(3.4.2.5)AgentGuide,AdvancedFeatures-ReceiveIncomingCall">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Here is how CTI toolbar behaves when new inbound call arrives:</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 600px;"> <img src="/__attachments/a_c1756bef5eb72d369497e4ef5dd717e7be4da87853babbeb7f82b438cfcce979/11.png?cb=d2732428bfccba74e40f348b3b0d311b" alt="11.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>Please note that call variables section is shrunk in this case, Agent can click update button to load call variables as follows:</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 600px;"> <img src="/__attachments/a_a239add8788e561e177a92f69b5d49095739281beed1849130affff00ab04783/12.png?cb=c01ca35f1392f5a749034950fe7065e5" alt="12.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>After receiving incoming call from CTI toolbar looks like follows:</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 600px;"> <img src="/__attachments/a_044e64b94c66b19103d8699dfc15058331168cb695d786cc1c26016a5e0041c4/13.png?cb=544e03296033bff43eb5b4259c4918f8" alt="13.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<h3 id="id-(3.4.2.5)AgentGuide,AdvancedFeatures-BlindTransferCall"><span id="AgentGuide,AdvancedFeatures-BlindTransferCall"></span>Blind Transfer Call
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/siebel/3.4.2.5/agent-guide-advanced-features#id-(3.4.2.5)AgentGuide,AdvancedFeatures-BlindTransferCall">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>When call is active, agent can make blind transfer call by entering extension in Work Edit box and click blind transfer button.</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 600px;"> <img src="/__attachments/a_d4ff9ddba1d81f166e2d9022c343f93ec5106f363ddf54476f87705f593e46dc/14.png?cb=b281b90a19f50c7547695e71c9d45ca1" alt="14.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>Blind transfer is done and agent is in wrap up state now. To logout, agent goes to “Not Ready” state first if currently in “Ready” state. After clicking not ready state button, a wrap up list of values pop up to enter not ready reason code as follows:</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 600px;"> <img src="/__attachments/a_9f9534aa2757c56faaf1bad46955c100e1d9d6760719f1713173c0d893d5847f/15.png?cb=a828def7ccbb5a3eb20d7badce86e3e9" alt="15.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>Agent selects a reason and click Ok, Not ready state with reason code in shown in CTI toolbar message.</p>
+<h3 id="id-(3.4.2.5)AgentGuide,AdvancedFeatures-LogoutfromCTIToolbar"><span id="AgentGuide,AdvancedFeatures-LogoutfromCTIToolbar"></span>Logout from CTI Toolbar
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/siebel/3.4.2.5/agent-guide-advanced-features#id-(3.4.2.5)AgentGuide,AdvancedFeatures-LogoutfromCTIToolbar">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 600px;"> <img src="/__attachments/a_213daac7c94b1359e5b29ad2eb2aea9181691e5de26dfe1dbd27aaa22e56b674/16.png?cb=273116a813a903f9089d4f59be1c53ef" alt="16.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>Now logout button is enabled. Agent can logout using this button, Logout reason codes LOV pops up upon clicking this button:</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 600px;"> <img src="/__attachments/a_93f042639f826215b6b44ab4f129d5dca56275f8996d1da7f7a0f5f0e98e7628/17.png?cb=24b9e0ee0b219fb94a7a2279563b3009" alt="17.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>After submitting logout reason code, Logout state message appears on CTI toolbar:</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 600px;"> <img src="/__attachments/a_fe4f3ac44c032b8c3b533c89d326dadba5df90153c97d3222cdead0ac6e7435a/18.png?cb=e7ca31eb533c341da6b98086592855f8" alt="18.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<h3 id="id-(3.4.2.5)AgentGuide,AdvancedFeatures-Consult&amp;ConferenceCall"><span id="AgentGuide,AdvancedFeatures-Consult&amp;amp;ConferenceCall"></span>Consult &amp; Conference Call
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/siebel/3.4.2.5/agent-guide-advanced-features#id-(3.4.2.5)AgentGuide,AdvancedFeatures-Consult&amp;amp;ConferenceCall">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>
+ <br>
+</p>
+<p>Agent can make a consult call when a call is active:</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 600px;"> <img src="/__attachments/a_47003606a5997daf00d3a956bc14a0eaf1b31ca7208c080e7edeeaa9ecaf6e59/19.png?cb=698a6d250dbf12b1a74f488ad296a2be" alt="19.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>Agent enters extension in Work Edit box and clicks consult transfer button, Call goes to ringing state, On other agent, this consult call is treated same as New Incoming Call. After he/she receives consult call, CTI Toolbar looks as follows:</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 600px;"> <img src="/__attachments/a_410e9ffbfc95860a2723c7f1d6c5e914828499eccf438e522e5b06563eaf07e1/20.png?cb=e9d7d932514f3f2e56e8ac7fcc2d505d" alt="20.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>Now conference call button is enabled. Agent can conference call to same agent he made consult call to. There is no need to enter extension in work edit box in conference call case.</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 600px;"> <img src="/__attachments/a_8c4d55ed665f0c9cdc949e5457606f864c309eee40d4264b9cc68fbc92308134/21.png?cb=9a3b8fc82e1f7214ade46dc0d5f33cc8" alt="21.png" data-scope="internal"> </span> </image-lightbox> </span>
+ <br>
+ <br></p>
+<p>Please check difference in Work Edit List in case of Consult Call and Conference Call. Here in conference call, buttons same buttons are enabled as in normal active call.</p>
+<h3 id="id-(3.4.2.5)AgentGuide,AdvancedFeatures-UnexpectedScenarios"><span id="AgentGuide,AdvancedFeatures-UnexpectedScenarios"></span>Unexpected Scenarios
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/siebel/3.4.2.5/agent-guide-advanced-features#id-(3.4.2.5)AgentGuide,AdvancedFeatures-UnexpectedScenarios">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>There may be some unexpected scenarios when agent sees unfamiliar messages on Siebel CTI Toolbar or Siebel CTI Toolbar can’t function normally. All Unexpected Scenarios are covered in <a href="https://docs.google.com/a/expertflow.com/document/d/1AxeM6M5_8IXPwbGQRqAcBgBr6UpFD_SmPGVq65IGdtQ/edit?usp=sharing" data-scope="external" rel="external noreferrer">Siebel CTI Connector - Unexpected Scenarios</a>.</p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="15d76800c5526195-27" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="15d76800c5526195-27">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/siebel/3.4.2.5/unexpected-scenarios">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Unexpected Scenarios</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/siebel/3.4.2.5/user-acceptance-tests-uats">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">User Acceptance Tests UATs</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

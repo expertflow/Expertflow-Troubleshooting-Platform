@@ -1,0 +1,3639 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_9ca2fe7ad80741aa3ecfffbf10e688e073f249a499e59e2a330da0efd6fc792d" data-confluence-content-id="1238303420"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/cx/4.10/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="CX">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>TLS Enablement for ActiveMQ | Expertflow CX</title>
+		<meta property="og:title" content="TLS Enablement for ActiveMQ | Expertflow CX">
+		<meta property="twitter:title" content="TLS Enablement for ActiveMQ | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/cx/4.10/tls-enablement-for-activemq">
+		<meta property="og:url" content="https://docs.expertflow.com/cx/4.10/tls-enablement-for-activemq">
+
+		<meta name="description" content="Generate Certificates Requirements: Make sure you have keytool and openssl installed on the machine where you want to generate certificates. Please run this sc…">
+		<meta property="og:description" content="Generate Certificates Requirements: Make sure you have keytool and openssl installed on the machine where you want to generate certificates. Please run this sc…">
+		<meta property="twitter:description" content="Generate Certificates Requirements: Make sure you have keytool and openssl installed on the machine where you want to generate certificates. Please run this sc…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2025-08-13T09:00:32.119Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": true
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.js"></script>
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="e5b6e01cf7a6c0cb-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="e5b6e01cf7a6c0cb-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="e5b6e01cf7a6c0cb-19">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="e5b6e01cf7a6c0cb-19" name="version" onchange="self.location.assign(this.value)" >
+				<option id="e5b6e01cf7a6c0cb-3"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="e5b6e01cf7a6c0cb-4"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="e5b6e01cf7a6c0cb-5"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="e5b6e01cf7a6c0cb-6"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="e5b6e01cf7a6c0cb-7"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="e5b6e01cf7a6c0cb-8"  value="/cx/4.10/tls-enablement-for-activemq"  selected="">
+					4.10
+				</option>
+				<option id="e5b6e01cf7a6c0cb-9"  value="/cx/4.9/tls-enablement-for-activemq"  >
+					4.9
+				</option>
+				<option id="e5b6e01cf7a6c0cb-10"  value="/cx/4.8"  >
+					4.8
+				</option>
+				<option id="e5b6e01cf7a6c0cb-11"  value="/cx/4.7"  >
+					4.7
+				</option>
+				<option id="e5b6e01cf7a6c0cb-12"  value="/cx/4.6"  >
+					4.6
+				</option>
+				<option id="e5b6e01cf7a6c0cb-13"  value="/cx/4.5.3"  >
+					4.5.3
+				</option>
+				<option id="e5b6e01cf7a6c0cb-14"  value="/cx/4.5.2"  >
+					4.5.2
+				</option>
+				<option id="e5b6e01cf7a6c0cb-15"  value="/cx/4.5.1"  >
+					4.5.1
+				</option>
+				<option id="e5b6e01cf7a6c0cb-16"  value="/cx/4.5"  >
+					4.5
+				</option>
+				<option id="e5b6e01cf7a6c0cb-17"  value="/cx/4.4"  >
+					4.4
+				</option>
+				<option id="e5b6e01cf7a6c0cb-18"  value="/cx/4.3"  >
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('e5b6e01cf7a6c0cb-19');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-e5b6e01cf7a6c0cb-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-e5b6e01cf7a6c0cb-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-e5b6e01cf7a6c0cb-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="e5b6e01cf7a6c0cb-20" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="e5b6e01cf7a6c0cb-20">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-e5b6e01cf7a6c0cb-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-e5b6e01cf7a6c0cb-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="e5b6e01cf7a6c0cb-37">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="e5b6e01cf7a6c0cb-37" name="version" onchange="self.location.assign(this.value)" >
+				<option id="e5b6e01cf7a6c0cb-21"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="e5b6e01cf7a6c0cb-22"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="e5b6e01cf7a6c0cb-23"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="e5b6e01cf7a6c0cb-24"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="e5b6e01cf7a6c0cb-25"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="e5b6e01cf7a6c0cb-26"  value="/cx/4.10/tls-enablement-for-activemq"  selected="">
+					4.10
+				</option>
+				<option id="e5b6e01cf7a6c0cb-27"  value="/cx/4.9/tls-enablement-for-activemq"  >
+					4.9
+				</option>
+				<option id="e5b6e01cf7a6c0cb-28"  value="/cx/4.8"  >
+					4.8
+				</option>
+				<option id="e5b6e01cf7a6c0cb-29"  value="/cx/4.7"  >
+					4.7
+				</option>
+				<option id="e5b6e01cf7a6c0cb-30"  value="/cx/4.6"  >
+					4.6
+				</option>
+				<option id="e5b6e01cf7a6c0cb-31"  value="/cx/4.5.3"  >
+					4.5.3
+				</option>
+				<option id="e5b6e01cf7a6c0cb-32"  value="/cx/4.5.2"  >
+					4.5.2
+				</option>
+				<option id="e5b6e01cf7a6c0cb-33"  value="/cx/4.5.1"  >
+					4.5.1
+				</option>
+				<option id="e5b6e01cf7a6c0cb-34"  value="/cx/4.5"  >
+					4.5
+				</option>
+				<option id="e5b6e01cf7a6c0cb-35"  value="/cx/4.4"  >
+					4.4
+				</option>
+				<option id="e5b6e01cf7a6c0cb-36"  value="/cx/4.3"  >
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('e5b6e01cf7a6c0cb-37');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-38" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-39" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-40" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-41"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-41" href="/cx/4.10/cx-release-notes" >CX Release Notes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-43" href="/cx/4.10/expertflow-cx-data-sheet" >CX Data Sheet</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-44"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-44" href="/cx/4.10/customer-identities" >Customer</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-46"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-46" href="/cx/4.10/reports" >Reports</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-48"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-48" href="/cx/4.10/expertflow-etl-data-platform" >Expertflow ETL - Data Platform</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-50"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-50" href="/cx/4.10/agent-capabilities" >Agent Capabilities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-52"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-52" href="/cx/4.10/supervisor-controls" >Supervisor Controls</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="e5b6e01cf7a6c0cb-55"						aria-labelledby="e5b6e01cf7a6c0cb-54"
+					></button>
+				<a id="e5b6e01cf7a6c0cb-54" href="/cx/4.10/deployment-guides" >Deployment Guides</a>
+			</div>
+
+<ul  id="e5b6e01cf7a6c0cb-55" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-56"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-56" href="/cx/4.10/kubernetes-deployment-getting-started" >Deployment Planning</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-58" href="/cx/4.10/rke2-single-node-deployment" >RKE2 Single Node Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-59"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-59" href="/cx/4.10/rke2-single-node-installation-without-ha" >RKE2 Control plane Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-61" href="/cx/4.10/air-gap-install-for-rke-2-kubernetes" >Air-Gap Install for RKE-2 Kubernetes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-62"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-62" href="/cx/4.10/rke2-multi-node-installation-without-ha" >Worker HA</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-64"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-64" href="/cx/4.10/rke2-high-availability-pre-deployment-installati-1" >CX High Availability</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-66"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-66" href="/cx/4.10/storage-solution-getting-started" >Storage Solution - Getting Started</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="e5b6e01cf7a6c0cb-69"						aria-labelledby="e5b6e01cf7a6c0cb-68"
+					></button>
+				<a id="e5b6e01cf7a6c0cb-68" href="/cx/4.10/tls-enablement-for-redis-mongodb-postgresql-and-ac" >TLS enablement for Redis, MongoDB , PostgreSQL and ActiveMQ</a>
+			</div>
+
+<ul  id="e5b6e01cf7a6c0cb-69" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-70" href="/cx/4.10/enable-keycloak-db-postgresql-connectivity-over-tl" >Enable Keycloak DB (PostgreSQL) Connectivity Over TLS</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-71" href="/cx/4.10/tls-enablement-for-redis-mongodb-postgresql-and--1" >TLS enablement for Redis, MongoDB , PostgreSQL and ActiveMQ with Static Certificates</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-72"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-72" href="/cx/4.10/ms-crm-connector-cif-1-0-enablement-with-kubernete" >MS-CRM-Connector-cif-1.0 Enablement with Kubernetes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-74" href="/cx/4.10/tls-enablement-for-activemq" aria-current="page">TLS Enablement for ActiveMQ</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-75" href="/cx/4.10/authentication-enablement-for-activemq" >Authentication Enablement for ActiveMQ</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-76"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-76" href="/cx/4.10/helm-based-deployment-for-expertflow-cx-solution" >Helm-based Deployment for Expertflow CX</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-78"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-78" href="/cx/4.10/deployment-of-solution-monitoring-components" >Monitoring Solution Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-80"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-80" href="/cx/4.10/cx-enhancements" >CX Enhancements</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-82"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-82" href="/cx/4.10/system-administration-guides" >System Administration Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-84"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-84" href="/cx/4.10/upgrade-guide" >Upgrade Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-86"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-86" href="/cx/4.10/geographical-deployment-of-expertflow-cx-with-redu" >Geographical Deployment of Expertflow CX with Redundancy</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-88" href="/cx/4.10/create-self-signed-certificates-for-ingress" >Create self-signed certificates for ingress</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-89" href="/cx/4.10/health-check-api-for-cx-components" >Health-Check API for CX Components</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-90"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-90" href="/cx/4.10/expertflow-cx-deployment-on-kubernetes" >CX Deployment on Kubernetes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-92" href="/cx/4.10/nats-deployment-guide-for-cx-on-cloud" >nats deployment guide for CX on cloud</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-93" href="/cx/4.10/helm-upgrade-guide" >Helm  Upgrade Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-94" href="/cx/4.10/upgrade-to-mongodb-version-8-x-for-cx-solution" >Upgrade to Mongodb Version 8.x  for CX Solution</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-95" href="/cx/4.10/qm-connector-deployment-guide-to-be-reviewed-by-si" >QM Connector Deployment Guide-to be reviewed by Sikander/Muneeb</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-96" href="/cx/4.10/oauth2-proxy-deployment-guide-using-helm" >Oauth2-Proxy Deployment Guide using Helm</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-97"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-97" href="/cx/4.10/application-gateway-apisix-deployment-for-ef-cx" >Application Gateway (APISIX) Deployment for EF CX</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-99" href="/cx/4.10/upgrade-to-redis-version-7-x-for-ef-cx" >Upgrade to Redis version 7.x For EF-CX</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-100" href="/cx/4.10/cx-tenant-component-deployment" >CX-Tenant Component deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-101" href="/cx/4.10/end-user-guide-upgrading-mongodb-replica-set-to-8-" >End-User Guide: Upgrading MongoDB Replica Set to 8.x for CX Solution ( UNVERIFIED )</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-102" href="/cx/4.10/deployment-guide-cisco-sync-service" >Deployment Guide - Cisco Sync Service</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-103"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-103" href="/cx/4.10/encryption-at-rest-configuration-guide" >Encryption at Rest - Configuration Guide</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-105"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-105" href="/cx/4.10/developer-guides" >Developer Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-107"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-107" href="/cx/4.10/unified-admin-guide" >Unified Admin Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-109"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-109" href="/cx/4.10/voice-recording-solution" >Voice Recording Solution</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-111"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-111" href="/cx/4.10/business-calendars" >Business Calendars</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-113"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-113" href="/cx/4.10/outbound-campaigns" >Outbound Campaigns</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e5b6e01cf7a6c0cb-115"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e5b6e01cf7a6c0cb-115" href="/cx/4.10/cx-surveys" >CX Surveys</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-117" href="/cx/4.10/right-to-left-rtl-support-on-agent-desk" >Right to left (RTL) support on Agent Desk</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-118" href="/cx/4.10/configurable-log-masking" >Configurable Log Masking</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-119" href="/cx/4.10/cx-solution-deployment-using-iac" >CX Solution Deployment using IAC</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e5b6e01cf7a6c0cb-120" href="/cx/4.10/translation-support-at-customer-widget" >Translation support at customer widget</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="e5b6e01cf7a6c0cb-121" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="e5b6e01cf7a6c0cb-121">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.10">
+										Expertflow CX
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.10/deployment-guides">
+										Deployment Guides
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.10/tls-enablement-for-redis-mongodb-postgresql-and-ac">
+										TLS enablement for Redis, MongoDB , PostgreSQL and ActiveMQ
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="e5b6e01cf7a6c0cb-122">
+			<h2 class="toc-heading" id="e5b6e01cf7a6c0cb-122">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>TLS Enablement for ActiveMQ</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+	
+	
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+	
+
+
+	
+	
+	
+	
+	
+	
+		
+		
+	
+	
+	
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<h2 id="Generate-Certificates"><span id="TLSEnablementforActiveMQ-GenerateCertificates"></span>Generate Certificates 
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.10/tls-enablement-for-activemq#Generate-Certificates">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p><strong>Requirements: </strong>Make sure you have <strong>keytool</strong> and <strong>openssl</strong> installed on the machine where you want to generate certificates.</p>
+<ol>
+ <li>
+  <p>Please run this script to generate certificate files.</p>
+ </li>
+</ol>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>vi generate-ssl.sh
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>#!/bin/bash
+
+set -e
+
+PASSWORD=password
+DAYS=36500
+KEYSIZE=2048
+
+# 1) Create a root CA
+# -------------------
+echo "&gt;&gt; Generating root CA (ca.key + ca.crt)..."
+openssl req -new -x509 -days $DAYS -nodes \
+  -keyout ca.key -out ca.crt \
+  -subj "/CN=MyCA" \
+  -sha256
+
+# 2) Broker: Keystore + Truststore with serverAuth EKU
+# -----------------------------------------------------
+# a) Create OpenSSL config for SAN and serverAuth
+cat &gt; broker-openssl.cnf &lt;&lt;EOF
+[ v3_req ]
+subjectAltName = DNS:activemq.ef-external.svc
+keyUsage = digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth
+EOF
+
+echo "&gt;&gt; Generating broker keystore (broker.ks)..."
+keytool -genkeypair \
+  -alias broker -keyalg RSA -keysize $KEYSIZE \
+  -dname "CN=broker" \
+  -keypass $PASSWORD -storepass $PASSWORD \
+  -keystore broker.ks -validity $DAYS
+
+echo "&gt;&gt; Generating broker CSR (broker.csr)..."
+keytool -certreq \
+  -alias broker -keystore broker.ks \
+  -file broker.csr -storepass $PASSWORD
+
+echo "&gt;&gt; Signing broker CSR with SAN &amp; EKU (broker.crt)..."
+openssl x509 -req -in broker.csr \
+  -CA ca.crt -CAkey ca.key -CAcreateserial \
+  -out broker.crt -days $DAYS -sha256 \
+  -extfile broker-openssl.cnf -extensions v3_req
+
+echo "&gt;&gt; Importing CA into broker keystore..."
+keytool -import -trustcacerts -alias ca \
+  -file ca.crt -keystore broker.ks -storepass $PASSWORD -noprompt
+
+echo "&gt;&gt; Importing broker cert into broker keystore..."
+keytool -import -alias broker \
+  -file broker.crt -keystore broker.ks -storepass $PASSWORD -noprompt
+
+echo "&gt;&gt; Generating broker truststore (broker.ts)..."
+keytool -import -trustcacerts -alias ca \
+  -file ca.crt -keystore broker.ts -storepass $PASSWORD -noprompt
+
+# 3) Client: PEM cert + key with clientAuth EKU
+# ----------------------------------------------
+# a) Create OpenSSL config for clientAuth
+cat &gt; client-openssl.cnf &lt;&lt;EOF
+[ v3_req ]
+keyUsage = digitalSignature
+extendedKeyUsage = clientAuth
+subjectAltName = DNS:client
+EOF
+
+echo "&gt;&gt; Generating client private key (client.key)..."
+openssl genrsa -out client.key $KEYSIZE
+
+echo "&gt;&gt; Generating client CSR (client.csr)..."
+openssl req -new -key client.key \
+  -out client.csr -subj "/CN=client" \
+  -sha256
+
+echo "&gt;&gt; Signing client CSR with EKU clientAuth (client.crt)..."
+openssl x509 -req -in client.csr \
+  -CA ca.crt -CAkey ca.key -CAcreateserial \
+  -out client.crt -days $DAYS -sha256 \
+  -extfile client-openssl.cnf -extensions v3_req
+
+# b) Combine key + cert + CA into single client.pem
+
+echo "&gt;&gt; Combining client.key + client.crt + CA into client.pem..."
+cat client.key client.crt ca.crt &gt; client.pem
+
+# 4) Cleanup intermediate files
+# ------------------------------
+echo "&gt;&gt; Cleaning up temporary files..."
+rm -f broker.csr client.csr broker-openssl.cnf client-openssl.cnf *.srl
+
+# 5) Summary
+# ----------
+echo "\n&gt;&gt; Done. Artifacts generated:"
+echo "   - broker.ks     (JKS keystore with broker key &amp; cert)"
+echo "   - broker.ts     (JKS truststore with CA cert)"
+echo "   - client.key    (PEM private key for client)"
+echo "   - client.crt    (PEM client certificate)"
+echo "   - client.pem    (PEM full chain: key+cert+CA)"
+echo "   - ca.crt        (PEM CA certificate)"
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<ol start="2">
+ <li>
+  <p>Run these commands</p>
+ </li>
+</ol>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>chmod +x generate-ssl.sh
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>./generate-ssl.sh
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>After that you got files named <code>broker.ks</code>, <code>broker.ts</code>, <code>client.key</code>,<code>client.crt</code>,<code>client.pem</code>,<code>ca.crt</code>.</p>
+<h2 id="For-ActiveMQ"><span id="TLSEnablementforActiveMQ-ForActiveMQ"></span>For ActiveMQ
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.10/tls-enablement-for-activemq#For-ActiveMQ">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="In-ActiveMQ-k8s-Repository"><span id="TLSEnablementforActiveMQ-InActiveMQ-k8sRepository"></span>In ActiveMQ-k8s Repository
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.10/tls-enablement-for-activemq#In-ActiveMQ-k8s-Repository">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ol>
+ <li>
+  <p>In <code>activemq.xml</code> add the following:</p>
+ </li>
+</ol>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>        &lt;sslContext&gt;
+            &lt;sslContext keyStore="file:${ACTIVEMQ_KEYSTORE}"
+                        keyStorePassword="${ACTIVEMQ_KEYSTORE_PASSWORD}"
+                        trustStore="file:${ACTIVEMQ_TRUSTSTORE}"
+                        trustStorePassword="${ACTIVEMQ_TRUSTSTORE_PASSWORD}" /&gt;
+        &lt;/sslContext&gt;
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<ol start="2">
+ <li>
+  <p>Appended parameter <code>&amp;amp;needClientAuth=true&amp;amp;maximumConnections=${MAX_CONNECTIONS}&amp;amp;wireFormat.maxFrameSize=104857600</code> at the end of <code>ssl</code> and <code>stomp+nio+ssl</code> transportConnector in <code>activemq.xml</code> file.</p>
+ </li>
+</ol>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>&lt;transportConnector name="ssl" uri="ssl://0.0.0.0:61617?enabledProtocols=TLSv1.2&amp;amp;needClientAuth=true&amp;amp;maximumConnections=${MAX_CONNECTIONS}&amp;amp;wireFormat.maxFrameSize=104857600"/&gt;
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>&lt;transportConnector name="stomp+ssl" uri="stomp+nio+ssl://0.0.0.0:61615?enabledProtocols=TLSv1.2&amp;amp;needClientAuth=true&amp;amp;maximumConnections=${MAX_CONNECTIONS}&amp;amp;wireFormat.maxFrameSize=104857600"/&gt;
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<ol start="3">
+ <li>
+  <p>After making these changes please create a tag through CI/CD pipeline.</p>
+ </li>
+</ol>
+<h3 id="In-Solution"><span id="TLSEnablementforActiveMQ-InSolution"></span>In Solution
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.10/tls-enablement-for-activemq#In-Solution">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ol>
+ <li>
+  <p>Update the tag in <code>values.yaml</code> file of ActiveMQ.</p>
+ </li>
+ <li>
+  <p>Add volumes and volumeMounts in <code>values.yaml</code> file of ActiveMQ.</p>
+ </li>
+</ol>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>   extraVolumes:
+      - name: activemq-tls        
+        secret:
+          secretName: activemq-tls
+   extraVolumeMounts:
+      - name: activemq-tls
+        mountPath: /activemq
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<ol start="3">
+ <li>
+  <p>Add these environment variables in <code>values.yaml</code> file of ActiveMQ.</p>
+ </li>
+</ol>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>   - name: ACTIVEMQ_KEYSTORE
+     value: "/activemq/broker.ks"
+   - name: ACTIVEMQ_KEYSTORE_PASSWORD
+     value: "password"
+   - name: ACTIVEMQ_TRUSTSTORE
+     value: "/activemq/broker.ts"
+   - name: ACTIVEMQ_TRUSTSTORE_PASSWORD
+     value: "password"
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<div data-component="panel" role="note" data-appearance="warning">
+ <div class="panel-content">
+  <p><strong>DO NOT</strong> run the helm upgrade command yet for ActiveMQ before creating the below secret.</p>
+ </div>
+</div>
+<h2 id="Apply-kubernetes-secret-containing-certificates"><span id="TLSEnablementforActiveMQ-Applykubernetessecretcontainingcertificates"></span>Apply kubernetes secret containing certificates
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.10/tls-enablement-for-activemq#Apply-kubernetes-secret-containing-certificates">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<ol>
+ <li>
+  <p>Convert the certificate files <code>broker.ks</code>, <code>broker.ts</code>, <code>client.key</code>,<code>client.crt</code>,<code>ca.crt</code> into base64 strings.</p>
+ </li>
+</ol>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>cat &lt;filename&gt; | base64 -w0; echo
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<ol start="2">
+ <li>
+  <p>Please add the certificate files, now converted to base64 strings, <code>broker.ks</code>, <code>broker.ts</code>, <code>client.key</code>,<code>client.crt</code>,<code>ca.crt</code> in secret as shown below.</p>
+ </li>
+</ol>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>vi activemq-tls.yaml
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>apiVersion: v1
+data:
+  broker.ts: MIIEcgIBAzCCBBwGCSqGSIb3DQEHAaCCBA0EggQJMIIEBTCCBAEGCSqGSIb3DQEHBqCCA/IwggPuAgEAMIID5wYJKoZIhvcNAQcBMGYGCSqGSIb3DQEFDTBZMDgGCSqGSIb3DQEFDDArBBSsbKsN+SkzUUSRfrky13asfr6CogICJxACASAwDAYIKoZIhvcNAgkFADAdBglghkgBZQMEASoEECs8OufLqD4sG8kwGT2orcaAggNwW39R1ys86nK+LPmKF3Vc78cZVVua5vV+oDr4sDZwobyehqBF4nnKGZPwehRxE2VfqS+bMd6iofeKh7FmsN85XE03A08uJEIXSR3v/hkEdQaZyksNpotxvKmiUkSHVvcFBv63x8DpR9I4TZB2l8uClm3Sf3YRklsVFapUZ3oZbKMal4E80xylmkEao4GQ2C864w84Nv/imP6We/9RARfXbfhAw+tYZmXn6Gpo5Iv3T75BS92DBtTcSwlZib9D6+eX8+fiwYB+slKEYn55ERPOuCd5m5AOjr8Njj3ngPm1wY1sSDmVabKls7ADPITndNQo1dzfOjjk9NCsYWV3wO2ZLMRwfa5wq/aF1FdM8y8NjUmKD4dgyvaCdul8X4RDdbPXgxju73yRDoLqn/QCuWq77fJNJYMTwuoQCNxEkfL3K54wRG5YmXeeryf9NM+8WOJzXwXj5canz+Rgr/nSYxGnaEuKXO4DRKllONGnHWP45ViHnwINwwTBI5nWaeQN9RgKi8H+LGGz/IXlT7fl7mPGDyL88XGniiTOcn6DnyZ5t3lBk+/T7wcOUaCRyF5amn152Aqhxol9VKB/h2LK6UYPlt53cAKg38Zb161Ioj1rhnPo/eL7YFj3g3BBCd/4Gm0dqweqT4KGmLm7AgIG9H5ludObUAAPNcN34o+RJ5VXDAzzfYmxaXUnvYYrqRiVY7BJzi9vELDt2Gn3AaBSrnrOQO4Fra4i2yhlyGgimHTSTkosfdZfHMUe7iMu3vfY7SkcZ79Lizo6aUwRGXVJYXAhgoeDmTtKke2YLbhqen8CFYqrOKM/aNStspLN9Ttpt1gV1pXVDFdM+FqOGqmq7v0KilQIaHHFWwRZgrHEI7wSrRCDNPntRHFQeMJJl0GpoMTEcpWkhY1rIch3CLNaKHjbTdazMez/HIfAlHwh0azkpKZAX+QAViP03ACdY0si9Js+zEIFXNFHikLtQA6fBMUhxXDphr+IS86BktO6i9KM3KiFNPIKBkvJYojhiCk4HmLihTW3my4f1XOaAn4i25IQl0F0qPRp/iDUmFQdV2XFIf/iuKzriC2QuBjImrvtsZKwcVebfFrBXpRiZ2hJWuxk4yYk9IQQXxpzrAIj1aL16Vw9pEjlZKS9S4gGvVxRQ/T2qoAHX74vGnDctOWCIWvKdzBNMDEwDQYJYIZIAWUDBAIBBQAEIAYcsjTaiF2hFGRhUsrteZAFWHXODjdD7PR/RuDSl9/7BBT4WAe29MV6BDp9IvU/tYnXtMFFFQICJxA=
+  broker.ks: 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
+  ca.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURBVENDQWVtZ0F3SUJBZ0lVVE9ybXgwZmU2RUpvbS9DajV0NGJFdEQzLzM0d0RRWUpLb1pJaHZjTkFRRUwKQlFBd0R6RU5NQXNHQTFVRUF3d0VUWGxEUVRBZ0Z3MHlOVEEwTWpJd09ERXlNamRhR0E4eU1USTFNRE15T1RBNApNVEl5TjFvd0R6RU5NQXNHQTFVRUF3d0VUWGxEUVRDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDCkFRb0NnZ0VCQUxnTDdFTWdVMGgybnJNZ1daMDU3S0ljVElIa3VsbUczRW5kOElpUkpUYXZqQkxlUHVWNHFDTUoKYTBDSW44aUpyV0pEajZ0KzY0c1hLWWNUY1Z1eVZPM3pubXdaOGZXR2xTT25GdzRJSFVSQTl5VW1KSkpEaXA4YQpiTUxrbVFDUU10RjdPL2d1NTBaQ3FRNC8rUGNQTnpsWWpjb0ZSUG9WQkxwZWhsSWFjaGY0MDh1VEpTaXdMVkRvClhqV2tENUFhTHluV0JUOU01WVBudnZKZU9nUlQwL3l1SmtyNXdjTHZjTFFpVmRoaGpLeEpiS1pmNHM0QWo1RXoKWHd0dFRHMXQxSDJkUmlmbFlBRnBlN0xLbjhKQ2RNbXlqU0krT0w1ZXRReUNaTEova2RBYTZNbmFyTThucktvbgpMd2N6ekNSVFIvbEF1bGFObkJuYlIzYXBGUUhmdVZjQ0F3RUFBYU5UTUZFd0hRWURWUjBPQkJZRUZJQW90ZS9TCmJSYkdSL09VN1NjU1FSQ08yYU1UTUI4R0ExVWRJd1FZTUJhQUZJQW90ZS9TYlJiR1IvT1U3U2NTUVJDTzJhTVQKTUE4R0ExVWRFd0VCL3dRRk1BTUJBZjh3RFFZSktvWklodmNOQVFFTEJRQURnZ0VCQUZ0dlh3Q25HTXBIcTVLOQpyYTNuUEhHVVNBdnhMenNSYkhKRjhsODZnOVZIcHBTSmhxaTh5UHE3UXhGTmg4SXFXd25sR2NqNUpEWkhkY3lXCndMdEMvbVpqSDVhRVVvdW1Ua2g3TlVTaHA0SWQvQVhLUmFLcytMUEdEUUwwZmpTbDMvd3oraU1jV1RBR2o2emEKOEZ5TCtGM3o0dDZVMHZDN05QSGpMbGNFMHlZTDdPMDhCN3hsOEU0QjRjeWZSOWR4RXZFS3RLUTdMYkZ6WWtQUgpUNHRzRlRhbHl6ZWtKRWhld25Wc3FzeUZZaUlDaVBSWDRBcllqZEZjMXlzSTFoM2FWM2VHYVdWVllSblk5eTkvCmoxNTY0OWhwMHVRWm0wYTMwbHNOM0NIczRBU0gyNUs1cElpd211OXJvbHR2TEZsTjlMQ1dDNFBoQ013MktMRk8KNVp4bjVJST0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURKekNDQWcrZ0F3SUJBZ0lVUWE0ME05alI3VUxvV1poUWswYlB6Ykk4alQ4d0RRWUpLb1pJaHZjTkFRRUwKQlFBd0R6RU5NQXNHQTFVRUF3d0VUWGxEUVRBZ0Z3MHlOVEEwTWpJd09ERXlNekJhR0E4eU1USTFNRE15T1RBNApNVEl6TUZvd0VURVBNQTBHQTFVRUF3d0dZMnhwWlc1ME1JSUJJakFOQmdrcWhraUc5dzBCQVFFRkFBT0NBUThBCk1JSUJDZ0tDQVFFQXlzMGpzb3Mvc1g2c2dPT2d5UGN4K25jQUN4RHRDQ1B2cmhxdVlKczcxVDZZYkh1LzNLakEKSEYvdGRIL216SFJiVzhHUFRPV1MvbEVoOTdkb1poMGpXZGJOQ09TNUFJVHZMNDVHVGhOK2h0Zk9mckduUDFSNAprTzlrYjJ1S1U1azg4bzQ4TDJUSXAwS1VObEFmRngxbjZ4RzBrbDJUQ2JFWE1xNWxDZXRnS2VkTVF2TXpzcnVGCk8zV0FGaGh3Ymx4TnZ3bi9PeEN5WkZ1aTVWU1c5Q0svbW1LVVdrcE56L0VkeTMxK1Via1dlRlJRTk5oNk9YTXYKQ3l4aWhabHpwa1NGekczQXN4TklnRDlhdFR2UXRnbHliZU5vajRNRWlJMXdJbVdmUWdEVEREZHZ4UUl1OXpRRQpPM3Y1R2c1dXdacEovQjdSQjRZU0hGRUF3ZlE2YW1JM2RRSURBUUFCbzNjd2RUQUxCZ05WSFE4RUJBTUNCNEF3CkV3WURWUjBsQkF3d0NnWUlLd1lCQlFVSEF3SXdFUVlEVlIwUkJBb3dDSUlHWTJ4cFpXNTBNQjBHQTFVZERnUVcKQkJRVUFjd3lZbm56TnJ3Q1R2b1F3THMwZGltbFhEQWZCZ05WSFNNRUdEQVdnQlNBS0xYdjBtMFd4a2Z6bE8wbgpFa0VRanRtakV6QU5CZ2txaGtpRzl3MEJBUXNGQUFPQ0FRRUFBK2VISmpIMVNHUTJFdlBsdzdHTWhpRzNqdVluCnlTL3l2UG4zN0hNR0dWTDM4ODMxMjdNb21OWVlrOStQcXJwdGd5U3hyRWdFV2h3ME9INFR1UjZ6T0dnTnRTYVEKV2lKYjBoWmNQd3dKbk9Db2dUYkIyeUxaS1pjdEIzVnByOE1sT2RsTFdPUTJKditDRldzeXlqcXNBdzFJaGRBbQpYb3F3aHZvRHRrdmErN09QR0VSN1E2SVFBZU1GYlp2SlhOd2sxRVN2QlNWdTcvTWtia0lGMnRIckJQZ213aGJaCjYrdXNpcXFzYTB1Mnl6dzJtNnRjcEV1SGNGWHlkcFJYTy80aGhSdWs1MUdhakxHYkJtM0gvQ1dnU2NHVnU2Sm4KSXREalp0aGJIT2tiMWlXMmRkT1lOU05IZzZMOXpMYWZ4UHEzZEFhNloyWGNqSDVHOXErMFVuUHhDUT09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+  tls.key: LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JSUV2d0lCQURBTkJna3Foa2lHOXcwQkFRRUZBQVNDQktrd2dnU2xBZ0VBQW9JQkFRREt6U095aXoreGZxeUEKNDZESTl6SDZkd0FMRU8wSUkrK3VHcTVnbXp2VlBwaHNlNy9jcU1BY1grMTBmK2JNZEZ0YndZOU01WkwrVVNIMwp0MmhtSFNOWjFzMEk1TGtBaE84dmprWk9FMzZHMTg1K3NhYy9WSGlRNzJSdmE0cFRtVHp5amp3dlpNaW5RcFEyClVCOFhIV2ZyRWJTU1haTUpzUmN5cm1VSjYyQXA1MHhDOHpPeXU0VTdkWUFXR0hCdVhFMi9DZjg3RUxKa1c2TGwKVkpiMElyK2FZcFJhU2szUDhSM0xmWDVSdVJaNFZGQTAySG81Y3k4TExHS0ZtWE9tUklYTWJjQ3pFMGlBUDFxMQpPOUMyQ1hKdDQyaVBnd1NJalhBaVpaOUNBTk1NTjIvRkFpNzNOQVE3ZS9rYURtN0Jta244SHRFSGhoSWNVUURCCjlEcHFZamQxQWdNQkFBRUNnZ0VBTHlHejNTZk5tck9rNWFPQlY1TlRrekVhMm5lSmp1M0RJMFJpS0dPTGFVak4KNWRCd3k1aVFaVWZLQ053OHlHRjJaZ0c3Q3hVRHI0VXRqc09hU0xrVzRTY3hxWkoyaUc5Y28wRytoeUN5dENYdApnTFpLOTBYcmEwdW5uTmx5WVhGb243cDh0RXNJOHc1ZklheEhQWGtCRUxtaHJLNkFvS3oraGpIUG01bVBWTTFZCjlXS2N5U1FTRFVoWE0vZ0hXVS90cFV0Q1ZiM091UTdoT3ZaNFM1STgwR1ZRU1RrMmhCV1pXcmNYUTlmM0QxbjUKYUpLR0g5L2F5VjdWaTI4Q2ZiNGhHNzZ2T2pPanJXRVUzMkExM0JLcHR5WFBTWHFWNHVyd2NaanNzRVBpVXFVVgptMy9TZkNuZFVJdjhTSDlWNmtjRnZSNFNxSlp5ajJFQXBvSGNsamlkMVFLQmdRRCtrTG9xSzl2UWpxUzZXUGZKCk93VThTQ0UwNkpGZnd5SVRHb1lrbHlRc29od0M2RXo1NDdPTUtxWnRxMWVQTXl5WkNJUEZRZDljRFBFYW1VNWMKcDdpVGMwNVBLRlRrZ25ETkV3VUZSa2VtSDBBVS9DYmhzRDhsVVJnUUFnR1p1UC8rZUV0NHJITzh2bDJmeVU3dApoczRuT3ZpeHEweGZFWmtnaXNxUUQ5alArd0tCZ1FETDhicmY4c3lnS2VBK2lBdG5GdnNMeStoNkttelRqRTVICjZHU3J0ZnVnVWtlSUV3UlhVQ0Npblo5UVZmdzZzRGh0TVZjN3NTTGRUeTgyNEJrci9kQkJsUlJ2VTBObzVpVSsKYVNJZCtac2t4UnVIV3c1Sy9ZbkFsTHo1VGQ3Z00zbi9VT1JDOVBtUnNEbmlDZm9LSG41N3U1YTBnSFlXWVFpbgpYT05CZ1VyTFR3S0JnUURubnV1a1gwK2NEWTNZZUFiTXM4VHB1bjlzVW9lamFEcml3dWwyOVlaV2poR0ttNjhlClY0NFFaT1lWTnlkdUJoUDRFZ1ZEUDlKcFFPVkhYR0l1Yi9URFJORGx1VDYwdy9LNnhTbDJTU0g4QnNjWjBPdlgKd2JOUzB0eGdCRk5NZVVXRFZoVGxjWlBGRWpqQm9Ec09aKysvUmlydURYeHBxK3QxN3BLc1RaN3FiUUtCZ1FEQgpMaUp6aTB0azB3WEVkWjFIY3k4dGgyS1loYU03NTRVbSsreVA4ZnQ5YXpLeXBFRFNhK1hkNHl4TExvZVRGK1Q3CkdXZWw5UzR2TDVocmhHNlRpd0kvZlBVMFZreGVDdEp3Z2FsOWR6Z0w1bUVqSDQ4MFhXQ2tlTDlmN3ZFVXNlMzMKZUNvZmVta0VKVWRPNDJCalFXdFJ6T2o5NVVqMS9jZnlzRHZiaXByTVpRS0JnUUQ0eXBqbFovTmM0dUQvS2E5MApBSWdZNkhCaWpSd2VHMDJlOXVERzRUYlZBMnFwaGxIK0F6amV2Z3prUTVwcnBqQjI4eXVTc3VlaUwvY0l6OFhvCmVmNnUxaDhNZ3pKK0trQm5yazRTMWFHaDkwMnlwMGowY0Mxd1ZGKzlqREdFazNaajZ5c0JOeHE0OVU4RE5yOGgKS20rWjIyVWpOSXE4TThaSTc1a29la3RIV1E9PQotLS0tLUVORCBQUklWQVRFIEtFWS0tLS0tCg==
+kind: Secret
+metadata:
+  name: activemq-tls
+  namespace: ef-external
+type: kubernetes.io/tls
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<ol start="3">
+ <li>
+  <p>Run these commands to create a secret.</p>
+ </li>
+</ol>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>kubectl apply -f activemq-tls.yaml
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h2 id="For-Components"><span id="TLSEnablementforActiveMQ-ForComponents"></span>For Components
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.10/tls-enablement-for-activemq#For-Components">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<ol>
+ <li>
+  <p>Copy the kubernetes secret to expertflow namespace.</p>
+ </li>
+</ol>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>kubectl get secret activemq-tls -n ef-external  -o yaml | sed 's/namespace: ef-external/namespace: expertflow/' | kubectl create -f -
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<ol start="2">
+ <li>
+  <p>Update the component tag to TLS enabled one.</p>
+ </li>
+ <li>
+  <p>Add volume and volumeMounts for the components that want to connect to ActiveMQ.</p>
+ </li>
+</ol>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>   extraVolumes:
+      - name: activemq-tls        
+        secret:
+          secretName: activemq-tls
+   extraVolumeMounts:
+      - name: activemq-tls
+        mountPath: /activemq
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<ol start="4">
+ <li>
+  <p>Please update these environment variables in <code>efConnectionVars</code> section.</p>
+ </li>
+</ol>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>    ACTIVEMQ_KEY_STORE_PASSWORD: "Expertflow123"
+    ACTIVEMQ_KEY_STORE_PATH: "activemq_keystore.p12"
+    ACTIVEMQ_OPEN_WIRE_PORT: "61617"
+    ACTIVEMQ_STOMP_PORT: "61615"
+    ACTIVEMQ_TRANSPORT: ssl
+    ACTIVEMQ_TRUST_STORE_PASSWORD: "Expertflow123"
+    ACTIVEMQ_TRUST_STORE_PATH: "activemq_truststore.p12"
+    ACTIVEMQ_CLIENT_CERT: /activemq/tls.crt
+    ACTIVEMQ_CLIENT_KEY: /activemq/tls.key
+    ACTIVEMQ_CA_CERT: /activemq/ca.crt
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="e5b6e01cf7a6c0cb-123" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="e5b6e01cf7a6c0cb-123">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/cx/4.10/ms-crm-connector-cif-2-0-enablement-with-kubernete">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">MS-CRM-Connector-cif-2.0 Enablement with Kubernetes</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/cx/4.10/authentication-enablement-for-activemq">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Authentication Enablement for ActiveMQ</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

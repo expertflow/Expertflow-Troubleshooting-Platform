@@ -1,0 +1,4649 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_5f3dd37bb667c023eb3f779daccc442f8ab292a88ae5144fa244232e87345981" data-confluence-content-id="1481801734"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/cx/5.0/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="CX">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>CX Voice upgrade Guide | Expertflow CX</title>
+		<meta property="og:title" content="CX Voice upgrade Guide | Expertflow CX">
+		<meta property="twitter:title" content="CX Voice upgrade Guide | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/cx/5.0/upgrade-guide-to-5-0">
+		<meta property="og:url" content="https://docs.expertflow.com/cx/5.0/upgrade-guide-to-5-0">
+
+		<meta name="description" content="Changes for Recording Components(Middleware and Recording Link Uploader) The Following New environment variables will be added for Recording Link Uploader CX_R…">
+		<meta property="og:description" content="Changes for Recording Components(Middleware and Recording Link Uploader) The Following New environment variables will be added for Recording Link Uploader CX_R…">
+		<meta property="twitter:description" content="Changes for Recording Components(Middleware and Recording Link Uploader) The Following New environment variables will be added for Recording Link Uploader CX_R…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__attachments/a_41a4e8de14c30c2b973dec45da5d6856e0c30a4f4e6cf763392f200e4204fa38/image2024-1-29_18-39-21.png?cb=f648c93e33f03a4dd79e7bba3b80e858">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__attachments/a_41a4e8de14c30c2b973dec45da5d6856e0c30a4f4e6cf763392f200e4204fa38/image2024-1-29_18-39-21.png?cb=f648c93e33f03a4dd79e7bba3b80e858">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2025-11-24T10:39:25.169Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": true
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.js"></script>
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="159821c613a88504-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="159821c613a88504-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="159821c613a88504-19">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="159821c613a88504-19" name="version" onchange="self.location.assign(this.value)" >
+				<option id="159821c613a88504-3"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="159821c613a88504-4"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="159821c613a88504-5"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="159821c613a88504-6"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="159821c613a88504-7"  value="/cx/5.0/upgrade-guide-to-5-0"  selected="">
+					5.0
+				</option>
+				<option id="159821c613a88504-8"  value="/cx/4.10"  >
+					4.10
+				</option>
+				<option id="159821c613a88504-9"  value="/cx/4.9"  >
+					4.9
+				</option>
+				<option id="159821c613a88504-10"  value="/cx/4.8"  >
+					4.8
+				</option>
+				<option id="159821c613a88504-11"  value="/cx/4.7"  >
+					4.7
+				</option>
+				<option id="159821c613a88504-12"  value="/cx/4.6"  >
+					4.6
+				</option>
+				<option id="159821c613a88504-13"  value="/cx/4.5.3"  >
+					4.5.3
+				</option>
+				<option id="159821c613a88504-14"  value="/cx/4.5.2"  >
+					4.5.2
+				</option>
+				<option id="159821c613a88504-15"  value="/cx/4.5.1"  >
+					4.5.1
+				</option>
+				<option id="159821c613a88504-16"  value="/cx/4.5"  >
+					4.5
+				</option>
+				<option id="159821c613a88504-17"  value="/cx/4.4"  >
+					4.4
+				</option>
+				<option id="159821c613a88504-18"  value="/cx/4.3"  >
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('159821c613a88504-19');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-159821c613a88504-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-159821c613a88504-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-159821c613a88504-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="159821c613a88504-20" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="159821c613a88504-20">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-159821c613a88504-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-159821c613a88504-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="159821c613a88504-37">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="159821c613a88504-37" name="version" onchange="self.location.assign(this.value)" >
+				<option id="159821c613a88504-21"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="159821c613a88504-22"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="159821c613a88504-23"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="159821c613a88504-24"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="159821c613a88504-25"  value="/cx/5.0/upgrade-guide-to-5-0"  selected="">
+					5.0
+				</option>
+				<option id="159821c613a88504-26"  value="/cx/4.10"  >
+					4.10
+				</option>
+				<option id="159821c613a88504-27"  value="/cx/4.9"  >
+					4.9
+				</option>
+				<option id="159821c613a88504-28"  value="/cx/4.8"  >
+					4.8
+				</option>
+				<option id="159821c613a88504-29"  value="/cx/4.7"  >
+					4.7
+				</option>
+				<option id="159821c613a88504-30"  value="/cx/4.6"  >
+					4.6
+				</option>
+				<option id="159821c613a88504-31"  value="/cx/4.5.3"  >
+					4.5.3
+				</option>
+				<option id="159821c613a88504-32"  value="/cx/4.5.2"  >
+					4.5.2
+				</option>
+				<option id="159821c613a88504-33"  value="/cx/4.5.1"  >
+					4.5.1
+				</option>
+				<option id="159821c613a88504-34"  value="/cx/4.5"  >
+					4.5
+				</option>
+				<option id="159821c613a88504-35"  value="/cx/4.4"  >
+					4.4
+				</option>
+				<option id="159821c613a88504-36"  value="/cx/4.3"  >
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('159821c613a88504-37');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="159821c613a88504-38" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="159821c613a88504-39" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="159821c613a88504-40" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="159821c613a88504-41"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="159821c613a88504-41" href="/cx/5.0/cx-release-notes" >CX Release Notes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="159821c613a88504-44"						aria-labelledby="159821c613a88504-43"
+					></button>
+				<a id="159821c613a88504-43" href="/cx/5.0/upgrade-guide" >Upgrade Guide</a>
+			</div>
+
+<ul  id="159821c613a88504-44" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="159821c613a88504-45" href="/cx/5.0/upgrade-guide-cx5-0-2-to-cx5-0-3" >Upgrade Guide CX5.0.2 to CX5.0.3</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="159821c613a88504-46" href="/cx/5.0/upgrade-guide-cx5-0-1-to-cx5-0-2" >Upgrade Guide CX5.0.1 to CX5.0.2</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="159821c613a88504-47" href="/cx/5.0/upgrade-guide-cx5-0-to-cx5-0-1" >Upgrade Guide CX5.0 to CX5.0.1</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="159821c613a88504-49"						aria-labelledby="159821c613a88504-48"
+					></button>
+				<a id="159821c613a88504-48" href="/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p" >Upgrade Guide CX4.10.3 to CX5.0 (Single Tenant/On-Prem)</a>
+			</div>
+
+<ul  id="159821c613a88504-49" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="159821c613a88504-50" href="/cx/5.0/cx5-0-changelog" >ChangeLog</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="159821c613a88504-51" href="/cx/5.0/upgrade-guide-for-data-platform" >Upgrade guide for Data Platform</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="159821c613a88504-52" href="/cx/5.0/upgrade-guide-to-5-0" aria-current="page">CX Voice upgrade Guide</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="159821c613a88504-53" href="/cx/5.0/vrs-upgrade-guide" >VRS Upgrade Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="159821c613a88504-54" href="/cx/5.0/upgrade-guide-cx5-0-3-to-5-0-4-rc-1-predictive-dialer" >Upgrade Guide CX5.0.3 to 5.0.4-rc.1 (Predictive Dialer)</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="159821c613a88504-55"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="159821c613a88504-55" href="/cx/5.0/cx-performance" >CX Performance</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="159821c613a88504-57"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="159821c613a88504-57" href="/cx/5.0/deployment-guide" >Deployment Guide</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="159821c613a88504-59" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="159821c613a88504-59">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/cx/5.0">
+										Expertflow CX
+								</a>
+							</li>
+							<li>
+								<a href="/cx/5.0/upgrade-guide">
+										Upgrade Guide
+								</a>
+							</li>
+							<li>
+								<a href="/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p">
+										Upgrade Guide CX4.10.3 to CX5.0 (Single Tenant/On-Prem)
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="159821c613a88504-60">
+			<h2 class="toc-heading" id="159821c613a88504-60">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>CX Voice upgrade Guide</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+
+	
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+	
+
+
+	
+	
+	
+	
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+		
+		
+	
+	
+	
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<h2 id="Changes-for-Recording-Components(Middleware-and-Recording-Link-Uploader)"><span id="CXVoiceupgradeGuide-ChangesforRecordingComponents(MiddlewareandRecordingLinkUploader)"></span>Changes for Recording Components(Middleware and Recording Link Uploader)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-to-5-0#Changes-for-Recording-Components(Middleware-and-Recording-Link-Uploader)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>The Following New environment variables will be added for Recording Link Uploader</p>
+<ul>
+ <li>
+  <p><strong>CX_ROOT_DOMAIN</strong>: Root domain of the CX solution (e.g., <a href="http://expertflow.com/" data-scope="external" rel="external noreferrer">expertflow.com</a> or <a href="http://ptcl.com/" data-scope="external" rel="external noreferrer">ptcl.com</a>). Should be “expertflow” in case of upgradation towards Single Tenant.</p>
+ </li>
+ <li>
+  <p><strong>CX_TENANT_URL: </strong>CX tenant url to fetch tenants (e.g., <a href="https://tenant4.expertflow.com/cx-tenant/tenant)." data-scope="external" rel="external noreferrer">https://tenant4.expertflow.com/cx-tenant).</a> We can use any of the tenant subdomains in place of tenant4, which is configured in CX.</p>
+ </li>
+ <li>
+  <p>And update the image/tag in docker_compose.yml file for Recording Link Uploader</p>
+ </li>
+</ul>
+<h2 id="Deployment-of-Domain-Utility"><span id="CXVoiceupgradeGuide-DeploymentofDomainUtility"></span>Deployment of Domain Utility 
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-to-5-0#Deployment-of-Domain-Utility">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<details class="expand" data-component="expand" data-align="wide" style="--width: 1800px">
+ <summary class="expand-control"> Domain Utility </summary>
+ <div class="expand-body">
+  <p>Add a tenant using the Domain utility. Follow <a href="https://expertflow-docs.atlassian.net/wiki/spaces/CT/pages/1250623489/Multi-Domain+Utility+Implementaion+for+EF-Switch" data-scope="external" rel="external noreferrer">this guide</a> to deploy the domain utility and to add a tenant.</p>
+ </div>
+</details>
+<h2 id="Upgradation-of-Media-Server-Scripts"><span id="CXVoiceupgradeGuide-UpgradationofMediaServerScripts"></span>Upgradation of Media Server Scripts
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-to-5-0#Upgradation-of-Media-Server-Scripts">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<details class="expand" data-component="expand" data-align="wide" style="--width: 1800px">
+ <summary class="expand-control"> Media Server Scripts </summary>
+ <div class="expand-body">
+  <ul>
+   <li>
+    <p>SSH into the Media Server.</p>
+    <ul>
+     <li>
+      <p>Use command</p>
+      <code-snippet class="theme-code-snippet">
+       <scroll-shadow>
+        <div data-component="code">
+         <pre><code>ssh username@server-ip
+</code></pre>
+        </div>
+       </scroll-shadow>
+       <copy-clipboard class="theme-code-snippet-copy">
+        <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+         <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+        </svg>
+       </copy-clipboard>
+      </code-snippet>
+     </li>
+     <li>
+      <p>Enter user password and press <strong>ENTER</strong>.</p>
+     </li>
+     <li>
+      <p>Use command</p>
+      <code-snippet class="theme-code-snippet">
+       <scroll-shadow>
+        <div data-component="code">
+         <pre><code>su
+</code></pre>
+        </div>
+       </scroll-shadow>
+       <copy-clipboard class="theme-code-snippet-copy">
+        <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+         <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+        </svg>
+       </copy-clipboard>
+      </code-snippet>
+     </li>
+     <li>
+      <p>Enter root password and press <strong>ENTER</strong>.</p>
+     </li>
+    </ul>
+   </li>
+   <li>
+    <p><a href="https://docs.gitlab.com/ee/gitlab-basics/start-using-git.html#confirm-git-is-installed" data-scope="external" rel="external noreferrer"><u>Confirm </u></a><strong>git</strong> is installed, and <a href="https://docs.gitlab.com/ee/topics/git/how_to_install_git/index.html" data-scope="external" rel="external noreferrer"><u>install it</u></a> if is not.</p>
+   </li>
+   <li>
+    <p>Make a directory name as upgrade-5.0 anywhere.</p>
+   </li>
+   <li>
+    <code-snippet class="theme-code-snippet">
+     <scroll-shadow>
+      <div data-component="code">
+       <pre><code>mkdir upgrade-5.0
+</code></pre>
+      </div>
+     </scroll-shadow>
+     <copy-clipboard class="theme-code-snippet-copy">
+      <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+       <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+      </svg>
+     </copy-clipboard>
+    </code-snippet>
+   </li>
+   <li>
+    <p>Navigate to the newly created directory</p>
+   </li>
+   <li>
+    <code-snippet class="theme-code-snippet">
+     <scroll-shadow>
+      <div data-component="code">
+       <pre><code>cd upgrade-5.0
+</code></pre>
+      </div>
+     </scroll-shadow>
+     <copy-clipboard class="theme-code-snippet-copy">
+      <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+       <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+      </svg>
+     </copy-clipboard>
+    </code-snippet>
+   </li>
+   <li>
+    <p>Clone the Media Server scripts repository:</p>
+    <code-snippet class="theme-code-snippet">
+     <scroll-shadow>
+      <div data-component="code">
+       <pre><code>git clone -b TAG https://efcx:RecRpsuH34yqp56YRFUb@gitlab.expertflow.com/rtc/freeswitch-scripts.git
+</code></pre>
+      </div>
+     </scroll-shadow>
+     <copy-clipboard class="theme-code-snippet-copy">
+      <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+       <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+      </svg>
+     </copy-clipboard>
+    </code-snippet>
+    <ul>
+     <li>
+      <p>Where <strong>TAG</strong> is the <strong>5.0</strong></p>
+     </li>
+    </ul>
+   </li>
+   <li>
+    <p>Navigate to the cloned repository to access the files:</p>
+    <code-snippet class="theme-code-snippet">
+     <scroll-shadow>
+      <div data-component="code">
+       <pre><code>cd freeswitch-scripts
+</code></pre>
+      </div>
+     </scroll-shadow>
+     <copy-clipboard class="theme-code-snippet-copy">
+      <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+       <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+      </svg>
+     </copy-clipboard>
+    </code-snippet>
+   </li>
+   <li>
+    <p>Move the files ending in <strong>.lua</strong>&nbsp; to the <strong>Media Server</strong> scripts folder:</p>
+   </li>
+   <li>
+    <code-snippet class="theme-code-snippet">
+     <scroll-shadow>
+      <div data-component="code">
+       <pre><code>mv *.lua /usr/share/freeswitch/scripts
+</code></pre>
+      </div>
+     </scroll-shadow>
+     <copy-clipboard class="theme-code-snippet-copy">
+      <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+       <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+      </svg>
+     </copy-clipboard>
+    </code-snippet>
+   </li>
+   <li>
+    <p>Move any custom IVR scripts to the <strong>Media Server</strong> scripts folder:</p>
+    <code-snippet class="theme-code-snippet">
+     <scroll-shadow>
+      <div data-component="code">
+       <pre><code>mv &lt;custom-lua-IVR-script&gt; /usr/share/freeswitch/scripts
+</code></pre>
+      </div>
+     </scroll-shadow>
+     <copy-clipboard class="theme-code-snippet-copy">
+      <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+       <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+      </svg>
+     </copy-clipboard>
+    </code-snippet>
+   </li>
+   <li>
+    <p>Move the <strong>ivr_prompts </strong>folder:</p>
+    <code-snippet class="theme-code-snippet">
+     <scroll-shadow>
+      <div data-component="code">
+       <pre><code>mv ivr_prompts/* /usr/share/freeswitch/sounds/ivr_prompts/
+</code></pre>
+      </div>
+     </scroll-shadow>
+     <copy-clipboard class="theme-code-snippet-copy">
+      <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+       <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+      </svg>
+     </copy-clipboard>
+    </code-snippet>
+   </li>
+   <li>
+    <p>Assign read-write permissions to the <strong>ivr_prompts</strong> and <strong>scripts </strong>folder:</p>
+    <code-snippet class="theme-code-snippet">
+     <scroll-shadow>
+      <div data-component="code">
+       <pre><code>chmod 777 -R /usr/share/freeswitch/sounds/ivr_prompts
+chmod 777 -R /usr/share/freeswitch/scripts
+</code></pre>
+      </div>
+     </scroll-shadow>
+     <copy-clipboard class="theme-code-snippet-copy">
+      <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+       <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+      </svg>
+     </copy-clipboard>
+    </code-snippet>
+   </li>
+   <li>
+    <p>Navigate to scripts directory</p>
+   </li>
+   <li>
+    <code-snippet class="theme-code-snippet">
+     <scroll-shadow>
+      <div data-component="code">
+       <pre><code>cd /usr/share/freeswitch/scripts
+</code></pre>
+      </div>
+     </scroll-shadow>
+     <copy-clipboard class="theme-code-snippet-copy">
+      <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+       <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+      </svg>
+     </copy-clipboard>
+    </code-snippet>
+   </li>
+   <li>
+    <p>Alter the file name of <strong>cx_env.lua </strong>to&nbsp;<strong>cx_env-{Domain-Name}-{DN}.lua</strong> where <strong>{Domain-Name}</strong> is the name of the Domain eg <code>expertflow</code>, or <code>tenant1</code>, &nbsp;<strong>{DN}</strong> is the <strong>dialing number </strong>of the IVR (Set in the <strong>CxIvr Dialplan</strong> section below). This <strong>{DN} </strong>is already created with the name <strong>cx_env-{DN}.lua</strong> i.e cx_env-1884.lua.</p>
+    <ul>
+     <li>
+      <p>e.g. for an IVR with a <strong>dialing number</strong> of <strong>1555</strong> and <strong>Domain Name</strong> is <strong>tenant1 </strong>the file would be named <strong>cx_env-tenant1-1555.lua.</strong></p>
+     </li>
+     <li>
+      <p>Do the same for all the DN file already exists</p>
+      <code-snippet class="theme-code-snippet">
+       <scroll-shadow>
+        <div data-component="code">
+         <pre><code>mv cx_env.lua cx_env-tenant1-1555.lua
+</code></pre>
+        </div>
+       </scroll-shadow>
+       <copy-clipboard class="theme-code-snippet-copy">
+        <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+         <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+        </svg>
+       </copy-clipboard>
+      </code-snippet>
+     </li>
+    </ul>
+   </li>
+   <li>
+    <p>Configuration</p>
+   </li>
+  </ul>
+  <ol>
+   <li>
+    <p>Open <em><strong>cx_env-{Domain-Name}-{DN}.lua</strong></em> :</p>
+    <code-snippet class="theme-code-snippet">
+     <scroll-shadow>
+      <div data-component="code">
+       <pre><code>vi /usr/share/freeswitch/scripts/cx_env-{Domain-Name}-{DN}.lua
+</code></pre>
+      </div>
+     </scroll-shadow>
+     <copy-clipboard class="theme-code-snippet-copy">
+      <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+       <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+      </svg>
+     </copy-clipboard>
+    </code-snippet>
+    <code-snippet class="theme-code-snippet">
+     <scroll-shadow>
+      <div data-component="code">
+       <pre><code>local config = {}
+local domain = session:getVariable("domain_name")
+local cxFqdn = ""
+if domain == "expertflow" then
+    cxFqdn = "https://efcx4-voice.expertflow.com"  -- set Default Domain here 
+else
+    cxFqdn = "https://" .. domain .. ".expertflow.com"  -- set Tenant based Domian here
+end
+config = {
+    -- Set to NAME or ID depending on whether queue field contains name or ID of queue
+    queueType = 'NAME',
+    -- Name or ID of queue to reserve agents from
+    queue = 'Test Voice Queue',
+    -- NOTE: Keeping queue and queueType as '' will cause CX to use the default queue set in the CX Voice channel
+    -- queue = '',
+    -- queueType = '',
+    -- FQDN of EF CX
+    cxFqdn = cxFqdn,
+    -- API of voice connector for reserving an agent
+    voiceConnectorApi = "http://VC-IP:PORT",
+    -- Path of folder containing sound files that play during the IVR menu, DO NOT CHANGE
+    ivr_prompts_folder = "/usr/share/freeswitch/sounds/ivr_prompts/",
+    auth_enabled = false,
+    auth_realm = "expertflow",
+    client_secret = "1234",
+    client_id = "cim",
+    username = "voice_auth",
+    password = "1234"
+}
+return config
+</code></pre>
+      </div>
+     </scroll-shadow>
+     <copy-clipboard class="theme-code-snippet-copy">
+      <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+       <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+      </svg>
+     </copy-clipboard>
+    </code-snippet>
+   </li>
+   <li>
+    <p>Press the <strong>"I"</strong> key to enter editing mode.</p>
+   </li>
+   <li>
+    <p>The <strong>cxFqdn </strong>is dynamic in case of MTT, and for Single Tenant its value is hardcoded on <strong>line 7.</strong></p>
+    <ol>
+     <li>
+      <p><strong>Single Tenant</strong>: set <strong>cxFqdn </strong>as <code>https://efcx4-voice.expertflow.com</code> , replace it with actual FQDN.</p>
+     </li>
+     <li>
+      <p><strong>MTT</strong>: cxFqdn is set dymanically by fetching the domain value form Channel Variables. The Root Domain need to be udpated. <code>expertflow.com</code> replace it with actual Domain</p>
+     </li>
+    </ol>
+   </li>
+   <li>
+    <p>The <strong>queueType</strong> field can contain one of two values:</p>
+    <ol>
+     <li>
+      <p><strong>'NAME'</strong></p>
+     </li>
+     <li>
+      <p><strong>''</strong></p>
+     </li>
+    </ol>
+   </li>
+   <li>
+    <p>The <strong>queue </strong>field can contain one of <strong>two types</strong> of values, based on what the <strong>queueType</strong> field above contains:</p>
+    <ol>
+     <li>
+      <p><strong>Name</strong> of the Agent Queue e.g. Support Queue (If <strong>queueType</strong> contains<strong> 'NAME'</strong>) This name can be obtained from Unified Admin from the <a href="/cx-knowledgebase/latest/unified-admin-guide#UnifiedAdminGuide-Step6:CreateaQueue" data-scope="internal"><u>Queues section</u></a>.</p>
+     </li>
+     <li>
+      <p>Empty string i.e. <strong>'' </strong>(If <strong>queueType</strong> contains <strong>''</strong>)</p>
+     </li>
+    </ol>
+   </li>
+   <li>
+    <p>If <strong>queue</strong> and <strong>queueType</strong> are set to <strong>''</strong> , then the call will be routed to the default queue set for the <a href="/cx-knowledgebase/latest/cx-voice-configuration-guide" data-scope="internal"><u>CX Voice channel in Unified Admin</u></a>.</p>
+   </li>
+   <li>
+    <p>The <strong>voiceConnectorApi</strong> field will contain a URL in the following format:</p>
+    <ol>
+     <li>
+      <p><a href="http://vc-ip/" data-scope="external" rel="external noreferrer"><u>http://VC-IP</u></a>:VC-PORT/request-agent</p>
+     </li>
+     <li>
+      <p>Replace VC-IP and VC-PORT with IP address and port of the <a href="/cx-knowledgebase/latest/voice-connector-deployment-guide" data-scope="internal"><u>voice connector</u></a>.</p>
+     </li>
+    </ol>
+   </li>
+   <li>
+    <p>The <strong>ivr_prompts_folder</strong> field contains path to the <strong>ivr_prompts </strong>folder. Leave it at the default value.</p>
+   </li>
+   <li>
+    <p><strong>AUTH_ENABLED</strong>: <strong>true</strong> or <strong>false</strong> depending on whether APISIX authentication is enabled in EFCX. The four settings below are set if this value is <strong>true</strong>.</p>
+   </li>
+   <li>
+    <p><strong>API_USERNAME</strong>: The username created in Keycloak for API authentication.</p>
+    <ul>
+     <li>
+      <p>On Keycloak create a user in the Expertflow realm.</p>
+     </li>
+     <li>
+      <p>Assign the <strong>admin</strong> and <strong>default</strong> roles, and have <strong>Email-Verified</strong> option enabled.</p>
+     </li>
+     <li>
+      <p>Assign a non-temporary password to this user as well.</p>
+     </li>
+    </ul>
+   </li>
+   <li>
+    <p><strong>API_PASS</strong>: The password for the above user created in Keycloak for API authentication</p>
+   </li>
+   <li>
+    <p><strong>CLIENT_ID</strong>: Should always be <strong>cim</strong>.</p>
+   </li>
+   <li>
+    <p><strong>CLIENT_SECRET</strong>: Found on Keycloak in the <strong>cim</strong> client.</p>
+   </li>
+   <li>
+    <p>Save and exit the file by pressing the <em><strong>Esc</strong></em><em> </em>key, entering <em><strong>:wq</strong></em> and pressing <strong>ENTER</strong>.</p>
+   </li>
+   <li>
+    <p>Steps 16-21 below are optional, in case Post-Call-Survey is in use.</p>
+   </li>
+   <li>
+    <p>Open <em><strong>pcs1_env.lua</strong></em>:</p>
+    <code-snippet class="theme-code-snippet">
+     <scroll-shadow>
+      <div data-component="code">
+       <pre><code>vi /usr/share/freeswitch/scripts/pcs1_env.lua
+</code></pre>
+      </div>
+     </scroll-shadow>
+     <copy-clipboard class="theme-code-snippet-copy">
+      <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+       <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+      </svg>
+     </copy-clipboard>
+    </code-snippet>
+    <code-snippet class="theme-code-snippet">
+     <scroll-shadow>
+      <div data-component="code">
+       <pre><code>local config = {}
+config = {
+    formId = "form-id123",
+    cxFqdn = "https://devops.expertflow.com",
+    ivr_prompts_folder = "/usr/share/freeswitch/sounds/ivr_prompts/"
+}
+return config
+</code></pre>
+      </div>
+     </scroll-shadow>
+     <copy-clipboard class="theme-code-snippet-copy">
+      <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+       <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+      </svg>
+     </copy-clipboard>
+    </code-snippet>
+   </li>
+   <li>
+    <p>Press the <strong>"I"</strong> key to enter editing mode.</p>
+   </li>
+   <li>
+    <p>The <strong>formId </strong>will contain the ID of the <strong>PCS Survey form</strong> created on Unified Admin (make sure that audio prompts were uploaded for each question).</p>
+   </li>
+   <li>
+    <p>The <strong>cxFqdn </strong>field contains the fully qualified domain name of the EFCX:</p>
+    <ol>
+     <li>
+      <p>Replace <a href="http://devops.expertflow.com/" data-scope="external" rel="external noreferrer"><u><strong>devops.expertflow.com</strong></u></a> with the EFCX domain name.</p>
+     </li>
+    </ol>
+   </li>
+   <li>
+    <p>The <strong>ivr_prompts_folder</strong> field contains path to the <strong>ivr_prompts </strong>folder. Leave it at the default value.</p>
+   </li>
+   <li>
+    <p>Save and exit the file by pressing the <em><strong>Esc</strong></em><em> </em>key, entering <em><strong>:wq</strong></em> and pressing <strong>ENTER</strong>.</p>
+   </li>
+   <li>
+    <p>Open <strong>vcApi.lua:</strong></p>
+   </li>
+  </ol>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>vi /usr/share/freeswitch/scripts/vcApi.lua
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+  <ol start="23">
+   <li>
+    <p>Search for <code>fsIp</code> and Replace <code>fsIp = '192.168.1.161'</code> with your actual Media Server Public IP</p>
+   </li>
+   <li>
+    <p>Save and exit the file by pressing the <em><strong>Esc</strong></em><em> </em>key, entering <em><strong>:wq</strong></em> and pressing <strong>ENTER</strong>.</p>
+   </li>
+  </ol>
+ </div>
+</details>
+<h2 id="Changing-the-Extension"><span id="CXVoiceupgradeGuide-ChangingtheExtension"></span>Changing the Extension
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-to-5-0#Changing-the-Extension">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<details class="expand" data-component="expand" data-align="wide" style="--width: 1800px">
+ <summary class="expand-control"> Extensions </summary>
+ <div class="expand-body">
+  <ul>
+   <li>
+    <p>Login to Media Server web interface.&nbsp;</p>
+    <ul>
+     <li>
+      <p>Open in browser: <a href="https://ip-addr/" data-scope="external" rel="external noreferrer"><u>https://IP-addr</u></a>, where IP-addr is the IP address of the Media Server.</p>
+     </li>
+    </ul>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 500px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_41a4e8de14c30c2b973dec45da5d6856e0c30a4f4e6cf763392f200e4204fa38/image2024-1-29_18-39-21.png?cb=f648c93e33f03a4dd79e7bba3b80e858" alt="image2024-1-29_18-39-21.png" data-scope="internal" width="716" height="437">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>Add the <strong>username</strong> and <strong>password</strong> that was shown upon <a href="/cx-knowledgebase/latest/media-server-deployment-guide" data-scope="internal"><u>installation of </u></a>Media Server and press <strong>LOGIN</strong>.</p>
+   </li>
+   <li>
+    <p>Press the IP address in the top right and select the previously created Domain where all the extension were created before:</p>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 696px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_2c501320326fe9f6b4a0331d9a527636f5420a6bbb286b332944af124082afb2/image2024-1-29_18-42-20.png?cb=adacca086a48713c81e440339af559e9" alt="image2024-1-29_18-42-20.png" data-scope="internal" width="1280" height="375">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>Open the Extensions section under the Accounts tab.</p>
+   </li>
+  </ul>
+  <p>
+   <br>
+  </p>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 757px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_a3c41aea71ca487b902c094745071637ab31b10cabf9a43e85a5a22d21d02f44/image-20251107-025302.png?cb=dedc9ebfc17e26532b46ad98c839b8dc" alt="image-20251107-025302.png" data-scope="internal" width="925" height="146">
+    </div>
+   </image-lightbox>
+  </div>
+  <p>
+   <br>
+  </p>
+  <ul>
+   <li>
+    <p>Open the extension one be one and scroll down to Domain and context.</p>
+   </li>
+   <li>
+    <p>Change the context and domain name to your newly created Domain e.g expertflow, tenant1.</p>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 794px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_9dad0504066781a8ac9ef5a41560bf519140b1d64fac7d56c797d0b1e111c379/image-20251107-025511.png?cb=91964cd5affd3c837a08a46cb1bbac98" alt="image-20251107-025511.png" data-scope="internal" width="1072" height="229">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>All the Extension will start to appear in the newly created Domain. It can be check by selecting your newly created Domain and to Extensions.</p>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 829px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_6760f946a3b5d80f5290ac9e92b8c810f6d83da7f0737ed7ca253acc4148d1ec/image-20251107-030406.png?cb=911c5a3593731a070c5e1e320ff40c27" alt="image-20251107-030406.png" data-scope="internal" width="1679" height="344">
+    </div>
+   </image-lightbox>
+  </div>
+  <p>
+   <br>
+  </p>
+  <p>
+   <br>
+  </p>
+ </div>
+</details>
+<h2 id="Changes-in-Dialplans"><span id="CXVoiceupgradeGuide-ChangesinDialplans"></span>Changes in Dialplans
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-to-5-0#Changes-in-Dialplans">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<details class="expand" data-component="expand" data-align="wide" style="--width: 1800px">
+ <summary class="expand-control"> Domain Specific Dialplan </summary>
+ <div class="expand-body">
+  <ul>
+   <li>
+    <p>Login to Media Server web interface.&nbsp;</p>
+    <ul>
+     <li>
+      <p>Open in browser: <a href="https://ip-addr/" data-scope="external" rel="external noreferrer">https://IP-addr</a>, where IP-addr is the IP address of the Media Server.</p>
+     </li>
+    </ul>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 500px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_41a4e8de14c30c2b973dec45da5d6856e0c30a4f4e6cf763392f200e4204fa38/image2024-1-29_18-39-21.png?cb=f648c93e33f03a4dd79e7bba3b80e858" alt="image2024-1-29_18-39-21.png" data-scope="internal" width="716" height="437">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>Add the <strong>username</strong> and <strong>password</strong> that was shown upon <a href="/cx-knowledgebase/latest/media-server-deployment-guide" data-scope="internal">installation of </a>Media Server and press <strong>LOGIN</strong>.</p>
+   </li>
+   <li>
+    <p>Press the IP address in the top right and select the <strong>Old Domain</strong> that was in use so far in the Domain creation section above:</p>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 696px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_2c501320326fe9f6b4a0331d9a527636f5420a6bbb286b332944af124082afb2/image2024-1-29_18-42-20.png?cb=adacca086a48713c81e440339af559e9" alt="image2024-1-29_18-42-20.png" data-scope="internal" width="1280" height="375">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>Open the Dialplan Manager section under the Dialplan tab.</p>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 674px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_c3cfc6356583f636da654615ced1b8f738cc3c55fddebd743bbc07591edcc0f9/image2024-1-29_18-49-17.png?cb=a69316a1353f7eaa2aded9397efa332b" alt="image2024-1-29_18-49-17.png" data-scope="internal" width="1280" height="395">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>Open the Inbound IVR Dialplan could be named as CxIvr. This is the dialplan where DN is mentioned.</p>
+   </li>
+   <li>
+    <p>Set the <strong>Context</strong> field to the value of the <strong>Domain</strong> set in the <strong>Domain creation</strong> section.</p>
+   </li>
+   <li>
+    <p>Set the <strong>Domain </strong>field to the value of the <strong>Domain</strong> set in the <strong>Domain creation</strong> section.</p>
+   </li>
+  </ul>
+  <div data-component="panel" role="note" data-appearance="note">
+   <div class="panel-content">
+    <p>In case of Multi Tenants, each Domain has it dedicated DN so set the Domain and Context accordingly.</p>
+    <p>In case of Single Tenant the Domain name and Context would be ‘expertflow’</p>
+   </div>
+  </div>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 700px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_1a16b2c51346f39451fcf4a9397b23075dba838cd3d733a9b7a968b6d06594e6/image-20250304-074926.png?cb=b44a5071e16fad0fde554cb791ae1f7a" alt="image-20250304-074926.png" data-scope="internal" width="1363" height="464">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>Save the changes by pressing <strong>SAVE</strong> button in top right corner.</p>
+   </li>
+   <li>
+    <p>Do the same for the following Dialplan</p>
+    <ul>
+     <li>
+      <p>WebRTC</p>
+     </li>
+     <li>
+      <p>Post Call Survey Dialplan (If using Post Call Survey other wise ignore it)</p>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </div>
+</details>
+<details class="expand" data-component="expand" data-align="wide" style="--width: 1800px">
+ <summary class="expand-control"> Global Dialplan </summary>
+ <div class="expand-body">
+  <ul>
+   <li>
+    <p>Login to Media Server web interface.&nbsp;</p>
+    <ul>
+     <li>
+      <p>Open in browser: <a href="https://ip-addr/" data-scope="external" rel="external noreferrer">https://IP-addr</a>, where IP-addr is the IP address of the Media Server.</p>
+     </li>
+    </ul>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 500px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_41a4e8de14c30c2b973dec45da5d6856e0c30a4f4e6cf763392f200e4204fa38/image2024-1-29_18-39-21.png?cb=f648c93e33f03a4dd79e7bba3b80e858" alt="image2024-1-29_18-39-21.png" data-scope="internal" width="716" height="437">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>Add the <strong>username</strong> and <strong>password</strong> that was shown upon <a href="/cx-knowledgebase/latest/media-server-deployment-guide" data-scope="internal">installation of </a>Media Server and press <strong>LOGIN</strong>.</p>
+   </li>
+   <li>
+    <p>Press the IP address in the top right and select the Domain created in the Domain creation section above:</p>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 696px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_2c501320326fe9f6b4a0331d9a527636f5420a6bbb286b332944af124082afb2/image2024-1-29_18-42-20.png?cb=adacca086a48713c81e440339af559e9" alt="image2024-1-29_18-42-20.png" data-scope="internal" width="1280" height="375">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>Open the Dialplan Manager section under the Dialplan tab.</p>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 674px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_c3cfc6356583f636da654615ced1b8f738cc3c55fddebd743bbc07591edcc0f9/image2024-1-29_18-49-17.png?cb=a69316a1353f7eaa2aded9397efa332b" alt="image2024-1-29_18-49-17.png" data-scope="internal" width="1280" height="395">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>Open the Outbound IVR Dialplan.</p>
+   </li>
+   <li>
+    <p>Set the <strong>Context</strong> field to the value of <strong>global</strong>.</p>
+   </li>
+   <li>
+    <p>Set the <strong>Context</strong> field to the value of <strong>global</strong>.</p>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 690px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_47898950bfebf1872d80f51859d64d2dcd512f624bc1abd0a586a53eb84bd3e2/image-20251107-063233.png?cb=06ee400879a460a91ba86db9d64378bc" alt="image-20251107-063233.png" data-scope="internal" width="1672" height="388">
+    </div>
+   </image-lightbox>
+  </div>
+  <p>
+   <br>
+  </p>
+  <ul>
+   <li>
+    <p>Save the changes by pressing <strong>SAVE</strong> button in top right corner.</p>
+   </li>
+   <li>
+    <p>Do the same for the following Dialplan</p>
+    <ul>
+     <li>
+      <p>Direct_Transfer Dialplan (CxQueue)</p>
+     </li>
+     <li>
+      <p>External Consult and Transfer Dialplan</p>
+     </li>
+     <li>
+      <p>Progressive Outbound Dialplan</p>
+     </li>
+     <li>
+      <p>Manual Outbound Dialplan</p>
+     </li>
+     <li>
+      <p>Custom Hangup Dialplan</p>
+     </li>
+     <li>
+      <p>Silent Monitoring Dialplan</p>
+     </li>
+     <li>
+      <p>Conference Dialplan</p>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </div>
+</details>
+<details class="expand" data-component="expand" data-align="wide" style="--width: 1800px">
+ <summary class="expand-control"> Changes in Call Recording Dialplan </summary>
+ <div class="expand-body">
+  <ul>
+   <li>
+    <p>Login to Media Server web interface.&nbsp;</p>
+    <ul>
+     <li>
+      <p>Open in browser: <a href="https://ip-addr/" data-scope="external" rel="external noreferrer">https://IP-addr</a>, where IP-addr is the IP address of the Media Server.</p>
+     </li>
+    </ul>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 500px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_53bccda987393ce7ed964eb52150ccfefbe77a66c9ca40ef9605fee234dfa54e/image2024-1-29_18-39-38.png?cb=f648c93e33f03a4dd79e7bba3b80e858" alt="image2024-1-29_18-39-38.png" data-scope="internal" width="716" height="437">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>Add the <strong>username</strong> and <strong>password</strong> that was shown upon <a href="/cx-knowledgebase/latest/media-server-deployment-guide" data-scope="internal">installation of </a>Media Server and press <strong>LOGIN</strong>.</p>
+   </li>
+   <li>
+    <p>Press the IP address in the top right and select the<strong> Existing Domain</strong>, which was in use, in the Domain creation section above:</p>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 776px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_80ccc486e5bad2c78cec01fb9451fc6bd635f4b5c3eee04f3c69644626ffcd13/image2024-1-29_18-42-44.png?cb=adacca086a48713c81e440339af559e9" alt="image2024-1-29_18-42-44.png" data-scope="internal" width="1280" height="375">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>Open the Dialplan Manager section under the Dialplan tab.</p>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 726px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_c3cfc6356583f636da654615ced1b8f738cc3c55fddebd743bbc07591edcc0f9/image2024-1-29_18-49-17.png?cb=a69316a1353f7eaa2aded9397efa332b" alt="image2024-1-29_18-49-17.png" data-scope="internal" width="1280" height="395">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>Find and open the <strong>user_record </strong>dialplan.</p>
+   </li>
+   <li>
+    <p>Make sure to <strong>delete the lines present previously in</strong> <strong>Group 9 apart from the first one</strong>, and NOT in the table and image below.</p>
+   </li>
+   <li>
+    <p>Add the following data to the table, such that the final version of<strong> Group 9</strong> looks like the image below:</p>
+   </li>
+  </ul>
+  <div class="theme-table" style="--width: 1011px;">
+   <table-expand>
+    <scroll-shadow>
+     <table-sort>
+      <div data-component="table" data-align="unset" data-number-column="false">
+       <table>
+        <colgroup>
+         <col style="width: 439px">
+         <col style="width: 142px">
+         <col style="width: 729px">
+         <col style="width: 115px">
+         <col style="width: 115px">
+         <col style="width: 115px">
+         <col style="width: 115px">
+        </colgroup>
+        <tbody>
+         <tr>
+          <th>
+           <p><strong>Tag</strong></p>
+          </th>
+          <th>
+           <p><strong>Type</strong></p>
+          </th>
+          <th>
+           <p><strong>Data</strong></p>
+          </th>
+          <th>
+           <p><strong>Inline</strong></p>
+          </th>
+          <th>
+           <p><strong>Group</strong></p>
+          </th>
+          <th>
+           <p><strong>Order</strong></p>
+          </th>
+          <th>
+           <p><strong>Enabled</strong></p>
+          </th>
+         </tr>
+         <tr>
+          <td>
+           <p>condition</p>
+          </td>
+          <td>
+           <p>${record_session}</p>
+          </td>
+          <td>
+           <p>^true$</p>
+          </td>
+          <td>
+           <p>
+            <br>
+           </p>
+          </td>
+          <td>
+           <p>9</p>
+          </td>
+          <td>
+           <p>5</p>
+          </td>
+          <td>
+           <p>true</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>action</p>
+          </td>
+          <td>
+           <p>set</p>
+          </td>
+          <td>
+           <p>record_path=${recordings_dir}/${domain_name}/archive/${strftime(%Y)}/${strftime(%b)}/${strftime(%d)}</p>
+          </td>
+          <td>
+           <p>true</p>
+          </td>
+          <td>
+           <p>9</p>
+          </td>
+          <td>
+           <p>10</p>
+          </td>
+          <td>
+           <p>true</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>action</p>
+          </td>
+          <td>
+           <p>export</p>
+          </td>
+          <td>
+           <p>record_path=${recordings_dir}/${domain_name}/archive/${strftime(%Y)}/${strftime(%b)}/${strftime(%d)}</p>
+          </td>
+          <td>
+           <p>true</p>
+          </td>
+          <td>
+           <p>9</p>
+          </td>
+          <td>
+           <p>15</p>
+          </td>
+          <td>
+           <p>true</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>action</p>
+          </td>
+          <td>
+           <p>set</p>
+          </td>
+          <td>
+           <p>record_name=${uuid}.${record_ext}</p>
+          </td>
+          <td>
+           <p>true</p>
+          </td>
+          <td>
+           <p>9</p>
+          </td>
+          <td>
+           <p>20</p>
+          </td>
+          <td>
+           <p>true</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>action</p>
+          </td>
+          <td>
+           <p>set</p>
+          </td>
+          <td>
+           <p>recording_follow_transfer=false</p>
+          </td>
+          <td>
+           <p>true</p>
+          </td>
+          <td>
+           <p>9</p>
+          </td>
+          <td>
+           <p>25</p>
+          </td>
+          <td>
+           <p>true</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>action</p>
+          </td>
+          <td>
+           <p>export</p>
+          </td>
+          <td>
+           <p>recording_follow_transfer=false</p>
+          </td>
+          <td>
+           <p>true</p>
+          </td>
+          <td>
+           <p>9</p>
+          </td>
+          <td>
+           <p>30</p>
+          </td>
+          <td>
+           <p>true</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>action</p>
+          </td>
+          <td>
+           <p>set</p>
+          </td>
+          <td>
+           <p>record_append=true</p>
+          </td>
+          <td>
+           <p>true</p>
+          </td>
+          <td>
+           <p>9</p>
+          </td>
+          <td>
+           <p>35</p>
+          </td>
+          <td>
+           <p>true</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>action</p>
+          </td>
+          <td>
+           <p>export</p>
+          </td>
+          <td>
+           <p>record_append=true</p>
+          </td>
+          <td>
+           <p>true</p>
+          </td>
+          <td>
+           <p>9</p>
+          </td>
+          <td>
+           <p>40</p>
+          </td>
+          <td>
+           <p>true</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>action</p>
+          </td>
+          <td>
+           <p>set</p>
+          </td>
+          <td>
+           <p>record_in_progress=true</p>
+          </td>
+          <td>
+           <p>true</p>
+          </td>
+          <td>
+           <p>9</p>
+          </td>
+          <td>
+           <p>45</p>
+          </td>
+          <td>
+           <p>true</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>action</p>
+          </td>
+          <td>
+           <p>set</p>
+          </td>
+          <td>
+           <p>RECORD_ANSWER_REQ=true</p>
+          </td>
+          <td>
+           <p>-</p>
+          </td>
+          <td>
+           <p>9</p>
+          </td>
+          <td>
+           <p>50</p>
+          </td>
+          <td>
+           <p>true</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>action</p>
+          </td>
+          <td>
+           <p>export</p>
+          </td>
+          <td>
+           <p>RECORD_ANSWER_REQ=true</p>
+          </td>
+          <td>
+           <p>-</p>
+          </td>
+          <td>
+           <p>9</p>
+          </td>
+          <td>
+           <p>55</p>
+          </td>
+          <td>
+           <p>true</p>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </table-sort>
+    </scroll-shadow>
+   </table-expand>
+  </div> 
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 900px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_42352d0fd651fd33db5ca0ba5ed9a6c17ba36076f69738c3acdfa0cdb4ff7fda/image-20250430-135151.png?cb=d5adc5cd31df0ff6301d1465c9b58b71" alt="image-20250430-135151.png" data-scope="internal" width="1354" height="450">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>Save the changes by pressing <strong>SAVE</strong> button in top right corner.</p>
+   </li>
+   <li>
+    <p>Repeat this step for the <strong>newly created Domain</strong> as well.</p>
+   </li>
+  </ul>
+ </div>
+</details>
+<details class="expand" data-component="expand" data-align="wide" style="--width: 1800px">
+ <summary class="expand-control"> Turn OFF the voicemail Dialplan </summary>
+ <div class="expand-body">
+  <ul>
+   <li>
+    <p>Login to Media Server web interface.&nbsp;</p>
+    <ul>
+     <li>
+      <p>Open in browser: <a href="https://ip-addr/" data-scope="external" rel="external noreferrer">https://IP-addr</a>, where IP-addr is the IP address of the Media Server.</p>
+     </li>
+    </ul>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 500px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_52bb501a6a33bc7720f34fba08087a3301516267e9dc20c128cd3753011ddb69/image2024-1-29_18-39-13.png?cb=f648c93e33f03a4dd79e7bba3b80e858" alt="image2024-1-29_18-39-13.png" data-scope="internal" width="716" height="437">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>Add the <strong>username</strong> and <strong>password</strong> that was shown upon <a href="/cx-knowledgebase/latest/media-server-deployment-guide" data-scope="internal">installation of </a>Media Server and press <strong>LOGIN</strong>.</p>
+   </li>
+   <li>
+    <p>Press the in the top right and select the Domain created in the Domain creation section above:</p>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 693px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_f4b0244d10f018159519f64fda52874e54ec623e9b48272a93af6ac4b1c00611/image2024-1-29_18-42-7.png?cb=adacca086a48713c81e440339af559e9" alt="image2024-1-29_18-42-7.png" data-scope="internal" width="1280" height="375">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>Once the domain is selected then click on the dilaplan menu and on the drop down section click the dialplan manager. once the dial plan are open search for the <code>voicemail </code>dilaplan</p>
+    <div class="theme-block-image">
+     <image-lightbox>
+      <div class="block-image" style="--width: 1240px" data-component="image" data-align="align-center">
+       <img src="/__attachments/a_7c74ab838741ac1ebc58e9285ffa17ccac399a3334bbbdacacae41eec27ce835/image-20251104-103050.png?cb=d36cd1f73d79c520234644b888ba7952" alt="image-20251104-103050.png" data-scope="internal" width="1240" height="39">
+      </div>
+     </image-lightbox>
+    </div>
+   </li>
+   <li>
+    <p>Cline on the voicemail dialplan is opened like below, then turned off the <code>Enabled</code> button to make the dialplan false/turnoff</p>
+    <p>Unknown Attachment</p>
+   </li>
+  </ul>
+ </div>
+</details>
+<h2 id="Upgradation-of-Voice-Connector"><span id="CXVoiceupgradeGuide-UpgradationofVoiceConnector"></span>Upgradation of Voice Connector
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-to-5-0#Upgradation-of-Voice-Connector">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<details class="expand" data-component="expand" data-align="wide" style="--width: 1800px">
+ <summary class="expand-control"> Voice Connector </summary>
+ <div class="expand-body">
+  <p>
+   <br>
+  </p>
+  <ul>
+   <li>
+    <p>SSH into the Debian server.</p>
+    <ul>
+     <li>
+      <p>Use command:</p>
+      <ul>
+       <li>
+        <code-snippet class="theme-code-snippet">
+         <scroll-shadow>
+          <div data-component="code">
+           <pre><code>ssh username@server-ip
+</code></pre>
+          </div>
+         </scroll-shadow>
+         <copy-clipboard class="theme-code-snippet-copy">
+          <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+           <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+          </svg>
+         </copy-clipboard>
+        </code-snippet>
+       </li>
+      </ul>
+     </li>
+     <li>
+      <p>Enter the ssh password and press <em>Enter</em>.</p>
+     </li>
+     <li>
+      <p>Use command:</p>
+      <ul>
+       <li>
+        <code-snippet class="theme-code-snippet">
+         <scroll-shadow>
+          <div data-component="code">
+           <pre><code>su
+</code></pre>
+          </div>
+         </scroll-shadow>
+         <copy-clipboard class="theme-code-snippet-copy">
+          <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+           <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+          </svg>
+         </copy-clipboard>
+        </code-snippet>
+       </li>
+      </ul>
+     </li>
+     <li>
+      <p>Enter the root user's password</p>
+     </li>
+    </ul>
+   </li>
+  </ul>
+  <h3 id="Container-deployment"><span id="CXVoiceupgradeGuide-Containerdeployment"></span>Container deployment
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-to-5-0#Container-deployment">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <p>The voice connector is deployed as a docker image.</p>
+  <ul>
+   <li>
+    <p>Navigate to the existing Voice connector directory</p>
+   </li>
+   <li>
+    <code-snippet class="theme-code-snippet">
+     <scroll-shadow>
+      <div data-component="code">
+       <pre><code>cd voice-connector
+</code></pre>
+      </div>
+     </scroll-shadow>
+     <copy-clipboard class="theme-code-snippet-copy">
+      <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+       <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+      </svg>
+     </copy-clipboard>
+    </code-snippet>
+   </li>
+   <li>
+    <p>Stop the previously running container</p>
+   </li>
+   <li>
+    <code-snippet class="theme-code-snippet">
+     <scroll-shadow>
+      <div data-component="code">
+       <pre><code>docker compose down
+</code></pre>
+      </div>
+     </scroll-shadow>
+     <copy-clipboard class="theme-code-snippet-copy">
+      <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+       <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+      </svg>
+     </copy-clipboard>
+    </code-snippet>
+   </li>
+   <li>
+    <p>Open the file <em>docker-compose.yml.</em></p>
+    <ul>
+     <li>
+      <code-snippet class="theme-code-snippet">
+       <scroll-shadow>
+        <div data-component="code">
+         <pre><code>vi docker-compose.yml
+</code></pre>
+        </div>
+       </scroll-shadow>
+       <copy-clipboard class="theme-code-snippet-copy">
+        <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+         <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+        </svg>
+       </copy-clipboard>
+      </code-snippet>
+     </li>
+    </ul>
+   </li>
+   <li>
+    <p>Enter editing mode with the<em> 'I' </em>or <em>'Insert'</em> keys.</p>
+    <ul>
+     <li>
+      <p>Replace the previous the tag with 5.0</p>
+      <code-snippet class="theme-code-snippet">
+       <scroll-shadow>
+        <div data-component="code">
+         <pre><code>version: "3.8"
+services:
+  voice-connector:
+    image: gitimages.expertflow.com/freeswitch/ecx_generic_connector:&lt;TAG&gt;
+    deploy:
+    
+    ...
+    ...
+</code></pre>
+        </div>
+       </scroll-shadow>
+       <copy-clipboard class="theme-code-snippet-copy">
+        <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+         <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+        </svg>
+       </copy-clipboard>
+      </code-snippet>
+     </li>
+    </ul>
+   </li>
+   <li>
+    <p>Save the file and exit by :</p>
+    <ul>
+     <li>
+      <p>Press the <em><strong>Esc</strong></em> key.</p>
+     </li>
+     <li>
+      <p>Enter the phrase <em><strong>:wq</strong></em> to save and exit.</p>
+     </li>
+    </ul>
+   </li>
+   <li>
+    <p>Open the <em>env.txt</em></p>
+    <ul>
+     <li>
+      <code-snippet class="theme-code-snippet">
+       <scroll-shadow>
+        <div data-component="code">
+         <pre><code>vi env.txt
+</code></pre>
+        </div>
+       </scroll-shadow>
+       <copy-clipboard class="theme-code-snippet-copy">
+        <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+         <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+        </svg>
+       </copy-clipboard>
+      </code-snippet>
+     </li>
+    </ul>
+   </li>
+   <li>
+    <p>Enter editing mode with the<em> 'I' </em>or <em>'Insert'</em> keys.</p>
+   </li>
+   <li>
+    <p>Add these environment variables into the file <em>env.txt</em> :&nbsp;</p>
+    <code-snippet class="theme-code-snippet">
+     <scroll-shadow>
+      <div data-component="code">
+       <pre><code>AUTH_ENABLED=true
+API_USERNAME=voice_auth
+API_PASS=pass
+CLIENT_ID=cim
+CLIENT_SECRET=secret
+ROOT_DOMAIN=expertflow
+ESL_DEFAULT_DOMAIN=192.168.1.17
+</code></pre>
+      </div>
+     </scroll-shadow>
+     <copy-clipboard class="theme-code-snippet-copy">
+      <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+       <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+      </svg>
+     </copy-clipboard>
+    </code-snippet>
+    <ul>
+     <li>
+      <p>AUTH_ENABLED: <strong>true</strong> or <strong>false</strong> depending on whether APISIX authentication is enabled in EFCX. The four settings below are set if this value is <strong>true</strong>.</p>
+     </li>
+     <li>
+      <p>API_USERNAME: The username created in Keycloak for API authentication.</p>
+      <ul>
+       <li>
+        <p>On Keycloak create a user in the Expertflow realm.</p>
+       </li>
+       <li>
+        <p>Assign the <strong>admin</strong> and <strong>default</strong> roles, and have <strong>Email-Verified</strong> option enabled.</p>
+       </li>
+       <li>
+        <p>Assign a non-temporary password to this user as well.</p>
+       </li>
+      </ul>
+     </li>
+     <li>
+      <p>API_PASS: The password for the above user created in Keycloak for API authentication</p>
+     </li>
+     <li>
+      <p>CLIENT_ID: Should always be <strong>cim</strong>.</p>
+     </li>
+     <li>
+      <p>CLIENT_SECRET: Found on Keycloak in the <strong>cim</strong> client.</p>
+     </li>
+     <li>
+      <p>ROOT_DOMAIN: Keep it as “expertflow” as realm name will be expertflow in Migration.</p>
+     </li>
+     <li>
+      <p>ESL_DEFAULT_DOMAIN: Media Server IP through which ESL connection can be established</p>
+     </li>
+    </ul>
+   </li>
+   <li>
+    <p>Run the command:</p>
+    <ul>
+     <li>
+      <code-snippet class="theme-code-snippet">
+       <scroll-shadow>
+        <div data-component="code">
+         <pre><code>docker login gitimages.expertflow.com
+</code></pre>
+        </div>
+       </scroll-shadow>
+       <copy-clipboard class="theme-code-snippet-copy">
+        <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+         <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+        </svg>
+       </copy-clipboard>
+      </code-snippet>
+     </li>
+     <li>
+      <p>Enter your username and password as prompted (make sure that you were granted access to the repository).</p>
+     </li>
+    </ul>
+   </li>
+   <li>
+    <p>Within the folder run the command:</p>
+    <ul>
+     <li>
+      <code-snippet class="theme-code-snippet">
+       <scroll-shadow>
+        <div data-component="code">
+         <pre><code>docker compose up -d
+</code></pre>
+        </div>
+       </scroll-shadow>
+       <copy-clipboard class="theme-code-snippet-copy">
+        <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+         <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+        </svg>
+       </copy-clipboard>
+      </code-snippet>
+     </li>
+    </ul>
+   </li>
+   <li>
+    <p>Confirm that the new docker container is running by using the command:</p>
+    <ul>
+     <li>
+      <code-snippet class="theme-code-snippet">
+       <scroll-shadow>
+        <div data-component="code">
+         <pre><code>docker ps
+</code></pre>
+        </div>
+       </scroll-shadow>
+       <copy-clipboard class="theme-code-snippet-copy">
+        <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+         <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+        </svg>
+       </copy-clipboard>
+      </code-snippet>
+     </li>
+    </ul>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 760px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_cbc895dac9c90ee82b83c45c37893c1f7502e229c5e36b77929c9257e2ffdeeb/image2023-9-6_12-55-39.png%3Fversion=1&amp;modificationDate=1693986938289&amp;cacheVersion=1&amp;api=v2&amp;width=800?cb=1fe590c0bda02b5880697db3457fc569" alt="image2023-9-6_12-55-39.png?version=1&amp;modificationDate=1693986938289&amp;cacheVersion=1&amp;api=v2&amp;width=800" data-scope="internal" width="1225" height="137">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>Confirm that the container is running correctly by opening the logs with command:</p>
+    <ul>
+     <li>
+      <code-snippet class="theme-code-snippet">
+       <scroll-shadow>
+        <div data-component="code">
+         <pre><code>docker logs -f containerID
+</code></pre>
+        </div>
+       </scroll-shadow>
+       <copy-clipboard class="theme-code-snippet-copy">
+        <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+         <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+        </svg>
+       </copy-clipboard>
+      </code-snippet>
+     </li>
+    </ul>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 782px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_237b8f8b2d66e16f3775a9dfd2d82b147fd031e19e4ec9408e239b8567721848/image2023-9-6_12-58-15.png%3Fversion=1&amp;modificationDate=1693987093716&amp;cacheVersion=1&amp;api=v2&amp;width=700?cb=6845a5dbda505f727a27c23da7385079" alt="image2023-9-6_12-58-15.png?version=1&amp;modificationDate=1693987093716&amp;cacheVersion=1&amp;api=v2&amp;width=700" data-scope="internal" width="1337" height="408">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>If there are multiple Voice Connectors running update all of them if needed.</p>
+   </li>
+  </ul>
+ </div>
+</details>
+<h2 id="Access-Control-List"><span id="CXVoiceupgradeGuide-AccessControlList"></span>Access Control List
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-to-5-0#Access-Control-List">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<details class="expand" data-component="expand" data-align="wide" style="--width: 1800px">
+ <summary class="expand-control"> Configure Access Control List (ACL) </summary>
+ <div class="expand-body">
+  <p>For the Voice Connector to be able to access the Freeswitch ESL for communicating with Media Server, their IP address must be added to the ACL.</p>
+  <ul>
+   <li>
+    <p>Login to Media Server web interface.&nbsp;</p>
+    <ul>
+     <li>
+      <p>Open in browser: <a href="https://ip-addr/" data-scope="external" rel="external noreferrer">https://IP-addr</a>, where IP-addr is the IP address of the Media Server.</p>
+     </li>
+    </ul>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 500px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_d7789555cd7479af3b59002a916984fa74a183382a9887305327039e9384bc00/image2024-1-29_18-39-53.png?cb=f648c93e33f03a4dd79e7bba3b80e858" alt="image2024-1-29_18-39-53.png" data-scope="internal" width="716" height="437">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>Add the <strong>username</strong> and <strong>password</strong> that was shown upon <a href="/cx-knowledgebase/latest/media-server-deployment-guide" data-scope="internal">installation of </a>Media Server and press <strong>LOGIN</strong>.</p>
+   </li>
+   <li>
+    <p>Press the IP address in the top right and select the Domain created in the Domain creation section above:</p>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 686px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_3a9d06dc846b7760ace9f878d2db9536b34c5578b8b06881c8f03beb61a64bc8/image2024-1-29_18-42-34.png?cb=adacca086a48713c81e440339af559e9" alt="image2024-1-29_18-42-34.png" data-scope="internal" width="1280" height="375">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>Open the <strong>Access Control List</strong> from the <strong>Advanced </strong>tab.</p>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 692px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_f0cfd261f9d0b95676dc833367933c731ab34f92014089019aa557202b4acb32/image2024-1-29_18-46-48.png?cb=389d5b228c3b27f69d24e120f7104f5e" alt="image2024-1-29_18-46-48.png" data-scope="internal" width="1280" height="507">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>Open <strong>ACL </strong>by clicking the name <strong>esl</strong></p>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 716px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_accbe30b1dac38cdb7616a1f3514911890ab9670ac2aa658dcee9996e85e8430/image2024-1-29_18-47-30.png?cb=064da2ebbc08445684a5d66fcbefe5e2" alt="image2024-1-29_18-47-30.png" data-scope="internal" width="1280" height="292">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>In the <strong>esl</strong>:</p>
+    <ul>
+     <li>
+      <p>It is required to add the IP addresses of the Voice Connector docker containers.</p>
+      <ul>
+       <li>
+        <p>On the Voice connector servers, use the command <strong>docker ps </strong>to list the containers.</p>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 832px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_407c21fb2d8835466075266c26370f0fb5ea9338e41609a7d128cd3cd8430ea4/image2023-9-8_10-36-22.png?cb=848aca959e3575fc6399c36361518ade" alt="image2023-9-8_10-36-22.png" data-scope="internal" width="1280" height="119">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>Run the command:</p>
+    <ul>
+     <li>
+      <code-snippet class="theme-code-snippet">
+       <scroll-shadow>
+        <div data-component="code">
+         <pre><code>docker inspect containerID
+</code></pre>
+        </div>
+       </scroll-shadow>
+       <copy-clipboard class="theme-code-snippet-copy">
+        <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+         <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+        </svg>
+       </copy-clipboard>
+      </code-snippet>
+     </li>
+     <li>
+      <p>Scroll down to the Networks object and find the Gateway and IPAddress fields.</p>
+     </li>
+    </ul>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 750px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_3ab61c80fcb29402a776cca4a7da46151eb8af7e7c17d2142f8f8ddbf60f3bb5/image2023-9-8_10-37-46.png?cb=ba0380e8fbdbdb932f1a974bd85355de" alt="image2023-9-8_10-37-46.png" data-scope="internal" width="837" height="389">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>Verify if the value of <strong>Gateway </strong>and <strong>IPAddress </strong>is added in esl ACL.</p>
+   </li>
+   <li>
+    <p>If it is already added ignore the remaining steps.</p>
+   </li>
+   <li>
+    <p>If it is not added follow next steps to add it in esl ACL.</p>
+   </li>
+   <li>
+    <p>Copy these two addresses to the <strong>esl </strong>ACL.</p>
+   </li>
+   <li>
+    <p>Click the <strong>Save </strong>button and go to the <strong>SIP Status</strong> with from the <strong>Status </strong>tab.</p>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 693px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_955903ad444ef181a219f04c3f7f2ff2356b085456fc754bc5d25c54c69e3d23/image2024-1-29_18-47-59.png?cb=0b5a3730ab48d4d6dce0f88684d21c66" alt="image2024-1-29_18-47-59.png" data-scope="internal" width="1280" height="587">
+    </div>
+   </image-lightbox>
+  </div>
+  <ul>
+   <li>
+    <p>Click the <strong>Reload ACL </strong>button on the top right.</p>
+   </li>
+  </ul>
+  <p>Unknown Attachment</p>
+ </div>
+</details>
+<h3 id="VRS-Upgrade-Guide-(15.5-→-14.6)"><span id="CXVoiceupgradeGuide-VRSUpgradeGuide(15.5→14.6)"></span>VRS Upgrade Guide (15.5 → 14.6)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-to-5-0#VRS-Upgrade-Guide-(15.5-→-14.6)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Here is the upgrade guide link tp upgrade the VRS from 14.5 to 14.6</p>
+<p><a href="https://expertflow-docs.atlassian.net/wiki/spaces/VRS/pages/1423441924/VRS+Upgrade+Guide+from+14.7+to+14.8.0" data-scope="external" rel="external noreferrer">VRS Upgrade Guide from 14.7 to 14.8.0</a></p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="159821c613a88504-61" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="159821c613a88504-61">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/cx/5.0/upgrade-guide-for-data-platform">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Upgrade guide for Data Platform</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/cx/5.0/vrs-upgrade-guide">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">VRS Upgrade Guide</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

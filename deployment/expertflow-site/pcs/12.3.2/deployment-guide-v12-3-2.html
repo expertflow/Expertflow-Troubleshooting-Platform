@@ -1,0 +1,3835 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_b8b73a0ef1f584cfa66251b1e1c0a3b53e47cb7fb0195a9713997c27ffb30b34" data-confluence-content-id="44303178"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/pcs/12.3.2/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="PCS">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>Deployment Guide | Expertflow CX</title>
+		<meta property="og:title" content="Deployment Guide | Expertflow CX">
+		<meta property="twitter:title" content="Deployment Guide | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/pcs/12.3.2/deployment-guide-v12-3-2">
+		<meta property="og:url" content="https://docs.expertflow.com/pcs/12.3.2/deployment-guide-v12-3-2">
+
+		<meta name="description" content="Solution Prerequisites Following are the solution setup prerequisites. Software requirements Minimum requirement OS CentOS 7, RedHat 8.8 MSSQLServer 2016 Docke…">
+		<meta property="og:description" content="Solution Prerequisites Following are the solution setup prerequisites. Software requirements Minimum requirement OS CentOS 7, RedHat 8.8 MSSQLServer 2016 Docke…">
+		<meta property="twitter:description" content="Solution Prerequisites Following are the solution setup prerequisites. Software requirements Minimum requirement OS CentOS 7, RedHat 8.8 MSSQLServer 2016 Docke…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2024-05-10T07:47:03.396Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": true
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.js"></script>
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="ac09cd5e6e955071-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="ac09cd5e6e955071-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="ac09cd5e6e955071-5">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="ac09cd5e6e955071-5" name="version" onchange="self.location.assign(this.value)" >
+				<option id="ac09cd5e6e955071-3"  value="/pcs/13.0"  >
+					13.0
+				</option>
+				<option id="ac09cd5e6e955071-4"  value="/pcs/12.3.2/deployment-guide-v12-3-2"  selected="">
+					12.3.2
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('ac09cd5e6e955071-5');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-ac09cd5e6e955071-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-ac09cd5e6e955071-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-ac09cd5e6e955071-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="ac09cd5e6e955071-6" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="ac09cd5e6e955071-6">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-ac09cd5e6e955071-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-ac09cd5e6e955071-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="ac09cd5e6e955071-9">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="ac09cd5e6e955071-9" name="version" onchange="self.location.assign(this.value)" >
+				<option id="ac09cd5e6e955071-7"  value="/pcs/13.0"  >
+					13.0
+				</option>
+				<option id="ac09cd5e6e955071-8"  value="/pcs/12.3.2/deployment-guide-v12-3-2"  selected="">
+					12.3.2
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('ac09cd5e6e955071-9');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ac09cd5e6e955071-10" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ac09cd5e6e955071-11" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ac09cd5e6e955071-12" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ac09cd5e6e955071-13"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ac09cd5e6e955071-13" href="/pcs/12.3.2/release-notes-v12-3-2" >Release Notes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ac09cd5e6e955071-15" href="/pcs/12.3.2/pcs-demo-guide" >PCS Demo Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ac09cd5e6e955071-16" href="/pcs/12.3.2/deployment-guide-v12-3-2" aria-current="page">Deployment Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ac09cd5e6e955071-17" href="/pcs/12.3.2/upgrade-guide-v12-3-2" >Upgrade Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ac09cd5e6e955071-18" href="/pcs/12.3.2/user-guide-v12-3-2" >User Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ac09cd5e6e955071-19" href="/pcs/12.3.2/solution-reference" >Solution Reference</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ac09cd5e6e955071-20" href="/pcs/12.3.2/business-features-v12-3-2" >Business Features</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ac09cd5e6e955071-21" href="/pcs/12.3.2/solution-components-and-architecture-v12-3-2" >Solution Components and Architecture</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ac09cd5e6e955071-22" href="/pcs/12.3.2/solution-security" >Solution Security</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ac09cd5e6e955071-23" href="/pcs/12.3.2/deployment-models" >Deployment Models</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ac09cd5e6e955071-24" href="/pcs/12.3.2/solution-prerequisites-v12-3-2" >Solution Prerequisites</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ac09cd5e6e955071-25" href="/pcs/12.3.2/system-limitations" >System Limitations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ac09cd5e6e955071-26" href="/pcs/12.3.2/compatibility-guide-v12-3-2" >Compatibility Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ac09cd5e6e955071-27" href="/pcs/12.3.2/pcs-training-and-demo-videos" >PCS Training and Demo Videos</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ac09cd5e6e955071-28" href="/pcs/12.3.2/api-developer-guide" >API Developer Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ac09cd5e6e955071-29" href="/pcs/12.3.2/pcs-data-service-specs-for-survey-dashboard" >PCS Data Service Specs for Survey Dashboard</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ac09cd5e6e955071-30" href="/pcs/12.3.2/pcs-uccx-ivr-integration" >PCS UCCX IVR Integration</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ac09cd5e6e955071-31" href="/pcs/12.3.2/pcs-ucce-ivr-integration-v12-3-2" >PCS UCCE IVR Integration</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ac09cd5e6e955071-32" href="/pcs/12.3.2/sitemap-xml" >sitemap.xml</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="ac09cd5e6e955071-33" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="ac09cd5e6e955071-33">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/pcs/12.3.2">
+										Post Collaboration Surveys
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="ac09cd5e6e955071-34">
+			<h2 class="toc-heading" id="ac09cd5e6e955071-34">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>Deployment Guide</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+
+	
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+	
+
+
+	
+	
+	
+	
+	
+	
+			
+	
+	
+	
+
+		
+	
+	
+	
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+
+
+
+		
+
+	
+	<div data-component="layout-section" class="layout-section" style="--columns: 2fr 1fr;">
+ <div class="layout-cell">
+  <h2 id="id-(12.3.2)DeploymentGuide-SolutionPrerequisites" style=""><span id="DeploymentGuide-SolutionPrerequisites"></span>Solution Prerequisites
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/pcs/12.3.2/deployment-guide-v12-3-2#id-(12.3.2)DeploymentGuide-SolutionPrerequisites">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h2>
+  <p>Following are the solution setup prerequisites.</p>
+  <h3 id="id-(12.3.2)DeploymentGuide-Softwarerequirements" style=""><span id="DeploymentGuide-Softwarerequirements"></span>Software requirements
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/pcs/12.3.2/deployment-guide-v12-3-2#id-(12.3.2)DeploymentGuide-Softwarerequirements">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3> 
+  <div class="theme-table" style="--width: 56.9231%;">
+   <table-expand>
+    <scroll-shadow>
+     <table-sort>
+      <div data-component="table" data-align="unset" data-number-column="false">
+       <table>
+        <colgroup>
+         <col style="width: 26.6495%">
+         <col style="width: 73.0711%">
+        </colgroup>
+        <tbody>
+         <tr>
+          <th>
+           <p>
+            <br>
+           </p>
+          </th>
+          <th>
+           <p>Minimum requirement</p>
+          </th>
+         </tr>
+         <tr>
+          <th>
+           <p>OS</p>
+          </th>
+          <td>
+           <p>CentOS 7, RedHat 8.8</p>
+          </td>
+         </tr>
+         <tr>
+          <th>
+           <p>MSSQLServer</p>
+          </th>
+          <td>
+           <p>2016</p>
+          </td>
+         </tr>
+         <tr>
+          <th>
+           <p>Docker CE/EE</p>
+          </th>
+          <td>
+           <p>18+, Docker EE in case of RedHat</p>
+          </td>
+         </tr>
+         <tr>
+          <th>
+           <p>Docker compose</p>
+          </th>
+          <td>
+           <p>1.21</p>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </table-sort>
+    </scroll-shadow>
+   </table-expand>
+  </div> 
+  <h3 id="id-(12.3.2)DeploymentGuide-Hardwarerequirements" style=""><span id="DeploymentGuide-Hardwarerequirements"></span>Hardware requirements
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/pcs/12.3.2/deployment-guide-v12-3-2#id-(12.3.2)DeploymentGuide-Hardwarerequirements">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3> 
+  <div class="theme-table" style="--width: 57.1429%;">
+   <table-expand>
+    <scroll-shadow>
+     <table-sort>
+      <div data-component="table" data-align="unset" data-number-column="false">
+       <table>
+        <colgroup>
+         <col style="width: 26.5468%">
+         <col style="width: 73.2177%">
+        </colgroup>
+        <tbody>
+         <tr>
+          <th>
+           <p>
+            <br>
+           </p>
+          </th>
+          <th>
+           <p>Minimum requirement</p>
+          </th>
+         </tr>
+         <tr>
+          <th>
+           <p>CPU</p>
+          </th>
+          <td>
+           <p>4 cores</p>
+          </td>
+         </tr>
+         <tr>
+          <th>
+           <p>RAM</p>
+          </th>
+          <td>
+           <p>8 GB</p>
+          </td>
+         </tr>
+         <tr>
+          <th>
+           <p>Disk</p>
+          </th>
+          <td>
+           <p>100 GB</p>
+          </td>
+         </tr>
+         <tr>
+          <th>
+           <p>NICs</p>
+          </th>
+          <td>
+           <p>1 NIC per VM</p>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </table-sort>
+    </scroll-shadow>
+   </table-expand>
+  </div>
+  <p>
+   <br>
+  </p>
+ </div>
+ <div class="layout-cell">
+  <p><strong>On this page</strong></p>
+ </div>
+</div>
+<h2 id="id-(12.3.2)DeploymentGuide-InstallationSteps" style=""><span id="DeploymentGuide-InstallationSteps"></span>Installation Steps
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/pcs/12.3.2/deployment-guide-v12-3-2#id-(12.3.2)DeploymentGuide-InstallationSteps">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<ol>
+ <li>
+  <p>Install <a href="https://docs.docker.com/install/linux/docker-ce/centos/" data-scope="external" rel="external noreferrer">Docker</a> and <a href="https://docs.docker.com/compose/install/" data-scope="external" rel="external noreferrer">Docker Compose</a>&nbsp;on the host operating system.</p>
+ </li>
+ <li>
+  <p>Download the deployment script&nbsp;<a href="/__attachments/a_16c016e76afe3d3d384e8e974d43032ce8157336398c83c69166697baa4af5c7/pcs-deployment%2012.3.2.sh?cb=c630e96c027f1667cbee1dd927e5436d" data-scope="internal">deployment.sh</a> and place it in the user home or any desired directory. This script will:</p>
+ </li>
+ <li>
+  <ol>
+   <li>
+    <p>delete the pcs-deployment directory if it exists.</p>
+   </li>
+  </ol>
+ </li>
+ <li>
+  <p style="--text-align: left">To execute the script, give it the execute permissions and execute it.&nbsp;</p>
+  <code-snippet class="theme-code-snippet">
+   <div class="theme-code-snippet-header">Bash</div>
+   <scroll-shadow>
+    <div data-component="code" data-language="bash">
+     <pre><code>$ chmod 755 pcs-deployment.sh
+$ ./pcs-deployment.sh
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+  <p>
+   <br>
+  </p>
+ </li>
+ <li>
+  <p>pcs-deployment directory has all the files required deployment</p>
+ </li>
+ <li>
+  <p>Create a database in MSSQL Server for PCS application.</p>
+ </li>
+ <li>
+  <p>Update following environment variables &nbsp;in environment_variables.env file inside pcs-deployment folder.</p>
+ </li>
+ <li>
+  <p>
+   <br>
+  </p>
+  <div class="theme-table">
+   <table-expand>
+    <scroll-shadow>
+     <table-sort>
+      <div data-component="table" data-align="unset" data-number-column="false">
+       <table>
+        <colgroup>
+         <col style="width: 238px">
+         <col style="width: 795px">
+        </colgroup>
+        <tbody>
+         <tr>
+          <td>
+           <p><strong>Name</strong></p>
+          </td>
+          <td>
+           <p><strong>Description</strong></p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>DB_URL</p>
+          </td>
+          <td>
+           <p>PCS database connection url, (jdbc:jtds:<a href="/pcs/12.3.2/deployment-guide-v12-3-2" data-scope="internal">sqlserver://192.168.1.92:1433/pcs_linux</a>)</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>DB_USER</p>
+          </td>
+          <td>
+           <p>PCS&nbsp;database user , sa</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>DB_PASSWORD</p>
+          </td>
+          <td>
+           <p>PCS&nbsp;database password,&nbsp;Expertflow464</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>DB_DRIVER</p>
+          </td>
+          <td>
+           <p>JDBC driver (net.sourceforge.jtds.jdbcx.JtdsDataSource)</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>DB_DIALECT</p>
+          </td>
+          <td>
+           <div class="unknown-content">
+            <p>org.hibernate.dialect.SQLServer2008Dialect</p>
+           </div>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <div class="unknown-content">
+            <p>UCCE_DB_URL</p>
+           </div>
+          </td>
+          <td>
+           <p>UCCE AWDB database connection URL.</p>
+           <div class="unknown-content">
+            <p>jdbc:jtds:sqlserver://192.168.1.87:1433/ucce_awdb</p>
+           </div>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <div class="unknown-content">
+            <p>UCCE_DB_USER</p>
+           </div>
+          </td>
+          <td>
+           <p>sa</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <div class="unknown-content">
+            <p>UCCE_DB_PASSWORD</p>
+           </div>
+          </td>
+          <td>
+           <div class="unknown-content">
+            <p>Expertflow464</p>
+           </div>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <div class="unknown-content">
+            <p>IS_DB_ON_SAME_SERVER</p>
+           </div>
+          </td>
+          <td colspan="1">
+           <p>Indicates if SQLServer is on Windows machine or not. If SQL Server is installed on Windows then set it to "no". If it is set to "yes" then SHARED_PATH variable should be set to have common shared folder that is used by Node server and SQLServer for report export. Check second last section for Node server</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <div class="unknown-content">
+            <p>SHARED_PATH</p>
+           </div>
+          </td>
+          <td colspan="1">
+           <p>Shared path for reports, SQL Server will write exported reports to this folder and
+            <br>
+            application will download from the same folder. It is only effective if SAME_SERVER
+            <br>
+            set to "no"</p>
+           <div class="unknown-content">
+            <p>\\\\192.168.1.79\\xyz\\</p>
+           </div>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="2">
+           <p>Following variables are used if Cisco contact center type is UCCX</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <div class="unknown-content">
+            <p>UCCX_SERVER_BASE_URL</p>
+           </div>
+          </td>
+          <td colspan="1">
+           <div class="unknown-content">
+            <p>http://192.168.1.100/adminapi</p>
+           </div>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <div class="unknown-content">
+            <p>UCCX_USERNAME</p>
+           </div>
+          </td>
+          <td colspan="1">
+           <div class="unknown-content">
+            <p>administrator</p>
+           </div>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <div class="unknown-content">
+            <p>UCCX_PASSWORD</p>
+           </div>
+          </td>
+          <td colspan="1">
+           <div class="unknown-content">
+            <p>Expertflow464</p>
+           </div>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="2">
+           <p>Following variables are used for LDAP authentication</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <div class="unknown-content">
+            <p>LDAP_SERVER</p>
+           </div>
+          </td>
+          <td colspan="1">
+           <div class="unknown-content">
+            <p>ldap://192.168.1.132:389/</p>
+           </div>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <div class="unknown-content">
+            <p>LDAP_SEARCH_USER</p>
+           </div>
+          </td>
+          <td colspan="1">
+           <div class="unknown-content">
+            <p>cn=administrator,cn=users,dc=eflab,dc=com</p>
+           </div>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <div class="unknown-content">
+            <p>LDAP_SEARCH_PASSWORD</p>
+           </div>
+          </td>
+          <td colspan="1">
+           <div class="unknown-content">
+            <p>Expertflow@12345</p>
+           </div>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <div class="unknown-content">
+            <p>LDAP_SEARCH_BASE</p>
+           </div>
+          </td>
+          <td colspan="1">
+           <div class="unknown-content">
+            <p>cn=users,dc=eflab,dc=com</p>
+           </div>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <div class="unknown-content">
+            <p>LDAP_ALLOW_EMPTY_PASSWORD</p>
+           </div>
+          </td>
+          <td colspan="1">
+           <p>false</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <div class="unknown-content">
+            <p>LDAP_USER_ATTRIBUTE</p>
+           </div>
+          </td>
+          <td colspan="1">
+           <div class="unknown-content">
+            <p>sAMAccountName</p>
+           </div>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <div class="unknown-content">
+            <p>TZ</p>
+           </div>
+          </td>
+          <td colspan="1">
+           <div class="unknown-content">
+            <p>Asia/Karachi</p>
+           </div>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>EMAIL_USERNAME</p>
+          </td>
+          <td colspan="1">
+           <p>Mail account username (example@</p>
+           <a href="http://ef.com/" data-scope="external" rel="external noreferrer"> 
+            <p>ef.com</p> 
+           </a>
+           <p>)</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>EMAIL_PASSWORD</p>
+          </td>
+          <td colspan="1">
+           <p>Mail account password</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>EMAIL_HOST</p>
+          </td>
+          <td colspan="1">
+           <p>Mail server host/IP</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>EMAIL_PORT</p>
+          </td>
+          <td colspan="1">
+           <p>Mail Server SMTP port</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>EMAIL_SOCKER_CLASS</p>
+          </td>
+          <td colspan="1">
+           <div class="unknown-content">
+            <p>javax.net.ssl.SSLSocketFactory, do not change it.</p>
+           </div>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>EMAIL_AUTH</p>
+          </td>
+          <td colspan="1">
+           <p>set it to "true", do not change it.</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <div class="unknown-content">
+            <p>TZ</p>
+           </div>
+          </td>
+          <td colspan="1">
+           <p>Timezone (Asia/Karachi</p>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </table-sort>
+    </scroll-shadow>
+   </table-expand>
+  </div>
+  <p>
+   <br>
+  </p>
+ </li>
+ <li>
+  <p>If there are SMS surveys as well, uncomment the following block in docker-compose <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 166px;"> <img src="/__attachments/a_f4ade0348d4e815a8690040e91a3e9293720ab80a5194e265f107e667f0f5ea7/image2019-12-4_10-47-46.png?cb=f966c3f389639c27b82dfe1d2ad38e9d" alt="image2019-12-4_10-47-46.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+  <p>
+   <br>
+  </p>
+ </li>
+ <li>
+  <p>For email notifications, uncomment following block in docker-compose and update email environment variables in environment_variables file.&nbsp; <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 192px;"> <img src="/__attachments/a_8156ef83939dd9a5799e2eb557f06d8c7c358f09e192506ff054885c47e56996/Screenshot%20from%202020-04-16%2013-35-23.png?cb=8ea388106c367eaa776f7dd28094b4ec" alt="Screenshot from 2020-04-16 13-35-23.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+ <li>
+  <p>Execute following commands to allow specific ports exposed in docker-compose.&nbsp;</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>$ firewall-cmd --zone=public --permanent --add-port=8443/tcp
+
+ $ firewall-cmd --reload
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+  <p>
+   <br>
+  </p>
+ </li>
+ <li>
+  <p>For callback surveys, uncomment following block in docker-compose file and update environment variables in middleware-environment.env file inside pcs-deployment/docker folder. Create a database in sql server for this service or user PCS application database and execute sql scripts inside pcs-deployment/proxyDbScripts folder to create necessary tables for this service.&nbsp;</p>
+  <p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 165px;"> <img src="/__attachments/a_6cf827c8580e7d7bc06f54c98eb5452d46cb516bb7c9ef570ff2acc877196b9d/image2019-12-4_10-52-27.png?cb=f3058d24a1e5af982277bff9f25260f4" alt="image2019-12-4_10-52-27.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+  <div class="theme-table">
+   <table-expand>
+    <scroll-shadow>
+     <table-sort>
+      <div data-component="table" data-align="unset" data-number-column="false">
+       <table>
+        <colgroup>
+         <col>
+         <col>
+        </colgroup>
+        <tbody>
+         <tr>
+          <th>
+           <p>Name</p>
+          </th>
+          <th>
+           <p>Description</p>
+          </th>
+         </tr>
+         <tr>
+          <td>
+           <p>server.port</p>
+          </td>
+          <td>
+           <p>8383, do not change it</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>http.port</p>
+          </td>
+          <td>
+           <p>7272, do not change it</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>database.sql.driver</p>
+          </td>
+          <td>
+           <p>com.microsoft.sqlserver.jdbc.SQLServerDriver, do not change it</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>database.sql.tcd.url</p>
+          </td>
+          <td colspan="1">
+           <p>UCCE awdb url, jdbc:</p>
+           <a href="/pcs/12.3.2/deployment-guide-v12-3-2" data-scope="internal"> 
+            <p>sqlserver://192.168.1.87:1433;databaseName=ucce_awdb</p> 
+           </a>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>database.sql.tcd.username</p>
+          </td>
+          <td colspan="1">
+           <p>UCCE awdb username</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>database.sql.tcd.password</p>
+          </td>
+          <td colspan="1">
+           <p>UCCE awdb password</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>database.sql.proxy.url</p>
+          </td>
+          <td colspan="1">
+           <p>this service database url,</p>
+           <p>jdbc:<a href="/pcs/12.3.2/deployment-guide-v12-3-2" data-scope="internal">sqlserver://192.168.1.87:1433;databaseName=p</a>roxy_db</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>database.sql.proxy.username</p>
+          </td>
+          <td colspan="1">
+           <p>proxy database username</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>database.sql.proxy.password</p>
+          </td>
+          <td colspan="1">
+           <p>proxy database password</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>pcs.getSurveyDetails</p>
+          </td>
+          <td colspan="1">
+           <p>/getSurveyDetails, do not change it.</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>pcs.getActiveSurveys</p>
+          </td>
+          <td colspan="1">
+           <p>/getActiveSurveys, do not change it.</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>pcs.serverUrl</p>
+          </td>
+          <td colspan="1">
+           <p>PCS application URL</p>
+           <p><strong>https://machine-ip:8443/PCS/survey</strong></p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>pcs.username</p>
+          </td>
+          <td colspan="1">
+           <p>A PCS user's username</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>pcs.password</p>
+          </td>
+          <td colspan="1">
+           <p>PCS user password</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>ecm.serverUrl</p>
+          </td>
+          <td colspan="1">
+           <p>ECM URL,</p>
+           <p><strong>http://machine-ip:7676/ecm</strong></p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>ecm.campaign.caller</p>
+          </td>
+          <td colspan="1">
+           <p>/callback/insertCallback, do not change it.</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>ecm.campaign.uploadBulkCaller</p>
+          </td>
+          <td colspan="1">
+           <p>/callback/uploadBulkCaller, do not change it.</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>ecm.campaign.callback</p>
+          </td>
+          <td colspan="1">
+           <p>1, ECM campaign Id supposed to be used for callback surveys</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>ecm.campaign.sms</p>
+          </td>
+          <td colspan="1">
+           <p>2, ECM campaign Id supposed to be used for sms surveys</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>MY_IP</p>
+          </td>
+          <td colspan="1">
+           <p>local machine IP</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>IS_HA</p>
+          </td>
+          <td colspan="1">
+           <p>true or false, decides if HA is supported or not for this service</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>TCD.startFetchingTime</p>
+          </td>
+          <td colspan="1">
+           <p>2019-11-12 10:11:52,</p>
+           <p>initial date time from where to start fetching inbound calls and check for callback surveys.</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>ecm.campaign.sms.phone.prefixes</p>
+          </td>
+          <td colspan="1">
+           <p>Prefixes of numbers to identify mobile numbes, e.g 77,83,92</p>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="1">
+           <p>time.zone</p>
+          </td>
+          <td colspan="1">
+           <p>+5, timzone GMT offset</p>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </table-sort>
+    </scroll-shadow>
+   </table-expand>
+  </div>
+  <p>
+   <br>
+  </p>
+ </li>
+ <li>
+  <p>Default self signed SSL certificates are provided with build. If it needs to be changed with domain signed certificate then replace server.crt(SSL certificate) and server.key (SSL key) in pcs-deployment/docker/ssl folder.</p>
+ </li>
+ <li>
+  <p>If UCCX APIs are required to be accessed via https (UCCX_SERVER_BASE_URL) then we will need to provide UCCX SSL certificate to application. Replace file ccx.crt inside pcs-deployment/docker/ssl folder with UCCX SSL certificate file.</p>
+ </li>
+ <li>
+  <p>Having environment configurations done,&nbsp; navigate to to the&nbsp;<code>pcs-deployment</code>&nbsp;directory and execute following commands:&nbsp;</p>
+  <code-snippet class="theme-code-snippet">
+   <div class="theme-code-snippet-header">Bash</div>
+   <scroll-shadow>
+    <div data-component="code" data-language="bash">
+     <pre><code>$&nbsp; chmod 755 install.sh
+$ ./install.sh
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+  <p>
+   <br>
+  </p>
+ </li>
+ <li>
+  <p style="--text-align: left">Run the following command to ensure that all the components are up and running:&nbsp;</p>
+  <code-snippet class="theme-code-snippet">
+   <div class="theme-code-snippet-header">Bash</div>
+   <scroll-shadow>
+    <div data-component="code" data-language="bash">
+     <pre><code>$ docker ps -a
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+  <p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_d782cf4eed716218c8e73bc27bc6191db6c63ee54a99331b7c9939b2df1ac827/Screenshot%20from%202020-04-16%2013-32-01.png?cb=72eba2063dbf4f5feb4cdf5ca6e90eb4" alt="Screenshot from 2020-04-16 13-32-01.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+ <li>
+  <p style="--text-align: left">The translation files are placed in pcs-deployment/docker/translations. Four languages are supported , English (message.properties), French (message_fr.properties), German (message_de.properties) and Italian (messages_it.properties. Any changes to properties in these files will reflect in respective language UI.</p>
+  <p>
+   <br>
+  </p>
+ </li>
+</ol>
+<p>HA Configurations</p>
+<ol>
+ <li>
+  <p>Change to HA folder inside pcs-deployment and edit the keep.env file to configure the HA attributes. The details are as follows:</p>
+  <div class="theme-table" style="--width: 87.4155%;">
+   <table-expand>
+    <scroll-shadow>
+     <table-sort>
+      <div data-component="table" data-align="unset" data-number-column="false">
+       <table>
+        <colgroup>
+         <col style="width: 13.8298%">
+         <col style="width: 86.1702%">
+        </colgroup>
+        <tbody>
+         <tr>
+          <td>
+           <p>KEEPALIVED_UNICAST_PEERS</p>
+          </td>
+          <td>
+           <p>IP of the other machine in the cluster (cluster means an HA cluster of 2 machines where supervisor tools are being deployed). It shouldn't be the IP of the machine on which you currently are.</p>
+           <p><strong>Example:&nbsp;</strong></p>
+           <p>192.168.1.233</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>KEEPALIVED_VIRTUAL_IPS</p>
+          </td>
+          <td>
+           <p>Virtual IP (should be provided by the customer) to be used to access the application. This should be available in the same subnet as the HA machines.</p>
+           <p><strong>Example</strong>:</p>
+           <p>192.168.1.245</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>KEEPALIVED_PRIORITY</p>
+          </td>
+          <td>
+           <p>Priority of the node from 0-255. A lower number represents a higher priority. The node with higher priority will be master&nbsp;and the other one will be the slave by default.</p>
+           <p><strong>Example:</strong></p>
+           <p>100</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>KEEPALIVED_INTERFACE</p>
+          </td>
+          <td>
+           <p>The network interface of the machine on which LAN is connected. On Linux, you can get this by executing $ ip addr sh&nbsp;</p>
+           <p>On a typical SuSE installation, it would generally be:</p>
+           <p>eth0</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>CLEARANCE_TIMEOUT</p>
+          </td>
+          <td>
+           <p>PCS startup time in seconds. On a 2 core machine, PCS takes around 1 minute or 60 seconds to boot up.</p>
+           <p><strong>Example</strong>:&nbsp;</p>
+           <p>60</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>KEEPALIVED_ROUTER_ID</p>
+          </td>
+          <td>
+           <p>Router ID of the cluster. This should be the same on both the machines in the cluster.</p>
+           <p><strong>Example</strong>:</p>
+           <p>51</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>SCRIPT_VAR</p>
+          </td>
+          <td>
+           <p>This is the health check script. It should remain as is unless you change the umm port in the compose file. Update PCS port instead of 8080 if you’re using some other port.</p>
+           <p><strong>Example</strong>:&nbsp;</p>
+           <p>pidof dockerd &amp;&amp; wget -O config <a href="http://localhost:7676/PCS/configurationSetting/list" data-scope="external" rel="external noreferrer">http://localhost:8080/PCS/configurationSetting/list</a></p>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </table-sort>
+    </scroll-shadow>
+   </table-expand>
+  </div>
+  <p>
+   <br>
+  </p>
+ </li>
+ <li>
+  <p>Start the HA cluster on all the machines with the following command:&nbsp;</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code> chmod +x keep-command.sh &amp;&amp; ./keep-command.sh
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+  <p>
+   <br>
+  </p>
+ </li>
+</ol>
+<p>If everything goes well, you should be able to access the application on <strong>https://machine-IP:8443/</strong>PCS after the application boot time (takes around 3 minutes on a 2 core machine).</p>
+<p>If deployment for UCCX&nbsp; access link <strong>https://machine-IP:8443/PCS/configurationSetting/list</strong></p>
+<p>and select&nbsp; <strong>Cisco Deployment Type =UCCX</strong></p>
+<p>
+ <br>
+</p>
+<p>Once PCS application is up and running, open SQL scripts (provided with build) in text editor and change variable name “db_name” (search by @dbName) in <em>detail_report_export_web,</em> <em>audit_survey_report_export</em>,&nbsp; <em>summary_report_export</em> and<em> details_report_export </em>to PCS database name. Create stored procedures by running all SQL scripts in SQL Server.</p>
+<p>
+ <br>
+</p>
+<p>Once PCS application is started, got to Stored Procedures folder inside pcs-deployment folder and run all the scripts there in PCS MSSQLServer database to create required stored procedures for PCS reports.</p>
+<h4 id="id-(12.3.2)DeploymentGuide-Configurationforreportexport" style=""><span id="DeploymentGuide-Configurationforreportexport"></span>Configuration for report export
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/pcs/12.3.2/deployment-guide-v12-3-2#id-(12.3.2)DeploymentGuide-Configurationforreportexport">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<ol>
+ <li>
+  <p>Run below script in PCS database on SQL Server&nbsp;</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>EXEC sp_configure 'show advanced options', 1
+GO
+-- To update the currently configured value for advanced options.
+RECONFIGURE
+GO
+-- To enable the feature.
+EXEC sp_configure 'xp_cmdshell', 1
+GO
+-- To update the currently configured value for this feature.
+RECONFIGURE
+GO
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+  <p>
+   <br>
+  </p>
+ </li>
+ <li>
+  <p>Install nodejs with default settings on SQL Server Machine, setup can be found <a href="https://drive.google.com/a/expertflow.com/file/d/0B67N9kIsx6WCNXZ0U2ZpZHNnbFE/view?usp=sharing" data-scope="external" rel="external noreferrer">here</a>.&nbsp;&nbsp;</p>
+ </li>
+ <li>
+  <p>After the installation is complete place <a href="https://drive.google.com/a/expertflow.com/file/d/1gWIx04Lorn7a_XLDsbSEq3MDARlHJGEX/view?usp=sharing" data-scope="external" rel="external noreferrer"><em><strong>ef_files_download </strong></em>&nbsp;</a>folder in <strong>C: drive of server (</strong><strong>note:</strong><strong> it must be placed in C drive root folder)</strong>&nbsp;</p>
+ </li>
+ <li>
+  <p>Now open <strong>Command Prompt</strong> and type <strong>cd C:/ef_files_download</strong></p>
+ </li>
+ <li>
+  <p>Type command <em><strong>node script.js&nbsp; </strong></em>and press enter&nbsp; &nbsp;</p>
+ </li>
+ <li>
+  <p>It will start the express server at some port like 3003</p>
+ </li>
+ <li>
+  <ol>
+   <li>
+    <p>If SQL server and application server are on<strong> two different </strong>machines</p>
+   </li>
+  </ol>
+  <ul>
+   <li>
+    <p>Share this folder “<strong>ef_files_download</strong>” with Everyone(Password protection should be OFF for this folder, both PCS and SQL Server machines should be on same domain)</p>
+   </li>
+   <li>
+    <p>Open PCS application</p>
+   </li>
+   <li>
+    <p>Go to PCS <a href="/pcs/12.3.2/deployment-guide-v12-3-2" data-scope="internal"><strong>http://machine_ip:tomcat_port/PCS/ConfigurationSetting/</strong></a></p>
+   </li>
+   <li>
+    <p>Edit settings</p>
+   </li>
+   <li>
+    <p>Enter <strong>Exported Report Path = machine_IP:listening_port/pcs</strong></p>
+   </li>
+   <li>
+    <p>Click update</p>
+   </li>
+  </ul>
+ </li>
+</ol>
+<h3 id="id-(12.3.2)DeploymentGuide-Troubleshooting" style=""><span id="DeploymentGuide-Troubleshooting"></span>Troubleshooting
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/pcs/12.3.2/deployment-guide-v12-3-2#id-(12.3.2)DeploymentGuide-Troubleshooting">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Logs for each container are available in files as well as within docker daemon. To see the logs for any container, execute docker ps and get the id of the container. Use that id to see the logs using&nbsp;docker logs &lt;container_id&gt;</p>
+<ol>
+ <li>
+  <p>PCS is not able to fetch prompts from CVP shared folder</p>
+  <ul>
+   <li>
+    <p>Solution: add extra_hosts in the docker-compose file in pcs-deployment/docker folder with CVP IP address and Host name like below&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;extra_host:
+     <br>
+     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;- "host-name: ip"</p>
+   </li>
+  </ul>
+ </li>
+</ol>
+<p>
+ <br>
+</p>
+<h3 id="id-(12.3.2)DeploymentGuide-SurveyDashboardDeploymentGuide:" style=""><span id="DeploymentGuide-SurveyDashboardDeploymentGuide:"></span><strong>Survey Dashboard Deployment Guide:</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/pcs/12.3.2/deployment-guide-v12-3-2#id-(12.3.2)DeploymentGuide-SurveyDashboardDeploymentGuide:">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>These are the series of Steps that are need to be executed to deploy the survey dashboard:</p>
+<p>1 Add the Survey Dashboard Docker image in your docker-compose.yml file. Following example explains the step:</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>pcs-service:
+  image: gitlab.expertflow.com:9242/surveys/survey-dashboard:1.1.0
+  env_file:
+  - ./environment-variables/survey-variables.env
+  restart: always
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>2 Update the survey-variables.env file with following Environment variables:</p>
+<div class="theme-table" style="--width: 87.1622%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 20.5626%">
+       <col style="width: 79.4374%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Environment Variables&nbsp;</p>
+        </th>
+        <th>
+         <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Values</p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>DB_DIALECT</strong></p>
+        </td>
+        <td>
+         <p>org.hibernate.dialect.SQLServer2008Dialect</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>DB_DRIVER</strong></p>
+        </td>
+        <td>
+         <p>net.sourceforge.jtds.jdbc.Driver</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>DB_PASS</strong></p>
+        </td>
+        <td>
+         <p>Expertflow464</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>DB_URL</strong></p>
+        </td>
+        <td>
+         <p>jdbc:jtds:</p>
+         <a href="/pcs/12.3.2/deployment-guide-v12-3-2" data-scope="internal"> 
+          <p>sqlserver://192.168.1.92:1433/PCS</p> 
+         </a>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>DB_USER</strong></p>
+        </td>
+        <td>
+         <p>sa</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>3 Login to Docker account: login to Docker with your credentials.</p>
+<p>docker login gitlab.expertflow.com:9242 --username deployment --password xWb8WafM8ZvdwBHNxLm3</p>
+<p>
+ <br>
+</p>
+<p>4 Up the Docker Compose file with following command:</p>
+<p>docker-compose -f docker/docker-compose.yml up -d</p>
+<p>
+ <br>
+</p>
+<h3 id="id-(12.3.2)DeploymentGuide-AfixinEmailNotification:" style=""><span id="DeploymentGuide-AfixinEmailNotification:"></span><strong>A fix in Email Notification:</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/pcs/12.3.2/deployment-guide-v12-3-2#id-(12.3.2)DeploymentGuide-AfixinEmailNotification:">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ol>
+ <li>
+  <p>Change the email-notification-service image tag to 12.3.1</p>
+ </li>
+ <li>
+  <p>Add an extra variable to environment variables with name&nbsp;<strong>TLS_ENABLED=true</strong></p>
+ </li>
+ <li>
+  <p>Run ./install.sh in pcs-deployment directly.</p>
+ </li>
+</ol>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="ac09cd5e6e955071-35" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="ac09cd5e6e955071-35">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/pcs/12.3.2/pcs-demo-guide">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">PCS Demo Guide</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/pcs/12.3.2/upgrade-guide-v12-3-2">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Upgrade Guide</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

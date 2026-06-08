@@ -1,0 +1,4859 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_639874e017a34b8392edbe2e9cb7c05f3f5b55d210cee832304186c230f39cce" data-confluence-content-id="274497538"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/gc/4.4.12/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="GC">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>Deployment Guide Linux | Expertflow CX</title>
+		<meta property="og:title" content="Deployment Guide Linux | Expertflow CX">
+		<meta property="twitter:title" content="Deployment Guide Linux | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/gc/4.4.12/deployment-guide-linux">
+		<meta property="og:url" content="https://docs.expertflow.com/gc/4.4.12/deployment-guide-linux">
+
+		<meta name="description" content="Solutions Pre-requisite Hardware Sizing For a simplex (single server) deployment, minimum and recommended hardware requirements are as follows: Minimum Recomme…">
+		<meta property="og:description" content="Solutions Pre-requisite Hardware Sizing For a simplex (single server) deployment, minimum and recommended hardware requirements are as follows: Minimum Recomme…">
+		<meta property="twitter:description" content="Solutions Pre-requisite Hardware Sizing For a simplex (single server) deployment, minimum and recommended hardware requirements are as follows: Minimum Recomme…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2024-05-21T03:36:48.706Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": true
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.js"></script>
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="d683e37232bc34d9-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="d683e37232bc34d9-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="d683e37232bc34d9-9">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="d683e37232bc34d9-9" name="version" onchange="self.location.assign(this.value)" >
+				<option id="d683e37232bc34d9-3"  value="/gc/4.4.12/deployment-guide-linux"  selected="">
+					4.4.12
+				</option>
+				<option id="d683e37232bc34d9-4"  value="/gc/4.4/deployment-guide-linux"  >
+					4.4
+				</option>
+				<option id="d683e37232bc34d9-5"  value="/gc/3.5.1.05"  >
+					3.5.1.05
+				</option>
+				<option id="d683e37232bc34d9-6"  value="/gc/3.4.2.02"  >
+					3.4.2.02
+				</option>
+				<option id="d683e37232bc34d9-7"  value="/gc/3.4.1.03"  >
+					3.4.1.03
+				</option>
+				<option id="d683e37232bc34d9-8"  value="/gc/3.4.1.02-trial-agentready"  >
+					3.4.1.02-Trial-AgentReady
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('d683e37232bc34d9-9');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-d683e37232bc34d9-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-d683e37232bc34d9-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-d683e37232bc34d9-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="d683e37232bc34d9-10" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="d683e37232bc34d9-10">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-d683e37232bc34d9-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-d683e37232bc34d9-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="d683e37232bc34d9-17">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="d683e37232bc34d9-17" name="version" onchange="self.location.assign(this.value)" >
+				<option id="d683e37232bc34d9-11"  value="/gc/4.4.12/deployment-guide-linux"  selected="">
+					4.4.12
+				</option>
+				<option id="d683e37232bc34d9-12"  value="/gc/4.4/deployment-guide-linux"  >
+					4.4
+				</option>
+				<option id="d683e37232bc34d9-13"  value="/gc/3.5.1.05"  >
+					3.5.1.05
+				</option>
+				<option id="d683e37232bc34d9-14"  value="/gc/3.4.2.02"  >
+					3.4.2.02
+				</option>
+				<option id="d683e37232bc34d9-15"  value="/gc/3.4.1.03"  >
+					3.4.1.03
+				</option>
+				<option id="d683e37232bc34d9-16"  value="/gc/3.4.1.02-trial-agentready"  >
+					3.4.1.02-Trial-AgentReady
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('d683e37232bc34d9-17');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d683e37232bc34d9-18" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d683e37232bc34d9-19" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d683e37232bc34d9-20" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d683e37232bc34d9-21" href="/gc/4.4.12/release-notes" >Release Notes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d683e37232bc34d9-22" href="/gc/4.4.12/datasheet" >Datasheet</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d683e37232bc34d9-23" href="/gc/4.4.12/solution-security" >Solution Security</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d683e37232bc34d9-24" href="/gc/4.4.12/gc-loadtest-report" >GC LoadTest Report</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d683e37232bc34d9-25" href="/gc/4.4.12/generic-connector-deployment-models" >Generic Connector Deployment Models</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d683e37232bc34d9-26" href="/gc/4.4.12/compatibility-guide" >Compatibility Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d683e37232bc34d9-27" href="/gc/4.4.12/unexpected-scenarios" >Unexpected Scenarios</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d683e37232bc34d9-28" href="/gc/4.4.12/generic-connector-json-api" >Generic Connector JSON API</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d683e37232bc34d9-29" href="/gc/4.4.12/developer-guide" >Developer Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="d683e37232bc34d9-31"						aria-labelledby="d683e37232bc34d9-30"
+					></button>
+				<a id="d683e37232bc34d9-30" href="/gc/4.4.12/deployment-guides" >Deployment Guides</a>
+			</div>
+
+<ul  id="d683e37232bc34d9-31" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d683e37232bc34d9-32" href="/gc/4.4.12/deployment-guide-linux" aria-current="page">Deployment Guide Linux</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d683e37232bc34d9-33" href="/gc/4.4.12/deployment-guide-kubernetes" >Deployment Guide Kubernetes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d683e37232bc34d9-34" href="/gc/4.4.12/upgrade-guide" >Upgrade Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d683e37232bc34d9-35" href="/gc/4.4.12/deployment-guide-windows" >Deployment Guide Windows</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d683e37232bc34d9-36" href="/gc/4.4.12/prerequisites" >Prerequisites</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d683e37232bc34d9-37" href="/gc/4.4.12/system-limitations" >System Limitations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d683e37232bc34d9-38" href="/gc/4.4.12/business-features" >Business Features</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d683e37232bc34d9-39" href="/gc/4.4.12/gc-load-test-utility-deployment-guide" >GC Load Test Utility Deployment Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d683e37232bc34d9-40" href="/gc/4.4.12/sitemap-xml" >sitemap.xml</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="d683e37232bc34d9-41" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="d683e37232bc34d9-41">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/gc/4.4.12">
+										Generic Connector
+								</a>
+							</li>
+							<li>
+								<a href="/gc/4.4.12/deployment-guides">
+										Deployment Guides
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="d683e37232bc34d9-42">
+			<h2 class="toc-heading" id="d683e37232bc34d9-42">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>Deployment Guide Linux</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+
+	
+
+
+	
+
+
+
+	
+
+
+
+	
+
+	
+
+
+	
+	
+	
+	
+	
+	
+			
+	
+	
+	
+	
+	
+	
+
+		
+	
+	
+	
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<h2 id="id-(4.4.12)DeploymentGuideLinux-SolutionsPre-requisite" style=""><span id="DeploymentGuideLinux-SolutionsPre-requisite"></span>Solutions Pre-requisite
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/4.4.12/deployment-guide-linux#id-(4.4.12)DeploymentGuideLinux-SolutionsPre-requisite">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="id-(4.4.12)DeploymentGuideLinux-HardwareSizing" style=""><span id="DeploymentGuideLinux-HardwareSizing"></span>Hardware Sizing
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/4.4.12/deployment-guide-linux#id-(4.4.12)DeploymentGuideLinux-HardwareSizing">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>For a simplex (single server) deployment, minimum and recommended hardware requirements are as follows:</p>
+<div class="theme-table" style="--width: 17.6283%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 20.0519%">
+       <col style="width: 27.5818%">
+       <col style="width: 52.3662%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th style="--bg-color: #808080">
+         <p>
+          <br>
+         </p>
+        </th>
+        <th style="--bg-color: #808080">
+         <p>Minimum</p>
+        </th>
+        <th style="--bg-color: #808080">
+         <p>Recommended</p>
+        </th>
+       </tr>
+       <tr>
+        <th style="--bg-color: #808080">
+         <p>vCPU</p>
+        </th>
+        <td style="--bg-color: #808080">
+         <p>4 Cores</p>
+        </td>
+        <td style="--bg-color: #808080">
+         <p>8 Cores</p>
+        </td>
+       </tr>
+       <tr>
+        <th style="--bg-color: #808080">
+         <p>vRAM</p>
+        </th>
+        <td style="--bg-color: #808080">
+         <p>8 GB</p>
+        </td>
+        <td style="--bg-color: #808080">
+         <p>16 GB</p>
+        </td>
+       </tr>
+       <tr>
+        <th style="--bg-color: #808080">
+         <p>vDisk</p>
+        </th>
+        <td style="--bg-color: #808080">
+         <p>40 GB</p>
+        </td>
+        <td style="--bg-color: #808080">
+         <p>160 GB</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p>For a redundant deployment, two servers of the same specifications (as mentioned above) are needed.</p>
+<h3 id="id-(4.4.12)DeploymentGuideLinux-SoftwareRequirement" style=""><span id="DeploymentGuideLinux-SoftwareRequirement"></span>Software Requirement
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/4.4.12/deployment-guide-linux#id-(4.4.12)DeploymentGuideLinux-SoftwareRequirement">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Following are the prerequisites for setting up a Generic Connector under different deployment profiles.&nbsp;</p>
+<div class="theme-table" style="--width: 1422.56px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 321.354px">
+       <col style="width: 303.146px">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th colspan="2" style="--bg-color: #ff0">
+         <p>Hardware Sizing</p>
+        </th>
+       </tr>
+       <tr>
+        <td colspan="1" style="--bg-color: #808080">
+         <p>For up to 250 concurrent agents</p>
+        </td>
+        <td>
+         <p>8 vCPU, 16 GB RAM, 150 GB HDD</p>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="2" style="--bg-color: #ff0">
+         <p>Software Requirements</p>
+        </th>
+       </tr>
+       <tr>
+        <td colspan="2">
+         <ul>
+          <li>
+           <p>Host Operating System - Cent OS 7</p>
+          </li>
+          <li><a href="https://docs.docker.com/install/linux/docker-ce/centos/" data-scope="external" rel="external noreferrer"> 
+            <p>Docker Community Edition 20+</p> 
+           </a></li>
+          <li><a href="https://docs.docker.com/compose/install/" data-scope="external" rel="external noreferrer"> 
+            <p>Docker Compose 1.28 or above</p> 
+           </a></li>
+          <li><a href="https://www.rosehosting.com/blog/how-to-install-git-on-centos-7/" data-scope="external" rel="external noreferrer"> 
+            <p>Git Client 1.8+</p> 
+           </a></li>
+          <li>
+           <p>Mandatory Linux Utilities:&nbsp;<span class="unknown-content">wgetcurl</span></p>
+          </li>
+          <li>
+           <p>For system monitoring and to assist in troubleshooting, the following utilities should be installed.<span class="unknown-content">stracehtopdstatatopsysstatiftopnethogsnmap or sstcpdump&nbsp;</span></p>
+          </li>
+         </ul>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="2" style="--bg-color: #ff0">
+         <p>Certificates for HTTPS</p>
+        </th>
+       </tr>
+       <tr>
+        <td colspan="2">
+         <ul>
+          <li>
+           <p>Certificates from a valid signing authority or Domain signed certificate are required for HTTPS protocol support</p>
+          </li>
+         </ul>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="2" style="--bg-color: #ff0">
+         <p>System Access Requirements</p>
+        </th>
+       </tr>
+       <tr>
+        <td colspan="2">
+         <ul>
+          <li>
+           <p>Administrative privileges (root) on the host machine are required to proceed with the installation.</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h3 id="id-(4.4.12)DeploymentGuideLinux-SystemAccessRequirements" style=""><span id="DeploymentGuideLinux-SystemAccessRequirements"></span>System Access Requirements
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/4.4.12/deployment-guide-linux#id-(4.4.12)DeploymentGuideLinux-SystemAccessRequirements">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Following ports should remain open on the Firewall. The local security policy and any antivirus should also allow open communication on the following ports:</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+       <col>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Type</p>
+        </th>
+        <th>
+         <p>Source Host</p>
+        </th>
+        <th>
+         <p>Source Port</p>
+        </th>
+        <th>
+         <p>Destination Host</p>
+        </th>
+        <th>
+         <p>Destination Port</p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p>TCP</p>
+        </td>
+        <td>
+         <p>&lt;Client Application&gt;</p>
+        </td>
+        <td>
+         <p>any</p>
+        </td>
+        <td>
+         <p>EF Connector</p>
+        </td>
+        <td>
+         <p>61616/61614</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>TCP</p>
+        </td>
+        <td>
+         <p>EF Connector (B)</p>
+        </td>
+        <td>
+         <p>any</p>
+        </td>
+        <td>
+         <p>EF Connector</p>
+        </td>
+        <td>
+         <p>61616/61614</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>HTTP</p>
+        </td>
+        <td colspan="2">
+         <p>For status monitoring from any machine</p>
+        </td>
+        <td>
+         <p>EF Connector</p>
+        </td>
+        <td>
+         <p>8162</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>XMPP</p>
+        </td>
+        <td>
+         <p>EF Connector</p>
+        </td>
+        <td>
+         <p>any</p>
+        </td>
+        <td>
+         <p>Cisco Finesse</p>
+        </td>
+        <td>
+         <p>5222, 5223, 7071, 7443</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>HTTP/S</p>
+        </td>
+        <td>
+         <p>EF Connector</p>
+        </td>
+        <td>
+         <p>any</p>
+        </td>
+        <td>
+         <p>Cisco Finesse</p>
+        </td>
+        <td>
+         <p>80, 8080, 443, 8443</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>NTP</p>
+        </td>
+        <td>
+         <p>EF Connector</p>
+        </td>
+        <td>
+         <p>any</p>
+        </td>
+        <td>
+         <p>NTP Server</p>
+        </td>
+        <td>
+         <p>123</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>DNS</p>
+        </td>
+        <td>
+         <p>EF Connector</p>
+        </td>
+        <td>
+         <p>any</p>
+        </td>
+        <td>
+         <p>DNS Server</p>
+        </td>
+        <td>
+         <p>53</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>Spring Port</p>
+        </td>
+        <td colspan="1">
+         <p>EF Connector</p>
+        </td>
+        <td colspan="1">
+         <p>any</p>
+        </td>
+        <td colspan="1">
+         <p>EF Connector</p>
+        </td>
+        <td colspan="1">
+         <p>8112</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<ul>
+ <li>
+  <p>&lt;Client Application&gt; is a machine running client application of EF Connector. For server-based applications like Siebel, it’s Siebel Communication Server. For desktop-based applications, it’s the machine address of the agent desktop running the desktop application.</p>
+ </li>
+ <li>
+  <p>In a redundant deployment, both EF Connector instances communicate with each other on the same TCP OpenWire port 61616. In the table above, it’s mentioned as EF Connector (B) ⇒ EF Connector.&nbsp;</p>
+ </li>
+ <li>
+  <p>These are defaults set in EF Connector, but you can always change the default configuration.</p>
+ </li>
+</ul>
+<p>Time Synchronization Requirements</p>
+<p>An important consideration is time synchronization between related components. Communication between EF Connector, client applications, and Cisco Finesse carry timestamps. If the system dates and times are not synchronized the system can produce unpredictable results. Therefore, please make every effort to adhere to the following time synchronization guidelines:</p>
+<p>EF Connector, client applications, and Cisco Finesse should have their Time Zone and time configured properly according to the geographic region and synchronized. To configure the time zone, please see the instructions from the hardware or software manufacturer of NTP server. Client applications and EF Connector should be synchronized to the second. This synchronization should be maintained continuously and validated on a regular basis. For security reasons, Network Time Protocol (NTP) V 4.1+ is recommended.</p>
+<h2 id="id-(4.4.12)DeploymentGuideLinux-DeploymentModes" style=""><span id="DeploymentGuideLinux-DeploymentModes"></span>Deployment Modes
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/4.4.12/deployment-guide-linux#id-(4.4.12)DeploymentGuideLinux-DeploymentModes">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="id-(4.4.12)DeploymentGuideLinux-Non-Redundant/SimplexModeDeployment" style=""><span id="DeploymentGuideLinux-Non-Redundant/SimplexModeDeployment"></span>Non-Redundant / Simplex Mode Deployment
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/4.4.12/deployment-guide-linux#id-(4.4.12)DeploymentGuideLinux-Non-Redundant/SimplexModeDeployment">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>In simplex deployment, the application is installed on a single server with no failover support of EF Connector. However, the same EF Connector can still communicate with primary and secondary Finesse servers.</p>
+<p>Simplex mode is useful for lab tests and commercial deployments at a smaller scale. Figure below explains the simplex mode of Generic Connector.</p>
+<p><a href="https://docs.expertflow.com/gc/files/latest/104529931/105021642/1/1606376243709/image24.png" data-scope="external" rel="external noreferrer"><span class="inline-image" data-component="inline-image" data-use-text-height="false"> <img src="https://docs.expertflow.com/gc/files/latest/104529931/105021642/1/1606376243709/image24.png" alt="https://docs.expertflow.com/gc/files/latest/104529931/105021642/1/1606376243709/image24.png" data-scope="external"> </span></a></p>
+<h3 id="id-(4.4.12)DeploymentGuideLinux-HighAvailability(HA)/DuplexDeployment" style=""><span id="DeploymentGuideLinux-HighAvailability(HA)/DuplexDeployment"></span>High Availability (HA) / Duplex Deployment
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/4.4.12/deployment-guide-linux#id-(4.4.12)DeploymentGuideLinux-HighAvailability(HA)/DuplexDeployment">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<h4 id="id-(4.4.12)DeploymentGuideLinux-Active-Passive(Primary/Secondary)Setup" style=""><span id="DeploymentGuideLinux-Active-Passive(Primary/Secondary)Setup"></span>Active-Passive (Primary / Secondary) Setup
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/4.4.12/deployment-guide-linux#id-(4.4.12)DeploymentGuideLinux-Active-Passive(Primary/Secondary)Setup">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>To configure the Connector in Active-Passive mode, set the value of attribute “GRC_CONSUMER_PRIORITY” in Connector configuration. For the Primary Connector, set the value of this attribute to “127” (without quotes). For the Secondary Connector, set the value of this attribute to “100” (without quotes).
+ <br>
+ <a href="https://docs.expertflow.com/gc/files/latest/104529931/105021644/1/1606376321009/image26.png" data-scope="external" rel="external noreferrer"><span class="inline-image" data-component="inline-image" data-use-text-height="false"> <img src="https://docs.expertflow.com/gc/files/latest/104529931/105021644/1/1606376321009/image26.png" alt="https://docs.expertflow.com/gc/files/latest/104529931/105021644/1/1606376321009/image26.png" data-scope="external"> </span></a>
+ <br></p>
+<p>The active-Passive mode has the following configurations.</p>
+<h5 id="id-(4.4.12)DeploymentGuideLinux-ConfigurationsforSite-1" style=""><span id="DeploymentGuideLinux-ConfigurationsforSite-1"></span>Configurations for Site-1
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/4.4.12/deployment-guide-linux#id-(4.4.12)DeploymentGuideLinux-ConfigurationsforSite-1">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<p>Primary-AMQ: broker-1, Secondary-AMQ: broker-2</p>
+<p>Generic Connector Configuration should look like this, For a detailed description of the GC please consult&nbsp;properties</p>
+<p>
+ <br>
+</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p><strong>Property</strong></p>
+        </td>
+        <td>
+         <p><strong>Value</strong></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ACTIVEMQ_TIMEOUT</p>
+        </td>
+        <td>
+         <p>10000</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>GRC_CONSUMER_PRIORITY</p>
+        </td>
+        <td>
+         <p>127</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>RANDOMIZE</p>
+        </td>
+        <td>
+         <p>false</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>PRIORITY_BACKUP</p>
+        </td>
+        <td>
+         <p>true</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ACTIVEMQ1</p>
+        </td>
+        <td>
+         <p>primary-url-of-amq:port</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ACTIVEMQ2</p>
+        </td>
+        <td>
+         <p>secondary-url-of-amq:port</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h5 id="id-(4.4.12)DeploymentGuideLinux-ConfigurationsforSite-2" style=""><span id="DeploymentGuideLinux-ConfigurationsforSite-2"></span>Configurations for Site-2
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/4.4.12/deployment-guide-linux#id-(4.4.12)DeploymentGuideLinux-ConfigurationsforSite-2">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<p>Primary-AMQ: broker-1, Secondary-AMQ: broker-2, For a detailed description of the GC please consult Connector Configuration Parameters (Environment Variables)</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p><strong>Property</strong></p>
+        </td>
+        <td>
+         <p><strong>Value</strong></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ACTIVEMQ_TIMEOUT</p>
+        </td>
+        <td>
+         <p>10000</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>GRC_CONSUMER_PRIORITY</p>
+        </td>
+        <td>
+         <p>100</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>RANDOMIZE</p>
+        </td>
+        <td>
+         <p>false</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>PRIORITY_BACKUP</p>
+        </td>
+        <td>
+         <p>true</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ACTIVEMQ1</p>
+        </td>
+        <td>
+         <p>primary-url-of-amq:port</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ACTIVEMQ2</p>
+        </td>
+        <td>
+         <p>secondary-url-of-amq:port</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h5 id="id-(4.4.12)DeploymentGuideLinux-FailoverScenarios" style=""><span id="DeploymentGuideLinux-FailoverScenarios"></span>Failover Scenarios
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/4.4.12/deployment-guide-linux#id-(4.4.12)DeploymentGuideLinux-FailoverScenarios">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<p>The following table shows different failover scenarios and their impact on the Connector Clients.</p>
+<p>
+ <br>
+</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>No.</p>
+        </td>
+        <td>
+         <p>Scenario</p>
+        </td>
+        <td>
+         <p>Behavior</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>1</p>
+        </td>
+        <td>
+         <p>AMQ-1 is down while GC-1 is active</p>
+        </td>
+        <td>
+         <p>AMQ-2 will take over. GC-1 will automatically connect to AMQ-2&nbsp; and all client requests will be processed by the same GC-1 instance because of its higher consumer priority.</p>
+         <p>Request Flow: Client-App → AMQ-2 → GC-1</p>
+         <p>Response Flow: GC-1 → AMQ-2 → Client-App</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>2</p>
+        </td>
+        <td>
+         <p>AMQ-2 and GC-1 are down while AMQ-1 and GC-2 are up</p>
+        </td>
+        <td>
+         <p>AMQ-1 will take over and all client requests will be processed by GC-2 because it has the second-highest priority after GC-1.&nbsp;</p>
+         <p>Request Flow: Client-App → AMQ-1 → GC-2&nbsp;</p>
+         <p>Response Flow: GC-2 → AMQ-1 → Client-App</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>3</p>
+        </td>
+        <td>
+         <p>Both AMQ-1 and GC-1 are down</p>
+        </td>
+        <td>
+         <p>AMQ-2 and GC-2 will start receiving requests. GC-2 will acquire all agent’s XMPP subscriptions and will start processing requests.</p>
+         <p>Request Flow: Client-App → AMQ-2 → GC-2&nbsp;</p>
+         <p>Response Flow: GC-2 → AMQ-2 → Client-App</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>4</p>
+        </td>
+        <td>
+         <p>GC-1 restores</p>
+        </td>
+        <td>
+         <p>GC-1 will start receiving requests and will grab the XMPP connection of all the active agents because of its higher consumer priority.&nbsp;</p>
+         <p>GC-2 will again be in stand-by mode.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>5</p>
+        </td>
+        <td>
+         <p>The link between Connector-1 and Connector-2 is down</p>
+        </td>
+        <td>
+         <p>In this case, the AMQ network of brokers will not be functional and GCs won’t be able to communicate to sync agents either.&nbsp;</p>
+         <p>So, both GCs will be functioning independently</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>6</p>
+        </td>
+        <td>
+         <p>AMQ-1 restores while GC-1 is still down</p>
+        </td>
+        <td>
+         <p>If AMQ-2 is active and the client application is connected to AMQ-2 then all requests will be processed by GC-2 even though GC-1 is active and connected to AMQ-1.&nbsp;</p>
+         <p>Request Flow: Client-App → AMQ-2 → GC-2&nbsp;</p>
+         <p>Response Flow: GC-2 → AMQ-2 → Client-App</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>7</p>
+        </td>
+        <td>
+         <p>GC-1 is down while both AMQs are active</p>
+        </td>
+        <td>
+         <p>Requests will be processed by GC-2 going through the network of brokers.</p>
+         <p>Request Flow: Client-App → AMQ-1 → AMQ-2 → GC-2&nbsp;</p>
+         <p>Response Flow: GC-2 → AMQ-2 → AMQ-1 → Client-App</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>8</p>
+        </td>
+        <td>
+         <p>GC-2 is down while both AMQ are active</p>
+        </td>
+        <td>
+         <p>In active-passive mode, it will have no effect on request and response flow. Because AMQ-2 doesn’t get any request from Client-App until AMQ-1 goes down.&nbsp;&nbsp;</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>Failover is handled in a way if any component goes down, passive components take over in a seamless way.</p>
+<h4 id="id-(4.4.12)DeploymentGuideLinux-Active-ActiveSetup" style=""><span id="DeploymentGuideLinux-Active-ActiveSetup"></span>Active-Active Setup
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/4.4.12/deployment-guide-linux#id-(4.4.12)DeploymentGuideLinux-Active-ActiveSetup">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>For an Active-Active deployment, the Failover URL is set to use the local AMQ as primary and remote AMQ as secondary.
+ <br>
+ <br>
+ <a href="https://docs.expertflow.com/gc/files/latest/104529931/105021643/1/1606376291883/image16.png" data-scope="external" rel="external noreferrer"><span class="inline-image" data-component="inline-image" data-use-text-height="false"> <img src="https://docs.expertflow.com/gc/files/latest/104529931/105021643/1/1606376291883/image16.png" alt="https://docs.expertflow.com/gc/files/latest/104529931/105021643/1/1606376291883/image16.png" data-scope="external"> </span></a></p>
+<p>For GC-1, the configuration would look like this, For a detailed description of the GC please consult Connector Configuration Parameters (Environment Variables)</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p><strong>Property</strong></p>
+        </td>
+        <td>
+         <p><strong>Value</strong></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ACTIVEMQ1</p>
+        </td>
+        <td>
+         <p>[AMQ-1]:61616</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ACTIVEMQ2</p>
+        </td>
+        <td>
+         <p>[AMQ-2]:61616</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>GRC_CONSUMER_PRIORITY</p>
+        </td>
+        <td>
+         <p>127</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>PRIORITY_BACKUP</p>
+        </td>
+        <td>
+         <p>true</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Finesse_1</p>
+        </td>
+        <td>
+         <p>http://Finesse-1/finesse/api/</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>SERVER_ADDRESS_1</p>
+        </td>
+        <td>
+         <p>Finesse-1</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Finesse_2</p>
+        </td>
+        <td>
+         <p>http://Finesse-2/finesse/api/</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>SERVER_ADDRESS_2</p>
+        </td>
+        <td>
+         <p>Finesse-2</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>For GC-2, the configuration would look like this, For a detailed description of the GC please consult&nbsp;Connector Configuration Parameters (Environment Variables)</p>
+<p>
+ <br>
+</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p><strong>Property</strong></p>
+        </td>
+        <td>
+         <p><strong>Value</strong></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ACTIVEMQ1</p>
+        </td>
+        <td>
+         <p>[AMQ-2]:61616</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ACTIVEMQ2</p>
+        </td>
+        <td>
+         <p>[AMQ-1]:61616</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>GRC_CONSUMER_PRIORITY</p>
+        </td>
+        <td>
+         <p>100</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>PRIORITY_BACKUP</p>
+        </td>
+        <td>
+         <p>true</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Finesse_1</p>
+        </td>
+        <td>
+         <p>http://Finesse-2/finesse/api/</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>SERVER_ADDRESS_1</p>
+        </td>
+        <td>
+         <p>Finesse-2</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Finesse_2</p>
+        </td>
+        <td>
+         <p>http://Finesse-1/finesse/api/</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>SERVER_ADDRESS_2</p>
+        </td>
+        <td>
+         <p>Finesse-1</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>Where [AMQ-1] should be replaced with the IP / machine-name of ActiveMQ-1 and [AMQ-2] should be replaced with the IP / machine-name of ActiveMQ-2. Finesse-1 is the IP/name of the Finesse-1 server and Finesse-2 is the IP/name of the Finesse-2 server.</p>
+<p>Both Connectors will have its local AMQ as primary brokers and both Connector instances will be serving agents' requests in parallel. All client requests received by Connector-1 are handled by Connector-1 and all requests received by Connector-2 will be handled by Connector-2. In case of failure of any component at any Connector instance, the other Connector instance will take over and handle the request.&nbsp;</p>
+<p>
+ <br>
+</p>
+<p>We have achieved it using ActiveMQ configurable properties specifically&nbsp;<a href="http://activemq.apache.org/consumer-priority.html" data-scope="external" rel="external noreferrer">Consumer priority</a>,&nbsp;<a href="http://activemq.apache.org/failover-transport-reference.html" data-scope="external" rel="external noreferrer">Priority Backup</a>, and building a Connector Sync mechanism in Generic Connector.</p>
+<h5 id="id-(4.4.12)DeploymentGuideLinux-FailoverScenarios.1" style=""><span id="DeploymentGuideLinux-FailoverScenarios"></span>Failover Scenarios
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/4.4.12/deployment-guide-linux#id-(4.4.12)DeploymentGuideLinux-FailoverScenarios.1">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5> 
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>No.</p>
+        </td>
+        <td>
+         <p>Scenario</p>
+        </td>
+        <td>
+         <p>Behavior</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>1</p>
+        </td>
+        <td>
+         <p>AMQ-1 is down while GC-1 is active</p>
+        </td>
+        <td>
+         <p>AMQ-2 will take over and all client requests will be processed by the same GC-1 instance because of its higher consumer priority.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>2</p>
+        </td>
+        <td>
+         <p>Both AMQ-1 and GC-1 are down</p>
+        </td>
+        <td>
+         <p>AMQ-2 and GC-2 will start receiving requests. GC-2 will acquire all agent’s XMPP subscriptions and will start processing requests.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>3</p>
+        </td>
+        <td>
+         <p>GC-1 restores</p>
+        </td>
+        <td>
+         <p>Connector-2 will continue to process requests until connectivity between the Client application and Connector-2 is lost or Connector-2 is down.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>4</p>
+        </td>
+        <td>
+         <p>The link between Connector-1 and Connector-2 is down</p>
+        </td>
+        <td>
+         <p>Both connector instances serve requests independently.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>5</p>
+        </td>
+        <td>
+         <p>AMQ-1 restores while GC-1 is still down and AMQ-2 is also down</p>
+        </td>
+        <td>
+         <p>The client will send a request to AMQ-1. AMQ-1 will send the request to GC-2 because GC-1 is down.&nbsp;</p>
+         <p>Request Flow: Client-App-1 → AMQ-1 → GC-2&nbsp;</p>
+         <p>Response Flow: CGC-2 → AMQ-1 → Client-App-1&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>6</p>
+        </td>
+        <td>
+         <p>GC-1 is down while both AMQs are active</p>
+        </td>
+        <td>
+         <p>The request flow will be the same as no. 5&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>7</p>
+        </td>
+        <td>
+         <p>GC-2 is down while both AMQs are active</p>
+        </td>
+        <td>
+         <p>AMQ-2 requests will be redirected to AMQ-1 and GC-1 will handle all requests.&nbsp;</p>
+         <p>Request Flow: Client-App-2 → AMQ-2 → AMQ-1 → GC-1</p>
+         <p>Response Flow: GC-1 → AMQ-1 → AMQ-2 → Client-App-2</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h2 id="id-(4.4.12)DeploymentGuideLinux-DeploymentSteps" style=""><span id="DeploymentGuideLinux-DeploymentSteps"></span>Deployment Steps
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/4.4.12/deployment-guide-linux#id-(4.4.12)DeploymentGuideLinux-DeploymentSteps">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<ol>
+ <li>
+  <p>Download the docker-compose an env file from <a href="https://drive.google.com/drive/folders/10U3b8zoj5eQuH4URQA5zJxrfzfRvRCYE" data-scope="external" rel="external noreferrer">Google-Drive</a></p>
+ </li>
+ <li>
+  <p>Download the required deployment folder</p>
+ </li>
+</ol>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--height: 150px;"> <img src="/__attachments/a_d7d6f82417a04a9f48ec22925f5efa337877202f07399a9dbf721d1a6d1efe2c/image2023-6-20_11-49-7.png?cb=4c3f8d78bb968bbb00a79e5294f0bfc7" alt="image2023-6-20_11-49-7.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<ol>
+ <li>
+  <p>Create a folder on a Linux machine in any path of your inside root.</p>
+ </li>
+ <li>
+  <p>Place the files inside the created folder as follows:
+   <br>
+   <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 196px;--height: 93px;"> <img src="/__attachments/a_af3465f75ad922c303cad79ce5be422e7999921c7467344bb2e7d5870312c905/image2022-8-10_12-18-37.png?cb=065ee4cab0a5806f073f6369a5651cc2" alt="image2022-8-10_12-18-37.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+ <li>
+  <p><span style="--color: #262626">Open env.txt file with text editor</span></p>
+ </li>
+ <li>
+  <p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 920px;--height: 634px;"> <img src="/__attachments/a_fd3ec6c3965112a4c6c6725839e70258f7dd3b949ced2ad611a7f9233d5a41fc/image2023-6-8_16-17-33.png?cb=117fb26dab42ba09071e1bba64489435" alt="image2023-6-8_16-17-33.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+ <li>
+  <p>Make the desired changes and update the file</p>
+ </li>
+ <li>
+  <p>run the command <strong>chmod 755 ./deploy.sh</strong></p>
+ </li>
+ <li>
+  <p>now run the <strong>./</strong><strong>deploy.sh</strong>&nbsp;file and you can see after completion your docker image is running</p>
+ </li>
+ <li>
+  <p><strong>For Active MQ deployment</strong></p>
+ </li>
+ <li>
+  <p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 1083px;--height: 429px;"> <img src="/__attachments/a_4ab20910ba3bed7b92ea7021b1c19e1e58111062f00839ed06af85039194bc42/image2023-6-20_11-55-11.png?cb=52c56718e65e604a95a065fd4c9ddee4" alt="image2023-6-20_11-55-11.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+ <li>
+  <p><strong>For Rest deployment</strong></p>
+ </li>
+ <li>
+  <p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray"> <img src="/__attachments/a_c2c3cf69008bd13c62283601b178e04b4e9e73ba7653549ceec930d09db9f072/image2023-6-20_11-52-18.png?cb=bc391152ab54a232c24c399caa80e1f2" alt="image2023-6-20_11-52-18.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+ <li>
+  <p>After that run the following commands to edit the ActiveMQ configuration</p>
+ </li>
+</ol>
+<ul>
+ <li>
+  <ul>
+   <li>
+    <p>a. Go into the folder where the docker-compose file is placed</p>
+    <code-snippet class="theme-code-snippet">
+     <scroll-shadow>
+      <div data-component="code">
+       <pre><code>cd /root/gc-docker-compose
+</code></pre>
+      </div>
+     </scroll-shadow>
+     <copy-clipboard class="theme-code-snippet-copy">
+      <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+       <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+      </svg>
+     </copy-clipboard>
+    </code-snippet>
+    <p>
+     <br>
+    </p>
+   </li>
+   <li>
+    <p>b. Get the ActiveMQ image id by following command</p>
+    <code-snippet class="theme-code-snippet">
+     <scroll-shadow>
+      <div data-component="code">
+       <pre><code>docker container ps -a
+</code></pre>
+      </div>
+     </scroll-shadow>
+     <copy-clipboard class="theme-code-snippet-copy">
+      <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+       <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+      </svg>
+     </copy-clipboard>
+    </code-snippet>
+    <p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 1080px;--height: 154px;"> <img src="/__attachments/a_f6dcfcbc79e25484d1c55e7c7926deb2225ab07b704856d4ddd7654b8cf089b1/image2023-6-20_11-56-39.png?cb=24f06417119160f7a93db4bc62f84538" alt="image2023-6-20_11-56-39.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+   </li>
+   <li>
+    <p>c. Enter the following set of commands to reach to the ActiveMQ configuration file (activemq.xml), and set the urls as in the following image</p>
+   </li>
+   <li>
+    <p>
+     <br>
+    </p>
+    <code-snippet class="theme-code-snippet">
+     <scroll-shadow>
+      <div data-component="code">
+       <pre><code>docker exec -it fd5346f6ab11 bash
+cd conf
+vim activemq.xml
+</code></pre>
+      </div>
+     </scroll-shadow>
+     <copy-clipboard class="theme-code-snippet-copy">
+      <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+       <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+      </svg>
+     </copy-clipboard>
+    </code-snippet>
+    <p>
+     <br>
+    </p>
+   </li>
+   <li>
+    <p>Add the server IP where the GC and ActiveMQ are running</p>
+   </li>
+   <li>
+    <p>eg. server IP 192.168.2.162</p>
+   </li>
+   <li>
+    <p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 1151px;--height: 163px;"> <img src="/__attachments/a_745f2c9c23db979748dd0ecaafc086a94783671ccd3f4063a3d181b597e4c428/image2022-8-5_12-47-1.png?cb=62424bf7e77427368b502c386dd2f7a2" alt="image2022-8-5_12-47-1.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+    <div data-component="panel" role="note" data-appearance="warning">
+     <div class="panel-meta">
+      <div class="panel-title">Note</div>
+     </div>
+     <div class="panel-content">
+      <p>Note: If you wanted to know about vim command, Here is the&nbsp;<a href="https://www.educba.com/vim-command-in-linux" data-scope="external" rel="external noreferrer">detail</a>.</p>
+     </div>
+    </div>
+    <p>
+     <br>
+    </p>
+   </li>
+  </ul>
+ </li>
+</ul>
+<h3 id="id-(4.4.12)DeploymentGuideLinux-ConnectorConfigurationParameters(EnvironmentVariables)" style=""><span id="DeploymentGuideLinux-ConnectorConfigurationParameters(EnvironmentVariables)"></span><strong>Connector Configuration Parameters (Environment Variables)</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/4.4.12/deployment-guide-linux#id-(4.4.12)DeploymentGuideLinux-ConnectorConfigurationParameters(EnvironmentVariables)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Parameter</p>
+        </td>
+        <td>
+         <p>Default Value</p>
+        </td>
+        <td>
+         <p>Description</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>NUMBER_OF_LICENSES</p>
+        </td>
+        <td colspan="1">
+         <p>1000</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>CUSTOMER_NAME</p>
+        </td>
+        <td colspan="1">
+         <p>Haseeb</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>KEY</p>
+        </td>
+        <td>
+         <p>ASDFGHJKLZXCVBNM234RFGHUIOKJMNBFEWSDFGHNJMNBV</p>
+        </td>
+        <td>
+         <p>License key. Must be obtained from EF Team</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Finesse_1</p>
+        </td>
+        <td>
+         <p>https://Finesse-X-DN/finesse/api/</p>
+        </td>
+        <td>
+         <p>Primary Finesse URL for Site A&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Finesse_2</p>
+        </td>
+        <td>
+         <p>https://Finesse-X-DN/finesse/api/</p>
+        </td>
+        <td>
+         <p>Primary Finesse URL for Site B&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>ACCESS_TOKEN_URL</p>
+        </td>
+        <td colspan="1">
+         <p>https://192.168.1.104:1126/getaccesstoken</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>FINESSE_REQUEST_TIMEOUT</p>
+        </td>
+        <td>
+         <p>3000</p>
+        </td>
+        <td>
+         <p>Finesse requested a timeout (in mili-seconds)</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>FINESSE_HEARTBEAT_SLEEP</p>
+        </td>
+        <td>
+         <p>5</p>
+        </td>
+        <td>
+         <p>Delay in ping to finesse servers (seconds)&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ByPass_SSL</p>
+        </td>
+        <td>
+         <p>ture</p>
+        </td>
+        <td>
+         <p>Bypass SSL Certificate if finesse url is https and self signed certificate is used, in case of false Import SSL certificate to JVM if needed</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ACTIVEMQ1</p>
+        </td>
+        <td>
+         <p>localhost:61616</p>
+        </td>
+        <td>
+         <p>ActiveMQ Primary URL</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ACTIVEMQ1</p>
+        </td>
+        <td>
+         <p>localhost:61616</p>
+        </td>
+        <td>
+         <p>ActiveMQ Secondary URL</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ACTIVEMQ_TIMEOUT</p>
+        </td>
+        <td>
+         <p>30000</p>
+        </td>
+        <td>
+         <p>ActiveMQ connection timeout (in milliseconds)</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>GRC_CONSUMER_PRIORITY</p>
+        </td>
+        <td colspan="1">
+         <p>127</p>
+        </td>
+        <td colspan="1">
+         <p>Connector1 Queue consumer priority (Used for primary, secondary deployment of GC)(0-127)</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>PRIORITY_BACKUP</p>
+        </td>
+        <td colspan="1">
+         <p>true</p>
+        </td>
+        <td colspan="1">
+         <p>To connect with its primary GC</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>RANDOMIZE</p>
+        </td>
+        <td colspan="1">
+         <p>false</p>
+        </td>
+        <td colspan="1">
+         <p>for failover url</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>PREFETCH_SIZE</p>
+        </td>
+        <td colspan="1">
+         <p>20000</p>
+        </td>
+        <td colspan="1">
+         <p>Prefect Size of the messages</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>AGENT_STATES_PUBLISHER_DURATION</p>
+        </td>
+        <td colspan="1">
+         <p>5000</p>
+        </td>
+        <td colspan="1">
+         <p>Time after which, states of all agents would be published on topic (In Milliseconds)</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>GC_HEARTBEAT_TIMEOUT</p>
+        </td>
+        <td colspan="1">
+         <p>10000</p>
+        </td>
+        <td colspan="1">
+         <p>GC heartbeat timeout</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>AGENT_INACTIVITY_DURATION</p>
+        </td>
+        <td>
+         <p>30</p>
+        </td>
+        <td>
+         <p>Agent inactivity time (in seconds)</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>GC_HEARTBEAT_SLEEP</p>
+        </td>
+        <td colspan="1">
+         <p>10000</p>
+        </td>
+        <td colspan="1">
+         <p>gc heartbeat thread sleep time</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>AGENT_INACTIVITY_TIME_SWITCH</p>
+        </td>
+        <td colspan="1">
+         <p>false</p>
+        </td>
+        <td colspan="1">
+         <p>Agent inactivity switch</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>DEFAULT_NOT_READY_REASON</p>
+        </td>
+        <td>
+         <p>19</p>
+        </td>
+        <td>
+         <p>default reason code for not ready (Must be defined in finesse)</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>DEFAULT_LOGOUT_REASON</p>
+        </td>
+        <td>
+         <p>70</p>
+        </td>
+        <td>
+         <p>Default reason code for force logout</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>AGENT_XMPP_SUBS_TIME</p>
+        </td>
+        <td colspan="1">
+         <p>10000</p>
+        </td>
+        <td colspan="1">
+         <p>Agent XMPP Subscription Time</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>USE_ENCRYPTED_PASSWORDS</p>
+        </td>
+        <td colspan="1">
+         <p>false</p>
+        </td>
+        <td colspan="1">
+         <p>Use encrypted password</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>CHANGE_STATE_ON_WRAPUP</p>
+        </td>
+        <td colspan="1">
+         <p>true</p>
+        </td>
+        <td colspan="1">
+         <p>Automatically change the state when wrap-up occurs</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>LOGLEVEL</p>
+        </td>
+        <td>
+         <p>TRACE</p>
+        </td>
+        <td>
+         <p>Log Level&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>GC_HEARTBEAT_TIMEOUT</p>
+        </td>
+        <td>
+         <p>10000&nbsp;</p>
+        </td>
+        <td>
+         <p>GC heartbeat timeout</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>USE_ENCRYPTED_PASSWORDS</p>
+        </td>
+        <td>
+         <p>true</p>
+        </td>
+        <td>
+         <p>Use password encryption (3Des). (Must be same as in client.)</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>CHANGE_STATE_ON_WRAPUP</p>
+        </td>
+        <td>
+         <p>true</p>
+        </td>
+        <td>
+         <p>Caller’s state change automatically on wrap-up</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>MESSAGE_FORMAT</p>
+        </td>
+        <td colspan="1">
+         <p>JSON</p>
+        </td>
+        <td colspan="1">
+         <p>Message Format for communication. Expected formats DEFAULT, JSON, XML</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>AGENT_LOGS_PATH</p>
+        </td>
+        <td>
+         <p>/app/logs/agents/</p>
+        </td>
+        <td>
+         <p>Agent Logs Storage path</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>AGENT_LOGS_LEVEL</p>
+        </td>
+        <td>
+         <p>TRACE</p>
+        </td>
+        <td>
+         <p>Agent Logs Level</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>AGENT_LOGS_MAX_FILES</p>
+        </td>
+        <td>
+         <p>10</p>
+        </td>
+        <td>
+         <p>Max No of Files per agent for logs</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>AGENT_LOGS_FILE_SIZE</p>
+        </td>
+        <td>
+         <p>10MB</p>
+        </td>
+        <td>
+         <p>Max file size for agent logs</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>XMPP_PING_INTERVAL</p>
+        </td>
+        <td colspan="1">
+         <p>3</p>
+        </td>
+        <td colspan="1">
+         <p>Interval in seconds between XMPP server pings</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>ADMIN_ID</p>
+        </td>
+        <td colspan="1">
+         <p>Administrator</p>
+        </td>
+        <td colspan="1">
+         <p>The username of the administrator account the would be used for phonebook and contact APIs</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>ADMIN_PASSWORD</p>
+        </td>
+        <td colspan="1">
+         <p>Expertflow464</p>
+        </td>
+        <td colspan="1">
+         <p>The password of the administrator account would be used for phonebook and contact APIs</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>Supervisor_initiated_NotReadyReasonCode</p>
+        </td>
+        <td colspan="1">
+         <p>19</p>
+        </td>
+        <td colspan="1">
+         <p>Reason code for supervisor state change to Not_Ready</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>Supervisor_initiated_LogOutReasonCode</p>
+        </td>
+        <td colspan="1">
+         <p>20</p>
+        </td>
+        <td colspan="1">
+         <p>Reason code for supervisor state change to Log_Out</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>UCCX_SERVER_IP</p>
+        </td>
+        <td colspan="1">
+         <p>192.168.1.29</p>
+        </td>
+        <td colspan="1">
+         <p>For queue stats in case of UCCX</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>UCCX_SERVER_USERNAME</p>
+        </td>
+        <td colspan="1">
+         <p>Administrator</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>UCCX_SERVER_PASSWORD</p>
+        </td>
+        <td colspan="1">
+         <p>Expertflow464</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>UCCX_DB_USERNAME</p>
+        </td>
+        <td colspan="1">
+         <p>uccxhruser</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>UCCX_DB_PASSWORD</p>
+        </td>
+        <td colspan="1">
+         <p>12345</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>UCCX_DB_RETRY_ATTEMPTS</p>
+        </td>
+        <td colspan="1">
+         <p>2</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>UCCX_DB_TIMEOUT_CONNECTION</p>
+        </td>
+        <td colspan="1">
+         <p>1800</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>COMMUNICATION_FORMAT</p>
+        </td>
+        <td colspan="1">
+         <p>REST | JMS</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p><span style="--color: #262626">SPRING_PORT</span></p>
+        </td>
+        <td colspan="1">
+         <p><span style="--color: #262626">8112</span></p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>REDIS_URL</p>
+        </td>
+        <td colspan="1">
+         <p>redis-master.ef-cti.svc</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>REDIS_PORT</p>
+        </td>
+        <td colspan="1">
+         <p>6379</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>REDIS_PASSWORD</p>
+        </td>
+        <td colspan="1">
+         <p>Expertflow123</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>SQL_SERVER</p>
+        </td>
+        <td colspan="1">
+         <p>192.168.1.89</p>
+        </td>
+        <td colspan="1">
+         <p>For Skill groups and supervisor list</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>DATABASE</p>
+        </td>
+        <td colspan="1">
+         <p>uc12_awdb</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>DATABASE_TABLE</p>
+        </td>
+        <td colspan="1">
+         <p>Skill_Group</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>DATABASE_USER_NAME</p>
+        </td>
+        <td colspan="1">
+         <p>sa</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>DATABASE_USER_PASSWORD</p>
+        </td>
+        <td colspan="1">
+         <p>Expertflow464</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>KEY_STORE_TYPE</p>
+        </td>
+        <td colspan="1">
+         <p>PKCS12</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>KEY_STORE</p>
+        </td>
+        <td colspan="1">
+         <p>D:\\EF_Project\\GC4.4\\Generic Connector\\certs\\store\\clientkeystore.p12</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>TRUST_STORE</p>
+        </td>
+        <td colspan="1">
+         <p>D:\\EF_Project\\GC4.4\\Generic Connector\\certs\\store\\client.truststore</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>KEY_STORE_PASSWORD</p>
+        </td>
+        <td colspan="1">
+         <p>changeit</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>TRUST_STORE_PASSWORD</p>
+        </td>
+        <td colspan="1">
+         <p>changeit</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>PRIVATE_KEY_STRING</p>
+        </td>
+        <td colspan="1">
+         <p>key_value</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>ISSUER</p>
+        </td>
+        <td colspan="1">
+         <p>ef-chat</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>EXPIRY</p>
+        </td>
+        <td colspan="1">
+         <p>300</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>PEP_BASE_PATH</p>
+        </td>
+        <td colspan="1">
+         <p>http://192.168.50.31:8113</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>AOP_CALLBACK</p>
+        </td>
+        <td colspan="1">
+         <p>/ef-voice/fnb-cme/submit-gc-event/v1</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>AXL_URL</p>
+        </td>
+        <td colspan="1">
+         <p>https://192.168.1.26:8443/axl/</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>AXL_USER</p>
+        </td>
+        <td colspan="1">
+         <p>administrator</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>AXL_PASSWORD</p>
+        </td>
+        <td colspan="1">
+         <p>Expertflow464</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>LD_LIBRARY_PATH</p>
+        </td>
+        <td colspan="1">
+         <p>/app</p>
+        </td>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<h3 id="id-(4.4.12)DeploymentGuideLinux-MXMonitoring" style=""><span id="DeploymentGuideLinux-MXMonitoring"></span><strong>MX Monitoring</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/4.4.12/deployment-guide-linux#id-(4.4.12)DeploymentGuideLinux-MXMonitoring">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>GC now supports JMX monitoring. You can monitor the performance of GC via any of the monitoring tools such as JConsole and VisualVM. GC supports JMX Monitoring on port&nbsp;<strong>9090</strong>.</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="d683e37232bc34d9-43" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="d683e37232bc34d9-43">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/gc/4.4.12/deployment-guides">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Deployment Guides</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/gc/4.4.12/deployment-guide-kubernetes">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Deployment Guide Kubernetes</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

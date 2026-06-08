@@ -1,0 +1,5153 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_3ec5ffd99634f0b8984381c6d5f310665764cf016c7ebc9a5680370466b663ff" data-confluence-content-id="1108934672"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/cx/4.9/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="CX">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>Comprehensive Guide to Customize APISIX Plugins &amp; Features via Helm | Expertflow CX</title>
+		<meta property="og:title" content="Comprehensive Guide to Customize APISIX Plugins &amp; Features via Helm | Expertflow CX">
+		<meta property="twitter:title" content="Comprehensive Guide to Customize APISIX Plugins &amp; Features via Helm | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe">
+		<meta property="og:url" content="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe">
+
+		<meta name="description" content="This is a comprehensive guide for end-users (Administrators, DevOps Engineers, and Application Developers) to understand, configure, and customize various APIS…">
+		<meta property="og:description" content="This is a comprehensive guide for end-users (Administrators, DevOps Engineers, and Application Developers) to understand, configure, and customize various APIS…">
+		<meta property="twitter:description" content="This is a comprehensive guide for end-users (Administrators, DevOps Engineers, and Application Developers) to understand, configure, and customize various APIS…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2025-05-27T11:01:23.535Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": true
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.js"></script>
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="4a952abb4393e159-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="4a952abb4393e159-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="4a952abb4393e159-19">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="4a952abb4393e159-19" name="version" onchange="self.location.assign(this.value)" >
+				<option id="4a952abb4393e159-3"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="4a952abb4393e159-4"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="4a952abb4393e159-5"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="4a952abb4393e159-6"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="4a952abb4393e159-7"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="4a952abb4393e159-8"  value="/cx/4.10"  >
+					4.10
+				</option>
+				<option id="4a952abb4393e159-9"  value="/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe"  selected="">
+					4.9
+				</option>
+				<option id="4a952abb4393e159-10"  value="/cx/4.8"  >
+					4.8
+				</option>
+				<option id="4a952abb4393e159-11"  value="/cx/4.7"  >
+					4.7
+				</option>
+				<option id="4a952abb4393e159-12"  value="/cx/4.6"  >
+					4.6
+				</option>
+				<option id="4a952abb4393e159-13"  value="/cx/4.5.3"  >
+					4.5.3
+				</option>
+				<option id="4a952abb4393e159-14"  value="/cx/4.5.2"  >
+					4.5.2
+				</option>
+				<option id="4a952abb4393e159-15"  value="/cx/4.5.1"  >
+					4.5.1
+				</option>
+				<option id="4a952abb4393e159-16"  value="/cx/4.5"  >
+					4.5
+				</option>
+				<option id="4a952abb4393e159-17"  value="/cx/4.4"  >
+					4.4
+				</option>
+				<option id="4a952abb4393e159-18"  value="/cx/4.3"  >
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('4a952abb4393e159-19');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-4a952abb4393e159-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-4a952abb4393e159-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-4a952abb4393e159-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="4a952abb4393e159-20" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="4a952abb4393e159-20">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-4a952abb4393e159-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-4a952abb4393e159-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="4a952abb4393e159-37">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="4a952abb4393e159-37" name="version" onchange="self.location.assign(this.value)" >
+				<option id="4a952abb4393e159-21"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="4a952abb4393e159-22"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="4a952abb4393e159-23"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="4a952abb4393e159-24"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="4a952abb4393e159-25"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="4a952abb4393e159-26"  value="/cx/4.10"  >
+					4.10
+				</option>
+				<option id="4a952abb4393e159-27"  value="/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe"  selected="">
+					4.9
+				</option>
+				<option id="4a952abb4393e159-28"  value="/cx/4.8"  >
+					4.8
+				</option>
+				<option id="4a952abb4393e159-29"  value="/cx/4.7"  >
+					4.7
+				</option>
+				<option id="4a952abb4393e159-30"  value="/cx/4.6"  >
+					4.6
+				</option>
+				<option id="4a952abb4393e159-31"  value="/cx/4.5.3"  >
+					4.5.3
+				</option>
+				<option id="4a952abb4393e159-32"  value="/cx/4.5.2"  >
+					4.5.2
+				</option>
+				<option id="4a952abb4393e159-33"  value="/cx/4.5.1"  >
+					4.5.1
+				</option>
+				<option id="4a952abb4393e159-34"  value="/cx/4.5"  >
+					4.5
+				</option>
+				<option id="4a952abb4393e159-35"  value="/cx/4.4"  >
+					4.4
+				</option>
+				<option id="4a952abb4393e159-36"  value="/cx/4.3"  >
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('4a952abb4393e159-37');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a952abb4393e159-38" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a952abb4393e159-39" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a952abb4393e159-40" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a952abb4393e159-41" href="/cx/4.9/cx-release-history" >CX Release History</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-42"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-42" href="/cx/4.9/cx-release-notes" >CX Release Notes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a952abb4393e159-44" href="/cx/4.9/expertflow-cx-data-sheet" >CX Data Sheet</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a952abb4393e159-45" href="/cx/4.9/hc-3-x-vs-expertflow-cx-features-comparison" >HC 3.x vs Expertflow CX - Features Comparison</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-46"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-46" href="/cx/4.9/conversation-studio" >Conversation Studio</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-48"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-48" href="/cx/4.9/customer-identities" >Customer</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-50"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-50" href="/cx/4.9/conversation-control" >Conversation Objects</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-52"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-52" href="/cx/4.9/customer-channels" >Channels</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-54"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-54" href="/cx/4.9/cx-events-and-activity-types" >CX-Activities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-56"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-56" href="/cx/4.9/solution-architecture" >Solution Architecture</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-58"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-58" href="/cx/4.9/expertflow-etl-data-platform" >Expertflow ETL - Data Platform</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-60"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-60" href="/cx/4.9/agent-capabilities" >Agent Capabilities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-62"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-62" href="/cx/4.9/supervisor-controls" >Supervisor Controls</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-64"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-64" href="/cx/4.9/deployment-guides" >Deployment Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-66"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-66" href="/cx/4.9/developer-guides" >Developer Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-68"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-68" href="/cx/4.9/unified-admin-guide" >Unified Admin Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-70"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-70" href="/cx/4.9/integrations" >Integrations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="4a952abb4393e159-73"						aria-labelledby="4a952abb4393e159-72"
+					></button>
+				<a id="4a952abb4393e159-72" href="/cx/4.9/security" >Security</a>
+			</div>
+
+<ul  id="4a952abb4393e159-73" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="4a952abb4393e159-75"						aria-labelledby="4a952abb4393e159-74"
+					></button>
+				<a id="4a952abb4393e159-74" href="/cx/4.9/identity-and-access-management" >Identity and Access Management</a>
+			</div>
+
+<ul  id="4a952abb4393e159-75" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-76"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-76" href="/cx/4.9/application-management" >Application Management</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="4a952abb4393e159-79"						aria-labelledby="4a952abb4393e159-78"
+					></button>
+				<a id="4a952abb4393e159-78" href="/cx/4.9/api-authentication-using-apisix" >API Authentication using Application Gateway</a>
+			</div>
+
+<ul  id="4a952abb4393e159-79" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a952abb4393e159-80" href="/cx/4.9/apisix-route-configuration-guide" >APISIX Route Configuration Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a952abb4393e159-81" href="/cx/4.9/increase-file-size-apisix-ingress" >Increase File Size - APISIX Ingress</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a952abb4393e159-82" href="/cx/4.9/advanced-apisix-routing-a-guide-to-create-exceptio" >Advanced APISIX Routing: A Guide to Create Exception Routes via Helm</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a952abb4393e159-83" href="/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna" >Customize IP-based Rate Limiting for CCM&#39;s Internal WCM Access Route</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a952abb4393e159-84" href="/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe" aria-current="page">Comprehensive Guide to Customize APISIX Plugins &amp; Features via Helm</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-85"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-85" href="/cx/4.9/api-authentication-integration-guide" >API Authentication - Integration Guide</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-87"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-87" href="/cx/4.9/user-management-in-keycloack" >User Management in KeyCloack</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-89"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-89" href="/cx/4.9/keycloack-guides" >KeyCloack Guides</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-91"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-91" href="/cx/4.9/compliance" >Security and Privacy Compliances</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-93"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-93" href="/cx/4.9/security-features" >Security Features</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-95"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-95" href="/cx/4.9/vulnerability-assessments" >Vulnerability Assessments</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a952abb4393e159-97" href="/cx/4.9/letsencrypt-ssl-for-ef-cx" >LetsEncrypt SSL for EF-CX</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a952abb4393e159-98" href="/cx/4.9/implementing-security-policies" >Implementing Security Policies</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a952abb4393e159-99" href="/cx/4.9/configurable-log-masking" >Configurable Log Masking</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-100"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-100" href="/cx/4.9/voice-recording-solution" >Voice Recording Solution</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a952abb4393e159-102" href="/cx/4.9/compatibility-guides" >Compatibility Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a952abb4393e159-103" href="/cx/4.9/list-of-open-source-software" >List of Open-source Software</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-104"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-104" href="/cx/4.9/business-calendars" >Business Calendars</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-106"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-106" href="/cx/4.9/outbound-campaigns" >Outbound Campaigns</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-108"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-108" href="/cx/4.9/cx-surveys" >CX Surveys</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-110"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-110" href="/cx/4.9/reports" >Reports</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-112"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-112" href="/cx/4.9/superset-deployment-for-reporting" >Superset Deployment for Reporting</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a952abb4393e159-114" href="/cx/4.9/reporting-database-schema-vcx-4-3" >Reporting Database Schema</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="4a952abb4393e159-115" href="/cx/4.9/cx-historical-reports-supporting-tables" >CX Historical Reports- Supporting Tables</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="4a952abb4393e159-116"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="4a952abb4393e159-116" href="/cx/4.9/key-reporting-concepts" >Key Reporting Concepts</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="4a952abb4393e159-118" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="4a952abb4393e159-118">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.9">
+										Expertflow CX
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.9/security">
+										Security
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.9/identity-and-access-management">
+										Identity and Access Management
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.9/api-authentication-using-apisix">
+										API Authentication using Application Gateway
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="4a952abb4393e159-119">
+			<h2 class="toc-heading" id="4a952abb4393e159-119">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>Comprehensive Guide to Customize APISIX Plugins &amp; Features via Helm</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+
+	
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+	
+
+
+	
+	
+	
+	
+	
+	
+		
+		
+	
+	
+	
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<p>This is a comprehensive guide for end-users (Administrators, DevOps Engineers, and Application Developers) to understand, configure, and customize various APISIX plugins and routing features available through the Helm chart's <code>values.yaml</code> file. The focus is on managing these configurations within the <code>apisixRoutes</code> definitions for each component.</p>
+<h2 id="General-Principles-for-Configuring-APISIX-Routes"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-GeneralPrinciplesforConfiguringAPISIXRoutes"></span>General Principles for Configuring APISIX Routes
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#General-Principles-for-Configuring-APISIX-Routes">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>Before diving into specific plugins, let's recap some general principles applicable to all APISIX route customizations via your Helm <code>values.yaml</code>:</p>
+<ul>
+ <li>
+  <p><strong>Locating Routes:</strong> APISIX route configurations are found within the <code>apisixRoutes</code> list under each specific component's section (e.g., <code>agent-manager</code>, <code>ccm</code>, <code>survey-studio</code>, etc.).</p>
+ </li>
+ <li>
+  <p><strong>Route Definition:</strong> Each item in the <code>apisixRoutes</code> list is a YAML dictionary defining a single APISIX route. Key fields include:</p>
+  <ul>
+   <li>
+    <p><code>nameSuffix</code>: A unique suffix combined with the release and component name to form the full APISIX route name. Use descriptive names.</p>
+   </li>
+   <li>
+    <p><code>enabled: true/false</code>: Activates or deactivates the route.</p>
+   </li>
+   <li>
+    <p><code>priority</code>: An integer determining matching precedence (higher number = higher priority, evaluated first). Crucial for exception routes.</p>
+   </li>
+   <li>
+    <p><code>paths</code>: A list of URI paths the route should match.</p>
+   </li>
+   <li>
+    <p><code>methods</code>: (Optional) A list of HTTP methods (e.g., <code>GET</code>, <code>POST</code>) the route applies to. Defaults to all if omitted.</p>
+   </li>
+   <li>
+    <p><code>backendServicePort</code>: The Kubernetes service port of the backend application this route targets.</p>
+   </li>
+  </ul>
+ </li>
+ <li>
+  <p><strong>The </strong><code>plugins</code><strong> Block:</strong> This is where most APISIX functionality is controlled for a route. It typically contains:</p>
+  <ul>
+   <li>
+    <p>Boolean flags like <code>enableAuth</code>, <code>enableRewrite</code>, <code>enableCors</code> which often trigger globally defined default plugin configurations or behaviors.</p>
+   </li>
+   <li>
+    <p>A <code>customPlugins</code> list: This allows for defining specific APISIX plugins (e.g., <code>limit-count</code>, <code>ip-restriction</code>) and their detailed configurations. Each item in this list is a dictionary with <code>name</code>, <code>enable: true/false</code>, and a <code>config: {...}</code> block.</p>
+   </li>
+  </ul>
+ </li>
+ <li>
+  <p><strong>Global Defaults:</strong> Be aware of global plugin configurations (e.g., <code>global.apisix.keycloak</code> for authentication, <code>global.apisix.plugins.cors</code> for CORS, <code>global.apisix.plugins.rewrite</code> for rewrite defaults). Route-specific settings can override these.</p>
+ </li>
+ <li>
+  <p><strong>Testing is Critical:</strong> After any change to <code>values.yaml</code> and subsequent deployment (<code>helm upgrade</code> or GitOps sync), thoroughly test the affected routes, related routes for the same component, and even unrelated services to ensure no unintended side effects.</p>
+ </li>
+ <li>
+  <p><strong>Version Control:</strong> Always keep your <code>values.yaml</code> files under version control (e.g., Git) to track changes, facilitate reviews, and enable rollbacks.</p>
+ </li>
+ <li>
+  <p><strong>Documentation:</strong> Comment your <code>values.yaml</code> for complex configurations and maintain external documentation for significant routing logic or exceptions.</p>
+ </li>
+</ul>
+<h2 id="Plugin-Guide:-Authentication-Management-(Keycloak-OIDC)"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-PluginGuide:AuthenticationManagement(KeycloakOIDC)"></span>Plugin Guide: Authentication Management (Keycloak OIDC)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#Plugin-Guide:-Authentication-Management-(Keycloak-OIDC)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="A.-Purpose-&amp;-Use-Cases"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-A.Purpose&amp;amp;UseCases"></span>A. Purpose &amp; Use Cases
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#A.-Purpose-&amp;amp;-Use-Cases">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Securing your services by requiring users to authenticate is a primary function of an API gateway. In your setup, this is typically handled by integrating APISIX with Keycloak using OpenID Connect (OIDC).</p>
+<ul>
+ <li>
+  <p>Protecting sensitive APIs and data from unauthorized access.</p>
+ </li>
+ <li>
+  <p>Ensuring only valid users or systems can perform operations.</p>
+ </li>
+ <li>
+  <p>Centralizing authentication logic at the gateway level.</p>
+ </li>
+</ul>
+<h3 id="B.-Key-Parameters-&amp;-Configuration"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-B.KeyParameters&amp;amp;Configuration"></span>B. Key Parameters &amp; Configuration
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#B.-Key-Parameters-&amp;amp;-Configuration">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Authentication for a route is primarily controlled by the <code>enableAuth: true/false</code> flag within its <code>plugins</code> block.</p>
+<ul>
+ <li>
+  <p><code>enableAuth: true</code>: This flag tells APISIX to enforce authentication for the route using the globally configured Keycloak OIDC provider. The details for this provider are typically found in your <code>values.yaml</code> under <code>global.apisix.keycloak</code>, including:</p>
+  <ul>
+   <li>
+    <p><code>discoveryUrl</code>: The OIDC discovery endpoint for your Keycloak realm.</p>
+   </li>
+   <li>
+    <p><code>realm</code>: The Keycloak realm name.</p>
+   </li>
+   <li>
+    <p><code>clientId</code>: The OIDC client ID registered in Keycloak for APISIX.</p>
+   </li>
+   <li>
+    <p><code>clientSecret</code>: The client secret associated with the <code>clientId</code>. (Handle this securely!)</p>
+   </li>
+   <li>
+    <p><code>bearerOnly: true</code>: Indicates APISIX expects a bearer token and won't initiate login flows itself.</p>
+   </li>
+   <li>
+    <p><code>tokenSigningAlg</code>: Expected algorithm for token signatures (e.g., <code>RS256</code>).</p>
+   </li>
+   <li>
+    <p>Other parameters like <code>setAccessTokenHeader</code>, <code>setUserInfoHeader</code>, <code>defaultAudience</code>, <code>defaultScopes</code> define further OIDC behavior.</p>
+   </li>
+  </ul>
+ </li>
+ <li>
+  <p><code>enableAuth: false</code>: This flag explicitly disables authentication for the route, making it public. This is often used for "exception routes" (see separate guide or section on exceptions).</p>
+ </li>
+</ul>
+<p><em>Note: Modifying the </em><code>global.apisix.keycloak</code><em> parameters is a high-level administrative task that affects all services relying on the global OIDC configuration. Exercise extreme caution.</em></p>
+<h3 id="C.-How-to-Configure"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-C.HowtoConfigure"></span>C. How to Configure
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#C.-How-to-Configure">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>To enable or disable authentication on a specific route:</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>
+# Example: Enabling auth for a route in component 'my-service'
+my-service:
+  apisixRoutes:
+    - nameSuffix: "data-api"
+      paths: ["/my-service/data/*"]
+      backendServicePort: 8080
+      plugins:
+        enableAuth: true  # Enforces Keycloak OIDC authentication
+        # ... other plugins ...
+
+    - nameSuffix: "public-status"
+      paths: ["/my-service/status"]
+      priority: 10 # Higher priority to be matched before the one above
+      backendServicePort: 8080
+      plugins:
+        enableAuth: false # This specific path is public
+        # ... other plugins ...
+    
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="D.-Important-Considerations"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-D.ImportantConsiderations"></span>D. Important Considerations
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#D.-Important-Considerations">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p><strong>Security of Public Routes:</strong> If setting <code>enableAuth: false</code>, ensure the exposed endpoint is genuinely safe for unauthenticated access and does not leak sensitive information or allow unintended actions.</p>
+ </li>
+ <li>
+  <p><strong>Token Propagation:</strong> The <code>setAccessTokenHeader</code> and <code>setUserInfoHeader</code> in the global Keycloak config determine if user identity information is passed to backend services. Understand these implications.</p>
+ </li>
+ <li>
+  <p><strong>Client Configuration:</strong> API clients will need to obtain valid JWT bearer tokens from Keycloak to access routes where <code>enableAuth: true</code>.</p>
+ </li>
+</ul>
+<h3 id="E.-What-to-Expect-After-Modification"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-E.WhattoExpectAfterModification"></span>E. What to Expect After Modification
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#E.-What-to-Expect-After-Modification">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>If <code>enableAuth</code> is changed from <code>false</code> to <code>true</code>, the route will now require a valid bearer token. Unauthenticated requests will typically receive an HTTP 401 (Unauthorized) or 403 (Forbidden) response.</p>
+ </li>
+ <li>
+  <p>If <code>enableAuth</code> is changed from <code>true</code> to <code>false</code>, the route will become publicly accessible (subject to other plugins like IP restriction).</p>
+ </li>
+</ul>
+<h2 id="Plugin-Guide:-URL-Rewriting-(rewrite)"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-PluginGuide:URLRewriting(rewrite)"></span>Plugin Guide: URL Rewriting (<code>rewrite</code>)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#Plugin-Guide:-URL-Rewriting-(rewrite)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="A.-Purpose-&amp;-Use-Cases.1"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-A.Purpose&amp;amp;UseCases"></span>A. Purpose &amp; Use Cases
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#A.-Purpose-&amp;amp;-Use-Cases.1">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>URL rewriting is the process of modifying the request URL before it reaches your backend service. This means the URL seen by the client can be different from the URL that your backend application actually receives and processes.</p>
+<ul>
+ <li>
+  <p><strong>User-Friendly URLs:</strong> Transforming complex internal URLs into simpler external URLs.</p>
+ </li>
+ <li>
+  <p><strong>Legacy System Support:</strong> Allowing older URL structures to function by rewriting them to new backend paths.</p>
+ </li>
+ <li>
+  <p><strong>Path Consolidation:</strong> Mapping multiple incoming URL variations to a single backend endpoint.</p>
+ </li>
+ <li>
+  <p><strong>API Versioning:</strong> Routing different API versions by rewriting paths.</p>
+ </li>
+ <li>
+  <p><strong>Hiding Internal Path Structures:</strong> Masking the backend service's internal routing.</p>
+ </li>
+</ul>
+<h3 id="B.-Key-Parameters-&amp;-Configuration-in-values.yaml"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-B.KeyParameters&amp;amp;Configurationinvalues.yaml"></span>B. Key Parameters &amp; Configuration in <code>values.yaml</code>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#B.-Key-Parameters-&amp;amp;-Configuration-in-values.yaml">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Within a route's <code>plugins</code> block:</p>
+<div class="theme-table" style="--width: 1800px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <tbody>
+       <tr>
+        <th>
+         <p>Parameter</p>
+        </th>
+        <th>
+         <p>Description</p>
+        </th>
+        <th>
+         <p>Common Usage Notes</p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p><code>enableRewrite</code></p>
+        </td>
+        <td>
+         <p>Boolean (<code>true</code> or <code>false</code>). Enables or disables rewriting for this route.</p>
+        </td>
+        <td>
+         <p>Must be <code>true</code> for any rewrite rules to take effect.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>rewriteStripPrefix</code></p>
+        </td>
+        <td>
+         <p>Boolean (<code>true</code> or <code>false</code>). If <code>true</code>, the matched route path prefix is stripped. E.g., if route path is <code>/service-a/*</code> and request is <code>/service-a/foo</code>, upstream gets <code>/foo</code>.</p>
+        </td>
+        <td>
+         <p>Often the default if <code>enableRewrite: true</code> and no custom regex (due to <code>global.apisix.plugins.rewrite.stripPrefix: true</code>). Set to <code>false</code> for custom regex control.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>rewriteRegexUriFrom</code></p>
+        </td>
+        <td>
+         <p>A PCRE regex string to match the request URI.</p>
+        </td>
+        <td>
+         <p>Used for custom rewrites, usually with <code>rewriteStripPrefix: false</code>. Uses capture groups <code>(...)</code>.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>rewriteRegexUriTo</code></p>
+        </td>
+        <td>
+         <p>The replacement string for the URI, using capture group references like <code>$1</code>, <code>$2</code>.</p>
+        </td>
+        <td>
+         <p>Defines the new URI path for the backend.</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="C.-Common-Rewrite-Scenarios-&amp;-Implementation"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-C.CommonRewriteScenarios&amp;amp;Implementation"></span>C. Common Rewrite Scenarios &amp; Implementation
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#C.-Common-Rewrite-Scenarios-&amp;amp;-Implementation">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<h4 id="Scenario-1:-Default-Prefix-Stripping"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-Scenario1:DefaultPrefixStripping"></span>Scenario 1: Default Prefix Stripping
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#Scenario-1:-Default-Prefix-Stripping">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p><strong>Example:</strong> Incoming <code>https://devops.ef.com/agent-manager/api/v1/users</code> → Backend sees <code>/api/v1/users</code>.</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>
+# In agent-manager.apisixRoutes:
+- nameSuffix: "main-strip-prefix"
+  paths: ["/agent-manager/*"]
+  plugins:
+    enableRewrite: true # Assumes rewriteStripPrefix: true globally or by template default
+    
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h4 id="Scenario-2:-Custom-Path-Prefix-Replacement"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-Scenario2:CustomPathPrefixReplacement"></span>Scenario 2: Custom Path Prefix Replacement
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#Scenario-2:-Custom-Path-Prefix-Replacement">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p><strong>Example:</strong> Incoming <code>https://devops.ef.com/legacy-service/data/query</code> → Backend sees <code>/current-api/data/query</code>.</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>
+# In the relevant component's apisixRoutes:
+- nameSuffix: "legacy-rewrite"
+  paths: ["/legacy-service/*"]
+  plugins:
+    enableRewrite: true
+    rewriteStripPrefix: false
+    rewriteRegexUriFrom: "^/legacy-service/(.*)$"
+    rewriteRegexUriTo: "/current-api/$1"
+    
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h4 id="Scenario-3:-Path-Reorganization-(e.g.,-campaign-studio)"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-Scenario3:PathReorganization(e.g.,campaign-studio)"></span>Scenario 3: Path Reorganization (e.g., <code>campaign-studio</code>)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#Scenario-3:-Path-Reorganization-(e.g.,-campaign-studio)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p><strong>Example:</strong> Incoming <code>https://devops.ef.com/campaign-studio/some/flow</code> → Backend sees <code>/red/some/flow</code>.</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>
+# In campaign-studio.apisixRoutes:
+- nameSuffix: "main"
+  paths: ["/campaign-studio/*"]
+  plugins:
+    enableRewrite: true
+    rewriteStripPrefix: false
+    rewriteRegexUriFrom: "^/campaign-studio(/|\\$)(.*)"
+    rewriteRegexUriTo: "/red/$2"
+    
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h4 id="Scenario-4:-Adding-a-Fixed-Prefix-Internally-(Without-Stripping-Original-Matched-Path)"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-Scenario4:AddingaFixedPrefixInternally(WithoutStrippingOriginalMatchedPath)"></span>Scenario 4: Adding a Fixed Prefix Internally (Without Stripping Original Matched Path)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#Scenario-4:-Adding-a-Fixed-Prefix-Internally-(Without-Stripping-Original-Matched-Path)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p><strong>Example:</strong> Route matches <code>/my-app/*</code>. Incoming <code>https://devops.ef.com/my-app/user-data</code> → Backend sees <code>/internal-prefix/my-app/user-data</code>.</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>
+# In the relevant component's apisixRoutes:
+- nameSuffix: "internal-prefix-add"
+  paths: ["/my-app/*"]
+  plugins:
+    enableRewrite: true
+    rewriteStripPrefix: false
+    rewriteRegexUriFrom: "^(/my-app/.*)$" 
+    rewriteRegexUriTo: "/internal-prefix$1"
+    
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="D.-Important-Considerations-for-Rewrites"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-D.ImportantConsiderationsforRewrites"></span>D. Important Considerations for Rewrites
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#D.-Important-Considerations-for-Rewrites">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p><strong>Regex Complexity:</strong> Keep regexes efficient. Test them with an online regex tool.</p>
+ </li>
+ <li>
+  <p><strong>Interaction with Route </strong><code>paths</code><strong>:</strong> The <code>rewriteRegexUriFrom</code> matches the URI portion APISIX processes after the initial route match based on <code>paths</code>.</p>
+ </li>
+ <li>
+  <p><strong>Query Parameters:</strong> Usually passed through unless explicitly modified by <code>rewriteRegexUriTo</code>.</p>
+ </li>
+ <li>
+  <p><strong>Security:</strong> Avoid open redirects or exposing unintended backend structures.</p>
+ </li>
+</ul>
+<h3 id="E.-Testing-and-Verifying-Rewrite-Rules"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-E.TestingandVerifyingRewriteRules"></span>E. Testing and Verifying Rewrite Rules
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#E.-Testing-and-Verifying-Rewrite-Rules">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ol>
+ <li>
+  <p>Use tools like <code>curl</code> or Postman to call the original URL.</p>
+ </li>
+ <li>
+  <p>Check response status and content.</p>
+ </li>
+ <li>
+  <p>Examine backend application logs for the exact path received.</p>
+ </li>
+ <li>
+  <p>Check APISIX logs if deeper debugging is needed.</p>
+ </li>
+ <li>
+  <p>Test various inputs, including edge cases (trailing slashes, empty segments).</p>
+ </li>
+</ol>
+<h3 id="F.-Best-Practices-for-Rewrites"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-F.BestPracticesforRewrites"></span>F. Best Practices for Rewrites
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#F.-Best-Practices-for-Rewrites">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>📝 Document complex rewrites in <code>values.yaml</code> comments.</p>
+ </li>
+ <li>
+  <p>🎯 Use specific <code>paths</code> and targeted regexes.</p>
+ </li>
+ <li>
+  <p>🧪 Test extensively.</p>
+ </li>
+ <li>
+  <p>🔄 Version control your <code>values.yaml</code>.</p>
+ </li>
+ <li>
+  <p>👁️ Make incremental changes for complex rewrite scenarios.</p>
+ </li>
+</ul>
+<h2 id="Plugin-Guide:-CORS-Policy-Configuration-(cors)"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-PluginGuide:CORSPolicyConfiguration(cors)"></span>Plugin Guide: CORS Policy Configuration (<code>cors</code>)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#Plugin-Guide:-CORS-Policy-Configuration-(cors)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="A.-Purpose-&amp;-Use-Cases.2"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-A.Purpose&amp;amp;UseCases"></span>A. Purpose &amp; Use Cases
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#A.-Purpose-&amp;amp;-Use-Cases.2">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Cross-Origin Resource Sharing (CORS) is a browser security feature that restricts web pages from making requests to a different domain than the one that served the web page. The <code>cors</code> plugin in APISIX allows you to define policies for how your APIs respond to these cross-origin requests, enabling legitimate interactions from authorized web frontends.</p>
+<ul>
+ <li>
+  <p>Allowing your single-page applications (SPAs) hosted on one domain (e.g., <code>https://frontend.example.com</code>) to make API calls to your services exposed via APISIX on another domain (e.g., <code>https://api.example.com</code>).</p>
+ </li>
+ <li>
+  <p>Specifying which HTTP methods (GET, POST, PUT, etc.) and headers are permissible in cross-origin requests.</p>
+ </li>
+ <li>
+  <p>Controlling whether credentials (like cookies or authentication headers) can be sent with cross-origin requests.</p>
+ </li>
+</ul>
+<h3 id="B.-Key-Parameters-&amp;-Configuration.1"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-B.KeyParameters&amp;amp;Configuration"></span>B. Key Parameters &amp; Configuration
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#B.-Key-Parameters-&amp;amp;-Configuration.1">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>CORS behavior for a route is primarily controlled by the <code>enableCors: true/false</code> flag within its <code>plugins</code> block, which usually refers to global defaults, or by adding a specific <code>cors</code> plugin entry in <code>customPlugins</code> for finer control.</p>
+<ul>
+ <li>
+  <p><code>enableCors: true</code>: Enables CORS for the route. It will typically use the default CORS settings defined in <code>global.apisix.plugins.cors</code> in your <code>values.yaml</code>. These global settings might include:</p>
+  <ul>
+   <li>
+    <p><code>allowOrigins: "*"</code> (Allows any origin - use with caution in production for sensitive APIs) or specific origins like <code>"https://frontend.example.com"</code>.</p>
+   </li>
+   <li>
+    <p><code>allowMethods: "GET, POST, PUT, DELETE, PATCH, OPTIONS"</code> (Common set of allowed methods).</p>
+   </li>
+   <li>
+    <p><code>allowCredentials: true/false</code> (Whether to allow cookies/auth headers).</p>
+   </li>
+   <li>
+    <p><code>allowHeaders</code>, <code>exposeHeaders</code>, <code>maxAge</code>.</p>
+   </li>
+  </ul>
+ </li>
+ <li>
+  <p><code>enableCors: false</code>: Explicitly disables CORS handling by APISIX for this route. The browser's same-origin policy will apply strictly.</p>
+ </li>
+ <li>
+  <p><strong>Via </strong><code>customPlugins</code><strong> (for route-specific overrides):</strong> If you need to override global defaults significantly for one route, you might define the <code>cors</code> plugin directly:</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>
+plugins:
+  # enableCors might be false or absent if using customPlugins for CORS
+  customPlugins:
+    - name: "cors"
+      enable: true
+      config:
+        allow_origins: "https://specific-origin.com,https://another-origin.com" # APISIX native uses 'allow_origins'
+        allow_methods: "GET, POST, OPTIONS"
+        allow_credentials: true
+        # max_age: 3600 # Example: How long preflight response can be cached (seconds)
+        # allow_headers: "Content-Type, Authorization, X-Custom-Header"
+        # expose_headers: "X-Custom-Response-Header, X-Pagination-Count"
+            
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+  <p><em>(Note: The parameter names in APISIX's native </em><code>cors</code><em> plugin schema are like </em><code>allow_origins</code><em>, </em><code>allow_methods</code><em>. Your </em><code>global.apisix.plugins.cors</code><em> uses camelCase like </em><code>allowOrigins</code><em>, which the Helm template might translate. If using </em><code>customPlugins</code><em> directly, prefer the native APISIX parameter names unless your template explicitly handles translation.)</em></p>
+ </li>
+</ul>
+<h3 id="C.-How-to-Configure.1"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-C.HowtoConfigure"></span>C. How to Configure
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#C.-How-to-Configure.1">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p><strong>Using the boolean flag (relies on global defaults):</strong></p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>
+# Example: Enabling CORS for a route in component 'my-service'
+my-service:
+  apisixRoutes:
+    - nameSuffix: "data-api"
+      paths: ["/my-service/data/*"]
+      plugins:
+        enableCors: true  # Enables CORS using global defaults from values.yaml
+    
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p><strong>Using </strong><code>customPlugins</code><strong> for specific settings (example):</strong></p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>
+# Example: Route with custom CORS settings
+my-service:
+  apisixRoutes:
+    - nameSuffix: "special-cors-api"
+      paths: ["/my-service/special/*"]
+      plugins:
+        # enableCors: false # Could be false if customPlugins provides the full CORS config
+        customPlugins:
+          - name: "cors"
+            enable: true
+            config:
+              allow_origins: "https://partner-app.com"
+              allow_methods: "GET, OPTIONS"
+              allow_credentials: false 
+    
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="D.-Important-Considerations.1"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-D.ImportantConsiderations"></span>D. Important Considerations
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#D.-Important-Considerations.1">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p><strong>Security:</strong> Be extremely cautious with <code>allow_origins: "*"</code>. For APIs requiring authentication or handling sensitive data, always specify the exact, trusted origins.</p>
+ </li>
+ <li>
+  <p><strong>Preflight Requests (</strong><code>OPTIONS</code><strong>):</strong> Complex cross-origin requests (e.g., with custom headers, methods like PUT/DELETE) trigger a browser "preflight" <code>OPTIONS</code> request. Your APISIX route and CORS policy must correctly handle these. The <code>cors</code> plugin usually manages this by responding to <code>OPTIONS</code> requests with appropriate CORS headers if the origin and method are allowed. Ensure <code>OPTIONS</code> is in your <code>allow_methods</code> if needed.</p>
+ </li>
+ <li>
+  <p><code>allow_credentials: true</code><strong>:</strong> If set, <code>allow_origins</code> *cannot* be a wildcard (<code>"*"</code>); it must be one or more specific origins.</p>
+ </li>
+</ul>
+<h3 id="E.-What-to-Expect-After-Modification.1"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-E.WhattoExpectAfterModification"></span>E. What to Expect After Modification
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#E.-What-to-Expect-After-Modification.1">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>Web applications from the configured allowed origins should be able to make successful cross-origin requests to the APISIX route.</p>
+ </li>
+ <li>
+  <p>If CORS is misconfigured or an origin is not permitted, the browser will block the request, and errors will be visible in the browser's developer console (often related to 'Access-Control-Allow-Origin' header missing or not matching).</p>
+ </li>
+</ul>
+<h2 id="Plugin-Guide:-IP-Access-Control-(ip-restriction)"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-PluginGuide:IPAccessControl(ip-restriction)"></span>Plugin Guide: IP Access Control (<code>ip-restriction</code>)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#Plugin-Guide:-IP-Access-Control-(ip-restriction)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="A.-Purpose-&amp;-Use-Cases.3"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-A.Purpose&amp;amp;UseCases"></span>A. Purpose &amp; Use Cases
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#A.-Purpose-&amp;amp;-Use-Cases.3">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>The <code>ip-restriction</code> plugin allows you to control access to your APIs based on the client's IP address. This is a valuable security measure for:</p>
+<ul>
+ <li>
+  <p>Allowing access only from specific trusted IP addresses or internal network ranges (whitelisting).</p>
+ </li>
+ <li>
+  <p>Blocking access from known malicious IP addresses or ranges (blacklisting).</p>
+ </li>
+ <li>
+  <p>Protecting sensitive administrative endpoints or internal-only APIs.</p>
+ </li>
+</ul>
+<h3 id="B.-Key-Parameters-&amp;-Configuration.2"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-B.KeyParameters&amp;amp;Configuration"></span>B. Key Parameters &amp; Configuration
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#B.-Key-Parameters-&amp;amp;-Configuration.2">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>This plugin is configured within the <code>customPlugins</code> list for a specific route.</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>
+# Example customPlugins entry for ip-restriction
+customPlugins:
+  - name: "ip-restriction"
+    enable: true # Set to true to activate
+    config:
+      # Whitelist specific IPs or CIDR ranges
+      whitelist:
+        - "192.168.1.100"
+        - "10.0.0.0/8" 
+      # OR / AND Blacklist specific IPs or CIDR ranges
+      # blacklist:
+      #   - "1.2.3.4"
+      #   - "5.0.0.0/16"
+      # message: "Your IP address is not allowed." # Optional custom message for rejected requests
+    
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<ul>
+ <li>
+  <p><code>enable: true/false</code>: Enables or disables this plugin instance.</p>
+ </li>
+ <li>
+  <p><code>config.whitelist</code>: (Optional) An array of IP addresses or CIDR ranges. If present, only requests from these IPs will be allowed (unless also in blacklist).</p>
+ </li>
+ <li>
+  <p><code>config.blacklist</code>: (Optional) An array of IP addresses or CIDR ranges. Requests from these IPs will be denied. Blacklist takes precedence.</p>
+ </li>
+ <li>
+  <p><code>config.message</code>: (Optional) A custom message to return when a request is rejected (default: "Your IP address is not allowed").</p>
+ </li>
+</ul>
+<h3 id="C.-How-to-Configure.2"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-C.HowtoConfigure"></span>C. How to Configure
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#C.-How-to-Configure.2">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Add or modify the <code>ip-restriction</code> entry in the <code>customPlugins</code> list for the desired route. Ensure the <code>real-ip</code> plugin runs before it if APISIX is behind a proxy.</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>
+# In a component's apisixRoutes:
+- nameSuffix: "internal-tool-access"
+  paths: ["/internal-tools/*"]
+  plugins:
+    enableAuth: true # Usually good to have auth too
+    customPlugins:
+      - name: "real-ip" 
+        enable: true
+        config:
+          source: "X-Forwarded-For"
+          trusted_addresses: [""]
+      - name: "ip-restriction"
+        enable: true
+        config:
+          whitelist:
+            - "203.0.113.5" 
+            - "192.168.10.0/24" # Office network
+    
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="D.-Important-Considerations.2"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-D.ImportantConsiderations"></span>D. Important Considerations
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#D.-Important-Considerations.2">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p><code>real-ip</code><strong> Plugin:</strong> Crucial for accuracy. Ensure it's configured with correct <code>trusted_addresses</code> and listed before <code>ip-restriction</code> in <code>customPlugins</code>.</p>
+ </li>
+ <li>
+  <p><strong>Specificity:</strong> Use the most specific CIDR ranges possible.</p>
+ </li>
+ <li>
+  <p><strong>Maintenance:</strong> Regularly review and update IP lists.</p>
+ </li>
+</ul>
+<h3 id="E.-What-to-Expect-After-Modification.2"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-E.WhattoExpectAfterModification"></span>E. What to Expect After Modification
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#E.-What-to-Expect-After-Modification.2">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>Requests from whitelisted IPs (and not blacklisted) will pass. Others will be blocked with an HTTP 403 Forbidden (by default).</p>
+ </li>
+</ul>
+<h2 id="Plugin-Guide:-Request-Body-Size-Limits-(client-control)"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-PluginGuide:RequestBodySizeLimits(client-control)"></span>Plugin Guide: Request Body Size Limits (<code>client-control</code>)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#Plugin-Guide:-Request-Body-Size-Limits-(client-control)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="A.-Purpose-&amp;-Use-Cases.4"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-A.Purpose&amp;amp;UseCases"></span>A. Purpose &amp; Use Cases
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#A.-Purpose-&amp;amp;-Use-Cases.4">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>The <code>client-control</code> plugin can limit the maximum size of a client request body, helping to:</p>
+<ul>
+ <li>
+  <p>Prevent DoS attacks using overly large request bodies.</p>
+ </li>
+ <li>
+  <p>Enforce application-specific limits (e.g., max file upload size).</p>
+ </li>
+</ul>
+<h3 id="B.-Key-Parameters-&amp;-Configuration.3"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-B.KeyParameters&amp;amp;Configuration"></span>B. Key Parameters &amp; Configuration
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#B.-Key-Parameters-&amp;amp;-Configuration.3">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Configured in <code>customPlugins</code>. The main parameter is <code>max_body_size</code>.</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>
+customPlugins:
+  - name: "client-control"
+    enable: true
+    config:
+      max_body_size: 5242880 # Bytes (e.g., 5 * 1024 * 1024 = 5MB)
+    
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<ul>
+ <li>
+  <p><code>config.max_body_size</code>: Maximum allowed request body size in bytes.</p>
+ </li>
+</ul>
+<h3 id="C.-How-to-Configure.3"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-C.HowtoConfigure"></span>C. How to Configure
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#C.-How-to-Configure.3">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>
+# In a component's apisixRoutes (e.g., file-engine):
+- nameSuffix: "uploads"
+  paths: ["/files/upload/*"]
+  plugins:
+    customPlugins:
+      - name: "client-control"
+        enable: true
+        config:
+          max_body_size: 10485760 # 10MB
+    
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="D.-Important-Considerations.3"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-D.ImportantConsiderations"></span>D. Important Considerations
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#D.-Important-Considerations.3">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p><strong>Units:</strong> <code>max_body_size</code> is in bytes.</p>
+ </li>
+ <li>
+  <p><strong>Application Needs:</strong> Set based on legitimate application requirements.</p>
+ </li>
+ <li>
+  <p><strong>Global Limits:</strong> This per-route limit might also be constrained by global APISIX or web server (Nginx) settings (e.g., <code>client_max_body_size</code> in Nginx context, or <code>apisix.proxy_buffer_size</code>).</p>
+ </li>
+</ul>
+<h3 id="E.-What-to-Expect-After-Modification.3"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-E.WhattoExpectAfterModification"></span>E. What to Expect After Modification
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#E.-What-to-Expect-After-Modification.3">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>Requests with bodies exceeding <code>max_body_size</code> will be rejected by APISIX with an HTTP 413 (Payload Too Large) error.</p>
+ </li>
+</ul>
+<h2 id="Plugin-Guide:-Custom-Error-Page-Handling-(error-page-rewrite)"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-PluginGuide:CustomErrorPageHandling(error-page-rewrite)"></span>Plugin Guide: Custom Error Page Handling (<code>error-page-rewrite</code>)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#Plugin-Guide:-Custom-Error-Page-Handling-(error-page-rewrite)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="A.-Purpose-&amp;-Use-Cases.5"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-A.Purpose&amp;amp;UseCases"></span>A. Purpose &amp; Use Cases
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#A.-Purpose-&amp;amp;-Use-Cases.5">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Customize responses for errors generated by upstream services or APISIX itself (e.g., 404, 500, 502).</p>
+<ul>
+ <li>
+  <p>Provide branded, user-friendly error pages.</p>
+ </li>
+ <li>
+  <p>Return structured error messages (e.g., JSON) instead of default server pages.</p>
+ </li>
+ <li>
+  <p>Hide potentially sensitive details from default error messages.</p>
+ </li>
+</ul>
+<h3 id="B.-Key-Parameters-&amp;-Configuration.4"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-B.KeyParameters&amp;amp;Configuration"></span>B. Key Parameters &amp; Configuration
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#B.-Key-Parameters-&amp;amp;-Configuration.4">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Configured in <code>customPlugins</code>.</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>
+customPlugins:
+  - name: "error-page-rewrite"
+    enable: true
+    config:
+      status_codes: [403, 404, 500, 502] # Upstream codes to intercept
+      rewrites:
+        - status_code: 404
+          body: "&lt;html&gt;&lt;title&gt;Not Found&lt;/title&gt;&lt;body&gt;&lt;h1&gt;Custom 404: Resource not here!&lt;/h1&gt;&lt;p&gt;Request ID: $request_id&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"
+          headers:
+            Content-Type: "text/html; charset=utf-8"
+        - status_code: 500
+          body: "{\"error_code\": \"E500\", \"message\": \"An internal error occurred. Please contact support with Request ID: $request_id\"}"
+          headers:
+            Content-Type: "application/json"
+        # Example redirect for 502 to an internal error page handler
+        # - status_code: 502
+        #   target_uri: "/_internal_error_page_handler?code=502&amp;id=$request_id" 
+        #   # Assumes another route handles /_internal_error_page_handler
+    
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<ul>
+ <li>
+  <p><code>config.status_codes</code>: Array of upstream HTTP status codes to act upon.</p>
+ </li>
+ <li>
+  <p><code>config.rewrites</code>: Array of rules, each with:</p>
+  <ul>
+   <li>
+    <p><code>status_code</code>: The specific code this rule handles.</p>
+   </li>
+   <li>
+    <p><code>body</code>: (Optional) The custom response body (HTML, JSON, text). Can use APISIX variables like <code>$request_id</code>.</p>
+   </li>
+   <li>
+    <p><code>headers</code>: (Optional) Headers to set for the custom error response.</p>
+   </li>
+   <li>
+    <p><code>target_uri</code>: (Optional) Instead of a body, internally proxy to this URI.</p>
+   </li>
+  </ul>
+ </li>
+</ul>
+<h3 id="C.-Important-Considerations"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-C.ImportantConsiderations"></span>C. Important Considerations
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#C.-Important-Considerations">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p><strong>HTML Escaping:</strong> YAML requires proper escaping or multi-line strings for HTML in the <code>body</code>.</p>
+ </li>
+ <li>
+  <p><strong>Content-Type Header:</strong> Set appropriately if providing a custom <code>body</code>.</p>
+ </li>
+ <li>
+  <p><strong>Rich Pages:</strong> For complex error pages, using <code>target_uri</code> to an internally served static page is often better than large inline HTML bodies.</p>
+ </li>
+</ul>
+<h3 id="E.-What-to-Expect-After-Modification.4"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-E.WhattoExpectAfterModification"></span>E. What to Expect After Modification
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#E.-What-to-Expect-After-Modification.4">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>Clients will receive your custom error responses/pages when upstream services return the specified error codes through this route.</p>
+ </li>
+</ul>
+<h2 id="Plugin-Guide:-Response-Header-Modification-(response-rewrite)"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-PluginGuide:ResponseHeaderModification(response-rewrite)"></span>Plugin Guide: Response Header Modification (<code>response-rewrite</code>)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#Plugin-Guide:-Response-Header-Modification-(response-rewrite)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="A.-Purpose-&amp;-Use-Cases.6"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-A.Purpose&amp;amp;UseCases"></span>A. Purpose &amp; Use Cases
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#A.-Purpose-&amp;amp;-Use-Cases.6">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Modify headers of the response from the upstream service before it's sent to the client.</p>
+<ul>
+ <li>
+  <p>Adding security headers (<code>X-Frame-Options</code>, <code>Strict-Transport-Security</code>, <code>X-XSS-Protection</code>, etc.).</p>
+ </li>
+ <li>
+  <p>Adding custom informational or debugging headers.</p>
+ </li>
+ <li>
+  <p>Removing sensitive headers from the backend response (e.g., <code>X-Powered-By</code>).</p>
+ </li>
+</ul>
+<h3 id="B.-Key-Parameters-&amp;-Configuration.5"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-B.KeyParameters&amp;amp;Configuration"></span>B. Key Parameters &amp; Configuration
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#B.-Key-Parameters-&amp;amp;-Configuration.5">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Configured in <code>customPlugins</code>.</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>
+customPlugins:
+  - name: "response-rewrite"
+    enable: true
+    config:
+      headers:
+        set: # Overwrites or sets header
+          X-Content-Type-Options: "nosniff"
+          My-Custom-Header: "Value"
+        # add: # Adds header, possibly creating duplicates if it exists
+        #   Cache-Control: "no-cache"
+        # remove: # List of headers to remove
+        #   - "Server" 
+    
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<ul>
+ <li>
+  <p><code>config.headers.set</code>: Dictionary of headers to set/overwrite.</p>
+ </li>
+ <li>
+  <p><code>config.headers.add</code>: Dictionary of headers to add (can result in multiple headers of the same name).</p>
+ </li>
+ <li>
+  <p><code>config.headers.remove</code>: List of header names to remove.</p>
+ </li>
+</ul>
+<h3 id="C.-Important-Considerations.1"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-C.ImportantConsiderations"></span>C. Important Considerations
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#C.-Important-Considerations.1">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p><strong>Overwriting:</strong> <code>set</code> overwrites existing headers from the backend.</p>
+ </li>
+ <li>
+  <p><strong>Security:</strong> A good place to enforce common security headers.</p>
+ </li>
+ <li>
+  <p><strong>Caching:</strong> Be cautious when modifying caching headers (<code>Cache-Control</code>, <code>Expires</code>).</p>
+ </li>
+</ul>
+<h3 id="D.-What-to-Expect-After-Modification"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-D.WhattoExpectAfterModification"></span>D. What to Expect After Modification
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#D.-What-to-Expect-After-Modification">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>Client receives responses with the modified header set. Verified via browser dev tools or <code>curl -v</code>.</p>
+ </li>
+</ul>
+<h2 id="Plugin-Guide:-Rate-Limiting-(limit-count)"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-PluginGuide:RateLimiting(limit-count)"></span>Plugin Guide: Rate Limiting (<code>limit-count</code>)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#Plugin-Guide:-Rate-Limiting-(limit-count)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="A.-Purpose-&amp;-Use-Cases.7"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-A.Purpose&amp;amp;UseCases"></span>A. Purpose &amp; Use Cases
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#A.-Purpose-&amp;amp;-Use-Cases.7">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>The <code>limit-count</code> plugin restricts request rates for a given key (e.g., client IP, user ID, API key) over a specified time window. This is crucial for:</p>
+<ul>
+ <li>
+  <p>Preventing DoS/DDoS attacks by limiting traffic from abusive sources.</p>
+ </li>
+ <li>
+  <p>Ensuring fair usage of API resources.</p>
+ </li>
+ <li>
+  <p>Protecting backend services from traffic spikes.</p>
+ </li>
+</ul>
+<h3 id="B.-Key-Parameters-&amp;-Configuration.6"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-B.KeyParameters&amp;amp;Configuration"></span>B. Key Parameters &amp; Configuration
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#B.-Key-Parameters-&amp;amp;-Configuration.6">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Configured within the <code>customPlugins</code> list.</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>
+customPlugins:
+  - name: "limit-count"
+    enable: true
+    config:
+      count: 100                     # Max requests
+      time_window: 60                # In seconds (e.g., 100 req/60 sec)
+      key_type: "var"                # e.g., "var", "var_combination"
+      key: "remote_addr"             # Key to limit on (e.g., client IP).
+      rejected_code: 429             # HTTP status for rejection
+      rejected_msg: "{\"error\":\"Too many requests\"}" # JSON response
+      show_limit_quota_header: true  # Adds X-RateLimit-* headers
+      # policy: "local"              # For cluster-wide, consider "redis"
+    
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<ul>
+ <li>
+  <p>See detailed parameter explanations in the dedicated "Customizing IP Rate Limiting for CCM's Internal WCM Access Route" guide or section 2 of this guide. Key parameters include <code>count</code>, <code>time_window</code>, <code>key_type</code>, <code>key</code>, <code>rejected_code</code>, <code>policy</code>.</p>
+ </li>
+</ul>
+<h3 id="C.-How-to-Configure.4"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-C.HowtoConfigure"></span>C. How to Configure
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#C.-How-to-Configure.4">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Add or modify the <code>limit-count</code> entry in the <code>customPlugins</code> list for the target route. Ensure the <code>real-ip</code> plugin is active before it if keying on <code>remote_addr</code> and APISIX is behind a proxy.</p>
+<h3 id="D.-Important-Considerations.4"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-D.ImportantConsiderations"></span>D. Important Considerations
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#D.-Important-Considerations.4">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p><strong>Key Selection:</strong> Crucial for effective limiting. Use <code>real-ip</code> for IP-based.</p>
+ </li>
+ <li>
+  <p><strong>Policy (</strong><code>local</code><strong> vs. </strong><code>redis</code><strong>):</strong> <code>local</code> policy is per-APISIX-node. For strict cluster-wide limits with multiple APISIX nodes, use <code>redis</code> (requires a Redis setup).</p>
+ </li>
+ <li>
+  <p><strong>User Communication:</strong> Inform API consumers of rate limits.</p>
+ </li>
+</ul>
+<h3 id="E.-What-to-Expect-After-Modification.5"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-E.WhattoExpectAfterModification"></span>E. What to Expect After Modification
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#E.-What-to-Expect-After-Modification.5">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>Requests exceeding the limit for a key are rejected (e.g., with HTTP 429).</p>
+ </li>
+ <li>
+  <p><code>X-RateLimit-*</code> headers provide quota info to clients if <code>show_limit_quota_header: true</code>.</p>
+ </li>
+</ul>
+<h2 id="Feature-Guide:-Websocket-Support"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-FeatureGuide:WebsocketSupport"></span>Feature Guide: Websocket Support
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#Feature-Guide:-Websocket-Support">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="A.-Purpose-&amp;-Use-Cases.8"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-A.Purpose&amp;amp;UseCases"></span>A. Purpose &amp; Use Cases
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#A.-Purpose-&amp;amp;-Use-Cases.8">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Websockets enable full-duplex, real-time communication over a single TCP connection, used for applications like live chat, notifications, and data streaming. APISIX can proxy WebSocket traffic.</p>
+<h3 id="B.-Key-Parameters-&amp;-Configuration.7"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-B.KeyParameters&amp;amp;Configuration"></span>B. Key Parameters &amp; Configuration
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#B.-Key-Parameters-&amp;amp;-Configuration.7">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Enabled at the route level via <code>enableWebsocket: true</code>. This flag is usually a direct key in the route definition (as seen for <code>web-channel-manager</code>) or sometimes placed within the <code>plugins</code> block for organizational purposes by the Helm template (as seen for <code>agent-manager</code>).</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>
+# Example route enabling websockets:
+- nameSuffix: "my-websocket-service"
+  paths: ["/ws-app/*"]
+  enableWebsocket: true  # Enables websocket proxying
+  websocketTimeout:    # Optional: specific timeouts
+    connect: "5s"
+    send: "3600s"
+    read: "3600s"
+  plugins:
+    # ... other plugins like auth (if needed for handshake) ...
+    
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<ul>
+ <li>
+  <p><code>enableWebsocket: true/false</code>: Toggles WebSocket proxying.</p>
+ </li>
+ <li>
+  <p><code>websocketTimeout</code><strong> (Optional)</strong>: Dictionary for <code>connect</code>, <code>send</code>, <code>read</code> timeouts for the proxied WebSocket connection. Useful for long-lived connections. (Note: actual underlying APISIX/Nginx parameters might vary based on template).</p>
+ </li>
+</ul>
+<h3 id="C.-Important-Considerations.2"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-C.ImportantConsiderations"></span>C. Important Considerations
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#C.-Important-Considerations.2">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p><strong>Backend Support:</strong> The backend service must support WebSockets on the proxied path.</p>
+ </li>
+ <li>
+  <p><strong>Timeouts:</strong> Default HTTP timeouts are often too short for WebSockets. Configure appropriate timeouts.</p>
+ </li>
+ <li>
+  <p><strong>Intermediate Proxies:</strong> Ensure all load balancers/proxies between client and APISIX, and APISIX and backend, support WebSocket protocol upgrade and long-lived connections.</p>
+ </li>
+</ul>
+<h3 id="D.-What-to-Expect-After-Modification.1"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-D.WhattoExpectAfterModification"></span>D. What to Expect After Modification
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#D.-What-to-Expect-After-Modification.1">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>If <code>true</code>, clients can establish WebSocket connections via APISIX. If <code>false</code>, upgrade requests will likely fail.</p>
+ </li>
+</ul>
+<h2 id="Understanding-the-real-ip-Plugin"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-Understandingthereal-ipPlugin"></span>Understanding the <code>real-ip</code> Plugin
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#Understanding-the-real-ip-Plugin">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="A.-Purpose-&amp;-Use-Cases.9"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-A.Purpose&amp;amp;UseCases"></span>A. Purpose &amp; Use Cases
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#A.-Purpose-&amp;amp;-Use-Cases.9">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>When APISIX is behind other load balancers or reverse proxies (like an Ingress controller in Kubernetes), the client IP address seen by APISIX (<code>$remote_addr</code>) is often the IP of the last proxy, not the original external client. The <code>real-ip</code> plugin extracts the true client IP from request headers (e.g., <code>X-Forwarded-For</code>).</p>
+<p>This is essential for: Accurate IP-based rate limiting, IP restriction policies, correct logging, and any backend logic relying on the client's IP.</p>
+<h3 id="B.-Key-Parameters-&amp;-Configuration.8"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-B.KeyParameters&amp;amp;Configuration"></span>B. Key Parameters &amp; Configuration
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#B.-Key-Parameters-&amp;amp;-Configuration.8">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Configured in <code>customPlugins</code>.</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>
+customPlugins:
+  - name: "real-ip"
+    enable: true
+    config:
+      source: "X-Forwarded-For" # Header to check (common: "X-Real-IP", "True-Client-IP")
+      trusted_addresses: ["10.0.0.0/8", "172.16.0.0/12", ""] # CIDRs of trusted proxies
+    
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<ul>
+ <li>
+  <p><code>config.source</code>: Request header to read the IP from (default <code>"X-Real-IP"</code>).</p>
+ </li>
+ <li>
+  <p><code>config.trusted_addresses</code>: Array of IP/CIDR ranges of proxies that are trusted to set the <code>source</code> header correctly. APISIX uses this to find the first non-trusted IP in the header value.</p>
+ </li>
+</ul>
+<h3 id="C.-Important-Considerations.3"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-C.ImportantConsiderations"></span>C. Important Considerations
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#C.-Important-Considerations.3">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p><strong>Order:</strong> Must be configured to run *before* any other plugins that depend on the client's real IP (e.g., <code>ip-restriction</code>, <code>limit-count</code> using <code>remote_addr</code>).</p>
+ </li>
+ <li>
+  <p><code>trusted_addresses</code><strong> Configuration:</strong> This is critical for security. It should include the IP ranges of your Ingress controller, load balancers, and any other proxies in front of APISIX. Incorrect configuration can lead to IP spoofing.</p>
+ </li>
+</ul>
+<h3 id="D.-What-to-Expect-After-Enablement"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-D.WhattoExpectAfterEnablement"></span>D. What to Expect After Enablement
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#D.-What-to-Expect-After-Enablement">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>The <code>$remote_addr</code> variable in APISIX (and subsequently available to other plugins and the backend) will reflect the actual client IP.</p>
+ </li>
+</ul>
+<h2 id="Understanding-the-enableTrailingSlashRedirect-Custom-Flag"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-UnderstandingtheenableTrailingSlashRedirectCustomFlag"></span>Understanding the <code>enableTrailingSlashRedirect</code> Custom Flag
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#Understanding-the-enableTrailingSlashRedirect-Custom-Flag">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="A.-Purpose-&amp;-Observation"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-A.Purpose&amp;amp;Observation"></span>A. Purpose &amp; Observation
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#A.-Purpose-&amp;amp;-Observation">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>In several of your Helm chart <code>values.yaml</code> files (e.g., "Campaigns," "Surveys"), a custom flag <code>enableTrailingSlashRedirect: true/false</code> appears in the <code>plugins</code> block of <code>apisixRoutes</code> definitions.</p>
+<p>This is **not a standard, built-in APISIX plugin name**. It is a custom boolean flag used by your specific Helm chart's templating logic. Its purpose is likely to conditionally enable a specific behavior for handling trailing slashes in URLs (e.g., redirecting <code>/path/</code> to <code>/path</code>, or vice-versa).</p>
+<h3 id="B.-Likely-Underlying-APISIX-Mechanism"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-B.LikelyUnderlyingAPISIXMechanism"></span>B. Likely Underlying APISIX Mechanism
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#B.-Likely-Underlying-APISIX-Mechanism">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>If <code>enableTrailingSlashRedirect: true</code> triggers an action, your Helm templates likely configure one of these APISIX mechanisms:</p>
+<ul>
+ <li>
+  <p><strong>The APISIX </strong><code>redirect</code><strong> Plugin:</strong> This plugin can perform various redirects, potentially configured by the template based on this flag to handle trailing slashes.</p>
+ </li>
+ <li>
+  <p><strong>Custom Nginx Configuration Snippets:</strong> The template might inject raw Nginx directives (e.g., <code>rewrite</code> rules) into the APISIX configuration for this route.</p>
+ </li>
+</ul>
+<h3 id="C.-How-to-Interpret-and-&quot;Customize&quot;"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-C.HowtoInterpretand&amp;quot;Customize&amp;quot;"></span>C. How to Interpret and "Customize"
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#C.-How-to-Interpret-and-&amp;quot;Customize&amp;quot;">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p><strong>Examine Helm Templates:</strong> To know precisely what this flag does, the Helm chart templates that generate the APISIX route configurations must be inspected. This will reveal how <code>enableTrailingSlashRedirect: true</code> translates into actual APISIX configuration.</p>
+ </li>
+ <li>
+  <p><strong>Observed Usage:</strong> For example, in <code>campaign-studio</code>, it was set to <code>true</code>, implying a redirect related to trailing slashes is active for that route. In many other connector routes, it was <code>false</code>.</p>
+ </li>
+ <li>
+  <p><strong>Customization:</strong></p>
+  <ul>
+   <li>
+    <p>Toggling this flag between <code>true</code> and <code>false</code> in <code>values.yaml</code> is the primary way to control the behavior it enables.</p>
+   </li>
+   <li>
+    <p>If more complex redirect logic is needed than this simple flag allows, you would need to understand the template's implementation or potentially configure the APISIX <code>redirect</code> plugin directly via <code>customPlugins</code> (if the template allows this to override or supplement the flag's behavior).</p>
+   </li>
+  </ul>
+ </li>
+</ul>
+<h3 id="D.-What-to-Expect"><span id="ComprehensiveGuidetoCustomizeAPISIXPlugins&amp;amp;FeaturesviaHelm-D.WhattoExpect"></span>D. What to Expect
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe#D.-What-to-Expect">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>If <code>enableTrailingSlashRedirect: true</code> (and the template implements a redirect): Requests to paths might be automatically redirected to a canonical version either with or without a trailing slash, depending on the specific redirect logic. This is often used for SEO or to ensure URL consistency.</p>
+ </li>
+ <li>
+  <p>If <code>enableTrailingSlashRedirect: false</code>: No specific trailing slash redirect logic (as controlled by *this specific flag*) will be active for that route. Standard APISIX or backend application behavior for trailing slashes will apply.</p>
+ </li>
+</ul>
+<p><em>As this is a custom flag in your Helm setup, its exact effect is defined by your internal Helm chart templates.</em></p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="4a952abb4393e159-120" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="4a952abb4393e159-120">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Customize IP-based Rate Limiting for CCM&#39;s Internal WCM Access Route</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/cx/4.9/api-authentication-integration-guide">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">API Authentication - Integration Guide</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

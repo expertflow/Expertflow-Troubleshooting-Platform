@@ -1,0 +1,3559 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_2b95269678130853d2643a08a1bf56ab75ff494d943aa62d28b8a59202ae103f" data-confluence-content-id="976292088"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/cx/4.8/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="CX">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>Using Keycloak for Superset Authentication | Expertflow CX</title>
+		<meta property="og:title" content="Using Keycloak for Superset Authentication | Expertflow CX">
+		<meta property="twitter:title" content="Using Keycloak for Superset Authentication | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/cx/4.8/using-keycloak-for-superset-authentication">
+		<meta property="og:url" content="https://docs.expertflow.com/cx/4.8/using-keycloak-for-superset-authentication">
+
+		<meta name="description" content="Objective: To replace the default authentication process of Superset with Keycloak. Since we use Keycloak as IAM solution for all the products of EF, we must p…">
+		<meta property="og:description" content="Objective: To replace the default authentication process of Superset with Keycloak. Since we use Keycloak as IAM solution for all the products of EF, we must p…">
+		<meta property="twitter:description" content="Objective: To replace the default authentication process of Superset with Keycloak. Since we use Keycloak as IAM solution for all the products of EF, we must p…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2025-03-19T12:38:42.710Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": true
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.js"></script>
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="7e94dfcca0ee4e88-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="7e94dfcca0ee4e88-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="7e94dfcca0ee4e88-19">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="7e94dfcca0ee4e88-19" name="version" onchange="self.location.assign(this.value)" >
+				<option id="7e94dfcca0ee4e88-3"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="7e94dfcca0ee4e88-4"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="7e94dfcca0ee4e88-5"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="7e94dfcca0ee4e88-6"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="7e94dfcca0ee4e88-7"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="7e94dfcca0ee4e88-8"  value="/cx/4.10"  >
+					4.10
+				</option>
+				<option id="7e94dfcca0ee4e88-9"  value="/cx/4.9/using-keycloak-for-superset-authentication"  >
+					4.9
+				</option>
+				<option id="7e94dfcca0ee4e88-10"  value="/cx/4.8/using-keycloak-for-superset-authentication"  selected="">
+					4.8
+				</option>
+				<option id="7e94dfcca0ee4e88-11"  value="/cx/4.7/using-keycloak-for-superset-authentication"  >
+					4.7
+				</option>
+				<option id="7e94dfcca0ee4e88-12"  value="/cx/4.6/using-keycloak-for-superset-authentication"  >
+					4.6
+				</option>
+				<option id="7e94dfcca0ee4e88-13"  value="/cx/4.5.3/using-keycloak-for-superset-authentication"  >
+					4.5.3
+				</option>
+				<option id="7e94dfcca0ee4e88-14"  value="/cx/4.5.2/using-keycloak-for-superset-authentication"  >
+					4.5.2
+				</option>
+				<option id="7e94dfcca0ee4e88-15"  value="/cx/4.5.1/using-keycloak-for-superset-authentication"  >
+					4.5.1
+				</option>
+				<option id="7e94dfcca0ee4e88-16"  value="/cx/4.5"  >
+					4.5
+				</option>
+				<option id="7e94dfcca0ee4e88-17"  value="/cx/4.4"  >
+					4.4
+				</option>
+				<option id="7e94dfcca0ee4e88-18"  value="/cx/4.3"  >
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('7e94dfcca0ee4e88-19');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-7e94dfcca0ee4e88-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-7e94dfcca0ee4e88-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-7e94dfcca0ee4e88-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="7e94dfcca0ee4e88-20" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="7e94dfcca0ee4e88-20">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-7e94dfcca0ee4e88-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-7e94dfcca0ee4e88-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="7e94dfcca0ee4e88-37">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="7e94dfcca0ee4e88-37" name="version" onchange="self.location.assign(this.value)" >
+				<option id="7e94dfcca0ee4e88-21"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="7e94dfcca0ee4e88-22"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="7e94dfcca0ee4e88-23"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="7e94dfcca0ee4e88-24"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="7e94dfcca0ee4e88-25"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="7e94dfcca0ee4e88-26"  value="/cx/4.10"  >
+					4.10
+				</option>
+				<option id="7e94dfcca0ee4e88-27"  value="/cx/4.9/using-keycloak-for-superset-authentication"  >
+					4.9
+				</option>
+				<option id="7e94dfcca0ee4e88-28"  value="/cx/4.8/using-keycloak-for-superset-authentication"  selected="">
+					4.8
+				</option>
+				<option id="7e94dfcca0ee4e88-29"  value="/cx/4.7/using-keycloak-for-superset-authentication"  >
+					4.7
+				</option>
+				<option id="7e94dfcca0ee4e88-30"  value="/cx/4.6/using-keycloak-for-superset-authentication"  >
+					4.6
+				</option>
+				<option id="7e94dfcca0ee4e88-31"  value="/cx/4.5.3/using-keycloak-for-superset-authentication"  >
+					4.5.3
+				</option>
+				<option id="7e94dfcca0ee4e88-32"  value="/cx/4.5.2/using-keycloak-for-superset-authentication"  >
+					4.5.2
+				</option>
+				<option id="7e94dfcca0ee4e88-33"  value="/cx/4.5.1/using-keycloak-for-superset-authentication"  >
+					4.5.1
+				</option>
+				<option id="7e94dfcca0ee4e88-34"  value="/cx/4.5"  >
+					4.5
+				</option>
+				<option id="7e94dfcca0ee4e88-35"  value="/cx/4.4"  >
+					4.4
+				</option>
+				<option id="7e94dfcca0ee4e88-36"  value="/cx/4.3"  >
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('7e94dfcca0ee4e88-37');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7e94dfcca0ee4e88-38" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7e94dfcca0ee4e88-39" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7e94dfcca0ee4e88-40" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7e94dfcca0ee4e88-41" href="/cx/4.8/cx-release-history" >CX Release History</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7e94dfcca0ee4e88-42"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7e94dfcca0ee4e88-42" href="/cx/4.8/cx-release-notes" >CX Release Notes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7e94dfcca0ee4e88-44" href="/cx/4.8/expertflow-cx-data-sheet" >CX Data Sheet</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7e94dfcca0ee4e88-45" href="/cx/4.8/hc-3-x-vs-expertflow-cx-features-comparison" >HC 3.x vs Expertflow CX - Features Comparison</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7e94dfcca0ee4e88-46"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7e94dfcca0ee4e88-46" href="/cx/4.8/conversation-studio" >Conversation Studio</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7e94dfcca0ee4e88-48"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7e94dfcca0ee4e88-48" href="/cx/4.8/customer-identities" >Customer</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7e94dfcca0ee4e88-50"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7e94dfcca0ee4e88-50" href="/cx/4.8/conversation-control" >Conversation Objects</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7e94dfcca0ee4e88-52"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7e94dfcca0ee4e88-52" href="/cx/4.8/customer-channels" >Channels</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7e94dfcca0ee4e88-54"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7e94dfcca0ee4e88-54" href="/cx/4.8/cx-events-and-activity-types" >CX-Activities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7e94dfcca0ee4e88-56"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7e94dfcca0ee4e88-56" href="/cx/4.8/solution-architecture" >Solution Architecture</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7e94dfcca0ee4e88-58"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7e94dfcca0ee4e88-58" href="/cx/4.8/reporting" >Reporting</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7e94dfcca0ee4e88-60"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7e94dfcca0ee4e88-60" href="/cx/4.8/agent-capabilities" >Agent Capabilities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7e94dfcca0ee4e88-62"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7e94dfcca0ee4e88-62" href="/cx/4.8/supervisor-controls" >Supervisor Controls</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7e94dfcca0ee4e88-64"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7e94dfcca0ee4e88-64" href="/cx/4.8/deployment-guides" >Deployment Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7e94dfcca0ee4e88-66"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7e94dfcca0ee4e88-66" href="/cx/4.8/developer-guides" >Developer Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7e94dfcca0ee4e88-68"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7e94dfcca0ee4e88-68" href="/cx/4.8/unified-admin-guide" >Unified Admin Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7e94dfcca0ee4e88-70"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7e94dfcca0ee4e88-70" href="/cx/4.8/integrations" >Integrations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="7e94dfcca0ee4e88-73"						aria-labelledby="7e94dfcca0ee4e88-72"
+					></button>
+				<a id="7e94dfcca0ee4e88-72" href="/cx/4.8/security" >Security</a>
+			</div>
+
+<ul  id="7e94dfcca0ee4e88-73" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="7e94dfcca0ee4e88-75"						aria-labelledby="7e94dfcca0ee4e88-74"
+					></button>
+				<a id="7e94dfcca0ee4e88-74" href="/cx/4.8/identity-and-access-management" >Identity and Access Management</a>
+			</div>
+
+<ul  id="7e94dfcca0ee4e88-75" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7e94dfcca0ee4e88-76"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7e94dfcca0ee4e88-76" href="/cx/4.8/user-management-in-keycloack" >User Management in KeyCloack</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7e94dfcca0ee4e88-78"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7e94dfcca0ee4e88-78" href="/cx/4.8/application-management" >Application Management</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="7e94dfcca0ee4e88-81"						aria-labelledby="7e94dfcca0ee4e88-80"
+					></button>
+				<a id="7e94dfcca0ee4e88-80" href="/cx/4.8/keycloack-guides" >KeyCloack Guides</a>
+			</div>
+
+<ul  id="7e94dfcca0ee4e88-81" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7e94dfcca0ee4e88-82" href="/cx/4.8/keycloak-configuration" >Keycloak Configuration</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7e94dfcca0ee4e88-83" href="/cx/4.8/using-keycloak-for-superset-authentication" aria-current="page">Using Keycloak for Superset Authentication</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7e94dfcca0ee4e88-84" href="/cx/4.8/keycloak-users-teams-configuration" >Keycloak Users&#39; Teams Configuration</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7e94dfcca0ee4e88-85" href="/cx/4.8/keycloak-realm-and-users-bootstrapping-for-ef-cx" >Keycloak realm and users Bootstrapping for EF-CX</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7e94dfcca0ee4e88-86"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7e94dfcca0ee4e88-86" href="/cx/4.8/compliance" >Security and Privacy Compliances</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7e94dfcca0ee4e88-88"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7e94dfcca0ee4e88-88" href="/cx/4.8/security-features" >Security Features</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7e94dfcca0ee4e88-90"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7e94dfcca0ee4e88-90" href="/cx/4.8/vulnerability-assessments" >Vulnerability Assessments</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7e94dfcca0ee4e88-92" href="/cx/4.8/letsencrypt-ssl-for-ef-cx" >LetsEncrypt SSL for EF-CX</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7e94dfcca0ee4e88-93" href="/cx/4.8/implementing-security-policies" >Implementing Security Policies</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7e94dfcca0ee4e88-94"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7e94dfcca0ee4e88-94" href="/cx/4.8/voice-recording-solution" >Voice Recording Solution</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7e94dfcca0ee4e88-96" href="/cx/4.8/compatibility-guides" >Compatibility Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7e94dfcca0ee4e88-97" href="/cx/4.8/cx-tenant-component-deployment" >CX-Tenant Component deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7e94dfcca0ee4e88-98"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7e94dfcca0ee4e88-98" href="/cx/4.8/business-calendars" >Business Calendars</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7e94dfcca0ee4e88-100"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7e94dfcca0ee4e88-100" href="/cx/4.8/outbound-campaigns" >Outbound Campaigns</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7e94dfcca0ee4e88-102"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7e94dfcca0ee4e88-102" href="/cx/4.8/cx-surveys" >CX Surveys</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="7e94dfcca0ee4e88-104" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="7e94dfcca0ee4e88-104">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.8">
+										Expertflow CX
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.8/security">
+										Security
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.8/identity-and-access-management">
+										Identity and Access Management
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.8/keycloack-guides">
+										KeyCloack Guides
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="7e94dfcca0ee4e88-105">
+			<h2 class="toc-heading" id="7e94dfcca0ee4e88-105">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>Using Keycloak for Superset Authentication</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+	
+	
+
+
+	
+
+	
+
+
+	
+	
+	
+	
+	
+	
+			
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+		
+	
+	
+	
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<h3 id="id-(4.8)UsingKeycloakforSupersetAuthentication-Objective:"><span id="UsingKeycloakforSupersetAuthentication-Objective:"></span><strong>Objective:&nbsp;</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.8/using-keycloak-for-superset-authentication#id-(4.8)UsingKeycloakforSupersetAuthentication-Objective:">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p><strong>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</strong>To replace the default authentication process of Superset with Keycloak. Since we use Keycloak as IAM solution for all the products of EF, we must package the 3rd party applications with Keycloak auth as well.</p>
+<h3 id="id-(4.8)UsingKeycloakforSupersetAuthentication-KeycloakAuthenticationImplementation:"><span id="UsingKeycloakforSupersetAuthentication-KeycloakAuthenticationImplementation:"></span><strong>Keycloak Authentication Implementation:</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.8/using-keycloak-for-superset-authentication#id-(4.8)UsingKeycloakforSupersetAuthentication-KeycloakAuthenticationImplementation:">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p><strong>&nbsp; &nbsp; &nbsp;</strong>Following are the steps that we will follow during the implementation of Keycloak as Authentication solution for Superset.</p>
+<ul>
+ <li>
+  <p>Add Dependencies for Keycloak Connector in Superset code-base.</p>
+ </li>
+ <li>
+  <p>File Modification inside Superset for Keycloak Login Implementation.</p>
+ </li>
+ <li>
+  <p>Changes in environemnt variables.</p>
+ </li>
+</ul>
+<p><strong>1.&nbsp; Add Dependencies for Keycloak Connector in Superset code-base:</strong></p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; To add dependenceis required for our integration process, we need to make changes to "<strong>local.txt</strong>" file on this path:&nbsp;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<code>&lt;Project-Directory&gt;/superset/requirements/local.txt</code></p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp;Also add file "<strong>requirements-local.txt</strong>" inside docker directory on this path:</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<code>&lt;Project-Directory&gt;/superset/docker/</code></p>
+<p>&nbsp; &nbsp; &nbsp;Add these dependencies inside both "<strong>requirements-local.txt</strong>" and "<code><strong>local.txt</strong></code>" files:</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 160px;"> <img src="/__attachments/a_60f4194a9d0c66a486b917434b200101f55997c1e034ceb47a8c0b5347426b4b/Screenshot%20from%202022-09-12%2014-27-23.png?cb=a5aef36c4f8f110ba81f842d999814ab" alt="Screenshot from 2022-09-12 14-27-23.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<h4 id="id-(4.8)UsingKeycloakforSupersetAuthentication-2.FileModificationinsideSupersetforKeycloakLoginImplementation:"><span id="UsingKeycloakforSupersetAuthentication-2.FileModificationinsideSupersetforKeycloakLoginImplementation:"></span>2. File Modification inside Superset for Keycloak Login Implementation:
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.8/using-keycloak-for-superset-authentication#id-(4.8)UsingKeycloakforSupersetAuthentication-2.FileModificationinsideSupersetforKeycloakLoginImplementation:">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>&nbsp; &nbsp; Once dependencies are added in above mentioned files, we can now do file modifications to add code for login/log-out implementation.&nbsp;</p>
+<p>These files will be modified/added into our Superset code-base inside the directory "<strong>pythonpath_dev</strong>", the path to described directory is "<code>&lt;Project-Directory&gt;/superset/docker/pythonpath_dev</code>". files to be added are:</p>
+<ul>
+ <li>
+  <p>keycloak-security.py:</p>
+  <ul>
+   <li>
+    <p>&nbsp;This file overrides the login/logout mechanism of Superset with Keycloak Implementation. We use FLASK-OIDC connector to overwrite the default implementation.</p>
+   </li>
+  </ul>
+ </li>
+ <li>
+  <p>keycloak-config.py:</p>
+  <ul>
+   <li>
+    <p>We add all the keycloak configs in this file that are required for our <strong>Flask-OIDC </strong>connector to implement Keycloak Auth. Keycloak configs will be imported from <strong>.env&nbsp;</strong>file placed.&nbsp;</p>
+   </li>
+  </ul>
+ </li>
+ <li>
+  <p>client_secret.json:</p>
+  <ul>
+   <li>
+    <p>This file contains all the keycloak configurations including its public_key, client_id, client_secret etc.</p>
+   </li>
+  </ul>
+ </li>
+ <li>
+  <p>.env:</p>
+  <ul>
+   <li>
+    <p>We will also add .env file inside this path "<code>&lt;Project-Directory&gt;/superset/docker/</code>", <strong>.env</strong> file contains the env_variables for Flask-OIDC client that we will import to <strong>keycloak-config.py&nbsp;</strong>file for connector configuration.</p>
+   </li>
+  </ul>
+ </li>
+</ul>
+<p>Now we will see in details the modification done in each of the above mentioned file:</p>
+<p><span style="--color: #292929">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span style="--color: #292929"><strong>keycloak-security.py:</strong></span></p>
+<p><span style="--color: #292929">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;In this file, we will add the code for login and logout APIs that use OIDC client and overwrites the already present Authenctication implementation with Keycloak Auth.</span></p>
+<p><span style="--color: #292929">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span style="--color: #292929"><strong>Code to add:</strong></span></p>
+<p><span style="--color: #292929"><strong>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</strong></span><span style="--color: #292929">this code will be added in </span><span style="--color: #292929"><strong>keycloak-security.py</strong></span><span style="--color: #292929"> file</span><span style="--color: #292929">&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<blockquote>
+ <p><code>import sys</code>
+  <br>
+  <code>from flask import redirect, request</code>
+  <br>
+  <code>from flask_appbuilder.security.manager import AUTH_OID</code>
+  <br>
+  <code>from superset.security import SupersetSecurityManager</code>
+  <br>
+  <code>from flask_oidc import OpenIDConnect</code>
+  <br>
+  <code>from flask_appbuilder.security.views import AuthOIDView</code>
+  <br>
+  <code>from flask_login import login_user</code>
+  <br>
+  <code>from urllib.parse import quote</code>
+  <br>
+  <code>from flask_appbuilder.views import ModelView, SimpleFormView, expose</code>
+  <br>
+  <code>import logging</code></p>
+ <p>
+  <br>
+  <br>
+  <br>
+  <code>class AuthOIDCView(AuthOIDView):</code>
+  <br>
+  <br>
+  <code> @expose('/login/', methods=['GET', 'POST'])</code>
+  <br>
+  <code> def login(self, flag=True):</code>
+  <br>
+  <code> sm = self.</code><a href="http://appbuilder.sm/" data-scope="external" rel="external noreferrer"><code>appbuilder.sm</code></a>
+  <br>
+  <code> oidc = sm.oid</code>
+  <br>
+  <br>
+  <code> @</code><a href="http://self.appbuilder.sm/" data-scope="external" rel="external noreferrer"><code>self.appbuilder.sm</code></a><code>.oid.require_login</code>
+  <br>
+  <code> def handle_login(): </code>
+  <br>
+  <code> user = sm.auth_user_oid(oidc.user_getfield('email'))</code>
+  <br>
+  <br>
+  <br>
+  <code> if user is None:</code>
+  <br>
+  <code> </code>
+  <br>
+  <code> info = oidc.user_getinfo(['preferred_username', 'given_name', 'family_name', 'email'])</code>
+  <br>
+  <code> user = sm.add_user(info.get('preferred_username'), info.get('given_name'), </code>
+  <br>
+  <code> info.get('family_name'), info.get('email'), sm.find_role('Gamma'))</code>
+  <br>
+  <code> </code>
+  <br>
+  <code> login_user(user, remember=False)</code>
+  <br>
+  <code> return redirect(self.appbuilder.get_url_for_index)</code>
+  <br>
+  <br>
+  <code> return handle_login()</code>
+  <br>
+  <br>
+  <code> @expose('/logout/', methods=['GET', 'POST'])</code>
+  <br>
+  <code> def logout(self):</code>
+  <br>
+  <br>
+  <code> oidc = self.</code><a href="http://appbuilder.sm/" data-scope="external" rel="external noreferrer"><code>appbuilder.sm</code></a><code>.oid</code>
+  <br>
+  <br>
+  <code> oidc.logout()</code>
+  <br>
+  <code> super(AuthOIDCView, self).logout() </code>
+  <br>
+  <code> redirect_url = request.url_root.strip('/') + self.appbuilder.get_url_for_login</code>
+  <br>
+  <br>
+  <code> return redirect(oidc.client_secrets.get('issuer') + </code>
+  <br>
+  <code> '/protocol/openid-connect/logout?redirect_uri=' + quote(redirect_url))</code>
+  <br>
+  <br>
+  <code>class OIDCSecurityManager(SupersetSecurityManager):</code>
+  <br>
+  <code> authoidview = AuthOIDCView</code>
+  <br>
+  <code> def __init__(self,appbuilder):</code>
+  <br>
+  <code> super(OIDCSecurityManager, self).__init__(appbuilder)</code>
+  <br>
+  <code> if self.auth_type == AUTH_OID:</code>
+  <br>
+  <code> self.oid = OpenIDConnect(self.appbuilder.get_app)</code>
+ </p>
+</blockquote>
+<h4 id="id-(4.8)UsingKeycloakforSupersetAuthentication-superset-config.py:"><span id="UsingKeycloakforSupersetAuthentication-superset-config.py:"></span>&nbsp; superset-config.py:
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.8/using-keycloak-for-superset-authentication#id-(4.8)UsingKeycloakforSupersetAuthentication-superset-config.py:">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;In superset-config.py file, we will add these dependencies and line, the dependencies will be added at top of file and then the code to import environment-variables from .env file and finally the OIDC variables to overwrite Flask-OpenID to Flask-OIDC.</p>
+<h5 id="id-(4.8)UsingKeycloakforSupersetAuthentication-DependenciestoADD:"><span id="UsingKeycloakforSupersetAuthentication-DependenciestoADD:"></span>&nbsp; &nbsp; &nbsp;Dependencies to ADD:
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.8/using-keycloak-for-superset-authentication#id-(4.8)UsingKeycloakforSupersetAuthentication-DependenciestoADD:">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<blockquote>
+ <p>from keycloak_security import OIDCSecurityManager
+  <br>
+  from flask_appbuilder.security.manager import AUTH_OID, AUTH_REMOTE_USER, AUTH_DB, AUTH_LDAP, AUTH_OAUTH
+  <br>
+  import pkg_resources
+  <br>
+  from cachelib.base import BaseCache
+  <br>
+  from celery.schedules import crontab
+  <br>
+  from dateutil import tz
+  <br>
+  from flask import Blueprint
+  <br>
+  from flask_appbuilder.security.manager import AUTH_DB
+  <br>
+  from pandas._libs.parsers import STR_NA_VALUE</p>
+ <p>from dotenv import load_dotenv, find_dotenv</p>
+</blockquote>
+<p><strong>&nbsp; &nbsp; &nbsp; To import Env Variables:</strong></p>
+<p><strong>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</strong>These lines of code will be added to load the .env file</p>
+<blockquote>
+ <p>#Loading Environment Variables.
+  <br>
+  load_dotenv(find_dotenv())
+  <br>
+  <br>
+  logger = logging.getLogger(__name__)</p>
+</blockquote>
+<p>
+ <br>
+</p>
+<p><strong>&nbsp; &nbsp; &nbsp; Add Keycloak OIDC Config:</strong></p>
+<blockquote>
+ <p>#Keycloak Config...
+  <br>
+  AUTH_TYPE = AUTH_OID
+  <br>
+  SECRET_KEY: os.getenv('SECRET_KEY')
+  <br>
+  OIDC_OPENID_REALM: os.getenv('OIDC_OPENID_REALM')
+  <br>
+  OIDC_CLIENT_SECRETS= os.getenv('OIDC_CLIENT_SECRETS')
+  <br>
+  OIDC_ID_TOKEN_COOKIE_SECURE = False
+  <br>
+  OIDC_REQUIRE_VERIFIED_EMAIL = False
+  <br>
+  OIDC_CLOCK_SKEW = 500
+  <br>
+  OIDC_VALID_ISSUERS = os.getenv('OIDC_VALID_ISSUERS')
+  <br>
+  AUTH_USER_REGISTRATION = True
+  <br>
+  AUTH_USER_REGISTRATION_ROLE = os.getenv('AUTH_USER_REGISTRATION_ROLE')
+  <br>
+  CUSTOM_SECURITY_MANAGER = OIDCSecurityManager
+  <br>
+  OIDC_INTROSPECTION_AUTH_METHOD = os.getenv('OIDC_INTROSPECTION_AUTH_METHOD')
+  <br>
+  OIDC_TOKEN_TYPE_HINT = os.getenv('OIDC_TOKEN_TYPE_HINT')</p>
+</blockquote>
+<h4 id="id-(4.8)UsingKeycloakforSupersetAuthentication-client_secret.json:"><span id="UsingKeycloakforSupersetAuthentication-client_secret.json:"></span>&nbsp; client_secret.json:
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.8/using-keycloak-for-superset-authentication#id-(4.8)UsingKeycloakforSupersetAuthentication-client_secret.json:">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>&nbsp; &nbsp; &nbsp;This file will contain the info regarding keycloak client and realm along with public key etc, all the configurations to be added are given below:</p>
+<ul>
+ <li>
+  <p>&nbsp; You can get the value of <strong>realm_public_key</strong> by going to Realm Settings &gt; Keys and the clicking on Public Key button on RS256 key.</p>
+ </li>
+</ul>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 780px;--height: 250px;"> <img src="/__attachments/a_d4fe73330bef1b95a979543bb49289eb02bb52ca1c2c7f0087e99e94ad023270/Screenshot%20from%202022-09-12%2016-33-53.png?cb=d9ba828d9150ecab69e356d09cfc269c" alt="Screenshot from 2022-09-12 16-33-53.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>
+ <br>
+</p>
+<ul>
+ <li>
+  <p>All the other information for properties given below can be gathered from Realm Setting &gt; General then clicking on OpenId Endpoint Configuration:</p>
+ </li>
+</ul>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 680px;"> <img src="/__attachments/a_906d9bf4d3d68ee0db077282845d7378a96a81365aba6e5dffb91e704c6493f8/Screenshot%20from%202022-09-12%2016-42-16.png?cb=53f559e2a45a0723eb2b33bb201fb2f7" alt="Screenshot from 2022-09-12 16-42-16.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 680px;"> <img src="/__attachments/a_ab1f4118605b282abc1075c65987d63016827246870974d0aec1c06b923d4fd7/Screenshot%20from%202022-09-12%2016-43-32.png?cb=3dc561ef87af6e0b743009fa9e2d9fc5" alt="Screenshot from 2022-09-12 16-43-32.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>
+ <br>
+</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Example configuration to add in file is given below:</p>
+<blockquote>
+ <p>{
+  <br>
+  "web": {
+  <br>
+  "realm_public_key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjQTp1Yiv97rZ32rZ5FVD0a79N0JK/DWrMSg/KO8DZ0juUJE4MGX76dH/CVRbymSopNHFZautJF5B9dUyAGKSqhP3q8RTgbM5kbwp39QL+8uJ4mODjTr1a5/6BxKHKJXgq+YSYmK1r8FJY6oUIh0iOv8ifSgRugxWHA8UOKb0A2xVStcW484b85S+BHbsgut6PFJ+ja8POJDWxsIgbYJFK0wHxyOrthB7GPyN3Gn3owu5IDd3fLINDbFrK1j03o1EZphA0t6QP02YGLm15sdhBP4cODzoeKn5vqYkqHg/xF2iJS/liIkv+jEUcWaHD48RdRVYnzvDixrLxAvyNpMK7QIDAQAB",
+  <br>
+  "issuer": "<a href="http://192.168.1.204:8080/auth/realms/Superset" data-scope="external" rel="external noreferrer">http://192.168.1.204:8080/auth/realms/Superset</a>",
+  <br>
+  "auth_uri":"<a href="http://192.168.1.204:8080/auth/realms/Superset/protocol/openid-connect/auth" data-scope="external" rel="external noreferrer">http://192.168.1.204:8080/auth/realms/Superset/protocol/openid-connect/auth</a>",
+  <br>
+  "client_id": "superset-demo",
+  <br>
+  "client_secret": "jkfWcMAmrcNGQM1bc3xXUnKe0LpQQEFP",
+  <br>
+  "verify_ssl_server": false,
+  <br>
+  "redirect_urls": [
+  <br>
+  "<a href="http://localhost:8088/oidc/callback" data-scope="external" rel="external noreferrer">http://localhost:8088/oidc/callback</a>"
+  <br>
+  ],
+  <br>
+  "userinfo_uri":"<a href="http://192.168.1.204:8080/auth/realms/Superset/protocol/openid-connect/userinfo" data-scope="external" rel="external noreferrer">http://192.168.1.204:8080/auth/realms/Superset/protocol/openid-connect/userinfo</a>",
+  <br>
+  "token_uri":"<a href="http://192.168.1.204:8080/auth/realms/Superset/protocol/openid-connect/token" data-scope="external" rel="external noreferrer">http://192.168.1.204:8080/auth/realms/Superset/protocol/openid-connect/token</a>",
+  <br>
+  "token_introspection_uri":"<a href="http://192.168.1.204:8080/auth/realms/Superset/protocol/openid-connect/token/introspect" data-scope="external" rel="external noreferrer">http://192.168.1.204:8080/auth/realms/Superset/protocol/openid-connect/token/introspect</a>"
+  <br>
+  }
+  <br>
+  }</p>
+</blockquote>
+<h4 id="id-(4.8)UsingKeycloakforSupersetAuthentication-.env:"><span id="UsingKeycloakforSupersetAuthentication-.env:"></span>.env:
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.8/using-keycloak-for-superset-authentication#id-(4.8)UsingKeycloakforSupersetAuthentication-.env:">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>&nbsp; &nbsp; Add these configurations in .env file, the file should be placed on this path "<code>&lt;Project-Directory&gt;/superset/docker/</code>", example configurations are given below:</p>
+<blockquote>
+ <p>
+  <br>
+  COMPOSE_PROJECT_NAME=superset
+ </p>
+ <p># database configurations (do not modify)
+  <br>
+  DATABASE_DB=superset
+  <br>
+  DATABASE_HOST=db
+  <br>
+  DATABASE_PASSWORD=superset
+  <br>
+  DATABASE_USER=superset</p>
+ <p># database engine specific environment variables
+  <br>
+  # change the below if you prefers another database engine
+  <br>
+  DATABASE_PORT=5432
+  <br>
+  DATABASE_DIALECT=postgresql
+  <br>
+  POSTGRES_DB=superset
+  <br>
+  POSTGRES_USER=superset
+  <br>
+  POSTGRES_PASSWORD=superset
+  <br>
+  #MYSQL_DATABASE=superset
+  <br>
+  #MYSQL_USER=superset
+  <br>
+  #MYSQL_PASSWORD=superset
+  <br>
+  #MYSQL_RANDOM_ROOT_PASSWORD=yes</p>
+ <p># Add the mapped in /app/pythonpath_docker which allows devs to override stuff
+  <br>
+  PYTHONPATH=/app/<a href="http://pythonpath/app/docker/pythonpath_dev" data-scope="external" rel="external noreferrer">pythonpath:/app/docker/pythonpath_dev</a>
+  <br>
+  REDIS_HOST=redis
+  <br>
+  REDIS_PORT=6379</p>
+ <p>FLASK_ENV=development
+  <br>
+  SUPERSET_ENV=development
+  <br>
+  SUPERSET_LOAD_EXAMPLES=yes
+  <br>
+  CYPRESS_CONFIG=false
+  <br>
+  SUPERSET_PORT=8088</p>
+ <p>SECRET_KEY=Expertflow464
+  <br>
+  OIDC_OPENID_REALM =superset-demo
+  <br>
+  OIDC_CLIENT_SECRETS=/app/docker/pythonpath_dev/client_secret.json
+  <br>
+  OIDC_VALID_ISSUERS=<a href="http://192.168.1.204:8080/auth/realms/Superset" data-scope="external" rel="external noreferrer">http://192.168.1.204:8080/auth/realms/Superset</a>
+  <br>
+  AUTH_USER_REGISTRATION_ROLE=agent
+  <br>
+  OIDC_INTROSPECTION_AUTH_METHOD=client_secret_post
+  <br>
+  OIDC_TOKEN_TYPE_HINT=access_token</p>
+</blockquote>
+<p>Once we have added all these configurations, we can just run the docker build command on our Dockerfile to create a Superset image with Keycloak as Authentication tool.</p>
+<p><strong>Note: </strong>The changes you've done in keycloak-config.py file should also be added to config.py file, config.py file exist on this path "<code>&lt;Project-Directory&gt;/superset/superset/config.py</code>"</p>
+<h2 id="id-(4.8)UsingKeycloakforSupersetAuthentication-ProcessofRegistrationofKeycloakUserinSuperset:"><span id="UsingKeycloakforSupersetAuthentication-ProcessofRegistrationofKeycloakUserinSuperset:"></span>Process of Registration of Keycloak User in Superset:
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.8/using-keycloak-for-superset-authentication#id-(4.8)UsingKeycloakforSupersetAuthentication-ProcessofRegistrationofKeycloakUserinSuperset:">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>To Create and Register a user in Keycloak for Superset login, we follow certain steps:</p>
+<ol>
+ <li>
+  <p>Go to the <strong>Keycloak instance</strong> you are using for Superset Auth Integration, e.g: We are using instance <a href="http://192.168.1.204:8080/auth/" data-scope="external" rel="external noreferrer">http://192.168.1.204:8080/auth/</a>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
+ </li>
+ <li>
+  <p>Once inside keycloak admin console, we select our desired realm that we configured for our Superset application (we assume that both client and realm are already configured and created for our superset application)</p>
+  <ol>
+   <li>
+    <p>For versions below 19: <a href="https://expertflow-docs.atlassian.net/wiki/spaces/CIMT/pages/1306964/Keycloak+API+Developer+Guide" data-scope="external" rel="external noreferrer">Keycloak API Developer Guide</a>
+     <br>
+     <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 489px;--height: 250px;"> <img src="/__attachments/a_c018f4e0ccfc49e2290016c4b43db88e63badf709e864332cb040798864ba409/Screenshot%20from%202023-01-30%2016-59-16.png?cb=6a48f71f282bd94e383699aceb99da6f" alt="Screenshot from 2023-01-30 16-59-16.png" data-scope="internal"> </span> </image-lightbox> </span>
+     <br>
+     <br>
+     <br></p>
+   </li>
+   <li>
+    <p>For version 19 and above: <a href="https://expertflow-docs.atlassian.net/wiki/spaces/CIMT/pages/1327686/Configure+Keycloak+for+Client+Application+Version+20+and+above" data-scope="external" rel="external noreferrer">Configure Keycloak for Client Application (Version 20 and above):</a></p>
+   </li>
+  </ol>
+ </li>
+</ol>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 489px;--height: 250px;"> <img src="/__attachments/a_4b290e6adf0860ba0a87f1ca67a201c310d0079f2b83a557ed996114a330040a/Screenshot%20from%202023-01-30%2017-01-23.png?cb=73b4be2c79a740d25d01ae62228227cc" alt="Screenshot from 2023-01-30 17-01-23.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; 3. Once inside our desried Realm, we go to the manage section on left side panel and click on Users section to create user, then click on Create User.</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 489px;--height: 250px;"> <img src="/__attachments/a_d4ce6e4faf0d7345d62105a3da7e7c32e03ba1af2d0ab04e6f22bdf7415acbb6/Screenshot%20from%202023-01-30%2017-26-32.png?cb=7eb6dd59052754f1e00e9920fa76cc42" alt="Screenshot from 2023-01-30 17-26-32.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp;4. For admin User, the email must be <a href="mailto:admin@superset.com" data-scope="external" rel="external noreferrer">admin@superset.com</a> and first name/last name should be <strong>admin</strong>, also username should be <strong>admin</strong>.</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 489px;--height: 250px;"> <img src="/__attachments/a_e7ade3fbed8cb29ceed0a4dfc0202f0983a1ca2684adf6a4795e9e67477127c6/Screenshot%20from%202023-01-30%2017-27-50.png?cb=82b00f8762b54543e51719e75a35e993" alt="Screenshot from 2023-01-30 17-27-50.png" data-scope="internal"> </span> </image-lightbox> </span> &nbsp;&nbsp;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp;5. Once user is created, Setup the Password in Credentials tab. provide the Password and Confirm Password (both should be <strong>admin</strong>) and turn temporary to off.</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 489px;--height: 250px;"> <img src="/__attachments/a_81674efae29b19514f004ad946c2dcf6c87e91ce608e8834b494ce3d9e4f30d7/Screenshot%20from%202023-01-30%2017-28-18.png?cb=501d839a8d12d9a66f9bd04eb6d6e664" alt="Screenshot from 2023-01-30 17-28-18.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;6. Check the admin user now by going to your superset instance and logging-in using admin user we just created inside Keycloak realm</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 489px;--height: 250px;"> <img src="/__attachments/a_61733a483563cb9519fbe1672390b1a2727a47a3f35664949eb0201e0d798faf/Screenshot%20from%202023-01-30%2018-19-05.png?cb=811802849e4ecb06cb2ec5cea43c148d" alt="Screenshot from 2023-01-30 18-19-05.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 489px;--height: 250px;"> <img src="/__attachments/a_5905073fe715dc9ec43733094910be98ce09638acb76ff40bf46eaac90ffd0f9/Screenshot%20from%202023-01-30%2018-20-34.png?cb=442c1dd1d570b305988dc94863e3eb98" alt="Screenshot from 2023-01-30 18-20-34.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 489px;--height: 250px;"> <img src="/__attachments/a_85636e5746887f3c6f3a86b3bbd6f9eb58cdd6fc469a0c6422b4ad789f4cafc7/Screenshot%20from%202023-01-30%2018-20-47.png?cb=cb04b1d4fc65e5c1bb64a25fd47daea2" alt="Screenshot from 2023-01-30 18-20-47.png" data-scope="internal"> </span> </image-lightbox> </span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>
+<p>&nbsp; &nbsp; &nbsp; 7. Once admin user is created, we create a normal user with pre-defined Gamma role to them. To create Gamma role users, we follow all the above steps of User creation (email, username, firstname, lastname) are mandatory attributes. Also provide credentials of User with temporary field as off.</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 489px;--height: 250px;"> <img src="/__attachments/a_f5362f9e4d1153a957df01151d9a4f401537f80eb0dc19b0febd973dce98efdb/Screenshot%20from%202023-01-30%2018-13-01.png?cb=f15e35542d09af3567c654f6d2754dc7" alt="Screenshot from 2023-01-30 18-13-01.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>&nbsp; &nbsp; 8. Check the normal user (you just created in keycloak)&nbsp; in your superset instance by logging-in.</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 489px;--height: 250px;"> <img src="/__attachments/a_330a5d66cfebf23b74665ba8c9244f81c6f728aad859b3c28e0346cf22a9ad46/Screenshot%20from%202023-01-30%2018-15-14.png?cb=214e22ed763a449e97724af07848f68a" alt="Screenshot from 2023-01-30 18-15-14.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 489px;--height: 250px;"> <img src="/__attachments/a_3337d6b05d2d7fde3a6845b8b5ca727a88a35f678b19fdba3a9d457bbaa08e3d/Screenshot%20from%202023-01-30%2018-16-09.png?cb=10181d7bb541552ee05ca51f96bdf1cb" alt="Screenshot from 2023-01-30 18-16-09.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--width: 489px;--height: 250px;"> <img src="/__attachments/a_42dfd73864afb10663cbc1b64f94cd0c8b78f771206da49b04627070ae5799ad/Screenshot%20from%202023-01-30%2018-16-23.png?cb=a6c6d8cb616a4af89059aa5610ecfe08" alt="Screenshot from 2023-01-30 18-16-23.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>Note:</p>
+<p>&nbsp; &nbsp; &nbsp; If a user with certain username and email is deleted in keycloak, then creation of a user with same username but different email is not allowed in superset,Hence a clash of unique username causes Internal Server Error in Application. Please avoid creating a deleted user with different email. If you want to create a deleted user again, then make sure its email is same as well.
+ <br>
+ <br></p>
+<h3 id="id-(4.8)UsingKeycloakforSupersetAuthentication-BuildaSupersetImagewithKeycloak-OIDC-Connector:"><span id="UsingKeycloakforSupersetAuthentication-BuildaSupersetImagewithKeycloak-OIDC-Connector:"></span><strong>Build a Superset Image with Keycloak-OIDC-Connector:</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.8/using-keycloak-for-superset-authentication#id-(4.8)UsingKeycloakforSupersetAuthentication-BuildaSupersetImagewithKeycloak-OIDC-Connector:">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>To build a Superset image containing Keycloak OIDC Connector implementation. We use following steps:</p>
+<ol>
+ <li>
+  <p>Configure <strong>client_secret.json</strong> file by following the process given above. The path of the file is superset_repo&gt;docker&gt;pythonpath_dev&gt;client_secret.json</p>
+ </li>
+ <li>
+  <p>Configure the <strong>env-file</strong> by providing valid data for all the Keycloak Configurations. Keycloak env variables contains variable starting from <strong>SECRET_KEY</strong> till <strong>OIDC_TOKEN_TYPE_HINT .&nbsp;</strong>The example of env variables is given in file <strong>.env</strong> above. Once all the valid values are provided in <strong>env-file</strong>&nbsp;rename it to <strong>.env . </strong>Path of env-file is superset_repo&gt;docker&gt;env-file</p>
+ </li>
+ <li>
+  <p>Once configurations are done. Create a superset custom image using file <strong>Dockerfile-Keycloak&nbsp;</strong>. Path to Dockerfile-Keycloak is: superset_repo&gt;Dockerfile-Keycloak</p>
+  <ol>
+   <li>
+    <p>Use this command to create superset docker image: <strong>sudo docker build -t &lt;image-name: image-tag&gt; -f Dockerfile-Keycloak .</strong></p>
+   </li>
+  </ol>
+ </li>
+ <li>
+  <p>Once build process is complete, confirm if the image is created or not by running command: <strong>sudo docker images</strong> and look for your created image.</p>
+ </li>
+ <li>
+  <p>Now copy the image-name and image-tag in this format &nbsp;<strong>&lt;image-name: image-tag&gt;</strong></p>
+ </li>
+ <li>
+  <p>Open the <strong>docker-compose.yml</strong> file and provide the copied &lt;image-name:image-tag&gt; against variable <strong>x-superset-image: &amp;superset-image</strong></p>
+  <ol>
+   <li>
+    <p>example: x-superset-image: &amp;superset-image ef-superset:1.4.0</p>
+   </li>
+  </ol>
+ </li>
+ <li>
+  <p>After providing the superset custom image to docker-compose file, run docker-compose command against newly updated file to run the image and confirm if it routes to Keycloak for Authentication.
+   <br></p>
+  <code-snippet class="theme-code-snippet">
+   <div class="theme-code-snippet-header">Bash</div>
+   <scroll-shadow>
+    <div data-component="code" data-language="bash">
+     <pre><code>docker-compose up -d
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+  <p>
+   <br>
+  </p>
+ </li>
+</ol>
+<p>
+ <br>
+</p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="7e94dfcca0ee4e88-106" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="7e94dfcca0ee4e88-106">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/cx/4.8/keycloak-configuration">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Keycloak Configuration</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/cx/4.8/keycloak-users-teams-configuration">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Keycloak Users&#39; Teams Configuration</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

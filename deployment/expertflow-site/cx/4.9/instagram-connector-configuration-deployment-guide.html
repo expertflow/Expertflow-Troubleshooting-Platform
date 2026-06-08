@@ -1,0 +1,3869 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_c4e33ca9adc103e9d6fdcf3d9ce2c0bf98bb095c1b5430cef675d4016c66472c" data-confluence-content-id="1042286117"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/cx/4.9/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="CX">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>Instagram Connector Configuration &amp; Deployment Guide | Expertflow CX</title>
+		<meta property="og:title" content="Instagram Connector Configuration &amp; Deployment Guide | Expertflow CX">
+		<meta property="twitter:title" content="Instagram Connector Configuration &amp; Deployment Guide | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/cx/4.9/instagram-connector-configuration-deployment-guide">
+		<meta property="og:url" content="https://docs.expertflow.com/cx/4.9/instagram-connector-configuration-deployment-guide">
+
+		<meta name="description" content="Introduction Integration of any 3rd party software with Meta Products like Instagram is made possible through the Meta Graph API (and Instagram Messenger APIs)…">
+		<meta property="og:description" content="Introduction Integration of any 3rd party software with Meta Products like Instagram is made possible through the Meta Graph API (and Instagram Messenger APIs)…">
+		<meta property="twitter:description" content="Introduction Integration of any 3rd party software with Meta Products like Instagram is made possible through the Meta Graph API (and Instagram Messenger APIs)…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2025-04-23T14:51:25.390Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": true
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="d9e2f89779836d6d-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="d9e2f89779836d6d-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="d9e2f89779836d6d-19">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="d9e2f89779836d6d-19" name="version" onchange="self.location.assign(this.value)" >
+				<option id="d9e2f89779836d6d-3"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="d9e2f89779836d6d-4"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="d9e2f89779836d6d-5"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="d9e2f89779836d6d-6"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="d9e2f89779836d6d-7"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="d9e2f89779836d6d-8"  value="/cx/4.10"  >
+					4.10
+				</option>
+				<option id="d9e2f89779836d6d-9"  value="/cx/4.9/instagram-connector-configuration-deployment-guide"  selected="">
+					4.9
+				</option>
+				<option id="d9e2f89779836d6d-10"  value="/cx/4.8/instagram-connector-configuration-deployment-guide"  >
+					4.8
+				</option>
+				<option id="d9e2f89779836d6d-11"  value="/cx/4.7/instagram-connector-configuration-deployment-guide"  >
+					4.7
+				</option>
+				<option id="d9e2f89779836d6d-12"  value="/cx/4.6/instagram-connector-configuration-deployment-guide"  >
+					4.6
+				</option>
+				<option id="d9e2f89779836d6d-13"  value="/cx/4.5.3/instagram-connector-configuration-deployment-guide"  >
+					4.5.3
+				</option>
+				<option id="d9e2f89779836d6d-14"  value="/cx/4.5.2/instagram-connector-configuration-deployment-guide"  >
+					4.5.2
+				</option>
+				<option id="d9e2f89779836d6d-15"  value="/cx/4.5.1/instagram-connector-configuration-deployment-guide"  >
+					4.5.1
+				</option>
+				<option id="d9e2f89779836d6d-16"  value="/cx/4.5/instagram-connector-configuration-deployment-guide"  >
+					4.5
+				</option>
+				<option id="d9e2f89779836d6d-17"  value="/cx/4.4/instagram-connector-configuration-deployment-guide"  >
+					4.4
+				</option>
+				<option id="d9e2f89779836d6d-18"  value="/cx/4.3/instagram-connector-configuration-deployment-guide"  >
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('d9e2f89779836d6d-19');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-d9e2f89779836d6d-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-d9e2f89779836d6d-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-d9e2f89779836d6d-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="d9e2f89779836d6d-20" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="d9e2f89779836d6d-20">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-d9e2f89779836d6d-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-d9e2f89779836d6d-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="d9e2f89779836d6d-37">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="d9e2f89779836d6d-37" name="version" onchange="self.location.assign(this.value)" >
+				<option id="d9e2f89779836d6d-21"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="d9e2f89779836d6d-22"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="d9e2f89779836d6d-23"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="d9e2f89779836d6d-24"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="d9e2f89779836d6d-25"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="d9e2f89779836d6d-26"  value="/cx/4.10"  >
+					4.10
+				</option>
+				<option id="d9e2f89779836d6d-27"  value="/cx/4.9/instagram-connector-configuration-deployment-guide"  selected="">
+					4.9
+				</option>
+				<option id="d9e2f89779836d6d-28"  value="/cx/4.8/instagram-connector-configuration-deployment-guide"  >
+					4.8
+				</option>
+				<option id="d9e2f89779836d6d-29"  value="/cx/4.7/instagram-connector-configuration-deployment-guide"  >
+					4.7
+				</option>
+				<option id="d9e2f89779836d6d-30"  value="/cx/4.6/instagram-connector-configuration-deployment-guide"  >
+					4.6
+				</option>
+				<option id="d9e2f89779836d6d-31"  value="/cx/4.5.3/instagram-connector-configuration-deployment-guide"  >
+					4.5.3
+				</option>
+				<option id="d9e2f89779836d6d-32"  value="/cx/4.5.2/instagram-connector-configuration-deployment-guide"  >
+					4.5.2
+				</option>
+				<option id="d9e2f89779836d6d-33"  value="/cx/4.5.1/instagram-connector-configuration-deployment-guide"  >
+					4.5.1
+				</option>
+				<option id="d9e2f89779836d6d-34"  value="/cx/4.5/instagram-connector-configuration-deployment-guide"  >
+					4.5
+				</option>
+				<option id="d9e2f89779836d6d-35"  value="/cx/4.4/instagram-connector-configuration-deployment-guide"  >
+					4.4
+				</option>
+				<option id="d9e2f89779836d6d-36"  value="/cx/4.3/instagram-connector-configuration-deployment-guide"  >
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('d9e2f89779836d6d-37');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d9e2f89779836d6d-38" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d9e2f89779836d6d-39" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d9e2f89779836d6d-40" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d9e2f89779836d6d-41" href="/cx/4.9/cx-release-history" >CX Release History</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-42"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-42" href="/cx/4.9/cx-release-notes" >CX Release Notes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d9e2f89779836d6d-44" href="/cx/4.9/expertflow-cx-data-sheet" >CX Data Sheet</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d9e2f89779836d6d-45" href="/cx/4.9/hc-3-x-vs-expertflow-cx-features-comparison" >HC 3.x vs Expertflow CX - Features Comparison</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-46"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-46" href="/cx/4.9/conversation-studio" >Conversation Studio</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-48"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-48" href="/cx/4.9/customer-identities" >Customer</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-50"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-50" href="/cx/4.9/conversation-control" >Conversation Objects</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="d9e2f89779836d6d-53"						aria-labelledby="d9e2f89779836d6d-52"
+					></button>
+				<a id="d9e2f89779836d6d-52" href="/cx/4.9/customer-channels" >Channels</a>
+			</div>
+
+<ul  id="d9e2f89779836d6d-53" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="d9e2f89779836d6d-55"						aria-labelledby="d9e2f89779836d6d-54"
+					></button>
+				<a id="d9e2f89779836d6d-54" href="/cx/4.9/digital-channels" >Digital Channels</a>
+			</div>
+
+<ul  id="d9e2f89779836d6d-55" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-56"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-56" href="/cx/4.9/webrtc" >WebConnect CX</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-58"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-58" href="/cx/4.9/whatsapp" >WhatsApp</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-60"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-60" href="/cx/4.9/facebook-direct-message" >Facebook Direct Message</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="d9e2f89779836d6d-63"						aria-labelledby="d9e2f89779836d6d-62"
+					></button>
+				<a id="d9e2f89779836d6d-62" href="/cx/4.9/instagram-social-media" >Instagram Social Media</a>
+			</div>
+
+<ul  id="d9e2f89779836d6d-63" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d9e2f89779836d6d-64" href="/cx/4.9/instagram-direct-message" >Instagram Direct Message</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d9e2f89779836d6d-65" href="/cx/4.9/instagram-connector-configuration-deployment-guide" aria-current="page">Instagram Connector Configuration &amp; Deployment Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d9e2f89779836d6d-66" href="/cx/4.9/instagram-connector-limitation" >Instagram Connector - Limitation</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-67"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-67" href="/cx/4.9/sms-mms-via-twillio" >SMS/MMS via Twillio</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-69"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-69" href="/cx/4.9/viber" >Viber</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-71"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-71" href="/cx/4.9/telegram-connector-configuration-guide" >Telegram</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-73"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-73" href="/cx/4.9/twitter" >Twitter – Feature Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-75"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-75" href="/cx/4.9/twilio-connector-configuration-vcx-4-3" >Twilio Configuration</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-77"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-77" href="/cx/4.9/linkedin-social-media" >LinkedIn Social Media</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d9e2f89779836d6d-79" href="/cx/4.9/youtube-connector-feature-guide" >YouTube-Feature Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d9e2f89779836d6d-80" href="/cx/4.9/youtube-connector-limitations-key-highlights" >YouTube – Limitations &amp; Key Highlights</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-81"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-81" href="/cx/4.9/youtube-integration-configuration-guide-developer-" >YouTube Integration &amp; Configuration Guide (Developer Access)</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-83"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-83" href="/cx/4.9/email" >Email</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-85"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-85" href="/cx/4.9/cx-voice" >Voice and Video</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-87"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-87" href="/cx/4.9/channel-connector-developer-guide" >Channel Connector Developer Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d9e2f89779836d6d-89" href="/cx/4.9/channel-related-terms" >Channel related terms</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-90"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-90" href="/cx/4.9/nlu-digital-bots" >NLU / Digital Bots</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-92"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-92" href="/cx/4.9/cx-events-and-activity-types" >CX-Activities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-94"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-94" href="/cx/4.9/solution-architecture" >Solution Architecture</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-96"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-96" href="/cx/4.9/expertflow-etl-data-platform" >Expertflow ETL - Data Platform</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-98"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-98" href="/cx/4.9/agent-capabilities" >Agent Capabilities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-100"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-100" href="/cx/4.9/supervisor-controls" >Supervisor Controls</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-102"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-102" href="/cx/4.9/deployment-guides" >Deployment Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-104"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-104" href="/cx/4.9/developer-guides" >Developer Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-106"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-106" href="/cx/4.9/unified-admin-guide" >Unified Admin Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-108"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-108" href="/cx/4.9/integrations" >Integrations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-110"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-110" href="/cx/4.9/security" >Security</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-112"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-112" href="/cx/4.9/voice-recording-solution" >Voice Recording Solution</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d9e2f89779836d6d-114" href="/cx/4.9/compatibility-guides" >Compatibility Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d9e2f89779836d6d-115" href="/cx/4.9/list-of-open-source-software" >List of Open-source Software</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-116"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-116" href="/cx/4.9/business-calendars" >Business Calendars</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-118"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-118" href="/cx/4.9/outbound-campaigns" >Outbound Campaigns</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-120"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-120" href="/cx/4.9/cx-surveys" >CX Surveys</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-122"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-122" href="/cx/4.9/reports" >Reports</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-124"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-124" href="/cx/4.9/superset-deployment-for-reporting" >Superset Deployment for Reporting</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d9e2f89779836d6d-126" href="/cx/4.9/reporting-database-schema-vcx-4-3" >Reporting Database Schema</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d9e2f89779836d6d-127" href="/cx/4.9/cx-historical-reports-supporting-tables" >CX Historical Reports- Supporting Tables</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d9e2f89779836d6d-128"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d9e2f89779836d6d-128" href="/cx/4.9/key-reporting-concepts" >Key Reporting Concepts</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="d9e2f89779836d6d-130" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="d9e2f89779836d6d-130">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.9">
+										Expertflow CX
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.9/customer-channels">
+										Channels
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.9/digital-channels">
+										Digital Channels
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.9/instagram-social-media">
+										Instagram Social Media
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="d9e2f89779836d6d-131">
+			<h2 class="toc-heading" id="d9e2f89779836d6d-131">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>Instagram Connector Configuration &amp; Deployment Guide</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+	
+	
+	
+
+
+	
+	
+	
+	
+	
+	
+			
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+		
+	
+	
+	
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<h2 id="id-(4.9)InstagramConnectorConfiguration&amp;DeploymentGuide-Introduction" style=""><span id="InstagramConnectorConfiguration&amp;amp;DeploymentGuide-Introduction"></span>Introduction
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/instagram-connector-configuration-deployment-guide#id-(4.9)InstagramConnectorConfiguration&amp;amp;DeploymentGuide-Introduction">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>Integration of any 3rd party software with Meta Products like Instagram is made possible through the Meta Graph API (and Instagram Messenger APIs) that are exposed by the Meta Platform. Since the software will be interacting with contents generated by the page connected with Instagram account and user of the page connected with instagram account, the 3rd party software require to authenticate itself to Meta APIs through the means of Page Access Token which is essentially&nbsp;<strong>"an opaque string that identify a user, app or page and can be used by the App to make Graph API calls".</strong><strong>&nbsp;</strong>The Page Access Token in itself will bears the permission scope (list of allowed permissions) that our Meta/Facebook App has been granted on the Facebook Page. To bring the point home, 3rd party software integrates with Instagram Platform via Facebook Apps which is created and configured by the developer on the <a href="https://developers.facebook.com/" data-scope="external" rel="external noreferrer">Facebook Developer Platform</a>.</p>
+<h2 id="id-(4.9)InstagramConnectorConfiguration&amp;DeploymentGuide-CreatingaFacebookApponFacebookDeveloperPlatform" style=""><span id="InstagramConnectorConfiguration&amp;amp;DeploymentGuide-CreatingaFacebookApponFacebookDeveloperPlatform"></span>Creating a Facebook App on Facebook Developer Platform
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/instagram-connector-configuration-deployment-guide#id-(4.9)InstagramConnectorConfiguration&amp;amp;DeploymentGuide-CreatingaFacebookApponFacebookDeveloperPlatform">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>As explained above, Facebook App is what enables us to integrate our connector with Facebook Platform for either comments or instagram messenger direct messages. The process for setting up a Facebook entails the following steps:</p>
+<ol>
+ <li>
+  <p>Creation of your&nbsp;<a href="https://developers.facebook.com/" data-scope="external" rel="external noreferrer">developer account</a>.&nbsp;<em><strong>Note</strong></em><em>: you MUST have a Facebook account for you to create a developer account.</em></p>
+ </li>
+ <li>
+  <p>Creation of Facebook App.</p>
+ </li>
+ <li>
+  <p>Adding a Webhook and/or Instagram Messenger Product</p>
+ </li>
+ <li>
+  <p>App permissions and Approval process.</p>
+ </li>
+</ol>
+<h3 id="id-(4.9)InstagramConnectorConfiguration&amp;DeploymentGuide-1.CreationofDeveloperAccount" style=""><span id="InstagramConnectorConfiguration&amp;amp;DeploymentGuide-1.CreationofDeveloperAccount"></span>1.&nbsp;Creation of Developer Account
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/instagram-connector-configuration-deployment-guide#id-(4.9)InstagramConnectorConfiguration&amp;amp;DeploymentGuide-1.CreationofDeveloperAccount">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Creation of your&nbsp;<a href="https://developers.facebook.com/" data-scope="external" rel="external noreferrer">developer account</a>.&nbsp;<em><strong>Note</strong></em><em>: you MUST have a Facebook account for you to create a developer account.</em></p>
+<h3 id="id-(4.9)InstagramConnectorConfiguration&amp;DeploymentGuide-2.CreationofFacebookApp" style=""><span id="InstagramConnectorConfiguration&amp;amp;DeploymentGuide-2.CreationofFacebookApp"></span>2. Creation of Facebook App
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/instagram-connector-configuration-deployment-guide#id-(4.9)InstagramConnectorConfiguration&amp;amp;DeploymentGuide-2.CreationofFacebookApp">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>You can now create the Facebook App after acquiring a Facebook Developer account.&nbsp;</p>
+<p><span style="--color: #4b4f56">The app creation flow gathers the minimum amount of information needed to generate a unique ID for your app. Once you complete the flow you will end up in the App Dashboard where you can provide additional information about your app.</span></p>
+<ol>
+ <li>
+  <p><span style="--color: #4b4f56">Go to the</span><span style="--color: #4b4f56">&nbsp;</span><a href="https://developers.facebook.com/apps" data-scope="external" rel="external noreferrer"><span style="--color: #4b4f56">Apps</span><span style="--color: #4b4f56"> </span></a><span style="--color: #4b4f56">panel and click</span><span style="--color: #4b4f56">&nbsp;</span><span style="--color: #4b4f56"><strong>Create App</strong></span><span style="--color: #4b4f56">.</span></p>
+ </li>
+ <li>
+  <p><span style="--color: #4b4f56">Select&nbsp;</span><span style="--color: #4b4f56"><strong>Other&nbsp;</strong></span><span style="--color: #4b4f56">and click Next</span>
+   <br>
+   <br>
+   <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_4895ccad80e5abba408d32d85b1b391a1b455fee93ba948d82339e0219ccf952/image2023-2-28_11-53-44.png?cb=6303c5be7b2b77ccbee1d97e72269593" alt="image2023-2-28_11-53-44.png" data-scope="internal"> </span> </image-lightbox> </span>
+   <br>
+   <br></p>
+ </li>
+ <li>
+  <p><span style="--color: #4b4f56">Select a&nbsp;</span><span style="--color: #4b4f56"><strong>App Type</strong></span><span style="--color: #4b4f56"><strong>&nbsp;</strong></span><span style="--color: #4b4f56">as Business and click Next</span>
+   <br>
+   <br>
+   <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_4dd7e1ec626e27ca3feb17d67abcfa09ad82f2b1af87f2900f71b3690273e580/image2023-2-28_11-58-25.png?cb=3fb0353d6fe234e2b5c6c61ab416bb88" alt="image2023-2-28_11-58-25.png" data-scope="internal"> </span> </image-lightbox> </span>
+   <br>
+   <br></p>
+ </li>
+ <li>
+  <p><span style="--color: #4b4f56">Enter the&nbsp;</span><span style="--color: #4b4f56"><strong>App Name&nbsp;</strong></span><span style="--color: #4b4f56">and an email address where we can send you any important developer notifications. You can also add a Facebook Business Manager account if you have one, then click</span><span style="--color: #4b4f56">&nbsp;</span><span style="--color: #4b4f56"><strong>Create App.</strong></span>
+   <br>
+   <br>
+   <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 400px;"> <img src="/__attachments/a_ab4daa62b04948f6f04dd88f2ed9439d9bfef62ec41dca348ebc453387649464/image2023-2-28_12-11-14.png?cb=599031bf2d94127e6a1fb6e6ddb984ad" alt="image2023-2-28_12-11-14.png" data-scope="internal"> </span> </image-lightbox> </span> <span style="--color: #4b4f56"><strong>&nbsp; &nbsp;</strong></span>
+   <br>
+   <br></p>
+ </li>
+ <li>
+  <p><span style="--color: #4b4f56">Once you have completed the app creation flow, your app will be loaded in your app dashboard. The app dashboard allows you to view, add, and update details, such as app settings, roles, and additional use cases.</span></p>
+ </li>
+</ol>
+<h3 id="id-(4.9)InstagramConnectorConfiguration&amp;DeploymentGuide-3.AddingaWebhookand/orInstagramMessengerProduct." style=""><span id="InstagramConnectorConfiguration&amp;amp;DeploymentGuide-3.AddingaWebhookand/orInstagramMessengerProduct."></span>3. Adding a Webhook and/or Instagram Messenger Product.
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/instagram-connector-configuration-deployment-guide#id-(4.9)InstagramConnectorConfiguration&amp;amp;DeploymentGuide-3.AddingaWebhookand/orInstagramMessengerProduct.">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p><strong>Note:&nbsp;</strong>This step is to be done after Instagram connector has been deployed in your environment.</p>
+<p>Adding a product to your app enables relevant functionality and access to your app. Webhook products enables your app to receive updates and changes at Realtime from the page without calling the API.</p>
+<h5 id="id-(4.9)InstagramConnectorConfiguration&amp;DeploymentGuide-A.Webhook" style=""><span id="InstagramConnectorConfiguration&amp;amp;DeploymentGuide-A.Webhook"></span>A. Webhook
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/instagram-connector-configuration-deployment-guide#id-(4.9)InstagramConnectorConfiguration&amp;amp;DeploymentGuide-A.Webhook">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<ul>
+ <li>
+  <p>Go to&nbsp;<a href="https://developers.facebook.com/apps/760853002041225/dashboard/?business_id=233394914442704#addProduct" data-scope="external" rel="external noreferrer">Add Product</a>&nbsp;page</p>
+ </li>
+ <li>
+  <p>Select&nbsp;<strong>Webhooks</strong></p>
+ </li>
+ <li>
+  <p>Then Select&nbsp;<strong>Webhooks&nbsp;&nbsp;</strong>from the left Navigation Menu.</p>
+ </li>
+ <li>
+  <p>Select&nbsp;<strong>Instagram </strong>as the object you want to subscribe to and click&nbsp;<strong>"Subscribe to this object"</strong>&nbsp;button
+   <br>
+   <br>
+   <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 400px;"> <img src="/__attachments/a_8abb53b85d9ff2ad48b6c3710afcd99379dde7f963bf72404ba634cb6b800c03/image2023-6-6_16-46-43.png?cb=6571d65b390c5b42b5ae71309f7bc011" alt="image2023-6-6_16-46-43.png" data-scope="internal"> </span> </image-lightbox> </span>
+   <br>
+   <br></p>
+ </li>
+ <li>
+  <p>Provide the INSTAGRAM connector specific configuration for the webhook endpoint exposed on the Instagram connector. Enter the webhook URL as follows;<span class="unknown-content">Webhook URL: &nbsp;https://{{SERVER-FQDN}}/instagram-connector/webhook/{{INSTAGRAM-USER-ID}}(If you don't know the instagram user id then you can fetch the page-id from the section "Creation of a Long-Lived(without-expiry) Page Access Token - 1g" below and use that page id to get the instagram account id from the "Getting a Page's IG User" section of this page link)Verify Token:&nbsp; Now, this verify token must be same as the INSTAGRAM-PAGE-ACCESS-TOKEN variable in unified-admin configuration (Channel Connector).</span></p>
+ </li>
+ <li>
+  <p>Click&nbsp;<strong>Verify &amp; Save</strong>. This will be saved only if the webhook URL and the token are valid.</p>
+ </li>
+ <li>
+  <p>On the App dashboard, subscribe to "<strong>messages</strong>", "<strong>comments</strong>" etc fields as required.</p>
+ </li>
+</ul>
+<h5 id="id-(4.9)InstagramConnectorConfiguration&amp;DeploymentGuide-B.InstagramMessenger" style=""><span id="InstagramConnectorConfiguration&amp;amp;DeploymentGuide-B.InstagramMessenger"></span>B. Instagram Messenger
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/instagram-connector-configuration-deployment-guide#id-(4.9)InstagramConnectorConfiguration&amp;amp;DeploymentGuide-B.InstagramMessenger">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<ul>
+ <li>
+  <p>Go to&nbsp;<a href="https://developers.facebook.com/apps/760853002041225/dashboard/?business_id=233394914442704#addProduct" data-scope="external" rel="external noreferrer">Add Product</a>&nbsp;page</p>
+ </li>
+ <li>
+  <p>Select <strong>Instagram Messenger</strong></p>
+ </li>
+ <li>
+  <p>Then Select <strong>Instagram </strong><strong>Messenger</strong><strong>&nbsp;</strong>from the left Navigation Menu.</p>
+ </li>
+ <li>
+  <p>One the page that opens, Look for section "Access Token" and then Select&nbsp;<strong>Add or remove Page.&nbsp;</strong>Note that you MUST have a&nbsp;<strong>new Page</strong>&nbsp;created already on facebook and you must have&nbsp;<strong>admin access</strong>&nbsp;to the page to do this step and that page must be linked with your instagram professional account. <em>(</em><em><strong>Note</strong></em><em>: To link facebook page with instagram professional account go to facebook page → settings → Linked Account and link your instagram professional account here)</em>
+   <br>
+   <br>
+   <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_bc206210cde984d0dfacaa9855a68a7e69396e0d2d8450ba1938222910259db6/image2023-3-1_11-58-56.png?cb=cd79b804c4f80a4eedd8c60c71498231" alt="image2023-3-1_11-58-56.png" data-scope="internal"> </span> </image-lightbox> </span>
+   <br>
+   <br></p>
+ </li>
+ <li>
+  <p>On the pop up dialog, select&nbsp;<strong>Opt in to current Pages only&nbsp;</strong></p>
+ </li>
+ <li>
+  <p>Select the Page that you intend to integrate and click Continue.&nbsp;</p>
+  <div data-component="panel" role="note" data-appearance="info">
+   <div class="panel-meta">
+    <div class="panel-title">Note</div>
+   </div>
+   <div class="panel-content">
+    <p>If you already have a page created then we can use the same page or else create a new page. Once created then create a <a href="https://help.instagram.com/155940534568753" data-scope="external" rel="external noreferrer">new instagram account</a> and make it as <a href="https://business.instagram.com/getting-started" data-scope="external" rel="external noreferrer">business account</a>. Once done, then <a href="https://www.facebook.com/business/help/connect-instagram-to-page" data-scope="external" rel="external noreferrer">link</a> this new instagram account with your newly created or already existing facebook page.</p>
+   </div>
+  </div>
+  <p>
+   <br>
+  </p>
+ </li>
+ <li>
+  <p>Then click Save.</p>
+ </li>
+ <li>
+  <p>Find and click the button&nbsp;<strong>Add subscriptions</strong>.&nbsp;</p>
+ </li>
+ <li>
+  <p>On the pop up dialog, select "<strong>messages</strong>" field as shown in the screenshot
+   <br>
+   <br>
+   <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_c9856b32b27aac25f49e071fc30e110efb6e977aeb498d9954d16cd35281293c/image2023-3-1_12-11-21.png?cb=5e473eb4c622bd448a13b97eac89f781" alt="image2023-3-1_12-11-21.png" data-scope="internal"> </span> </image-lightbox> </span>
+   <br>
+   <br></p>
+ </li>
+</ul>
+<p><strong>At this point, your Facebook App is setup and can send feed or DM messages generated by the page </strong><em><strong>(connected with instagram professional account)</strong></em><strong> admins/developers/testers to the webhook.</strong>
+ <br>
+ <br></p>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-meta">
+  <div class="panel-title">Note</div>
+ </div>
+ <div class="panel-content">
+  <p>As we have already settled up Facebook DM(Direct Messaging) and SM(Social Media) related pages and webhooks and we do already have advanced access on webhooks related permissions on DEV as well as QA account so for instagram we only need to setup webhook and assign page. Rest everything will be used as same as before already settled up.</p>
+ </div>
+</div>
+<p>
+ <br>
+</p>
+<h2 id="id-(4.9)InstagramConnectorConfiguration&amp;DeploymentGuide-ApppermissionsandApprovalProcess" style=""><span id="InstagramConnectorConfiguration&amp;amp;DeploymentGuide-ApppermissionsandApprovalProcess"></span>App permissions and Approval Process
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/instagram-connector-configuration-deployment-guide#id-(4.9)InstagramConnectorConfiguration&amp;amp;DeploymentGuide-ApppermissionsandApprovalProcess">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>To access contents generated by other public users, your Facebook App has to undergo scrutiny by Facebook and the respective permissions used in the App have to reviewed and approved by Facebook Review Team.</p>
+<p>Following are the permissions that you need to access instagram post's comments and instagram messenger messages posted by public users:</p>
+<h4 id="id-(4.9)InstagramConnectorConfiguration&amp;DeploymentGuide-BasicPermissionsRequiredinallcases" style=""><span id="InstagramConnectorConfiguration&amp;amp;DeploymentGuide-BasicPermissionsRequiredinallcases"></span>Basic Permissions Required in all cases
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/instagram-connector-configuration-deployment-guide#id-(4.9)InstagramConnectorConfiguration&amp;amp;DeploymentGuide-BasicPermissionsRequiredinallcases">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<ol>
+ <li>
+  <p><em><strong>instagram_basic </strong></em><em>- (</em><span style="--color: #4b4f56"><em>The</em></span><span style="--color: #4b4f56"><em>&nbsp;</em></span><em><strong>instagram_basic</strong></em><span style="--color: #4b4f56"><em>&nbsp;</em></span><span style="--color: #4b4f56"><em>allows your app to read an Instagram account profile's info and media. </em></span><a href="https://developers.facebook.com/docs/permissions/reference/instagram_basic/" data-scope="external" rel="external noreferrer"><span style="--color: #4b4f56"><em>Link</em></span></a><em>)</em></p>
+ </li>
+ <li>
+  <p><em><strong>pages_manage_metadata&nbsp;</strong></em>-&nbsp;(The <strong>pages_manage_metadata</strong> permission allows your app to subscribe and receive webhooks about activity on the Page, and to update settings on the Page. <a href="https://developers.facebook.com/docs/permissions/reference/pages_manage_metadata" data-scope="external" rel="external noreferrer">Link</a>)</p>
+ </li>
+</ol>
+<h5 id="id-(4.9)InstagramConnectorConfiguration&amp;DeploymentGuide-A.InstagramMessenger" style=""><span id="InstagramConnectorConfiguration&amp;amp;DeploymentGuide-A.InstagramMessenger"></span>A. Instagram Messenger
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/instagram-connector-configuration-deployment-guide#id-(4.9)InstagramConnectorConfiguration&amp;amp;DeploymentGuide-A.InstagramMessenger">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<ol>
+ <li>
+  <p><em><strong>instagram_manage_messages </strong></em><em>- (</em><span style="--color: #4b4f56"><em>The&nbsp;</em></span><em><strong>instagram_manage_messages</strong></em><span style="--color: #4b4f56"><em>&nbsp;permission allows business users to read and respond to Instagram Direct messages. </em></span><a href="https://developers.facebook.com/docs/permissions/reference/instagram_manage_messages" data-scope="external" rel="external noreferrer"><span style="--color: #4b4f56"><em>Link</em></span></a><em>)</em></p>
+ </li>
+</ol>
+<h5 id="id-(4.9)InstagramConnectorConfiguration&amp;DeploymentGuide-B.InstagramComments" style=""><span id="InstagramConnectorConfiguration&amp;amp;DeploymentGuide-B.InstagramComments"></span>B. Instagram Comments
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/instagram-connector-configuration-deployment-guide#id-(4.9)InstagramConnectorConfiguration&amp;amp;DeploymentGuide-B.InstagramComments">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<ol>
+ <li>
+  <p><em><strong>instagram_manage_comments</strong></em><em> - (</em><span style="--color: #4b4f56"><em>The&nbsp;</em></span><em><strong>instagram_manage_comments</strong></em><span style="--color: #4b4f56"><em>&nbsp;permission allows your app to create, delete and hide comments on behalf of the Instagram account linked to a Page. </em></span><a href="https://developers.facebook.com/docs/permissions/reference/instagram_manage_comments" data-scope="external" rel="external noreferrer"><span style="--color: #4b4f56"><em>Link</em></span></a><span style="--color: #4b4f56"><em>)</em></span>
+   <br></p>
+ </li>
+</ol>
+<h4 id="id-(4.9)InstagramConnectorConfiguration&amp;DeploymentGuide-Stepsforsubmittingapermissionforapproval" style=""><span id="InstagramConnectorConfiguration&amp;amp;DeploymentGuide-Stepsforsubmittingapermissionforapproval"></span><em><strong>Steps for submitting a permission for approval&nbsp;</strong></em>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/instagram-connector-configuration-deployment-guide#id-(4.9)InstagramConnectorConfiguration&amp;amp;DeploymentGuide-Stepsforsubmittingapermissionforapproval">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<ol>
+ <li>
+  <p>Go to&nbsp;<a href="https://developers.facebook.com/apps/627370728911855/app-review/permissions/?business_id=233394914442704" data-scope="external" rel="external noreferrer">permissions and feature</a>&nbsp;section and click&nbsp;<strong>Permissions and Features</strong></p>
+ </li>
+ <li>
+  <p>Identify the permission and click&nbsp;<strong>Get advanced access .&nbsp;</strong>Agree to the term and conditions and click Confirm</p>
+ </li>
+ <li>
+  <p>On the page the opens, Scroll down to&nbsp;<strong>Review your app settings&nbsp;</strong>and click the arrow, to open the form.</p>
+ </li>
+ <li>
+  <p>Fill in the form. Ensure to specify the privacy policy URL (the policy MUST be hosted on the company's website and should always be accessible). Look at the the&nbsp;<a href="https://www.expertflow.com/facebook-page-privacy-statement/" data-scope="external" rel="external noreferrer">privacy policy for Expertflow</a>.. you can use this for internal deployments.</p>
+ </li>
+ <li>
+  <p>Select App Category as&nbsp;<strong>Messaging&nbsp;</strong>and Save.</p>
+ </li>
+ <li>
+  <p>Then Scroll down to&nbsp;<strong>Complete App verification&nbsp;</strong>and click the arrow to open the form.&nbsp;
+   <br>
+   <br>
+   <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_6c85f59d1c8d502beac6a551988dfe0bb8d53446dd881ca08e92ef2d9616edc9/image2023-3-1_13-27-14.png?cb=96b575ea5c5c78fe230355069e326067" alt="image2023-3-1_13-27-14.png" data-scope="internal"> </span> </image-lightbox> </span>
+   <br>
+   <br></p>
+ </li>
+ <li>
+  <p>On the pop up form, Select "<strong>No</strong>" for the question&nbsp;<strong>"</strong><span style="--color: #1c1e21"><strong>Does your app use a Facebook authentication solution, like Facebook Login, that the review team can use to login and verify your app?</strong></span><strong>"</strong></p>
+ </li>
+ <li>
+  <p>For the question&nbsp;<strong>"</strong><span style="--color: #1c1e21"><strong>Provide detailed step-by-step instructions on how a reviewer can test your integration and how you are using the requested permissions or features. Include any testing credentials required to access your integration</strong></span><strong>".&nbsp;</strong>Here you need to document a clear end-to-end step by step procedure that the Facebook Review Team need to follow when Testing the permission that you have requested for. The step Must include describing;</p>
+  <ol>
+   <li>
+    <p>Instagram Account they need to use to test you App.</p>
+   </li>
+   <li>
+    <p>The URL for the Facebook Page or Instagram Account (based on permission)</p>
+   </li>
+   <li>
+    <p>Credentials for login into the Agent Desk or CIM or any other backend for that matter.</p>
+   </li>
+   <li>
+    <p>Instruction of how/what content/text to send from Page/Instagram Messenger and how to accept/reply etc to that message within Agent Desk etc.</p>
+   </li>
+   <li>
+    <p>Clarity on how the permission will be used in your App and why it's necessary for your App to function.</p>
+   </li>
+   <li>
+    <p>A screencast demonstrating all the steps above.</p>
+   </li>
+  </ol>
+ </li>
+ <li>
+  <p>Once you have submitted the review forms. Facebook Team will review the App and send feedback to the email that you specified in the App.</p>
+ </li>
+</ol>
+<p><strong>Repeat the process for the rest of the permissions.&nbsp;</strong>Ensure to switch your App to&nbsp;<strong>Live Mode&nbsp;</strong>once all the required permissions have been approved - this will enable you App to access public contents posted on the page. Here is a link to a link to&nbsp;<a href="https://drive.google.com/drive/folders/1vdjXvGR_ZETiuiVsP1SPaKZgxMtEifwG" data-scope="external" rel="external noreferrer">document</a> &amp; screencasts which explains in detail the App Permissions related stuff that would be helpful.&nbsp;</p>
+<p>
+ <br>
+</p>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <p>INSTAGRAM_BASIC permission can be used without ADVANCED level access. However, PAGES_MANAGE_METADATA, INSTAGRAM_MANAGE_MESSAGES &amp; INSTAGRAM_MANAGE_COMMENTS must be used with ADVANCED level access.</p>
+ </div>
+</div>
+<p>
+ <br>
+ <br>
+ <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 77px;"> <img src="/__attachments/a_e62481f88ad1f893551b66aeea59ccdcf9a0a30472c61d208ae8031a8a5d6c09/image2023-3-1_13-44-37.png?cb=98cf3fe596f8a300032d78d24b58eee8" alt="image2023-3-1_13-44-37.png" data-scope="internal"> </span> </image-lightbox> </span>
+ <br>
+ <br>
+</p>
+<h2 id="id-(4.9)InstagramConnectorConfiguration&amp;DeploymentGuide-GrantingaUserAccesstoFacebookApponFacebookDeveloperPlatform" style=""><span id="InstagramConnectorConfiguration&amp;amp;DeploymentGuide-GrantingaUserAccesstoFacebookApponFacebookDeveloperPlatform"></span>Granting a User Access to Facebook App on Facebook Developer Platform
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/instagram-connector-configuration-deployment-guide#id-(4.9)InstagramConnectorConfiguration&amp;amp;DeploymentGuide-GrantingaUserAccesstoFacebookApponFacebookDeveloperPlatform">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>Access to an existing Facebook App on the FB Developer platform is granted by the app owner or anyone else who has the admin role to the app. (Assuming) you have access the app and you want to grant another FB user access the same app, follow the steps below;</p>
+<ol>
+ <li>
+  <p>Login to Facebook using the Facebook account which is associated with the app you want to grant the user access. (<strong>Note</strong>: Step 2, below will use the active session that you established in this step to authenticate and authorize you to the apps which you have access to)</p>
+ </li>
+ <li>
+  <p>Navigate to&nbsp;<a href="https://developers.facebook.com/apps" data-scope="external" rel="external noreferrer">Facebook Developer platform</a>. The landing page will somehow look as depicted in this screenshot
+   <br>
+   <br>
+   <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" data-border-size="1" data-border-color="gray" style="--height: 250px;"> <img src="/__attachments/a_12d21bf2003109c11fa6081520fbd8e6f61d68300b0ccc1e8747ea4117773c52/image2022-9-12_15-40-1.png?cb=7bab2f6d673f577a2ce99045f9e8b6ce" alt="image2022-9-12_15-40-1.png" data-scope="internal"> </span> </image-lightbox> </span>
+   <br>
+   <br></p>
+ </li>
+ <li>
+  <p>Select the app you want to grant the user access</p>
+ </li>
+ <li>
+  <p>On app's detail page(i.e. the page that opens up), expand the tab "<strong>Roles</strong>" and click&nbsp;<strong>Roles</strong></p>
+ </li>
+ <li>
+  <p>Depending on the type of Role that you want to assign the user, you will choose either to add the user as an Admin, Developer or Tester to the app.<span class="unknown-content">Click on the&nbsp;Add&nbsp;.. button, and search the user by Full Names as per his/her FB account or for more precise search, you can use the FB user username that you will find when you open your profile via the URL:&nbsp;User Facebook Profile&nbsp;(example)Copy your username that after the&nbsp;https://www.facebook.com/&nbsp;and paste in the filter field and click&nbsp;submit.Verify that the user that you added appearsAsk the user to login into his/her Facebook account and subsequently to his&nbsp;https://developers.facebook.com/apps&nbsp;account to accept the invitation to manage the app (Note:&nbsp;Without accepting the invite the user won't see the app in which they are associated with on Facebook developer account)After clicking the above link for FB developer account, go the top-right corner of your FB Developer account, and expand the notification tray (it will appear as shown in following screenshot)&nbsp;Click on&nbsp;Pending App Request&nbsp;link that appears, and click accept.</span></p>
+ </li>
+</ol>
+<h2 id="id-(4.9)InstagramConnectorConfiguration&amp;DeploymentGuide-CreationofaLong-Lived(withoutexpiry)PageAccessToken" style=""><span id="InstagramConnectorConfiguration&amp;amp;DeploymentGuide-CreationofaLong-Lived(withoutexpiry)PageAccessToken"></span>Creation of a Long-Lived (without expiry) Page Access Token
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/instagram-connector-configuration-deployment-guide#id-(4.9)InstagramConnectorConfiguration&amp;amp;DeploymentGuide-CreationofaLong-Lived(withoutexpiry)PageAccessToken">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>Every API call to the Facebook graph API requires authentication, and this is achieved through combination of User Access Token and the Page Access Token.&nbsp;The former is used during the process of generation of the Page Access Token, therefore the resultant token (which is the Page Access Token) will be of main focus in this topic.</p>
+<p>The question would be that how do we generate this token(Page Access Token)?&nbsp;<strong>Note:&nbsp;</strong>Prior to this step, ensure that the Facebook Account you intent to use has been added onto the Facebook Page as an admin and also granted access to the Facebook App on Facebook Developer Account.</p>
+<h4 id="id-(4.9)InstagramConnectorConfiguration&amp;DeploymentGuide-FollowthestepsbelowtogenerateaLong-LivedPageAccessToken:" style=""><span id="InstagramConnectorConfiguration&amp;amp;DeploymentGuide-FollowthestepsbelowtogenerateaLong-LivedPageAccessToken:"></span>Follow the steps below to generate a Long-Lived Page Access Token:
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/instagram-connector-configuration-deployment-guide#id-(4.9)InstagramConnectorConfiguration&amp;amp;DeploymentGuide-FollowthestepsbelowtogenerateaLong-LivedPageAccessToken:">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>As mentioned above, the ultimate page access token is generated using the user access token, therefore, we will start with generation of a user access token and then using the user access token, we will generate a long-lived page access token.</p>
+<ol>
+ <li>
+  <p>Navigate to&nbsp;<a href="https://developers.facebook.com/tools/explorer/" data-scope="external" rel="external noreferrer">https://developers.facebook.com/tools/explorer/</a>&nbsp;to launch the Graph API Explorer Tool which is used to generate a&nbsp;<strong>short-lived user access token</strong><strong>&nbsp;</strong>(valid for 1hr).&nbsp;&nbsp;<span class="unknown-content">On the Graph API Explorer window that opens on your browser, edit the from&nbsp;me?fields=id,name&nbsp;to&nbsp;me/accounts&nbsp;On the form to the right of your screen, select the App on the&nbsp;Meta App&nbsp;dropdown menuOn the&nbsp;User or Page&nbsp;select dropdown, select&nbsp;Get User Access TokenOn the permissions field. Select all the permissions required like instagram_basic, instagram_manage_messages, Instagram_manage_comments etc.Click&nbsp;Generate Access Token&nbsp;button and then&nbsp;SubmitCopy the access token on the&nbsp;Access Token&nbsp;field and store it somewhere as you will need it in the next step.Copy the Page Id(designated as&nbsp;id) in the API response body and store it somewhere as you will need it as well in the next step.</span></p>
+ </li>
+ <li>
+  <p>Navigate to&nbsp;<a href="https://expertflow.postman.co/workspace/Expertflow~f8480e26-6001-4a5f-8435-d0adbf5d7f5c/request/21457238-db3ee9aa-c184-42dd-8f84-2fe7342332a9" data-scope="external" rel="external noreferrer">Expertflow Postman documentation platform - Long-Lived User Access Token</a>&nbsp;where Graph API for generating long-lived user access token is documented&nbsp;<span class="unknown-content">On the page that opens, replace value on the&nbsp;client_id&nbsp;field with the actual&nbsp;App Id.&nbsp;You can find the App Id to replace in this field on your Facebook App's&nbsp;Settings&nbsp;&gt;&nbsp;Basic&nbsp;page.Replace the value on the&nbsp;client_secret&nbsp;field with the actual value on your&nbsp;App secret&nbsp;field (Note:&nbsp;you have to click the&nbsp;show&nbsp;button to unlock the full secret)Replace the value on the&nbsp;fb_exchange_token&nbsp;field with the Short-Lived User Access Token which you generated in the step above.Click&nbsp;SendFrom the API response payload, copy the access token value that you receive after making the API request. This is a Long-Lived User Access Token which expires after a period of 60 days. Ensure that you store this token as we will use it in the next step.</span></p>
+ </li>
+ <li>
+  <p>Navigate to&nbsp;<a href="https://expertflow.postman.co/workspace/Expertflow~f8480e26-6001-4a5f-8435-d0adbf5d7f5c/request/21457238-17f77dfe-4e01-4600-87f1-a365b0bf5504" data-scope="external" rel="external noreferrer">Expertflow Postman documentation platform - Long-Lived Page Access Token</a>&nbsp;where Graph API for generating long-lived page access token is documented<span class="unknown-content">On the page that opens, replace the {PAGE-ID} on the address bar with the actual page id which you generated in step 1, above.Replace the value on the&nbsp;access_token&nbsp;field with the Long-Lived User Access Token which you generated in&nbsp;step 2(e), above.Click&nbsp;SendFrom the API response payload, copy the access token value that you receive after making the API request. This is a now the Long-Lived Page Access Token(never expires) which you will need to configure in the Facebook Connector in CIM.&nbsp;(Note:&nbsp;Ensure that you store this token in a safe place where it's not exposed to compromise).</span></p>
+ </li>
+</ol>
+<h2 id="id-(4.9)InstagramConnectorConfiguration&amp;DeploymentGuide-UnifiedAdminConfigurations" style=""><span id="InstagramConnectorConfiguration&amp;amp;DeploymentGuide-UnifiedAdminConfigurations"></span>Unified Admin Configurations
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/instagram-connector-configuration-deployment-guide#id-(4.9)InstagramConnectorConfiguration&amp;amp;DeploymentGuide-UnifiedAdminConfigurations">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h4 id="id-(4.9)InstagramConnectorConfiguration&amp;DeploymentGuide-A).Instagramconnectorconfigurations" style=""><span id="InstagramConnectorConfiguration&amp;amp;DeploymentGuide-A).Instagramconnectorconfigurations"></span><strong>A). Instagram connector configurations</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/instagram-connector-configuration-deployment-guide#id-(4.9)InstagramConnectorConfiguration&amp;amp;DeploymentGuide-A).Instagramconnectorconfigurations">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>This section outlines the procedure for setting up the Instagram connector in CIM.&nbsp;</p>
+<h3 id="id-(4.9)InstagramConnectorConfiguration&amp;DeploymentGuide-ChannelType&amp;Provider" style=""><span id="InstagramConnectorConfiguration&amp;amp;DeploymentGuide-ChannelType&amp;amp;Provider"></span>Channel Type &amp; Provider
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/instagram-connector-configuration-deployment-guide#id-(4.9)InstagramConnectorConfiguration&amp;amp;DeploymentGuide-ChannelType&amp;amp;Provider">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <p>It is recommended to use the service name of the component in the <strong>"Channel Provider -&gt; Provider's Webhook"</strong> field. However, FQDN can also be used with some additional custom configurations.</p>
+ </div>
+</div>
+<ol>
+ <li>
+  <p>Create a new Channel Type (if doesn't exist). Give it the name "Instagram".</p>
+ </li>
+ <li>
+  <p><em>Provide the service name of Instagram Connector in the </em><em><strong>Provider Webhook</strong></em><em> field as http://{SERVICE-NAME}:{SERVICE-PORT}. Replace the {</em><em><strong>SERVICE-NAME} and </strong></em><em>{</em><em><strong>SERVICE-PORT} </strong></em><em>in the URL with the component's k3s-based service name and port </em><em>(It can be fetched using </em><em><strong>k get svc -n expertflow</strong></em><em>) </em><em><strong>E.g:</strong></em>
+   <br>
+   <em>For K3s:</em><em> </em><a href="http://ef-viber-connector-svc:8080/" data-scope="external" rel="external noreferrer"><em>http://ef-instagram-connector-svc:8080</em></a>
+   <br>
+   <em>For Helm Based: </em><a href="http://cx-channels-viber-connector-svc:8080/" data-scope="external" rel="external noreferrer"><em>http://cx-channels-instagram-connector-svc:8080</em></a>
+   <br>
+   <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_9003d12b72da763aca6bb1aa93ea4eb6439fd896df3960742c660f8a2e2bddf2/instagram.png?cb=9a4c166c19b61006040c052a8cf1a828" alt="instagram.png" data-scope="internal"> </span> </image-lightbox> </span>
+   <br></p>
+ </li>
+ <li>
+  <p><span style="--color: #212121">Add the following attributes;</span></p>
+  <ol>
+   <li>
+    <p><span style="--color: #212121">Click Add Custom Attribute</span><span style="--color: #212121"><strong>&nbsp;</strong></span><span style="--color: #212121">button and on the form that opens, replace the dummy value "New attribute0.." in the attribute field with</span><span style="--color: #212121">&nbsp;</span><span style="--color: #212121"><strong>INSTAGRAM-HOST-URL </strong></span><span style="--color: #212121">and select data-type as "URL" in the field to the right-most part of the form.</span></p>
+   </li>
+   <li>
+    <p><span style="--color: #212121">Click Add Custom Attribute</span><span style="--color: #212121"><strong>&nbsp;</strong></span><span style="--color: #212121">button again, and replace the dummy value "New attribute1.." in the attribute field with</span><span style="--color: #212121"> </span><span style="--color: #212121"><strong>INSTAGRAM</strong></span><span style="--color: #212121"><strong>-API-KEY&nbsp;</strong></span><span style="--color: #212121">and select data-type as "String 2000".</span></p>
+   </li>
+   <li>
+    <p><span style="--color: #212121">Click Add Custom Attribute</span><span style="--color: #212121"><strong>&nbsp;</strong></span><span style="--color: #212121">button again, and replace the dummy value "New attribute2.." in the attribute field with</span><span style="--color: #212121"> </span><span style="--color: #212121"><strong>INSTAGRAM</strong></span><span style="--color: #212121"><strong>-PAGE-ACCESS-TOKEN</strong></span><span style="--color: #212121"><strong>&nbsp;</strong></span><span style="--color: #212121">and select data-type as "String 100".</span></p>
+   </li>
+   <li>
+    <p><span style="--color: #212121">Click</span><span style="--color: #212121">&nbsp;</span><span style="--color: #212121"><strong>Save</strong></span></p>
+   </li>
+  </ol>
+ </li>
+</ol>
+<h3 id="id-(4.9)InstagramConnectorConfiguration&amp;DeploymentGuide-ChannelConnector" style=""><span id="InstagramConnectorConfiguration&amp;amp;DeploymentGuide-ChannelConnector"></span>Channel Connector
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/instagram-connector-configuration-deployment-guide#id-(4.9)InstagramConnectorConfiguration&amp;amp;DeploymentGuide-ChannelConnector">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<h5 id="id-(4.9)InstagramConnectorConfiguration&amp;DeploymentGuide-AddingtheInstagramURLandPageAccessTokeninChannelConnector" style=""><span id="InstagramConnectorConfiguration&amp;amp;DeploymentGuide-AddingtheInstagramURLandPageAccessTokeninChannelConnector"></span>Adding the Instagram URL and Page Access Token in Channel Connector
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/instagram-connector-configuration-deployment-guide#id-(4.9)InstagramConnectorConfiguration&amp;amp;DeploymentGuide-AddingtheInstagramURLandPageAccessTokeninChannelConnector">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<ol>
+ <li>
+  <p>Navigate to Channel Manager &gt; Channel Connector
+   <br>
+   <br>
+   <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 400px;"> <img src="/__attachments/a_908684c0caf4211ec73e87e95a6979632827d860787b0e3fbea13c6d004d2c16/image2023-6-7_16-58-14.png?cb=93d279ab53bc214de4c9f138ba33565f" alt="image2023-6-7_16-58-14.png" data-scope="internal"> </span> </image-lightbox> </span>
+   <br>
+   <br></p>
+ </li>
+ <li>
+  <p>Provide the name for the connector under the&nbsp;<strong>Name</strong>&nbsp;field</p>
+ </li>
+ <li>
+  <p>Select the Channel Provider Interface.</p>
+ </li>
+ <li>
+  <p>Enter the Instagram URL in the&nbsp;<strong>INSTAGRAM-HOST-URL </strong>field. For example,&nbsp;<a href="https://graph.facebook.com/v15.0/" data-scope="external" rel="external noreferrer">https://graph.facebook.com/v15.0/</a>&nbsp;(<strong>Note:</strong>&nbsp;ensure you add the "/" after the API version)</p>
+ </li>
+ <li>
+  <p>Enter the Long-Lived Page Access Token in the&nbsp;<strong>INSTAGRAM-API-KEY</strong><strong>&nbsp;</strong>field.</p>
+ </li>
+ <li>
+  <p>Enter the "Verify Token" value which was used while registering Webhook (Step 3A) in the&nbsp;<strong>INSTAGRAM-PAGE-ACCESS-TOKEN</strong><strong>&nbsp;</strong>field.</p>
+ </li>
+ <li>
+  <p>Click&nbsp;<strong>Save</strong></p>
+ </li>
+</ol>
+<h3 id="id-(4.9)InstagramConnectorConfiguration&amp;DeploymentGuide-Channel" style=""><span id="InstagramConnectorConfiguration&amp;amp;DeploymentGuide-Channel"></span>Channel
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/instagram-connector-configuration-deployment-guide#id-(4.9)InstagramConnectorConfiguration&amp;amp;DeploymentGuide-Channel">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<h5 id="id-(4.9)InstagramConnectorConfiguration&amp;DeploymentGuide-ConfiguringtheInstagramChannelinChannelConfiguration" style=""><span id="InstagramConnectorConfiguration&amp;amp;DeploymentGuide-ConfiguringtheInstagramChannelinChannelConfiguration"></span>Configuring the Instagram Channel in Channel Configuration
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/instagram-connector-configuration-deployment-guide#id-(4.9)InstagramConnectorConfiguration&amp;amp;DeploymentGuide-ConfiguringtheInstagramChannelinChannelConfiguration">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<ol>
+ <li>
+  <p>Navigate to Channel Manager &gt; Channel
+   <br>
+   <br>
+   <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 400px;"> <img src="/__attachments/a_29b6231743fae1cae276f798a617b246a456adca5931f157590e61ab3481fd23/image2023-6-7_16-59-8.png?cb=5832de90929457db5437c19b78273dad" alt="image2023-6-7_16-59-8.png" data-scope="internal"> </span> </image-lightbox> </span>
+   <br>
+   <br></p>
+ </li>
+ <li>
+  <p>Provide the channel name under the&nbsp;<strong>Name</strong>&nbsp;field</p>
+ </li>
+ <li>
+  <p>Provide the&nbsp;<strong>Instagram User Id </strong>which is linked with facebook page&nbsp;under the Service Identifier field.&nbsp;<strong>Note:&nbsp;</strong>This is the same IG User-ID which you received from the API request that you placed to&nbsp;<a href="https://docs.expertflow.com/me/accounts" data-scope="external" rel="external noreferrer">/me/accounts</a>&nbsp;API on Graph API Explorer above and used that in IG UserID page API call.</p>
+ </li>
+ <li>
+  <p>Fill the rest of the fields in the form accordingly and Click&nbsp;<strong>Save&nbsp;</strong>button.</p>
+ </li>
+</ol>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="d9e2f89779836d6d-132" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="d9e2f89779836d6d-132">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/cx/4.9/instagram-direct-message">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Instagram Direct Message</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/cx/4.9/instagram-connector-limitation">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Instagram Connector - Limitation</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

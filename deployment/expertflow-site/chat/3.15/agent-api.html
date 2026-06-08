@@ -1,0 +1,6066 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_bbd781971cdb54b6e6416b40c5e6773f08aae7dbfa59c5520add73ad6380a578" data-confluence-content-id="35226535"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/chat/3.15/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="CHAT">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>Agent API | Expertflow CX</title>
+		<meta property="og:title" content="Agent API | Expertflow CX">
+		<meta property="twitter:title" content="Agent API | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/chat/3.15/agent-api">
+		<meta property="og:url" content="https://docs.expertflow.com/chat/3.15/agent-api">
+
+		<meta name="description" content="Use Agent API to use human agent features and controls in a CRM application, a mobile app, or integrate with other agent channel applications such as MS Teams. A web-based agent gadget is shipped out of the box that can also be embedded in Cisco Finesse Agent/Supervisor desktop as a Finesse gadget.">
+		<meta property="og:description" content="Use Agent API to use human agent features and controls in a CRM application, a mobile app, or integrate with other agent channel applications such as MS Teams. A web-based agent gadget is shipped out of the box that can also be embedded in Cisco Finesse Agent/Supervisor desktop as a Finesse gadget.">
+		<meta property="twitter:description" content="Use Agent API to use human agent features and controls in a CRM application, a mobile app, or integrate with other agent channel applications such as MS Teams. A web-based agent gadget is shipped out of the box that can also be embedded in Cisco Finesse Agent/Supervisor desktop as a Finesse gadget.">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2023-12-12T11:16:28.721Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": true
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.js"></script>
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="9c8069a028a72d1c-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="9c8069a028a72d1c-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-9c8069a028a72d1c-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-9c8069a028a72d1c-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-9c8069a028a72d1c-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="9c8069a028a72d1c-3" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="9c8069a028a72d1c-3">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-9c8069a028a72d1c-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-9c8069a028a72d1c-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="9c8069a028a72d1c-4" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="9c8069a028a72d1c-5" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="9c8069a028a72d1c-6" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="9c8069a028a72d1c-7" href="/chat/3.15/release-notes" >Release Notes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="9c8069a028a72d1c-8"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="9c8069a028a72d1c-8" href="/chat/3.15/user-guides" >User Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="9c8069a028a72d1c-10"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="9c8069a028a72d1c-10" href="/chat/3.15/agent-platforms" >Agent Platforms</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="9c8069a028a72d1c-12"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="9c8069a028a72d1c-12" href="/chat/3.15/media-channels" >Media Channels</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="9c8069a028a72d1c-14" href="/chat/3.15/rich-media-messaging" >Rich Media Messaging</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="9c8069a028a72d1c-15"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="9c8069a028a72d1c-15" href="/chat/3.15/bots" >Bots</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="9c8069a028a72d1c-17"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="9c8069a028a72d1c-17" href="/chat/3.15/reports" >Reports</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="9c8069a028a72d1c-19"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="9c8069a028a72d1c-19" href="/chat/3.15/docker-based-deployment" >Docker-based Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="9c8069a028a72d1c-21"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="9c8069a028a72d1c-21" href="/chat/3.15/security-and-compliance" >Security and Compliance</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="9c8069a028a72d1c-23" href="/chat/3.15/solution-components" >Solution Components</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="9c8069a028a72d1c-24" href="/chat/3.15/channel-manager" >Channel Manager</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="9c8069a028a72d1c-25" href="/chat/3.15/sms-connector-apis-documentation" >SMS Connector APIs Documentation</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="9c8069a028a72d1c-26"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="9c8069a028a72d1c-26" href="/chat/3.15/routing-engine" >Routing Engine</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="9c8069a028a72d1c-28"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="9c8069a028a72d1c-28" href="/chat/3.15/hybrid-chat-deployment" >Hybrid Chat Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="9c8069a028a72d1c-30"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="9c8069a028a72d1c-30" href="/chat/3.15/system-limitations" >System Limitations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="9c8069a028a72d1c-33"						aria-labelledby="9c8069a028a72d1c-32"
+					></button>
+				<a id="9c8069a028a72d1c-32" href="/chat/3.15/api-reference" >API Reference</a>
+			</div>
+
+<ul  id="9c8069a028a72d1c-33" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="9c8069a028a72d1c-34" href="/chat/3.15/agent-api" aria-current="page">Agent API</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="9c8069a028a72d1c-35" href="/chat/3.15/agent-list-api" >Agent List API</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="9c8069a028a72d1c-36" href="/chat/3.15/hybrid-chat-apis" >Hybrid Chat APIs</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="9c8069a028a72d1c-37"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="9c8069a028a72d1c-37" href="/chat/3.15/troubleshooting-and-maintenance" >Troubleshooting and Maintenance</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="9c8069a028a72d1c-39"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="9c8069a028a72d1c-39" href="/chat/3.15/demo-environment" >Demo Environment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="9c8069a028a72d1c-41" href="/chat/3.15/faqs" >FAQs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="9c8069a028a72d1c-42" href="/chat/3.15/conversation-message-object" >Conversation Message Object</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="9c8069a028a72d1c-43" href="/chat/3.15/sitemap-xml" >sitemap.xml</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="9c8069a028a72d1c-44" href="/chat/3.15/list-of-open-source-software" >List of Open-source Software</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="9c8069a028a72d1c-45" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="9c8069a028a72d1c-45">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/chat/3.15">
+										Hybrid Chat
+								</a>
+							</li>
+							<li>
+								<a href="/chat/3.15/api-reference">
+										API Reference
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="9c8069a028a72d1c-46">
+			<h2 class="toc-heading" id="9c8069a028a72d1c-46">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>Agent API</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+
+	
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+	
+
+
+	
+	
+	
+	
+	
+	
+		
+		
+	
+	
+	
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<p>
+ <br>
+</p>
+<p>Use Agent API to use human agent features and controls in a CRM application, a mobile app, or integrate with other agent channel applications such as MS Teams. A web-based agent gadget is shipped out of the box that can also be embedded in Cisco Finesse Agent/Supervisor desktop as a Finesse gadget.</p>
+<p>
+ <br>
+</p>
+<h2 id="id-(3.15)AgentAPI-Events"><span id="AgentAPI-Events"></span>Events
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-Events">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>Here is the list of all possible events which can be used as a command sent to server and events received from the server. Origin of each event is specified by Source.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 149px">
+       <col style="width: 937px">
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p><strong>Event Name</strong></p>
+        </td>
+        <td>
+         <p><strong>Description</strong></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="/chat/3.15/agent-api#id-(3.15)AgentAPI-amq-sub" data-scope="internal">Agent API | id (3.15)AgentAPI amq sub</a></p>
+        </td>
+        <td>
+         <p>This event is used to subscribe to ActiveMQ topic.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="/chat/3.15/agent-api#id-(3.15)AgentAPI-amq-send" data-scope="internal">Agent API | id (3.15)AgentAPI amq send</a></p>
+        </td>
+        <td>
+         <p>This event is used to send ActiveMQ related messages.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>amq-msg</p>
+        </td>
+        <td>
+         <p>This event is used to receive a message from ActiveMQ</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>login</p>
+        </td>
+        <td>
+         <p>This event is used to login in the system</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>receiveChatRequest</p>
+        </td>
+        <td>
+         <p>The amq-msg event containing "head":"TaskAssigned"&nbsp; is used to show a chat request from a customer</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>joinConversation</p>
+        </td>
+        <td>
+         <p>This event is used to accept the chat request. Client needs to emit this event.</p>
+         <p>Bot and customer also needs to emit this event to receive conversation updates.&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>changeState</p>
+        </td>
+        <td>
+         <p>To change the state client emit amq-send event with "head" : "AgentState" to change his state</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>addParticipant</p>
+        </td>
+        <td>
+         <p>This event is used to add a participant in the chat. Client needs to emit this event.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>removeParticipant</p>
+        </td>
+        <td>
+         <p>This event is used to remove a participant from the chat. Client needs to emit this event.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>transferChat</p>
+        </td>
+        <td>
+         <p>The transferChat event is used to transfer a chat from one agent to another agent/supervisor. Client needs to emit this event.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>raiseHand</p>
+        </td>
+        <td>
+         <p>The raiseHand event is used to add the supervisor in the chat as a participant. Client needs to emit this event.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>wrapUp</p>
+        </td>
+        <td>
+         <p>The wrapUp is used at the end of the conversation to upload wrapup data. Client needs to emit this event.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>silentMonitor</p>
+        </td>
+        <td>
+         <p>The silentMonitor event is used by the supervisor to monitor any active conversation of some agent in his team. Client needs to emit this event.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>bargeIn</p>
+        </td>
+        <td>
+         <p>The bargeIn event is used by the supervisor to join the conversation. Client needs to emit this event.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>messageArrived</p>
+        </td>
+        <td>
+         <p>The messageArrived event is used to receive messages from other participants. Client needs to subscribe to this event.</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>conversationInfo</p>
+        </td>
+        <td colspan="1">
+         <p>The conversationInfo event is used to receive complete details of the conversation</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>conversationList</p>
+        </td>
+        <td colspan="1">
+         <p>The conversationList event is used to recieve all converrsations list, this is specific for the bot-connector</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>teamInfo</p>
+        </td>
+        <td colspan="1">
+         <p>The teamInfo event is used to receive team members state, for supervisor user teamInfo also contains list of active chats against each team member</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>leaveConversation</p>
+        </td>
+        <td colspan="1">
+         <p>This event is used to leave the conversation</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>endConversation</p>
+        </td>
+        <td colspan="1">
+         <p>This event is used to end the conversation</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>RoleUpdated</p>
+        </td>
+        <td colspan="1">
+         <p>The event is received once user role is changed.</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>getConversationInfo</p>
+        </td>
+        <td colspan="1">
+         <p>The event is emitted on agent login</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-​amq-sub"><span id="AgentAPI-amq-sub"></span>​amq-sub
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-​amq-sub">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>This request is used for an agent to subscribe on chat solution’s activemq.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Protocol</p>
+        </td>
+        <td>
+         <p>Websockets</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Name</p>
+        </td>
+        <td>
+         <p>amq-sub</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Source</p>
+        </td>
+        <td>
+         <p>Client</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Input/Output Format</p>
+        </td>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Request Payload</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+
+"AgentId": "abc",
+
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Payload Parameters</p>
+        </td>
+        <td>
+         <p>AgentId: Id of the agent to login</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Triggered</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-​amq-send"><span id="AgentAPI-amq-send"></span>​amq-send
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-​amq-send">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>For communication with media routing engine, chat solution uses activemq. Any message which needs to be passed to activemq is sent through amq-send event.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Protocol</p>
+        </td>
+        <td>
+         <p>Websockets</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Name</p>
+        </td>
+        <td>
+         <p>amq-send</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Source</p>
+        </td>
+        <td>
+         <p>Client</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Input/Output Format</p>
+        </td>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Request Payload</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+
+"head": "Login",
+
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Payload Parameters</p>
+        </td>
+        <td>
+         <p>head: this is the JMS type of activemq message</p>
+         <p>There will be other parameters of the request as well inside request payload.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Triggered</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-​amq-msg"><span id="AgentAPI-amq-msg"></span>​amq-msg
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-​amq-msg">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>This event is used for sending activemq message data to the client.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Protocol</p>
+        </td>
+        <td>
+         <p>Websockets</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Name</p>
+        </td>
+        <td>
+         <p>amq-msg</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Source</p>
+        </td>
+        <td>
+         <p>Server</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Input/Output Format</p>
+        </td>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Request Payload</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+
+"head": "AgentInfo",
+
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Payload Parameters</p>
+        </td>
+        <td>
+         <p>head: this is the JMS type of activemq message</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Triggered</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-​login"><span id="AgentAPI-login"></span>​login
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-​login">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>This request is used for an agent to login in chat solution.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Protocol</p>
+        </td>
+        <td>
+         <p>Websockets</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Name</p>
+        </td>
+        <td>
+         <p>login</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Source</p>
+        </td>
+        <td>
+         <p>Client</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Input/Output Format</p>
+        </td>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Request Payload</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+
+"agentId": "abc",
+
+"password":"*******",
+
+"mrd": "mrd-id"
+
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Payload Parameters</p>
+        </td>
+        <td>
+         <p>agentId: Id of the agent to login</p>
+         <p>Password: password of the agent</p>
+         <p>Mrd:Id of the Mrd in which agent want to login</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Triggered</p>
+        </td>
+        <td>
+         <p><a href="https://docs.google.com/document/d/1sw1DJLYuzsRFgsrL4ct7PB19DE6NzmiroU4YrHxGqU8/edit#heading=h.jr4l0koxuvly" data-scope="external" rel="external noreferrer">messageArrived</a></p>
+         <p>type: activityMessage</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-​changeState"><span id="AgentAPI-changeState"></span>​changeState
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-​changeState">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>It allows the agent to change state between ready and not ready.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Protocol</p>
+        </td>
+        <td>
+         <p>Websockets</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Name</p>
+        </td>
+        <td>
+         <p>amq-send</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Source</p>
+        </td>
+        <td>
+         <p>Client</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Input/Output Format</p>
+        </td>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Request Payload</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+"head": "AgentState",
+"AgentId": "agentId",
+"State": "NOT_READY",
+"Mrd": "mrd-id",
+"ReasonCode": -1
+
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Payload Parameters</p>
+        </td>
+        <td>
+         <p>state: agent requested state</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Triggered</p>
+        </td>
+        <td>
+         <p>amq-msg</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-​receiveChatRequest"><span id="AgentAPI-receiveChatRequest"></span>​receiveChatRequest
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-​receiveChatRequest">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>When agent is in ready state, receives a new chat request from customer,</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Protocol</p>
+        </td>
+        <td>
+         <p>Websockets</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Name</p>
+        </td>
+        <td>
+         <p>amq-msq</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Source</p>
+        </td>
+        <td>
+         <p>server</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Input/Output Format</p>
+        </td>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Request Payload</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+"head": "TaskAssigned",
+"param": "param object",
+
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Payload Parameters</p>
+        </td>
+        <td>
+         <p>param: Object of the param containing customer information and chatId</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Triggered</p>
+        </td>
+        <td>
+         <p><a href="https://docs.google.com/document/d/1sw1DJLYuzsRFgsrL4ct7PB19DE6NzmiroU4YrHxGqU8/edit#heading=h.jr4l0koxuvly" data-scope="external" rel="external noreferrer">messageArrived</a></p>
+         <p>type: activityMessage</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-​joinConversation"><span id="AgentAPI-joinConversation"></span>​joinConversation
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-​joinConversation">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>The agent can accept the chat request once receives a chat request. After accepting the chat request, chat will be started between agent and customer.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Protocol</p>
+        </td>
+        <td>
+         <p>Websockets</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Name</p>
+        </td>
+        <td>
+         <p>joinConversation</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Source</p>
+        </td>
+        <td>
+         <p>client</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Input/Output Format</p>
+        </td>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Request Payload</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+
+"conversationId": "abc333"
+
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Payload Parameters</p>
+        </td>
+        <td>
+         <p>conversationId: &nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Triggered</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-​addParticipant"><span id="AgentAPI-addParticipant"></span>​addParticipant
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-​addParticipant">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Once the chat is active between agent and customer, the agent can add other available agents (agents in READY state) in the chat.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 151px">
+       <col style="width: 520px">
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Protocol</p>
+        </td>
+        <td>
+         <p>Websockets</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Name</p>
+        </td>
+        <td>
+         <p>addParticipant</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Source</p>
+        </td>
+        <td>
+         <p>client</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Input/Output Format</p>
+        </td>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Request Payload</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+
+"participant": "participant object",
+"conversationId": "conversationId"
+
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Payload Parameters</p>
+        </td>
+        <td>
+         <p>participant: participant object having participant information such as agentId etc.</p>
+         <p>conversationId: Id of the conversation, in which participant is added</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Triggered</p>
+        </td>
+        <td>
+         <p><a href="https://docs.google.com/document/d/1sw1DJLYuzsRFgsrL4ct7PB19DE6NzmiroU4YrHxGqU8/edit#heading=h.jr4l0koxuvly" data-scope="external" rel="external noreferrer">messageArrived</a></p>
+         <p>type:activityMessage</p>
+         <p>activityType: participantAdded</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-​removeParticipant"><span id="AgentAPI-removeParticipant"></span>​removeParticipant
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-​removeParticipant">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Agent, who first received the chat request from a customer is the owner of the conversation. If there are multiple participants in the conversation other than customer then an agent (owner of the chat) can remove any participant from the conversation other than the customer.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Protocol</p>
+        </td>
+        <td>
+         <p>Websockets</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Name</p>
+        </td>
+        <td>
+         <p>removeParticipant</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Source</p>
+        </td>
+        <td>
+         <p>client</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Input/Output Format</p>
+        </td>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Request Payload</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+
+"participantId": "participantId",
+
+"conversationId": "conversationId"
+
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Payload Parameters</p>
+        </td>
+        <td>
+         <p>participantId: Id of the participant</p>
+         <p>conversationId: Id of the conversation</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Triggered</p>
+        </td>
+        <td>
+         <p><a href="https://docs.google.com/document/d/1sw1DJLYuzsRFgsrL4ct7PB19DE6NzmiroU4YrHxGqU8/edit#heading=h.jr4l0koxuvly" data-scope="external" rel="external noreferrer">messageArrived</a></p>
+         <p>type: activityMessage</p>
+         <p>activityType: participantRemoved</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-​transferChat"><span id="AgentAPI-transferChat"></span>​transferChat
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-​transferChat">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Once the agent has added other participants in the chat, he can transfer the chat to any of the participants (agents/supervisor).</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Protocol</p>
+        </td>
+        <td>
+         <p>Websockets</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Name</p>
+        </td>
+        <td>
+         <p>transferChat</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Source</p>
+        </td>
+        <td>
+         <p>client</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Input/Output Format</p>
+        </td>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Request Payload</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+
+"participantId": "participantId",
+
+"conversationId": "conversationId"
+
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Payload Parameters</p>
+        </td>
+        <td>
+         <p>participantId: Id of the participant</p>
+         <p>conversationId: Id of current conversation</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Triggered</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-​raiseHand"><span id="AgentAPI-raiseHand"></span>​raiseHand
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-​raiseHand">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>During a chat, if an agent needs help, he can raise hand. By raising hand a chat request will be sent to his supervisor. Once the supervisor accepts the request, chat history will be visible to him and now he can help the agent.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Protocol</p>
+        </td>
+        <td>
+         <p>Websockets</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Name</p>
+        </td>
+        <td>
+         <p>raiseHand</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Source</p>
+        </td>
+        <td>
+         <p>client</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Input/Output Format</p>
+        </td>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Request Payload</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+
+"conversationId": "conversationId",
+
+"participantId": "supervisorId"
+
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Payload Parameters</p>
+        </td>
+        <td>
+         <p>participantId: Id of the supervisor</p>
+         <p>conversationId: Id of current conversation</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Triggered</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-​wrapUp"><span id="AgentAPI-wrapUp"></span>​wrapUp
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-​wrapUp">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>At the end of conversation with the customer, the agent can submit wrap-up.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Protocol</p>
+        </td>
+        <td>
+         <p>Websockets</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Name</p>
+        </td>
+        <td>
+         <p>wrapUp</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Source</p>
+        </td>
+        <td>
+         <p>client</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Input/Output Format</p>
+        </td>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Request Payload</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+
+"conversationId": "conversationId",
+
+},
+
+"wrapup": "wrapup text",
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Payload Parameters</p>
+        </td>
+        <td>
+         <p>conversation: conversation object containing conversationId</p>
+         <p>wrapup: wrapup reason text</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Triggered</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-​silentMonitor"><span id="AgentAPI-silentMonitor"></span>​silentMonitor
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-​silentMonitor">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>The supervisor can see all active conversations of his team. He can select and monitor any of the active conversation but cannot participate in the conversation. This is called silent monitoring.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Protocol</p>
+        </td>
+        <td>
+         <p>Websockets</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Name</p>
+        </td>
+        <td>
+         <p>silentMonitor</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Source</p>
+        </td>
+        <td>
+         <p>client</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Input/Output Format</p>
+        </td>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Request Payload</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+
+"conversationId": "conversationId",
+
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Payload Parameters</p>
+        </td>
+        <td>
+         <p>conversation: conversation object containing conversationId</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Triggered</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-​bargeIn"><span id="AgentAPI-bargeIn"></span>​bargeIn
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-​bargeIn">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>During silent monitoring, if supervisor wants to participate in the conversation, he will use bargeIn functionality. An activity message will be sent to the participants of the conversation other than the customer that supervisor has joined the conversation. Now the supervisor can send a message as well.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Protocol</p>
+        </td>
+        <td>
+         <p>Websockets</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Name</p>
+        </td>
+        <td>
+         <p>bargeIn</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Source</p>
+        </td>
+        <td>
+         <p>client</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Input/Output Format</p>
+        </td>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Request Payload</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+
+"conversationId": "conversationId",
+
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Payload Parameters</p>
+        </td>
+        <td>
+         <p>conversation: conversation object containing conversationId</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Triggered</p>
+        </td>
+        <td>
+         <p><a href="https://docs.google.com/document/d/1sw1DJLYuzsRFgsrL4ct7PB19DE6NzmiroU4YrHxGqU8/edit#heading=h.jr4l0koxuvly" data-scope="external" rel="external noreferrer">messageArrived</a></p>
+         <p>type: activityMessage</p>
+         <p>activityType: participantJoined</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-AgentAPI"><span id="AgentAPI-AgentAPI|id(3.15)AgentAPIconversationInfo"></span><a href="/chat/3.15/agent-api#id-(3.15)AgentAPI-conversationInfo" data-scope="internal">Agent API | id (3.15)AgentAPI conversationInfo</a>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-AgentAPI">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>This event is received when customer/agent joins the conversation. It is also published on demand when agent emit getConversationInfo event</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Protocol</p>
+        </td>
+        <td>
+         <p>Websockets</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Name</p>
+        </td>
+        <td>
+         <p>conversationInfo</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Source</p>
+        </td>
+        <td>
+         <p>server</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Input/Output Format</p>
+        </td>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Request Payload</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+
+"conversation": "conversation",
+"messages": "[]",
+"participant": "[]",
+"role": "&lt;string&gt;",
+"handRaise: "&lt;boolean&gt;"
+
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>Payload Parameters</p>
+        </td>
+        <td colspan="1">
+         <p>conversation: conversation object containing conversation information</p>
+         <p>messages: contains list of all the messages</p>
+         <p>participant: list of participants</p>
+         <p>role: role of the user in the conversation</p>
+         <p>handRaise: state of the handRaise either true or false</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Triggered</p>
+        </td>
+        <td>
+         <p>joinConversation</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-teamInfo"><span id="AgentAPI-teamInfo"></span>teamInfo
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-teamInfo">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Whenever any agent in the team changes the state or logged in/logged out teamInfo event is published for the whole team.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Protocol</p>
+        </td>
+        <td>
+         <p>Websockets</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Name</p>
+        </td>
+        <td>
+         <p>teamInfo</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Source</p>
+        </td>
+        <td>
+         <p>server</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Input/Output Format</p>
+        </td>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Request Payload</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+"teamId": "teamId",
+"teamName": "teamName",
+"agents": "[]",
+"supervisors": "[]"
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>Payload Parameters</p>
+        </td>
+        <td colspan="1">
+         <p>team: team object containing teamId,teamName,agents list and supervisors list</p>
+         <p>agents and supervisor list contains objects of participant with id, name and state properties</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Triggered</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-messageArrived"><span id="AgentAPI-messageArrived"></span>messageArrived
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-messageArrived">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>The messageArrived event is used to receive messages from other participant. Client need to subscribe to this event.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Protocol</p>
+        </td>
+        <td>
+         <p>Websockets</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Name</p>
+        </td>
+        <td>
+         <p>messageArrived</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Source</p>
+        </td>
+        <td>
+         <p>Server</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Input/Output Format</p>
+        </td>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Payload (for ChatMessage)</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+
+"conversationId": "7g5639ju987g",
+
+"type": "ChatMessage",
+
+"requestId":"99397bf7-a4fb-41c3-8292-a021b44262a6",
+
+"timestamp": "2018-05-07T06:52:21.661Z",
+
+"channel": "web",
+
+"from": {
+
+&nbsp;&nbsp;"id": "abcdedf",
+
+&nbsp;&nbsp;"name": "Kashif Sohail"
+
+},
+
+"to": [
+
+&nbsp;&nbsp;{
+
+&nbsp;&nbsp;&nbsp;&nbsp;"id": "yferdt5"
+
+&nbsp;&nbsp;},
+
+&nbsp;&nbsp;{
+
+&nbsp;&nbsp;&nbsp;&nbsp;"id": "4ty678gu"
+
+&nbsp;&nbsp;}
+
+],
+
+"text": "Hello, what is the status of my request",
+
+"attachments": []
+
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Payload Parameters</p>
+        </td>
+        <td>
+         <p>conversationId: The id of conversation to which message is being sent</p>
+         <p>type: Type of message</p>
+         <p>channel: The channel on which messaging</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Triggered</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-leaveConversation"><span id="AgentAPI-leaveConversation"></span>leaveConversation
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-leaveConversation">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Once there are multiple agents in the conversation, any agent can leave the conversation</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Protocol</p>
+        </td>
+        <td>
+         <p>Websockets</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Name</p>
+        </td>
+        <td>
+         <p>leaveConversation</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Source</p>
+        </td>
+        <td>
+         <p>client</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Input/Output Format</p>
+        </td>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Request Payload</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+"conversationId": "conversationId",
+"notify": "true"
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Payload Parameters</p>
+        </td>
+        <td>
+         <p>converstionId: id of the converastion</p>
+         <p>notify: a boolean, default is true,&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>Event Triggered</p>
+        </td>
+        <td colspan="1">
+         <p>messageArrived</p>
+         <p>type:activityMessage</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-endConversation"><span id="AgentAPI-endConversation"></span>endConversation
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-endConversation">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>chat-owner has the rights to end the conversation, once endConversation events is received, conversation is ended for all the participants</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Protocol</p>
+        </td>
+        <td>
+         <p>Websockets</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Name</p>
+        </td>
+        <td>
+         <p>endConversation</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Source</p>
+        </td>
+        <td>
+         <p>client</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Input/Output Format</p>
+        </td>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Request Payload</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+"conversationId": "conversationId",
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Payload Parameters</p>
+        </td>
+        <td>
+         <p>converstionId: id of the converastion</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>Event Triggered</p>
+        </td>
+        <td colspan="1">
+         <p>endConversation</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-RoleUpdated"><span id="AgentAPI-RoleUpdated"></span>RoleUpdated
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-RoleUpdated">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>This event is received whenever user role is changed.&nbsp;</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Protocol</p>
+        </td>
+        <td>
+         <p>Websockets</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Name</p>
+        </td>
+        <td>
+         <p>RoleUpdated</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Source</p>
+        </td>
+        <td>
+         <p>server</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Input/Output Format</p>
+        </td>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Request Payload</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+"participantId": "agentId",
+"role": "&lt;string&gt;" 
+"conversationId": "conversationId",
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Payload Parameters</p>
+        </td>
+        <td>
+         <p>participantId: Id of the agent</p>
+         <p>role: new role in the conversation</p>
+         <p>converstionId: id of the converastion</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Triggered</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-getConversationInfo"><span id="AgentAPI-getConversationInfo"></span>getConversationInfo
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-getConversationInfo">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>On login, agent emit this event to get all his conversations.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Protocol</p>
+        </td>
+        <td>
+         <p>Websockets</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Name</p>
+        </td>
+        <td>
+         <p>getConversationInfo</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Source</p>
+        </td>
+        <td>
+         <p>server</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Input/Output Format</p>
+        </td>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Request Payload</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+"AgentId": "agentId"
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Payload Parameters</p>
+        </td>
+        <td>
+         <p><span style="--color: #000">AgentId</span>: Id of the agent</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Event Triggered</p>
+        </td>
+        <td>
+         <p>conversationInfo</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h2 id="id-(3.15)AgentAPI-​Schema"><span id="AgentAPI-Schema"></span>​Schema
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-​Schema">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="id-(3.15)AgentAPI-​ParticipantObject"><span id="AgentAPI-ParticipantObject"></span>​Participant Object
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-​ParticipantObject">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Defines a participant of the conversation and who can send or receive messages.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Property</p>
+        </td>
+        <td>
+         <p>Type</p>
+        </td>
+        <td>
+         <p>Description</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>displayName</p>
+        </td>
+        <td>
+         <p>String</p>
+        </td>
+        <td>
+         <p>Name of the participant to be displayed to other participants of the conversation</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>type</p>
+        </td>
+        <td>
+         <p>String</p>
+        </td>
+        <td>
+         <p>Type of participant. It can be Agent, Supervisor, Bot or Customer</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Role</p>
+        </td>
+        <td>
+         <p>String</p>
+        </td>
+        <td>
+         <p>Role of the participant. Owner or Participant</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>status</p>
+        </td>
+        <td>
+         <p>String</p>
+        </td>
+        <td>
+         <p>Status of the participant. Ready, Active, Busy</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-​ConversationObject"><span id="AgentAPI-ConversationObject"></span>​Conversation Object
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-​ConversationObject">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Defines a conversation which contains information of participants and messages being sent among participants.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Property</p>
+        </td>
+        <td>
+         <p>Type</p>
+        </td>
+        <td>
+         <p>Description</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Id</p>
+        </td>
+        <td>
+         <p>String</p>
+        </td>
+        <td>
+         <p>The ID that identifies the conversation. The ID is unique per conversation. This conversationId is generated from service side and sent to the client when the client request <a href="https://docs.google.com/document/d/1sw1DJLYuzsRFgsrL4ct7PB19DE6NzmiroU4YrHxGqU8/edit#heading=h.wc6prk1gba0e" data-scope="external" rel="external noreferrer">initiate chat</a></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>type</p>
+        </td>
+        <td>
+         <p>String</p>
+        </td>
+        <td>
+         <p>Type of Message. ActivityMessage in this case</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>participants</p>
+        </td>
+        <td>
+         <p><a href="https://docs.google.com/document/d/1sw1DJLYuzsRFgsrL4ct7PB19DE6NzmiroU4YrHxGqU8/edit#heading=h.i43ez1ospm0p" data-scope="external" rel="external noreferrer">Participant</a>[]</p>
+        </td>
+        <td>
+         <p>Array of &nbsp;Participant objects.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>activityType</p>
+        </td>
+        <td>
+         <p>String</p>
+        </td>
+        <td>
+         <p>Type of activity. One of these values:</p>
+         <p>greetings, typing, participantAdded, participantRemoved, participantJoined, participantLeft, endOfConversation</p>
+         <p>For details about activity types, see <a href="https://docs.google.com/document/d/1sw1DJLYuzsRFgsrL4ct7PB19DE6NzmiroU4YrHxGqU8/edit#heading=h.udv7yvukfvus" data-scope="external" rel="external noreferrer">AcitivityTypes</a></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>messages</p>
+        </td>
+        <td>
+         <p>Message[]</p>
+        </td>
+        <td>
+         <p>List of messages exchanged in the current conversation.</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-​CustomerObject"><span id="AgentAPI-CustomerObject"></span>​Customer Object
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-​CustomerObject">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Defines a customer which is also a participant of the conversation.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Property</p>
+        </td>
+        <td>
+         <p>Type</p>
+        </td>
+        <td>
+         <p>Description</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>displayName</p>
+        </td>
+        <td>
+         <p>String</p>
+        </td>
+        <td>
+         <p>Name of the participant to be displayed to other participants of the conversation</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>email</p>
+        </td>
+        <td>
+         <p>String</p>
+        </td>
+        <td>
+         <p>Email of the customer</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>phone</p>
+        </td>
+        <td>
+         <p>String</p>
+        </td>
+        <td>
+         <p>Phone number of the customer</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>channel</p>
+        </td>
+        <td>
+         <p>String</p>
+        </td>
+        <td>
+         <p>The channel on which messaging</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-​AgentObject"><span id="AgentAPI-AgentObject"></span>​Agent Object
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-​AgentObject">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Defines an agent who is a participant of the conversation.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Property</p>
+        </td>
+        <td>
+         <p>Type</p>
+        </td>
+        <td>
+         <p>Description</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>displayName</p>
+        </td>
+        <td>
+         <p>String</p>
+        </td>
+        <td>
+         <p>Name of the participant to be displayed to other participants of the conversation</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>type</p>
+        </td>
+        <td>
+         <p>String</p>
+        </td>
+        <td>
+         <p>Type of participant. In this case, it will be Agent.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>role</p>
+        </td>
+        <td>
+         <p>String</p>
+        </td>
+        <td>
+         <p>Role of the participant. Owner or Participant</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>status</p>
+        </td>
+        <td>
+         <p>String</p>
+        </td>
+        <td>
+         <p>Status of the participant. Ready, Active, Busy</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>teams</p>
+        </td>
+        <td>
+         <p>Team[]</p>
+        </td>
+        <td>
+         <p>List of teams in which agent is the member</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>conversations</p>
+        </td>
+        <td>
+         <p>Conversation[]</p>
+        </td>
+        <td>
+         <p>List of active conversations.</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-​SupervisorObject"><span id="AgentAPI-SupervisorObject"></span>​Supervisor Object
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-​SupervisorObject">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Defines supervisor, he is also a participant of the conversation.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Property</p>
+        </td>
+        <td>
+         <p>Type</p>
+        </td>
+        <td>
+         <p>Description</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>displayName</p>
+        </td>
+        <td>
+         <p>String</p>
+        </td>
+        <td>
+         <p>Name of the participant to be displayed to other participants of the conversation</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>type</p>
+        </td>
+        <td>
+         <p>String</p>
+        </td>
+        <td>
+         <p>Type of participant. In this case, it will be Agent.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>role</p>
+        </td>
+        <td>
+         <p>String</p>
+        </td>
+        <td>
+         <p>Role of the participant. Owner or Participant</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>status</p>
+        </td>
+        <td>
+         <p>String</p>
+        </td>
+        <td>
+         <p>Status of the participant. Ready, Active, Busy</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>team</p>
+        </td>
+        <td>
+         <p>Team</p>
+        </td>
+        <td>
+         <p>Supervisor’s team, in which his role is Supervisor</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-​TeamObject"><span id="AgentAPI-TeamObject"></span>​Team Object
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-​TeamObject">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Defines team, an agent and supervisor are always part of some team.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Property</p>
+        </td>
+        <td>
+         <p>Type</p>
+        </td>
+        <td>
+         <p>Description</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>id</p>
+        </td>
+        <td>
+         <p>String</p>
+        </td>
+        <td>
+         <p>Each team has always a unique identification.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>name</p>
+        </td>
+        <td>
+         <p>String</p>
+        </td>
+        <td>
+         <p>Name of the team</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>members</p>
+        </td>
+        <td>
+         <p>Agent[]</p>
+        </td>
+        <td>
+         <p>Agents are added as members of the team. A team will consist of multiple agents</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>supervisors</p>
+        </td>
+        <td>
+         <p>Supervisor[]</p>
+        </td>
+        <td>
+         <p>List of supervisors. A team can have 1 or more supervisors</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(3.15)AgentAPI-​ActivityMessageobject"><span id="AgentAPI-ActivityMessageobject"></span>​ActivityMessage object
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/agent-api#id-(3.15)AgentAPI-​ActivityMessageobject">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Defines an activity message that is exchanged between server and client.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Property</p>
+        </td>
+        <td>
+         <p>Type</p>
+        </td>
+        <td>
+         <p>Description</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>conversationId</p>
+        </td>
+        <td>
+         <p>String</p>
+        </td>
+        <td>
+         <p>The ID that identifies the conversation. The ID is unique per conversation. This conversationId is generated from the service side and sent to the client when the client request <a href="https://docs.google.com/document/d/1sw1DJLYuzsRFgsrL4ct7PB19DE6NzmiroU4YrHxGqU8/edit#heading=h.wc6prk1gba0e" data-scope="external" rel="external noreferrer">initiate chat</a></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>type</p>
+        </td>
+        <td>
+         <p>String</p>
+        </td>
+        <td>
+         <p>Type of Message. ActivityMessage in this case</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>from</p>
+        </td>
+        <td>
+         <p><a href="https://docs.google.com/document/d/1sw1DJLYuzsRFgsrL4ct7PB19DE6NzmiroU4YrHxGqU8/edit#heading=h.i43ez1ospm0p" data-scope="external" rel="external noreferrer">Participant</a></p>
+        </td>
+        <td>
+         <p>A Participant object that specifies the sender of the message</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>to</p>
+        </td>
+        <td>
+         <p><a href="https://docs.google.com/document/d/1sw1DJLYuzsRFgsrL4ct7PB19DE6NzmiroU4YrHxGqU8/edit#heading=h.i43ez1ospm0p" data-scope="external" rel="external noreferrer">Participant</a>[]</p>
+        </td>
+        <td>
+         <p>Array of &nbsp;Participant objects that specifies the recipients of the message. If the list is empty, the message will be broadcasted in the conversation.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>activityType</p>
+        </td>
+        <td>
+         <p>String</p>
+        </td>
+        <td>
+         <p>Type of activity. One of these values:</p>
+         <p>greetings, typing, participantAdded, participantRemoved, participantJoined, participantLeft, endOfConversation</p>
+         <p>For details about activity types, see <a href="https://docs.google.com/document/d/1sw1DJLYuzsRFgsrL4ct7PB19DE6NzmiroU4YrHxGqU8/edit#heading=h.udv7yvukfvus" data-scope="external" rel="external noreferrer">AcitivityTypes</a></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>info</p>
+        </td>
+        <td>
+         <p>Object</p>
+        </td>
+        <td>
+         <p>Notification data.</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="9c8069a028a72d1c-47" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="9c8069a028a72d1c-47">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/chat/3.15/api-reference">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">API Reference</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/chat/3.15/agent-list-api">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Agent List API</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

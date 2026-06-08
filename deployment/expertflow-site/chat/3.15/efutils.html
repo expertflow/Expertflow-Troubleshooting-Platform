@@ -1,0 +1,3444 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_5b0f6275c4fa2e92352a1308f67775897a4eb9c642a2786e76154fbee14c8dc1" data-confluence-content-id="35063988"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/chat/3.15/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="CHAT">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>efutils | Expertflow CX</title>
+		<meta property="og:title" content="efutils | Expertflow CX">
+		<meta property="twitter:title" content="efutils | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/chat/3.15/efutils">
+		<meta property="og:url" content="https://docs.expertflow.com/chat/3.15/efutils">
+
+		<meta name="description" content="This utility is used for simplified solution administration via command line.">
+		<meta property="og:description" content="This utility is used for simplified solution administration via command line.">
+		<meta property="twitter:description" content="This utility is used for simplified solution administration via command line.">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2023-12-12T11:25:15.092Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": true
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.js"></script>
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="3d30b21a55031212-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="3d30b21a55031212-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-3d30b21a55031212-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-3d30b21a55031212-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-3d30b21a55031212-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="3d30b21a55031212-3" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="3d30b21a55031212-3">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-3d30b21a55031212-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-3d30b21a55031212-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3d30b21a55031212-4" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3d30b21a55031212-5" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3d30b21a55031212-6" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3d30b21a55031212-7" href="/chat/3.15/release-notes" >Release Notes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="3d30b21a55031212-8"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="3d30b21a55031212-8" href="/chat/3.15/user-guides" >User Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="3d30b21a55031212-10"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="3d30b21a55031212-10" href="/chat/3.15/agent-platforms" >Agent Platforms</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="3d30b21a55031212-12"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="3d30b21a55031212-12" href="/chat/3.15/media-channels" >Media Channels</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3d30b21a55031212-14" href="/chat/3.15/rich-media-messaging" >Rich Media Messaging</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="3d30b21a55031212-15"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="3d30b21a55031212-15" href="/chat/3.15/bots" >Bots</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="3d30b21a55031212-17"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="3d30b21a55031212-17" href="/chat/3.15/reports" >Reports</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="3d30b21a55031212-19"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="3d30b21a55031212-19" href="/chat/3.15/docker-based-deployment" >Docker-based Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="3d30b21a55031212-21"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="3d30b21a55031212-21" href="/chat/3.15/security-and-compliance" >Security and Compliance</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3d30b21a55031212-23" href="/chat/3.15/solution-components" >Solution Components</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3d30b21a55031212-24" href="/chat/3.15/channel-manager" >Channel Manager</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3d30b21a55031212-25" href="/chat/3.15/sms-connector-apis-documentation" >SMS Connector APIs Documentation</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="3d30b21a55031212-26"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="3d30b21a55031212-26" href="/chat/3.15/routing-engine" >Routing Engine</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="3d30b21a55031212-28"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="3d30b21a55031212-28" href="/chat/3.15/hybrid-chat-deployment" >Hybrid Chat Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="3d30b21a55031212-30"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="3d30b21a55031212-30" href="/chat/3.15/system-limitations" >System Limitations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="3d30b21a55031212-32"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="3d30b21a55031212-32" href="/chat/3.15/api-reference" >API Reference</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="3d30b21a55031212-35"						aria-labelledby="3d30b21a55031212-34"
+					></button>
+				<a id="3d30b21a55031212-34" href="/chat/3.15/troubleshooting-and-maintenance" >Troubleshooting and Maintenance</a>
+			</div>
+
+<ul  id="3d30b21a55031212-35" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3d30b21a55031212-36" href="/chat/3.15/docker-issues-with-firewalld" >Docker issues with Firewalld</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3d30b21a55031212-37" href="/chat/3.15/firewall-integration-for-deployment" >Firewall Integration for Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3d30b21a55031212-38" href="/chat/3.15/articulate-bot-integration-with-ha-solution" >Articulate Bot Integration with HA Solution</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3d30b21a55031212-39" href="/chat/3.15/portainer" >Portainer</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3d30b21a55031212-40" href="/chat/3.15/change-docker-default-directory" >Change Docker default directory</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3d30b21a55031212-41" href="/chat/3.15/load-balancer-administration-interface" >Load Balancer Administration Interface</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3d30b21a55031212-42" href="/chat/3.15/efutils" aria-current="page">efutils</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3d30b21a55031212-43" href="/chat/3.15/docker-logs-retention" >Docker Logs Retention</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3d30b21a55031212-44" href="/chat/3.15/extend-mongodb-memory-limit" >Extend MongoDB Memory Limit</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3d30b21a55031212-45" href="/chat/3.15/reporting-connector-reporting-database" >Reporting Connector &amp; Reporting Database</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="3d30b21a55031212-46"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="3d30b21a55031212-46" href="/chat/3.15/demo-environment" >Demo Environment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3d30b21a55031212-48" href="/chat/3.15/faqs" >FAQs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3d30b21a55031212-49" href="/chat/3.15/conversation-message-object" >Conversation Message Object</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3d30b21a55031212-50" href="/chat/3.15/sitemap-xml" >sitemap.xml</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3d30b21a55031212-51" href="/chat/3.15/list-of-open-source-software" >List of Open-source Software</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="3d30b21a55031212-52" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="3d30b21a55031212-52">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/chat/3.15">
+										Hybrid Chat
+								</a>
+							</li>
+							<li>
+								<a href="/chat/3.15/troubleshooting-and-maintenance">
+										Troubleshooting and Maintenance
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="3d30b21a55031212-53">
+			<h2 class="toc-heading" id="3d30b21a55031212-53">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>efutils</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+
+	
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+	
+
+
+	
+	
+	
+	
+	
+	
+		
+		
+	
+	
+	
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>This utility is used for simplified solution administration via command line.</p>
+<p>
+ <br>
+</p>
+<h2 id="id-(3.15)efutils-GeneralUsageDetails"><span id="efutils-GeneralUsageDetails"></span>General Usage Details
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/efutils#id-(3.15)efutils-GeneralUsageDetails">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>You can this utility to perform following actions:&nbsp;</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>
+          <br>
+         </p>
+        </th>
+        <th>
+         <p>
+          <br>
+         </p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p>login&nbsp;</p>
+        </td>
+        <td>
+         <p>to login to a particular Docker service container using sh. The utility will list all the available Expertflow containers that a user can choose from.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>service</p>
+        </td>
+        <td>
+         <p>To start, stop, kill, or restart a service container</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>profile</p>
+        </td>
+        <td>
+         <p>up,down,restart a profile and all its services</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>logs</p>
+        </td>
+        <td colspan="1">
+         <p>show logs from selected service</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>all</p>
+        </td>
+        <td colspan="1">
+         <p>perform up,down,restart on all deployed profiles</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>status</p>
+        </td>
+        <td colspan="1">
+         <p>show status of all services in short form</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>images</p>
+        </td>
+        <td colspan="1">
+         <p>List of Images with possible details</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>pull</p>
+        </td>
+        <td colspan="1">
+         <p>Fetch latest images based on coreversion.env tags</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>info</p>
+        </td>
+        <td colspan="1">
+         <p>Summarized details about this deployment</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>stats</p>
+        </td>
+        <td colspan="1">
+         <p>Statistics for all services replayed by an interval</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>config</p>
+        </td>
+        <td colspan="1">
+         <p>Display Configuration of the selected YAML Profile and its variables</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-meta">
+  <div class="panel-title">General information</div>
+ </div>
+ <div class="panel-content">
+  <p>In all cases 'up' argument is implemented as 'up -d'</p>
+ </div>
+</div>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<h3 id="id-(3.15)efutils-Login"><span id="efutils-Login"></span>Login
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/efutils#id-(3.15)efutils-Login">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<code-snippet class="theme-code-snippet">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash">
+   <pre><code>$ efutils  login
+ Please select Expertflow Service Container: 
+ 1) angry_rhodes		      			14) expertflow_file-engine_1
+ 2) expertflow_activemq_1	      		15) expertflow_keepalived
+ 3) expertflow_agent-gadget_1	    	16) expertflow_minio_1
+ 4) expertflow_bot-connector_1	    	17) expertflow_mongo_1
+ 5) expertflow_ccm_1		      		18) expertflow_mre_1
+ 6) expertflow_chat_1		      		19) expertflow_mre-frontend_1
+ 7) expertflow_comm-server_1	      	20) expertflow_mre-microservice_1
+ 8) expertflow_customer-gadget_1      	21) expertflow_mysql_1
+ 9) expertflow_database-connector_1   	22) expertflow_app-gateway_1
+10) expertflow_eabc_1		      		23) expertflow_portainer_1
+11) expertflow_ecm_1		      		24) expertflow_reporting-connector_1
+12) expertflow_ecm-frontend_1	      	25) expertflow_umm_1
+13) expertflow_ecm-services_1
+Please select:12
+trying login to expertflow_ecm-frontend_1 using sh
+~ $ ls
+e50x.html              assets1               docker-entrypoint.sh  index.html            localhost.key         nginx.conf.template   styles
+app                   conf                  favicon.ico           localhost.crt         maps                  scripts               translations
+~ $ exit
+[root@devops32 ~]#
+
+
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>
+ <br>
+</p>
+<h3 id="id-(3.15)efutils-Service"><span id="efutils-Service"></span>Service
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/efutils#id-(3.15)efutils-Service">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<code-snippet class="theme-code-snippet">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash">
+   <pre><code>$ efutils service
+ Please select Expertflow Service Container: 
+ 1) angry_rhodes		      			14) expertflow_file-engine_1
+ 2) expertflow_activemq_1	      		15) expertflow_keepalived
+ 3) expertflow_agent-gadget_1	      	16) expertflow_minio_1
+ 4) expertflow_bot-connector_1	      	17) expertflow_mongo_1
+ 5) expertflow_ccm_1		      		18) expertflow_mre_1
+ 6) expertflow_chat_1		      		19) expertflow_mre-frontend_1
+ 7) expertflow_comm-server_1	      	20) expertflow_mre-microservice_1
+ 8) expertflow_customer-gadget_1      	21) expertflow_mysql_1
+ 9) expertflow_database-connector_1   	22) expertflow_app-gateway_1
+10) expertflow_eabc_1		      		23) expertflow_portainer_1
+11) expertflow_ecm_1		      		24) expertflow_reporting-connector_1
+12) expertflow_ecm-frontend_1	      	25) expertflow_umm_1
+13) expertflow_ecm-services_1
+Please select:18
+ Please select action for expertflow_mre_1  
+1) up
+2) down
+3) restart
+Please select: 3
+Performing  restart   on  expertflow_mre_1 
+using  /var/lib/expertflow/sds/docker-compose-ha-routing.yml  
+docker-compose --env-file /var/lib/expertflow/coreversion.env -p expertflow -f /var/lib/expertflow/sds/docker-compose-ha-routing.yml restart mre
+restart on expertflow_mre_1 performed successfully
+[root@devops32 ~]# 
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<h3 id="id-(3.15)efutils-Profile"><span id="efutils-Profile"></span>Profile
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/efutils#id-(3.15)efutils-Profile">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<code-snippet class="theme-code-snippet">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash">
+   <pre><code>$ efutils  profile
+ Please select Expertflow Service Profile 
+1) ha-agent-gadget	 6) ha-db-connector	11) ha-routing
+2) ha-amq		 7) ha-eabc		12) ha-service-gateway
+3) ha-campaigns		 8) ha-hc-server	13) ha-umm
+4) ha-ccm		 9) ha-mongo
+5) ha-customer-gadget	10) ha-mysql
+Please select:8
+ Please select action for  ha-hc-server 
+1) up
+2) down
+3) restart
+4) ps
+Please select:1
+performing  up -d   operation on  ha-hc-server 
+docker-compose -p expertflow --env-file /var/lib/expertflow/coreversion.env  -f /var/lib/expertflow/sds/docker-compose-ha-hc-server.yml  up -d
+up -d on ha-hc-server performed successfully
+[root@devops32 ~]#
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>
+ <br>
+</p>
+<h4 id="id-(3.15)efutils-logs"><span id="efutils-logs"></span>logs
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/efutils#id-(3.15)efutils-logs">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>
+ <br>
+</p>
+<code-snippet class="theme-code-snippet">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash">
+   <pre><code>$ efutils  logs
+ Please select Expertflow Service Container: 
+ 1) angry_rhodes		      14) expertflow_file-engine_1
+ 2) expertflow_activemq_1	      15) expertflow_keepalived
+ 3) expertflow_agent-gadget_1	      16) expertflow_minio_1
+ 4) expertflow_bot-connector_1	      17) expertflow_mongo_1
+ 5) expertflow_ccm_1		      18) expertflow_mre_1
+ 6) expertflow_chat_1		      19) expertflow_mre-frontend_1
+ 7) expertflow_comm-server_1	      20) expertflow_mre-microservice_1
+ 8) expertflow_customer-gadget_1      21) expertflow_mysql_1
+ 9) expertflow_database-connector_1   22) expertflow_app-gateway_1
+10) expertflow_eabc_1		      23) expertflow_portainer_1
+11) expertflow_ecm_1		      24) expertflow_reporting-connector_1
+12) expertflow_ecm-frontend_1	      25) expertflow_umm_1
+13) expertflow_ecm-services_1
+Please select:16
+Tailing logs for  expertflow_minio_1 
+2020-09-03T11:21:28.157855787Z 
+2020-09-03T11:21:28.158001932Z  You are running an older version of MinIO released 6 months ago 
+2020-09-03T11:21:28.158016452Z  Update: docker pull minio/minio:RELEASE.2020-09-02T18-19-50Z 
+2020-09-03T11:21:28.158024231Z 
+2020-09-03T11:21:28.158031300Z 
+2020-09-03T11:21:28.920812875Z Endpoint:  https://172.18.0.8:9000  https://127.0.0.1:9000
+2020-09-03T11:21:28.920854599Z 
+2020-09-03T11:21:28.920863793Z Browser Access:
+2020-09-03T11:21:28.920871583Z    https://172.18.0.8:9000  https://127.0.0.1:9000
+2020-09-03T11:21:28.920879324Z 
+2020-09-03T11:21:28.920886677Z Object API (Amazon S3 compatible):
+2020-09-03T11:21:28.921128410Z    Go:         https://docs.min.io/docs/golang-client-quickstart-guide
+2020-09-03T11:21:28.921156832Z    Java:       https://docs.min.io/docs/java-client-quickstart-guide
+2020-09-03T11:21:28.921165824Z    Python:     https://docs.min.io/docs/python-client-quickstart-guide
+2020-09-03T11:21:28.921173849Z    JavaScript: https://docs.min.io/docs/javascript-client-quickstart-guide
+2020-09-03T11:21:28.921181683Z    .NET:       https://docs.min.io/docs/dotnet-client-quickstart-guide
+2020-09-03T11:21:28.921190155Z 
+2020-09-03T11:21:28.921197649Z Detected default credentials 'minioadmin:minioadmin', please change the credentials immediately using 'MINIO_ACCESS_KEY' and 'MINIO_SECRET_KEY'
+^C
+
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<h4 id="id-(3.15)efutils-all"><span id="efutils-all"></span>all
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/efutils#id-(3.15)efutils-all">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>
+ <br>
+</p>
+<code-snippet class="theme-code-snippet">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash">
+   <pre><code>$efutils all
+ Please select action for all  
+1) up
+2) down
+3) restart
+Please select: 1
+Performing  up    on  all 
++--------------------------------+-------------+
+| Profile                        |  Status     |
++--------------------------------+-------------+
+| ha-agent-gadget                | OK          |
++--------------------------------+-------------+
+| ha-amq                         | OK          |
++--------------------------------+-------------+
+| ha-campaigns                   | OK          |
++--------------------------------+-------------+
+| ha-ccm                         | OK          |
++--------------------------------+-------------+
+| ha-customer-gadget             | OK          |
++--------------------------------+-------------+
+| ha-db-connector                | OK          |
++--------------------------------+-------------+
+| ha-eabc                        | OK          |
++--------------------------------+-------------+
+| ha-hc-server                   | OK          |
++--------------------------------+-------------+
+| ha-mongo                       | OK          |
++--------------------------------+-------------+
+| ha-mysql                       | OK          |
++--------------------------------+-------------+
+| ha-routing                     | OK          |
++--------------------------------+-------------+
+| ha-service-gateway             | OK          |
++--------------------------------+-------------+
+| ha-umm                         | OK          |
++--------------------------------+-------------+
+
+
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>
+ <br>
+</p>
+<h4 id="id-(3.15)efutils-status"><span id="efutils-status"></span>status
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/efutils#id-(3.15)efutils-status">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>
+ <br>
+</p>
+<code-snippet class="theme-code-snippet">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash">
+   <pre><code>$ efutils  status
++--------+-------------------------------------------+-----------------------------------------------------+
+| #      |  Service                                ↓ |  Status                                             |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  1     | angry_rhodes                              |  Exited (0) 55 minutes ago                          |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  2     | expertflow_activemq_1                     |  Up 27 minutes (healthy)                            |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  3     | expertflow_agent-gadget_1                 |  Up 26 minutes (healthy)                            |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  4     | expertflow_bot-connector_1                |  Up 27 minutes (healthy)                            |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  5     | expertflow_ccm_1                          |  Up 26 minutes (healthy)                            |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  6     | expertflow_chat_1                         |  Up 27 minutes (healthy)                            |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  7     | expertflow_comm-server_1                  |  Up 26 minutes (healthy)                            |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  8     | expertflow_customer-gadget_1              |  Up 26 minutes (healthy)                            |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  9     | expertflow_database-connector_1           |  Up 26 minutes (unhealthy)                          |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  10    | expertflow_eabc_1                         |  Up 27 minutes (unhealthy)                          |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  11    | expertflow_ecm_1                          |  Up 26 minutes (healthy)                            |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  12    | expertflow_ecm-frontend_1                 |  Up 26 minutes (healthy)                            |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  13    | expertflow_ecm-services_1                 |  Up 26 minutes                                      |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  14    | expertflow_file-engine_1                  |  Up 27 minutes (healthy)                            |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  15    | expertflow_keepalived                     |  Up 28 minutes                                      |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  16    | expertflow_minio_1                        |  Up 27 minutes (healthy)                            |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  17    | expertflow_mongo_1                        |  Up 27 minutes (healthy)                            |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  18    | expertflow_mre_1                          |  Up 3 minutes (healthy)                             |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  19    | expertflow_mre-frontend_1                 |  Up 26 minutes (healthy)                            |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  20    | expertflow_mre-microservice_1             |  Up 26 minutes (healthy)                            |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  21    | expertflow_mysql_1                        |  Up 27 minutes (healthy)                            |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  22    | expertflow_app-gateway_1                        |  Up 27 minutes (healthy)                            |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  23    | expertflow_portainer_1                    |  Up 12 seconds                                      |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  24    | expertflow_reporting-connector_1          |  Up 26 minutes (healthy)                            |
++--------+-------------------------------------------+-----------------------------------------------------+
+|  25    | expertflow_umm_1                          |  Up 27 minutes (unhealthy)                          |
++--------+-------------------------------------------+-----------------------------------------------------+
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>
+ <br>
+</p>
+<h4 id="id-(3.15)efutils-Pull"><span id="efutils-Pull"></span>Pull
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/efutils#id-(3.15)efutils-Pull">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>
+ <br>
+</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>$ efutils pull
+ reading /root/master/coreversion.env file for new changes
+ Please select
+1) agent-gadget       7) eabc             13) routing
+2) amq                8) hc-server        14) service-gateway
+3) campaigns          9) mongo            15) umm
+4) ccm               10) mysql            16) all
+5) customer-gadget   11) portainer
+6) db-connector      12) reporting
+Please select:1
+performing  pull    operation on  agent-gadget
+docker-compose -p expertflow --env-file /root/master/coreversion.env  -f /root/master/sds/docker-compose-agent-gadget.yml  pull
+agent-gadget update performed  successfully
+ details in /tmp/agent-gadget.pull.ef
+code
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>
+ <br>
+</p>
+<h4 id="id-(3.15)efutils-info"><span id="efutils-info"></span>info
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/efutils#id-(3.15)efutils-info">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>$ efutils info
+Deployed in...................: /root/master
+Type Of Deployment............: single
+Fully Qualified Domain Name...: qateam.expertflow.com
+IP Address....................: 192.168.2.82
+Bot Integrated................: NO
+Deployment Branch.............: master
+
+
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>
+ <br>
+</p>
+<h4 id="id-(3.15)efutils-stats"><span id="efutils-stats"></span>stats
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/efutils#id-(3.15)efutils-stats">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>In below given cases the lines are show red</p>
+<p>1) Number of PIDs is greater than 50</p>
+<p>OR</p>
+<p>2) CPU Usage is greater than 50%</p>
+<p>OR</p>
+<p>3) Memory usage is greater than 50%</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>$ efutils stats
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| NAME                                | %CPU   | MEM_USAGE  | MEM_LIMIT  | %MEM        | NET_IN     | NET_OUT    | BLOCK_IN   | BLOCK_OUT  | PIDS  |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| expertflow_ccm_1                    | 0.08% | 76.5MiB    | 7.638GiB   | 0.98%       | 162kB      | 101kB      | 0B         | 0B         | 44    |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| expertflow_bot-connector_1          | 0.31% | 28.64MiB   | 128MiB     | 22.37%      | 494kB      | 706kB      | 98.3kB     | 0B         | 11    |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| expertflow_umm_1                    | 0.11% | 388.8MiB   | 1GiB       | 37.97%      | 47.4MB     | 40.1MB     | 65.8MB     | 41kB       | 76    |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| expertflow_app-gateway_1                  | 0.69% | 7.414MiB   | 128MiB     | 5.79%       | 54.5MB     | 60.7MB     | 1.62MB     | 11.3kB     | 3     |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| expertflow_mre_1                    | 0.83% | 490.6MiB   | 7.638GiB   | 6.27%       | 1.21MB     | 2.11MB     | 586kB      | 0B         | 32    |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| expertflow_mre-microservice_1       | 0.00% | 61.35MiB   | 128MiB     | 47.93%      | 3.46MB     | 1.11MB     | 4.2MB      | 0B         | 12    |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| expertflow_mre-frontend_1           | 0.00% | 3.281MiB   | 80MiB      | 4.10%       | 3.89kB     | 0B         | 8.19kB     | 0B         | 6     |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| expertflow_comm-server_1            | 1.03% | 130.9MiB   | 7.638GiB   | 1.67%       | 14.5MB     | 7.21MB     | 2.96MB     | 0B         | 42    |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| expertflow_reporting-connector_1    | 0.03% | 42.89MiB   | 128MiB     | 33.51%      | 3.64MB     | 4.58MB     | 7.04MB     | 0B         | 11    |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| expertflow_portainer_1              | 0.00% | 7.152MiB   | 7.638GiB   | 0.09%       | 8.54kB     | 1.83kB     | 0B         | 344kB      | 11    |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| expertflow_mysql_1                  | 0.06% | 84.03MiB   | 512MiB     | 16.41%      | 42.5MB     | 55.6MB     | 2.24MB     | 2.37GB     | 51    |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| expertflow_mongo_1                  | 0.33% | 18.72MiB   | 256MiB     | 7.31%       | 1.91MB     | 1.76MB     | 23.3MB     | 15.7MB     | 34    |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| expertflow_file-engine_1            | 0.00% | 22.04MiB   | 128MiB     | 17.22%      | 8.84kB     | 3kB        | 1.29MB     | 0B         | 12    |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| expertflow_chat_1                   | 1.37% | 82.48MiB   | 7.638GiB   | 1.05%       | 33MB       | 17.7MB     | 0B         | 0B         | 12    |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| expertflow_minio_1                  | 0.01% | 31.96MiB   | 128MiB     | 24.97%      | 13.8kB     | 6.29kB     | 1.97MB     | 38.9MB     | 13    |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| expertflow_eabc_1                   | 0.13% | 457.5MiB   | 512MiB     | 89.35%      | 967kB      | 641kB      | 54.6MB     | 192MB      | 74    |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| expertflow_database-connector_1     | 0.61% | 32.1MiB    | 128MiB     | 25.08%      | 1.27MB     | 1.15MB     | 5.21MB     | 0B         | 12    |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| expertflow_customer-gadget_1        | 0.00% | 3.309MiB   | 80MiB      | 4.14%       | 161kB      | 359kB      | 32.8kB     | 0B         | 6     |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| expertflow_ecm-frontend_1           | 0.00% | 2.105MiB   | 80MiB      | 2.63%       | 4.82kB     | 0B         | 217kB      | 0B         | 4     |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| expertflow_ecm-services_1           | 0.18% | 43.62MiB   | 512MiB     | 8.52%       | 2.54MB     | 354kB      | 6.37MB     | 0B         | 25    |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| expertflow_ecm_1                    | 0.23% | 475.1MiB   | 512MiB     | 92.79%      | 1.38MB     | 684kB      | 249MB      | 193MB      | 69    |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| expertflow_activemq_1               | 1.07% | 110.7MiB   | 7.638GiB   | 1.42%       | 7.93MB     | 7.98MB     | 12.9MB     | 195MB      | 80    |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| expertflow_agent-gadget_1           | 0.00% | 3.352MiB   | 80MiB      | 4.19%       | 78.4kB     | 2.93MB     | 0B         | 0B         | 6     |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| docker_nginx_1                      | 0.00% | 8.348MiB   | 7.638GiB   | 0.11%       | 7.36MB     | 3.4MB      | 0B         | 0B         | 5     |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| docker_app_1                        | 0.00% | 22.18MiB   | 7.638GiB   | 0.28%       | 25kB       | 138B       | 9.84MB     | 138kB      | 2     |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| docker_rasa-worker_1                | 0.37% | 298.4MiB   | 7.638GiB   | 3.82%       | 10MB       | 12.9MB     | 392MB      | 0B         | 11    |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| docker_rasa-production_1            | 0.34% | 206.1MiB   | 7.638GiB   | 2.63%       | 13.2MB     | 14MB       | 217MB      | 0B         | 9     |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| docker_rasa-x_1                     | 0.98% | 368.5MiB   | 7.638GiB   | 4.71%       | 61.5MB     | 64.7MB     | 277MB      | 0B         | 100   |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| docker_db_1                         | 0.25% | 47.66MiB   | 7.638GiB   | 0.61%       | 40MB       | 37.5MB     | 90.2MB     | 135MB      | 19    |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| docker_duckling_1                   | 0.00% | 22.98MiB   | 7.638GiB   | 0.29%       | 24.9kB     | 0B         | 0B         | 0B         | 11    |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+| docker_rabbit_1                     | 0.23% | 96.81MiB   | 7.638GiB   | 1.24%       | 2.7MB      | 3.56MB     | 89.5MB     | 1.91MB     | 92    |
++-------------------------------------+-------+------------+------------+-------------+-----------+------------+------------+------------+--------+
+
+
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>
+ <br>
+</p>
+<h4 id="id-(3.15)efutils-config"><span id="efutils-config"></span>config
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/chat/3.15/efutils#id-(3.15)efutils-config">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>
+ <br>
+</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>$efutils config
+ Please select Expertflow Service Profile
+1) agent-gadget       6) db-connector     11) portainer
+2) amq                7) eabc             12) reporting
+3) campaigns          8) hc-server        13) routing
+4) ccm                9) mongo            14) service-gateway
+5) customer-gadget   10) mysql            15) umm
+Please select:15
+ umm  Config
+
+docker-compose -p expertflow --env-file /root/master/coreversion.env -f /root/master/sds/docker-compose-umm.yml  config
+
+networks:
+  chat-solution:
+    external: true
+    name: chat-solution
+services:
+  umm:
+    cpu_period: 20000
+    cpu_quota: 50000
+    cpu_shares: 73
+    cpuset: 0,1,2,3
+    environment:
+      ADMIN_PASS: admiN123!
+      AGENTS_UPDATE_NOTIFICATIONS: "false"
+      AMQ_PRIM: activemq:61616
+      AMQ_SEC: activemq:61616
+      FINESSE_PASS: Expertflow464
+      FINESSE_USER: administrator
+      PRIM_FINESSE_IP: https://finesse116.ucce.ipcc
+      SEC_FINESSE_IP: ''
+      SERVER_URL: https://qateam.expertflow.com
+      SOO_AUTO_LOGIN: "false"
+      SSO_ENABLED: "false"
+      SUP_VERSION: '13.1'
+      TOPIC_NAME: umm
+      TZ: Asia/Karachi
+      UMM_DB_DIALECT: org.hibernate.dialect.MySQL5InnoDBDialect
+      UMM_DB_DRIVER: com.mysql.jdbc.Driver
+      UMM_DB_PASS: root
+      UMM_DB_URL: jdbc:mysql://mysql:3306/umm
+      UMM_DB_USER: root
+    healthcheck:
+      interval: 90s
+      retries: 10
+      test: wget --no-check-certificate -q --spider https://localhost:8443 || exit
+        1
+      timeout: 10s
+    image: gitlab.expertflow.com:9242/chat-solution/user-management:13.2.1.RBI-256
+    init: true
+    mem_limit: 1024m
+    mem_reservation: 1024m
+    memswap_limit: 2048m
+    networks:
+      chat-solution: null
+    pids_limit: -1
+    ports:
+    - 8452:8443/tcp
+    privileged: true
+    restart: on-failure:5
+    volumes:
+    - /root/master/docker/certificates:/opt/apache-tomcat-8.5.41/webapps/umm/base/https:rw
+version: '2.4'
+
+
+
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="3d30b21a55031212-54" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="3d30b21a55031212-54">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/chat/3.15/load-balancer-administration-interface">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Load Balancer Administration Interface</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/chat/3.15/docker-logs-retention">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Docker Logs Retention</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

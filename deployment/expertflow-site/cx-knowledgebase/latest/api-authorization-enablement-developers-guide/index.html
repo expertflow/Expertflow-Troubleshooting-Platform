@@ -1,0 +1,3490 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_547d33f599b7add363359d58efcbdf81d38c4337325cc44ce52892e4dd509511" data-confluence-content-id="1206681603"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/cx-knowledgebase/latest/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="SBT">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>API Authorization: Configuration and Customization Guide | Expertflow CX</title>
+		<meta property="og:title" content="API Authorization: Configuration and Customization Guide | Expertflow CX">
+		<meta property="twitter:title" content="API Authorization: Configuration and Customization Guide | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/cx-knowledgebase/latest/api-authorization-enablement-developers-guide">
+		<meta property="og:url" content="https://docs.expertflow.com/cx-knowledgebase/latest/api-authorization-enablement-developers-guide">
+
+		<meta name="description" content="This document is intended for anyone responsible for configuring or managing API authorization settings, including developers, system administrators, and opera…">
+		<meta property="og:description" content="This document is intended for anyone responsible for configuring or managing API authorization settings, including developers, system administrators, and opera…">
+		<meta property="twitter:description" content="This document is intended for anyone responsible for configuring or managing API authorization settings, including developers, system administrators, and opera…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__attachments/a_2283c6f9f7ad398ecfa877e70470a2e91a854a442a9782c5c6642a2118088805/766a00bd-cc57-4e51-a4ad-6af83f84b4bf-20250903-135934.png?cb=89af754a18abbf47d3cde35fbc01a447">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__attachments/a_2283c6f9f7ad398ecfa877e70470a2e91a854a442a9782c5c6642a2118088805/766a00bd-cc57-4e51-a4ad-6af83f84b4bf-20250903-135934.png?cb=89af754a18abbf47d3cde35fbc01a447">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2025-12-16T13:38:39.233Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": true
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.js"></script>
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="744b3d0c427b7670-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="744b3d0c427b7670-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-744b3d0c427b7670-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-744b3d0c427b7670-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-744b3d0c427b7670-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="744b3d0c427b7670-3" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="744b3d0c427b7670-3">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-744b3d0c427b7670-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-744b3d0c427b7670-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="744b3d0c427b7670-4" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="744b3d0c427b7670-5" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="744b3d0c427b7670-6" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="744b3d0c427b7670-7"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="744b3d0c427b7670-7" href="/cx-knowledgebase/latest/expertflow-cx-overview" >ExpertFlow CX Overview</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="744b3d0c427b7670-9"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="744b3d0c427b7670-9" href="/cx-knowledgebase/latest/expertflow-cx-platform-overview" >Expertflow CX Platform Overview</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="744b3d0c427b7670-11"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="744b3d0c427b7670-11" href="/cx-knowledgebase/latest/solutions" >Solutions</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="744b3d0c427b7670-13"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="744b3d0c427b7670-13" href="/cx-knowledgebase/latest/platform" >Platform</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="744b3d0c427b7670-15"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="744b3d0c427b7670-15" href="/cx-knowledgebase/latest/deployment-installation" >Deployment &amp; Installation</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="744b3d0c427b7670-17"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="744b3d0c427b7670-17" href="/cx-knowledgebase/latest/reports" >Reports and Analytics</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="744b3d0c427b7670-20"						aria-labelledby="744b3d0c427b7670-19"
+					></button>
+				<a id="744b3d0c427b7670-19" href="/cx-knowledgebase/latest/resources" >Resources</a>
+			</div>
+
+<ul  id="744b3d0c427b7670-20" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="744b3d0c427b7670-21"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="744b3d0c427b7670-21" href="/cx-knowledgebase/latest/configuration-guides" >Configuration Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="744b3d0c427b7670-23"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="744b3d0c427b7670-23" href="/cx-knowledgebase/latest/post-deployment-administration" >Troubleshooting Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="744b3d0c427b7670-25"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="744b3d0c427b7670-25" href="/cx-knowledgebase/latest/logging-monitoring" >Logging &amp; Monitoring</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="744b3d0c427b7670-27"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="744b3d0c427b7670-27" href="/cx-knowledgebase/latest/system-administration-guides" >Platform Administration</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="744b3d0c427b7670-29"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="744b3d0c427b7670-29" href="/cx-knowledgebase/latest/rke2-high-availability-pre-deployment-installati-1" >CX High Availability</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="744b3d0c427b7670-31" href="/cx-knowledgebase/latest/how-to-register-new-tenants-fqdn-on-grafana-allowe" >Register new Tenants FQDN on Grafana allowedHosts</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="744b3d0c427b7670-32" href="/cx-knowledgebase/latest/conversation-search-api-using-graphql-user-guide" >Conversation Search API using GraphQL - User Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="744b3d0c427b7670-33" href="/cx-knowledgebase/latest/activities-search-api-using-graphql-user-guide" >Activities Search API using GraphQL - User Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="744b3d0c427b7670-34" href="/cx-knowledgebase/latest/faqs-wfm" >FAQs - WFM (To be updated by Nabeel after release)</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="744b3d0c427b7670-35" href="/cx-knowledgebase/latest/kubernetes-distributions" >Kubernetes Distributions</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="744b3d0c427b7670-36" href="/cx-knowledgebase/latest/deploy-rasa-for-multitenancy-5-0" >Deploy Rasa for Multitenancy</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="744b3d0c427b7670-37" href="/cx-knowledgebase/latest/list-of-open-source-software" >List of Open-source Software</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="744b3d0c427b7670-39"						aria-labelledby="744b3d0c427b7670-38"
+					></button>
+				<a id="744b3d0c427b7670-38" href="/cx-knowledgebase/latest/identity-and-access-management" >How IAM and Security Layers Work</a>
+			</div>
+
+<ul  id="744b3d0c427b7670-39" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="744b3d0c427b7670-40"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="744b3d0c427b7670-40" href="/cx-knowledgebase/latest/user-management-in-keycloack" >Managing Roles and Permissions</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="744b3d0c427b7670-42"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="744b3d0c427b7670-42" href="/cx-knowledgebase/latest/application-management" >Managing Keycloak Clients and Applications</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="744b3d0c427b7670-45"						aria-labelledby="744b3d0c427b7670-44"
+					></button>
+				<a id="744b3d0c427b7670-44" href="/cx-knowledgebase/latest/api-authentication-using-application-gateway" >API Authentication &amp; Authorization Flows</a>
+			</div>
+
+<ul  id="744b3d0c427b7670-45" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="744b3d0c427b7670-46" href="/cx-knowledgebase/latest/increase-file-size-api-gateway-ingress" >Increase File Size - API Gateway Ingress</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="744b3d0c427b7670-47" href="/cx-knowledgebase/latest/ip-based-rate-limiting" >IP-based Rate Limiting</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="744b3d0c427b7670-48"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="744b3d0c427b7670-48" href="/cx-knowledgebase/latest/api-authentication-integration" >API Authentication - Integration</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="744b3d0c427b7670-51"						aria-labelledby="744b3d0c427b7670-50"
+					></button>
+				<a id="744b3d0c427b7670-50" href="/cx-knowledgebase/latest/api-authorization-overview" >API Authorization - Overview</a>
+			</div>
+
+<ul  id="744b3d0c427b7670-51" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="744b3d0c427b7670-52" href="/cx-knowledgebase/latest/api-authorization-enablement-developers-guide" aria-current="page">API Authorization: Configuration and Customization Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="744b3d0c427b7670-53" href="/cx-knowledgebase/latest/components-secured-with-authorization" >Components Secured with Authorization</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="744b3d0c427b7670-54" href="/cx-knowledgebase/latest/visual-representation-of-api-gateway-routes-and-pl" >Visual representation of API Gateway Routes and plugins</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="744b3d0c427b7670-55" href="/cx-knowledgebase/latest/overview-of-api-gateway-its-capabilities-and-plugi" >Overview of API Gateway, its capabilities and plugins</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="744b3d0c427b7670-56" href="/cx-knowledgebase/latest/configuring-api-authentication-and-authorization" >Configuring API Authentication and Authorization</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="744b3d0c427b7670-57" href="/cx-knowledgebase/latest/api-authentication-authorization-configuration-gui" >API Authentication &amp; Authorization - Configuration Guide</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="744b3d0c427b7670-58"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="744b3d0c427b7670-58" href="/cx-knowledgebase/latest/iam-keycloak-guides" >Initial Security Setup for New Tenants</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="744b3d0c427b7670-60"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="744b3d0c427b7670-60" href="/cx-knowledgebase/latest/cx-enhancements" >CX Enhancements</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="744b3d0c427b7670-62" href="/cx-knowledgebase/latest/deploy-cx-analyser" >Deploy CX Analyser</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="744b3d0c427b7670-63"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="744b3d0c427b7670-63" href="/cx-knowledgebase/latest/contact-center-personas" >Contact Center Personas</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="744b3d0c427b7670-65" href="/cx-knowledgebase/latest/user-inactivity-logout" >User Inactivity Logout</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="744b3d0c427b7670-66" href="/cx-knowledgebase/latest/agent-desk-release-strategy" >Agent Desk Release Strategy</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="744b3d0c427b7670-67" href="/cx-knowledgebase/latest/channels-integration-onboarding-guide-s" >Channels Integration - Onboarding guide(s)</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="744b3d0c427b7670-68" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="744b3d0c427b7670-68">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest">
+										Expertflow CX
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest/resources">
+										Resources
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest/identity-and-access-management">
+										How IAM and Security Layers Work
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest/api-authentication-using-application-gateway">
+										API Authentication &amp; Authorization Flows
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest/api-authorization-overview">
+										API Authorization - Overview
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="744b3d0c427b7670-69">
+			<h2 class="toc-heading" id="744b3d0c427b7670-69">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>API Authorization: Configuration and Customization Guide</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+
+			
+
+
+
+	
+		
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+	
+
+
+	
+	
+	
+	
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+		
+		
+	
+	
+	
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<p>This document is intended for anyone responsible for configuring or managing API authorization settings, including developers, system administrators, and operations teams. They can apply fine-grained authorization on their APIs using this document. By default, APIs of all the components mentioned in <a href="/cx-knowledgebase/latest/components-secured-with-authorization" data-scope="internal">Secured Components</a> document are secured with authorization. <a href="/cx-knowledgebase/latest/components-secured-with-authorization" data-scope="internal">Secured Components</a> document specifies the secured APIs and user roles (e.g., <em>agent, supervisor, admin</em>) that have access to each API, along with the allowed scopes (e.g., <em>GET, POST</em>) for each user role.</p>
+<p>The document outlines all the steps for securing APIs with <em>authorization</em> using <strong>IAM</strong> and the <strong>authz-keycloak</strong> plugin of <strong>Application Gateway</strong>. It provides generic templates for applying authorization or customizing authorization rules for various APIs and uses an API from Customer Channel Manager as an example.</p>
+<div data-component="panel" role="note" data-appearance="note">
+ <div class="panel-content">
+  <p><strong>Considerables</strong></p>
+  <ul>
+   <li>
+    <p>Wildcard entries for APIs of all the components are already secured, as mentioned in the <a href="/cx-knowledgebase/latest/components-secured-with-authorization" data-scope="internal">Secured Components</a> (e.g., <code>/ccm/*</code>, <code>/routing-engine/*</code>, <code>/conversation-manager/*</code>, etc.). The wildcard <code>/ccm/*</code> covers all routes under it, such as <code>/ccm/channel-types</code>, <code>/ccm/channel-provider-interfaces</code>, <code>/ccm/widget-configs</code>, and so on.</p>
+   </li>
+   <li>
+    <p>Suppose you’re working with <strong>CCM</strong> APIs and you want a specific endpoint to be treated differently and should have different access levels than wildcard endpoint (<code>/ccm/*</code>), you will need to perform all the steps outlined in <a href="/cx-knowledgebase/latest/api-authorization-enablement-developers-guide#Configurations-Required-in-IAM" data-scope="internal"><em>IAM Configurations</em></a> section below. For example, if you choose <code>/ccm/channel-types*</code> endpoint, it will have its own set of <em>authorization</em> rules (including resources, scopes, policies, and permissions) associated with it.</p>
+   </li>
+  </ul>
+ </div>
+</div>
+<h2 id="Configurations-Required-in-Application-Gateway" style=""><span id="APIAuthorization:ConfigurationandCustomizationGuide-ConfigurationsRequiredinApplicationGateway"></span>Configurations Required in Application Gateway
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/api-authorization-enablement-developers-guide#Configurations-Required-in-Application-Gateway">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>By default, all the required routes are secured with <em>authorization</em> in Application Gateway, so no changes are required in the its configuration. To confirm that the component you’re working with is secured in Application Gateway, you can search for the following values under the <code>plugins</code> section of your component’s route within <code>apisixStandalone.routes</code> in the <code>values.yaml</code> file (located under <code>/kubernetes/helm/apisix</code>).</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">YAML</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="yaml" data-align="wide">
+   <pre><code>authz-keycloak:
+  lazy_load_paths: true
+  http_method_as_scope: true
+  resource_registration_endpoint: "http://keycloak.ef-external.svc/auth/realms/expertflow/authz/protection/resource_set"
+  discovery: "http://keycloak.ef-external.svc/auth/realms/expertflow/.well-known/uma2-configuration"
+  client_id: "cim"                                             # keycloak client-id
+  client_secret: "ef61df80-061c-xxxx-xxxx-387e6bf67052"        # keycloak client-secret
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>For example, the route for Customer Channel Manager is given below:</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">YAML</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="yaml" data-align="wide">
+   <pre><code>- id: ef-cx-ccm-main-secured
+  uris: ["/ccm/*"]
+  hosts: ["{{ .Values.global.ingressRouter }}"]
+  priority: 0
+  service_id: svc-ccm
+  status: 1
+  plugins:
+    openid-connect: ...
+    authz-keycloak: ...
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<div data-component="panel" role="note" data-appearance="note">
+ <div class="panel-content">
+  <p>In the case of an on-premises or Single Tenant deployment, for the <code>resource_registration_endpoint</code> and <code>discovery</code> settings:</p>
+  <ul>
+   <li>
+    <p>Ensure that, instead of using the FQDN, the Keycloak service name is specified before the <code>/auth</code> subpath as shown above.</p>
+   </li>
+   <li>
+    <p>Ensure that your <strong>realm name</strong> or <strong>tenant ID</strong> is used instead of <em>"expertflow"</em>. For example: <code>http://keycloak.ef-external.svc/auth/realms/tenant-id/authz/...</code>.</p>
+   </li>
+  </ul>
+ </div>
+</div>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <ul>
+   <li>
+    <p>To add <em>authorization</em> to a specific route, you need to add <code>authz-keycloak</code> plugin (mentioned above) in <code>plugins</code> section of that route.</p>
+   </li>
+   <li>
+    <p>To remove <em>authorization</em> from a route, simply remove or comment out the <code>authz-keycloak</code> plugin from the route. In YAML files, a line is commented out by adding a <code>#</code> at the beginning. Removing the <code>#</code> enables (uncomments) the line.</p>
+   </li>
+  </ul>
+ </div>
+</div>
+<h3 id="Exception-Routes" style=""><span id="APIAuthorization:ConfigurationandCustomizationGuide-ExceptionRoutes"></span>Exception Routes
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/api-authorization-enablement-developers-guide#Exception-Routes">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>If <code>/ccm/*</code> is secured with <em>authorization</em>, it means that all the routes falling under <code>/ccm/</code> are secured. However, if you want to leave <code>/ccm/channel-types*</code> unsecured by removing <em>authorization</em> while keeping all other routes under <code>/ccm/</code> secured, you’ll need to create an <em><strong>Exception Route</strong></em> for <code>/ccm/channel-types*</code> without the <code>authz-keycloak</code> plugin. See <a href="/cx-knowledgebase/latest/advanced-api-gateway-routing" data-scope="internal">Advance API Gateway Routing</a>.</p>
+<h2 id="Configurations-Required-in-IAM" style=""><span id="APIAuthorization:ConfigurationandCustomizationGuide-ConfigurationsRequiredinIAM"></span>Configurations Required in IAM
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/api-authorization-enablement-developers-guide#Configurations-Required-in-IAM">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>To secure an API endpoint with <em>authorization</em>, you must create Resource, Scopes, Policies, and Permissions in IAM for it. These four entities must be configured for <em>authorization</em> to function properly. We'll cover each entity in detail.</p>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <p>Your realm will have the same name as your tenant ID, instead of <em>"Expertflow"</em>.</p>
+ </div>
+</div>
+<p>To find the settings where you can create these entities, follow the steps below:</p>
+<ol>
+ <li>
+  <p>In <strong>Expertflow</strong> realm, go to <strong>Clients</strong> section and select <strong>cim</strong>.</p>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 1061px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+     <img src="/__attachments/a_2283c6f9f7ad398ecfa877e70470a2e91a854a442a9782c5c6642a2118088805/766a00bd-cc57-4e51-a4ad-6af83f84b4bf-20250903-135934.png?cb=89af754a18abbf47d3cde35fbc01a447" alt="766a00bd-cc57-4e51-a4ad-6af83f84b4bf-20250903-135934.png" data-scope="internal" width="1534" height="544">
+    </div>
+   </image-lightbox>
+  </div>
+  <p>
+   <br>
+  </p>
+ </li>
+ <li>
+  <p>Go to <strong>Authorization</strong> tab. Here you’ll see all the four entities. We’ll cover next steps from here.</p>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 1061px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+     <img src="/__attachments/a_93719ed447b78f1a00f5a59600b93f0ca603dd4e852b25d135c758c46d86d354/9de79a13-209e-431e-ab57-1cf09a2c51a7-20250903-135745.png?cb=c2fc50cd4511b43b03cb65b6ffcadbb0" alt="9de79a13-209e-431e-ab57-1cf09a2c51a7-20250903-135745.png" data-scope="internal" width="1534" height="544">
+    </div>
+   </image-lightbox>
+  </div>
+ </li>
+</ol>
+<h3 id="1.-Create-Scopes" style=""><span id="APIAuthorization:ConfigurationandCustomizationGuide-1.CreateScopes"></span>1. Create Scopes
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/api-authorization-enablement-developers-guide#1.-Create-Scopes">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>There can be multiple scopes that need to be created for a resource. You can think of a <strong>resource</strong> as an API endpoint, and <strong>scopes</strong> as the actions (verbs/functions) that can be performed on that resource. For APIs, each HTTP method acts as a scope. Following scopes are already created in IAM:</p>
+<ul>
+ <li>
+  <p><strong>GET</strong></p>
+ </li>
+ <li>
+  <p><strong>PUT</strong></p>
+ </li>
+ <li>
+  <p><strong>POST</strong></p>
+ </li>
+ <li>
+  <p><strong>DELETE</strong></p>
+ </li>
+ <li>
+  <p><strong>PATCH</strong></p>
+ </li>
+</ul>
+<p>If there are any other HTTP methods that your API uses or if you can’t find a scope for one of the above mentioned methods, you can create the necessary scopes by following the instructions below.</p>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <p>Number of scopes in a resource depends on the use-case of API you are securing. For example, if you're only securing GET and POST requests for an API, you don’t need to use/define other scopes, as those operations are not relevant in this case. Also, access is dynamic and flexible, you can give access to any user (agent, senior agent, supervisor, admin) based on use-case.</p>
+ </div>
+</div>
+<p><strong>Steps to create Scopes:</strong></p>
+<ol>
+ <li>
+  <p>Select <strong>Scopes</strong> under <strong>Authorization</strong> tab.</p>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 1061px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+     <img src="/__attachments/a_93719ed447b78f1a00f5a59600b93f0ca603dd4e852b25d135c758c46d86d354/9de79a13-209e-431e-ab57-1cf09a2c51a7-20250903-135745.png?cb=c2fc50cd4511b43b03cb65b6ffcadbb0" alt="9de79a13-209e-431e-ab57-1cf09a2c51a7-20250903-135745.png" data-scope="internal" width="1534" height="544">
+    </div>
+   </image-lightbox>
+  </div>
+  <p>
+   <br>
+  </p>
+ </li>
+ <li>
+  <p>In the search box, enter the name of the scope you want to use for your API (e.g., <strong>POST</strong>). If you find the scope, you’re good to go. Otherwise, you'll need to create the scope by following the next steps.</p>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 1061px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+     <img src="/__attachments/a_b80f75d20b85a400a88c2d816bddcba70ec8d7239c56879158bc716689461401/e93b433c-1bc1-4a5b-8635-1c08bc0d262e-20250903-135659.png?cb=d9bdf0fce9c76ea729acc954a2aac697" alt="e93b433c-1bc1-4a5b-8635-1c08bc0d262e-20250903-135659.png" data-scope="internal" width="1535" height="446">
+    </div>
+   </image-lightbox>
+  </div>
+  <p>
+   <br>
+  </p>
+ </li>
+ <li>
+  <p>Click <strong>Create authorization scope</strong>.</p>
+ </li>
+ <li>
+  <p>Enter the name of the scope for your API. The scope name should be in capital letters and match the HTTP method (e.g., <strong>DELETE</strong>).</p>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 1061px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+     <img src="/__attachments/a_4da47477b886c0aa4824525812a46a8023e1eeb57756dc75867bdde5abf0f660/21390685-bdcc-4883-b693-5e8be9e385be-20250903-135529.png?cb=f07c0f672a813187c05dad146af51021" alt="21390685-bdcc-4883-b693-5e8be9e385be-20250903-135529.png" data-scope="internal" width="1535" height="402">
+    </div>
+   </image-lightbox>
+  </div>
+  <p>
+   <br>
+  </p>
+ </li>
+ <li>
+  <p>Click Save. Your <strong>DELETE</strong> scope has been created.</p>
+ </li>
+ <li>
+  <p>You can create other scopes in the same way.</p>
+ </li>
+ <li>
+  <p>We’ll use <strong>GET, PUT, POST </strong>&amp;<strong> DELETE</strong> scopes with <code>/ccm/channel-types*</code>.</p>
+ </li>
+</ol>
+<h3 id="2.-Create-a-Resource" style=""><span id="APIAuthorization:ConfigurationandCustomizationGuide-2.CreateaResource"></span>2. Create a Resource
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/api-authorization-enablement-developers-guide#2.-Create-a-Resource">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>An API endpoint is considered a resource because it serves data or allows you to perform CRUD operations. For each targeted endpoint, a separate resource will be created in IAM. If you target <em>N</em> number of APIs, you will need to create <em>N</em> number of resources. We’ll create a resource for <code>/ccm/channel-types*</code> API below.</p>
+<p><strong>Steps to create a Resource:</strong></p>
+<ol>
+ <li>
+  <p>Select <strong>Resources</strong> under <strong>Authorization</strong> tab and click <strong>Create resource</strong>.</p>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 1061px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+     <img src="/__attachments/a_60077c407af09962ef879aa4276f66db8fdffe802b5a30800ac4408d9ad436d3/b5ccfae0-f853-4045-a1af-ab8862ac23cd-20250903-135444.png?cb=9d64862f1faacde5316bd7340368959b" alt="b5ccfae0-f853-4045-a1af-ab8862ac23cd-20250903-135444.png" data-scope="internal" width="1534" height="410">
+    </div>
+   </image-lightbox>
+  </div>
+  <p>
+   <br>
+  </p>
+ </li>
+ <li>
+  <p>Enter the name of the resource for your endpoint. The resource name should follow the camelCase convention, structured as: <code>&lt;componentName&gt;-&lt;endPoint&gt;-api</code>.</p>
+ </li>
+ <li>
+  <p>Enter your endpoint in the <strong>URIs</strong> field. The endpoint is the last part of the URL except the FQDN. For example, to secure <code>https://demo.expertflow.com/ccm/channelTypes</code>, you will enter <code>/ccm/channelTypes</code> in the URIs field. This should also match the <a href="/cx-knowledgebase/latest/api-authorization-enablement-developers-guide#Exception-Routes" data-scope="internal">exception route</a> you added above.</p>
+ </li>
+ <li>
+  <p>Select all the allowed HTTP methods for your API in Authorization scopes field. For example, you can enter <strong>GET</strong> or <strong>POST</strong>, and then select them from the drop-down menu.</p>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 1061px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+     <img src="/__attachments/a_201697afd2ae297f103a341b875b763e561f6066aa89290cb724b1f6216ece47/67d5cf7c-716a-4676-b38d-6c7e6f5c938b-20250903-133540.png?cb=96cfe08e348b8ba87bc13d4157a0651d" alt="67d5cf7c-716a-4676-b38d-6c7e6f5c938b-20250903-133540.png" data-scope="internal" width="1534" height="582">
+    </div>
+   </image-lightbox>
+  </div>
+  <p>
+   <br>
+  </p>
+ </li>
+ <li>
+  <p>Click Save and you have created a resource for an endpoint.</p>
+ </li>
+</ol>
+<h3 id="3.-Create-Policies" style=""><span id="APIAuthorization:ConfigurationandCustomizationGuide-3.CreatePolicies"></span>3. Create Policies
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/api-authorization-enablement-developers-guide#3.-Create-Policies">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Policies in IAM define the conditions under which a specific action or permission is granted to a user, a role, or group of users. You need to create a policy for each scope of a resource. In the example above, since we used four scopes, we will need to create four policies, one for each scope.</p>
+<p><strong>Steps to create Policies:</strong></p>
+<ol>
+ <li>
+  <p>Select <strong>Policies</strong> under <strong>Authorization</strong> tab and click <strong>Create policy</strong>.</p>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 1061px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+     <img src="/__attachments/a_1fc3deb7277c546400b47b7ddfea8dca1b6ceb9e60b4197bbb94c14bc7cc608f/964eec2c-c958-4b93-87fd-9a99f61cffe0-20250903-133323.png?cb=be0a4c2e345aae38eb20ff8864594fff" alt="964eec2c-c958-4b93-87fd-9a99f61cffe0-20250903-133323.png" data-scope="internal" width="1534" height="296">
+    </div>
+   </image-lightbox>
+  </div>
+  <p>
+   <br>
+  </p>
+ </li>
+ <li>
+  <p>Select <strong>Role</strong> as policy type.</p>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 1061px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+     <img src="/__attachments/a_d190e99250abac04546b80c231580ff490342dd6afb10afaff523b593fcee76e/96f1e88f-bdc6-451a-9139-c90d6935a1fc-20250903-133146.png?cb=b85c221a561b618f93b74a9ff3df265a" alt="96f1e88f-bdc6-451a-9139-c90d6935a1fc-20250903-133146.png" data-scope="internal" width="1534" height="313">
+    </div>
+   </image-lightbox>
+  </div>
+  <p>
+   <br>
+  </p>
+ </li>
+ <li>
+  <p>Enter the name of the policy for <strong>GET</strong> scope. Policy name should follow this convention: <code>&lt;Resource Name&gt; - &lt;Scope Name&gt; - policy</code>. Note the spaces around dashes/hyphens.</p>
+ </li>
+ <li>
+  <p>Add a description for the policy.</p>
+ </li>
+ <li>
+  <p>Click <strong>Add roles</strong> and assign all the roles (e.g., <strong>agent</strong>, <strong>supervisor</strong>, and <strong>admin</strong>) that should be able to make <strong>GET</strong> request to <code>/ccm/customer-topics*</code>.</p>
+ </li>
+ <li>
+  <p>Click Save. You may not see roles listed, but if IAM notifies you about successful policy creation, you’re all set.</p>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 1061px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+     <img src="/__attachments/a_5e77674de9232112a1b7cc92d8db780837e974fa084fef98c4ae34d2099403fe/dd5957df-5d48-4e7d-8255-2e832a2abfcc-20250903-133036.png?cb=49401f889cffb14fa0e0ec5ac436a482" alt="dd5957df-5d48-4e7d-8255-2e832a2abfcc-20250903-133036.png" data-scope="internal" width="1535" height="600">
+    </div>
+   </image-lightbox>
+  </div>
+  <p>
+   <br>
+  </p>
+ </li>
+ <li>
+  <p>Create a policy for <strong>PUT</strong>, <strong>POST</strong> and <strong>DELETE</strong> scopes in the same way. The differences are as follows:</p>
+  <ol>
+   <li>
+    <p>Scope names are different for the policies.</p>
+   </li>
+   <li>
+    <p>Only select the roles that are allowed to perform specific actions on the resource. For example, <em>supervisor</em> for <strong>POST</strong> and <em>admin</em> for <strong>DELETE</strong>, etc.</p>
+   </li>
+   <li>
+    <p>If you want to allow an <em>agent</em> to perform CRUD operations on the resource, make sure to select that role as well for other scopes.</p>
+   </li>
+  </ol>
+ </li>
+ <li>
+  <p>You have now created policies for the endpoint/resource.</p>
+ </li>
+</ol>
+<h3 id="4.-Create-Permissions---The-Final-Step" style=""><span id="APIAuthorization:ConfigurationandCustomizationGuide-4.CreatePermissions-TheFinalStep"></span>4. Create Permissions - The Final Step
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/api-authorization-enablement-developers-guide#4.-Create-Permissions---The-Final-Step">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Permissions in IAM define what actions users are allowed to perform on a specific resource. You need to create a permission for each policy related to a resource. In the example above, since we have created four policies for <code>ccm-channelTypes-api</code> resource, we will need to create four permissions, one for each policy.</p>
+<p><strong>Step to create Permissions:</strong></p>
+<ol>
+ <li>
+  <p>Select <strong>Permission</strong> under <strong>Authorization</strong> tab, click <strong>Create permission</strong> and select <strong>Create scope-based permission</strong>.</p>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 1061px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+     <img src="/__attachments/a_923a3e34461243247d80b565beea22bed7a0c1d472c0127939de1cc4adbe57d2/beb55d26-0736-4797-b5a8-f75949ced601-20250903-132857.png?cb=2bb8289928b058af896d6ff9fcf15c5a" alt="beb55d26-0736-4797-b5a8-f75949ced601-20250903-132857.png" data-scope="internal" width="1535" height="392">
+    </div>
+   </image-lightbox>
+  </div>
+  <p>
+   <br>
+  </p>
+ </li>
+ <li>
+  <p>Enter the name of the permission for the <strong>GET</strong> scope/policy. The permission name follows the same convention as the policy, but with the keyword <code>policy</code> replaced by <code>permission</code>.</p>
+ </li>
+ <li>
+  <p>Add a description for the permission.</p>
+ </li>
+ <li>
+  <p>Select the resource you created (e.g., <code>ccm-channelTypes-api</code>).</p>
+ </li>
+ <li>
+  <p>Select the <strong>GET</strong> scope to allow HTTP GET method for respective resource.</p>
+ </li>
+ <li>
+  <p>Select the <strong>GET</strong> policy you created for the resource (e.g., <code>ccm-channelTypes-api - GET - policy</code>).</p>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 1057px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+     <img src="/__attachments/a_ed7b5017740d599d36f4f7e5afdbe307924d32c3fffc0037a5068ddc53984a3c/76a5efab-87f6-4066-8465-5fc3c6de1c38-20250903-132753.png?cb=367eddefe34d3d12b0388f004d6aedd0" alt="76a5efab-87f6-4066-8465-5fc3c6de1c38-20250903-132753.png" data-scope="internal" width="1535" height="593">
+    </div>
+   </image-lightbox>
+  </div>
+  <p>
+   <br>
+  </p>
+ </li>
+ <li>
+  <p>Click Save.</p>
+ </li>
+ <li>
+  <p><em><strong>You’ve now created a permission that allows users with the “agent”, “supervisor”, or “admin” role to access the </strong></em><code>/ccm/channel-types*</code><em><strong> API using the </strong></em><code>GET</code><em><strong> method.</strong></em></p>
+ </li>
+ <li>
+  <p>You can create permissions for other scopes/policies of the same resource in a similar manner, with the following differences:</p>
+  <ol>
+   <li>
+    <p>Select the appropriate scope (<strong>POST</strong>, <strong>PUT</strong>, or <strong>DELETE</strong>) based on your specific requirements.</p>
+   </li>
+   <li>
+    <p>Choose the corresponding <strong>POST</strong>, <strong>PUT</strong>, or <strong>DELETE</strong> policy you created for the resource.</p>
+   </li>
+   <li>
+    <p>For example, for <code>ccm-channelTypes-api - POST - permission</code>, the scope would be and <code>POST</code>. The policy would be <code>ccm-channelTypes-api - POST - policy</code>.</p>
+   </li>
+  </ol>
+ </li>
+ <li>
+  <p><em><strong>This permission will allow users with the “supervisor” or “admin” role to access the </strong></em><code>/ccm/channel-types*</code><em><strong> API using the </strong></em><code>POST</code><em><strong> method.</strong></em></p>
+ </li>
+</ol>
+<h2 id="Configured-Authorization" style=""><span id="APIAuthorization:ConfigurationandCustomizationGuide-ConfiguredAuthorization"></span>Configured Authorization
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx-knowledgebase/latest/api-authorization-enablement-developers-guide#Configured-Authorization">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>In the above examples, we have configured authorization for the <code>/ccm/channel-types*</code> endpoint of Customer Channel Manager APIs, such that:</p>
+<ul>
+ <li>
+  <p>A user with <em><strong>agent</strong></em><em>, </em><em><strong>supervisor</strong></em>, or <em><strong>admin</strong></em> role can make a <strong>GET</strong> request to the <code>/ccm/channel-types*</code> endpoint.</p>
+ </li>
+ <li>
+  <p>A user with <em><strong>supervisor</strong></em> or <em><strong>admin</strong></em> role can make a <strong>POST</strong> and <strong>PUT</strong> requests to the <code>/ccm/channel-types*</code> endpoint.</p>
+ </li>
+ <li>
+  <p>A user with <em><strong>admin</strong></em> role can make a <strong>DELETE</strong> request to the <code>/ccm/channel-types*</code> endpoint.</p>
+ </li>
+ <li>
+  <p>Any other HTTP methods are not allowed.</p>
+ </li>
+</ul>
+<details class="expand" data-component="expand" data-align="wide" style="--width: 1800px">
+ <summary class="expand-control"> Examples </summary>
+ <div class="expand-body">
+  <div class="theme-table" style="--width: 1800px;">
+   <table-expand>
+    <scroll-shadow>
+     <table-sort>
+      <div data-component="table" data-align="align-start" data-number-column="false">
+       <table>
+        <colgroup>
+         <col style="width: 112px">
+         <col style="width: 146px">
+         <col style="width: 352px">
+         <col style="width: 328px">
+        </colgroup>
+        <tbody>
+         <tr>
+          <th>
+           <p><strong>Username</strong></p>
+          </th>
+          <th>
+           <p><strong>Role(s)</strong></p>
+          </th>
+          <th>
+           <p><strong>HTTP Request</strong></p>
+          </th>
+          <th>
+           <p><strong>HTTP Response</strong></p>
+          </th>
+         </tr>
+         <tr>
+          <td>
+           <p>ali</p>
+          </td>
+          <td>
+           <p>agent</p>
+          </td>
+          <td>
+           <code-snippet class="theme-code-snippet">
+            <div class="theme-code-snippet-header">Bash</div>
+            <scroll-shadow>
+             <div data-component="code" data-language="bash">
+              <pre><code>GET /ccm/channel-types*
+Authorization: Bearer &lt;token&gt;
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </td>
+          <td>
+           <code-snippet class="theme-code-snippet">
+            <div class="theme-code-snippet-header">Bash</div>
+            <scroll-shadow>
+             <div data-component="code" data-language="bash">
+              <pre><code>HTTP/1.1 200
+&lt;expected-response&gt;
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>ali</p>
+          </td>
+          <td>
+           <p>agent</p>
+          </td>
+          <td>
+           <code-snippet class="theme-code-snippet">
+            <div class="theme-code-snippet-header">Bash</div>
+            <scroll-shadow>
+             <div data-component="code" data-language="bash">
+              <pre><code>POST|PUT|DELETE /ccm/channel-types*
+Authorization: Bearer &lt;token&gt;
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </td>
+          <td>
+           <code-snippet class="theme-code-snippet">
+            <div class="theme-code-snippet-header">Bash</div>
+            <scroll-shadow>
+             <div data-component="code" data-language="bash">
+              <pre><code>HTTP/1.1 403 Forbidden
+{"error":"access_denied","error_description":"not_authorized"}
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>alisup</p>
+          </td>
+          <td>
+           <p>supervisor</p>
+          </td>
+          <td>
+           <code-snippet class="theme-code-snippet">
+            <div class="theme-code-snippet-header">Bash</div>
+            <scroll-shadow>
+             <div data-component="code" data-language="bash">
+              <pre><code>GET|POST|PUT /ccm/channel-types*
+Authorization: Bearer &lt;token&gt;
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </td>
+          <td>
+           <code-snippet class="theme-code-snippet">
+            <div class="theme-code-snippet-header">Bash</div>
+            <scroll-shadow>
+             <div data-component="code" data-language="bash">
+              <pre><code>HTTP/1.1 200
+&lt;expected-response&gt;
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>alisup</p>
+          </td>
+          <td>
+           <p>supervisor</p>
+          </td>
+          <td>
+           <code-snippet class="theme-code-snippet">
+            <div class="theme-code-snippet-header">Bash</div>
+            <scroll-shadow>
+             <div data-component="code" data-language="bash">
+              <pre><code>DELETE /ccm/channel-types*
+Authorization: Bearer &lt;token&gt;
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </td>
+          <td>
+           <code-snippet class="theme-code-snippet">
+            <div class="theme-code-snippet-header">Bash</div>
+            <scroll-shadow>
+             <div data-component="code" data-language="bash">
+              <pre><code>HTTP/1.1 403 Forbidden
+{"error":"access_denied","error_description":"not_authorized"}
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>aliadmin</p>
+          </td>
+          <td>
+           <p>admin</p>
+          </td>
+          <td>
+           <code-snippet class="theme-code-snippet">
+            <div class="theme-code-snippet-header">Bash</div>
+            <scroll-shadow>
+             <div data-component="code" data-language="bash">
+              <pre><code>GET|PUT|POST|DELETE /ccm/channel-types*
+Authorization: Bearer &lt;token&gt;
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </td>
+          <td>
+           <code-snippet class="theme-code-snippet">
+            <div class="theme-code-snippet-header">Bash</div>
+            <scroll-shadow>
+             <div data-component="code" data-language="bash">
+              <pre><code>HTTP/1.1 200
+&lt;expected-response&gt;
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </table-sort>
+    </scroll-shadow>
+   </table-expand>
+  </div>
+ </div>
+</details>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="744b3d0c427b7670-70" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="744b3d0c427b7670-70">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/cx-knowledgebase/latest/api-authorization-overview">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">API Authorization - Overview</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/cx-knowledgebase/latest/components-secured-with-authorization">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Components Secured with Authorization</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

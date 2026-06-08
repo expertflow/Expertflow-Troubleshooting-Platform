@@ -1,0 +1,3432 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_f679d5c8ebada83f39b7d3d45d19cd650d7abf38a82e0dbdc535708abe1f8ceb" data-confluence-content-id="118489364"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/dynamics-web/3.0.5/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="MDWEB">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>CIF 1.0 Based MS CRM(Cloud) Web-CTI Connector Deployment Guide | Expertflow CX</title>
+		<meta property="og:title" content="CIF 1.0 Based MS CRM(Cloud) Web-CTI Connector Deployment Guide | Expertflow CX">
+		<meta property="twitter:title" content="CIF 1.0 Based MS CRM(Cloud) Web-CTI Connector Deployment Guide | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/dynamics-web/3.0.5/cif-1-0-based-ms-crm-cloud-web-cti-connector-deplo">
+		<meta property="og:url" content="https://docs.expertflow.com/dynamics-web/3.0.5/cif-1-0-based-ms-crm-cloud-web-cti-connector-deplo">
+
+		<meta name="description" content="Preface This document provides deployment details of the product inside MS Dynamics CRM. Prerequisites The following are the prerequisites for the deployment o…">
+		<meta property="og:description" content="Preface This document provides deployment details of the product inside MS Dynamics CRM. Prerequisites The following are the prerequisites for the deployment o…">
+		<meta property="twitter:description" content="Preface This document provides deployment details of the product inside MS Dynamics CRM. Prerequisites The following are the prerequisites for the deployment o…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__attachments/a_de2faa9057310afc7c0865ad47c2cab123ccd6a402603bbd1d4ace27d450d9ca/2023-09-14_11-17-59.jpg?cb=ca7df5f52f6fe64b4d4d614962220658">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__attachments/a_de2faa9057310afc7c0865ad47c2cab123ccd6a402603bbd1d4ace27d450d9ca/2023-09-14_11-17-59.jpg?cb=ca7df5f52f6fe64b4d4d614962220658">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2024-08-16T08:42:22.095Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": true
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="c3bdaeef57c09c4b-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="c3bdaeef57c09c4b-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="c3bdaeef57c09c4b-8">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="c3bdaeef57c09c4b-8" name="version" onchange="self.location.assign(this.value)" >
+				<option id="c3bdaeef57c09c4b-3"  value="/dynamics-web/3.1"  >
+					3.1
+				</option>
+				<option id="c3bdaeef57c09c4b-4"  value="/dynamics-web/3.0.6"  >
+					3.0.6
+				</option>
+				<option id="c3bdaeef57c09c4b-5"  value="/dynamics-web/3.0.5/cif-1-0-based-ms-crm-cloud-web-cti-connector-deplo"  selected="">
+					3.0.5
+				</option>
+				<option id="c3bdaeef57c09c4b-6"  value="/dynamics-web/3.0.4/cif-1-0-based-ms-crm-cloud-web-cti-connector-deployment-guide"  >
+					3.0.4
+				</option>
+				<option id="c3bdaeef57c09c4b-7"  value="/dynamics-web/3.0.3"  >
+					3.0.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('c3bdaeef57c09c4b-8');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-c3bdaeef57c09c4b-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-c3bdaeef57c09c4b-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-c3bdaeef57c09c4b-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="c3bdaeef57c09c4b-9" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="c3bdaeef57c09c4b-9">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-c3bdaeef57c09c4b-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-c3bdaeef57c09c4b-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="c3bdaeef57c09c4b-15">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="c3bdaeef57c09c4b-15" name="version" onchange="self.location.assign(this.value)" >
+				<option id="c3bdaeef57c09c4b-10"  value="/dynamics-web/3.1"  >
+					3.1
+				</option>
+				<option id="c3bdaeef57c09c4b-11"  value="/dynamics-web/3.0.6"  >
+					3.0.6
+				</option>
+				<option id="c3bdaeef57c09c4b-12"  value="/dynamics-web/3.0.5/cif-1-0-based-ms-crm-cloud-web-cti-connector-deplo"  selected="">
+					3.0.5
+				</option>
+				<option id="c3bdaeef57c09c4b-13"  value="/dynamics-web/3.0.4/cif-1-0-based-ms-crm-cloud-web-cti-connector-deployment-guide"  >
+					3.0.4
+				</option>
+				<option id="c3bdaeef57c09c4b-14"  value="/dynamics-web/3.0.3"  >
+					3.0.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('c3bdaeef57c09c4b-15');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="c3bdaeef57c09c4b-16" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="c3bdaeef57c09c4b-17" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="c3bdaeef57c09c4b-18" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="c3bdaeef57c09c4b-19" href="/dynamics-web/3.0.5/solution-reference" >Solution Reference</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="c3bdaeef57c09c4b-20"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="c3bdaeef57c09c4b-20" href="/dynamics-web/3.0.5/business-features-ms-crm-web-connector" >Business Features MS CRM Web-Connector</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="c3bdaeef57c09c4b-22" href="/dynamics-web/3.0.5/compatibility-guide" >Compatibility Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="c3bdaeef57c09c4b-23" href="/dynamics-web/3.0.5/solution-components-and-architecture" >Solution Components and Architecture</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="c3bdaeef57c09c4b-25"						aria-labelledby="c3bdaeef57c09c4b-24"
+					></button>
+				<a id="c3bdaeef57c09c4b-24" href="/dynamics-web/3.0.5/deployment-guide" >Deployment Guide</a>
+			</div>
+
+<ul  id="c3bdaeef57c09c4b-25" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="c3bdaeef57c09c4b-26" href="/dynamics-web/3.0.5/cif-1-0-based-ms-crm-cloud-web-cti-connector-deplo" aria-current="page">CIF 1.0 Based MS CRM(Cloud) Web-CTI Connector Deployment Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="c3bdaeef57c09c4b-27" href="/dynamics-web/3.0.5/cif-2-0-based-ms-crm-cloud-web-cti-connector-deplo" >CIF 2.0 Based MS CRM(Cloud) Web-CTI Connector Deployment Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="c3bdaeef57c09c4b-28" href="/dynamics-web/3.0.5/3-0-5-on-premise-crm-solution-cti-deployment-guide" >3.0.5 On-Premise CRM Solution CTI Deployment Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="c3bdaeef57c09c4b-29" href="/dynamics-web/3.0.5/delete-existing-solution-on-prem" >Delete Existing Solution (On-Prem)</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="c3bdaeef57c09c4b-30" href="/dynamics-web/3.0.5/crm-configuration-for-sso" >CRM Configuration for SSO</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="c3bdaeef57c09c4b-31" href="/dynamics-web/3.0.5/high-availability-ha-duplex-deployment" >High Availability (HA) / Duplex Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="c3bdaeef57c09c4b-32" href="/dynamics-web/3.0.5/workflow" >Workflow</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="c3bdaeef57c09c4b-33" href="/dynamics-web/3.0.5/in-the-roadmap" >In the Roadmap</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="c3bdaeef57c09c4b-34" href="/dynamics-web/3.0.5/sitemap-xml" >sitemap.xml</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="c3bdaeef57c09c4b-35" href="/dynamics-web/3.0.5/solution-prerequisites" >Solution Prerequisites</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="c3bdaeef57c09c4b-36" href="/dynamics-web/3.0.5/release-notes" >Release Notes</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="c3bdaeef57c09c4b-37" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="c3bdaeef57c09c4b-37">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/dynamics-web/3.0.5">
+										Microsoft Dynamics Web-based CTI Connector
+								</a>
+							</li>
+							<li>
+								<a href="/dynamics-web/3.0.5/deployment-guide">
+										Deployment Guide
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="c3bdaeef57c09c4b-38">
+			<h2 class="toc-heading" id="c3bdaeef57c09c4b-38">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>CIF 1.0 Based MS CRM(Cloud) Web-CTI Connector Deployment Guide</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+
+	
+	
+
+
+	
+	
+	
+	
+		
+	
+	
+	
+	
+	
+
+	
+			
+
+		
+	
+	
+	
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+				
+
+		
+
+
+				
+
+
+	
+	
+	
+	<h2 id="Preface"><span id="CIF1.0BasedMSCRM(Cloud)Web-CTIConnectorDeploymentGuide-Preface"></span>Preface
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/dynamics-web/3.0.5/cif-1-0-based-ms-crm-cloud-web-cti-connector-deplo#Preface">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>This document provides deployment details of the product inside MS Dynamics CRM.</p>
+<h2 id="Prerequisites"><span id="CIF1.0BasedMSCRM(Cloud)Web-CTIConnectorDeploymentGuide-Prerequisites"></span>Prerequisites
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/dynamics-web/3.0.5/cif-1-0-based-ms-crm-cloud-web-cti-connector-deplo#Prerequisites">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>The following are the prerequisites for the deployment of the Javascript CTI Toolbar.</p>
+<ol>
+ <li>
+  <p>Dynamics 365 should be installed.&nbsp;</p>
+ </li>
+ <li>
+  <p>The user must have administrative rights&nbsp;</p>
+ </li>
+</ol>
+<h2 id="Install-Javascript-CTI-Toolbar-for-MS-Dynamics-CRM"><span id="CIF1.0BasedMSCRM(Cloud)Web-CTIConnectorDeploymentGuide-InstallJavascriptCTIToolbarforMSDynamicsCRM"></span>Install Javascript CTI Toolbar for MS Dynamics CRM&nbsp;
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/dynamics-web/3.0.5/cif-1-0-based-ms-crm-cloud-web-cti-connector-deplo#Install-Javascript-CTI-Toolbar-for-MS-Dynamics-CRM">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<ol>
+ <li>
+  <p>To install the Javascript CTI Toolbar, please follow this <a href="/javascript-cti/3.0.5/deployment-guide" data-scope="internal">guide</a></p>
+ </li>
+</ol>
+<h2 id="Expertflow-SSO-Server-Deployment-Guide"><span id="CIF1.0BasedMSCRM(Cloud)Web-CTIConnectorDeploymentGuide-ExpertflowSSOServerDeploymentGuide"></span>Expertflow SSO Server Deployment Guide
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/dynamics-web/3.0.5/cif-1-0-based-ms-crm-cloud-web-cti-connector-deplo#Expertflow-SSO-Server-Deployment-Guide">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<ul>
+ <li>
+  <p>The Deployment Guide is available <a href="/javascript-cti/3.0.5/ef-sso-server-deployment-guide" data-scope="internal">here</a>. This is only required if Cisco Finesse is Configured with SSO. If Finesse is running without SSO, then please ignore this.</p>
+ </li>
+</ul>
+<h2 id="Configuration"><span id="CIF1.0BasedMSCRM(Cloud)Web-CTIConnectorDeploymentGuide-Configuration"></span>Configuration
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/dynamics-web/3.0.5/cif-1-0-based-ms-crm-cloud-web-cti-connector-deplo#Configuration">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<ol>
+ <li>
+  <p>Open the new_config.js file located on `c:\inetpub\wwwroot\CIF-JavaScript-CTI\config.js` path.&nbsp; Set the properties as per the below table.&nbsp;</p>
+  <p>
+   <br>
+  </p>
+ </li>
+</ol>
+<div class="theme-table" style="--width: 1800px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="align-start" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 117px">
+       <col style="width: 196px">
+       <col style="width: 213px">
+       <col style="width: 693px">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p><a href="http://s.no/" data-scope="external" rel="external noreferrer">S.No</a></p>
+        </th>
+        <th>
+         <p>Property Name</p>
+        </th>
+        <th>
+         <p>Value</p>
+        </th>
+        <th>
+         <p>&nbsp;Description</p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p>1</p>
+        </td>
+        <td>
+         <p>adminUserName</p>
+        </td>
+        <td>
+         <p>admin</p>
+        </td>
+        <td>
+         <p>The Finesse Admin Username, This username is used to call the different Finesse APIs</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>2</p>
+        </td>
+        <td>
+         <p>adminPassword</p>
+        </td>
+        <td>
+         <p>*******</p>
+        </td>
+        <td>
+         <p>The Finesse Admin Password. (You'll first need to encrypt the password and then use the encrypted string here as adminPassword)</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>3</p>
+        </td>
+        <td>
+         <p>domain</p>
+        </td>
+        <td>
+         <p>https://&lt;finesseFQDN&gt;:8445</p>
+        </td>
+        <td>
+         <p>The domain name for finesse with which we are integrating&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>4</p>
+        </td>
+        <td>
+         <p>subDomain</p>
+        </td>
+        <td>
+         <p>https://&lt;subscriberfinesseFQDN&gt;:8445</p>
+        </td>
+        <td>
+         <p>The domain name for subscriber finesse with which we are integrating&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>5</p>
+        </td>
+        <td>
+         <p>boshURL</p>
+        </td>
+        <td>
+         <p>https://&lt;finesseFQDN&gt;:7443/http-bind /</p>
+        </td>
+        <td>
+         <p>The bosh URL variable basically append the same Finesse Domain with a predefined URL&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>6</p>
+        </td>
+        <td>
+         <p>subBoshUrl</p>
+        </td>
+        <td>
+         <p>https://&lt;subscriberfinesseFQDN&gt;:7443/http-bind/</p>
+        </td>
+        <td>
+         <p>The sub bosh URL variable basically appends the same subscriber Finesse Domain with a predefined URL&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>7</p>
+        </td>
+        <td>
+         <p>finesseFlavor</p>
+        </td>
+        <td>
+         <p>UCCE/UCCX</p>
+        </td>
+        <td>
+         <p>This property can have 2 values&nbsp;</p>
+         <ul>
+          <li>
+           <p>UCCE</p>
+          </li>
+          <li>
+           <p>UCCX</p>
+          </li>
+         </ul>
+         <p>Note: In the case of PCCE, we need to provide value UCCE.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>8</p>
+        </td>
+        <td>
+         <p>callVariable</p>
+        </td>
+        <td>
+         <p>callVariable1</p>
+        </td>
+        <td>
+         <p>Our Connector required an empty one variable which it needs to use for some internal mechanism.&nbsp; That variable can be any callVariable like callVariable1,callVariable2, callVariable3....callVariable10, or any ECC variable as well.&nbsp;</p>
+         <p>In the case of the ECC variable, we need to provide names like ECC.variableName</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>9</p>
+        </td>
+        <td>
+         <p>powered_by</p>
+        </td>
+        <td>
+         <p>True</p>
+        </td>
+        <td>
+         <p>System variable should always remain True</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>10</p>
+        </td>
+        <td>
+         <p>disableEndCallBtn</p>
+        </td>
+        <td>
+         <p>false</p>
+        </td>
+        <td>
+         <p>This should always remain false</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>11</p>
+        </td>
+        <td>
+         <p>CRM</p>
+        </td>
+        <td>
+         <p>0/1</p>
+        </td>
+        <td>
+         <p>A possible value for this key would be 0 or 1</p>
+         <p>0= When web CTI is deployed as a standalone project without any CRM Integration&nbsp;</p>
+         <p>1= When Web CTI is deployed with some CRM, The CRM can be any. If the value for this property is 1, then the <strong>crmFilePath</strong> variable must be set</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>12</p>
+        </td>
+        <td>
+         <p><strong>crmFilepath</strong></p>
+        </td>
+        <td>
+         <p>The predefined path of the CRM file</p>
+        </td>
+        <td>
+         <p>To make this property work, the above property CRM must be set 1 . Value for this property depends on the CRM you are using.&nbsp; Possible values are&nbsp;</p>
+         <p>CRM</p>
+         <p>Value</p>
+         <p>MS CRM Online&nbsp;</p>
+         <p>CRM/ new_MS_CIF.js</p>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>13</p>
+        </td>
+        <td>
+         <p>organizationDomain</p>
+        </td>
+        <td>
+         <p><a href="https://expertflow.dynamics.com/" data-scope="external" rel="external noreferrer">https://expertflow.dynamics.com</a></p>
+        </td>
+        <td>
+         <p>This value can only be set when you are using Microsoft CRM Online (CIF enabled) else you can ignore this property. This is the organization domain of your online CRM&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>14</p>
+        </td>
+        <td>
+         <p>entities</p>
+        </td>
+        <td>
+         <p>"contact,account"</p>
+        </td>
+        <td>
+         <p>The searching priority user can define in the config file. For example, as per this configuration, the CTI connector first searches the record in the contact and then accounts. If you wanted to search the record first in the account, you can simply change the order as per your requirement and the searching order will be changed.&nbsp;</p>
+         <div data-component="panel" role="note" data-appearance="info">
+          <div class="panel-content">
+           <h3 id="INFO"><span id="CIF1.0BasedMSCRM(Cloud)Web-CTIConnectorDeploymentGuide-INFO"></span>INFO
+            <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+             <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/dynamics-web/3.0.5/cif-1-0-based-ms-crm-cloud-web-cti-connector-deplo#INFO">
+              <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+               <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+              </svg>
+             </copy-clipboard>
+            </i18n-message></h3>
+           <p>In online CRM entities name should be in the small latter</p>
+           <p>entities: "contact, account"</p>
+          </div>
+         </div>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>15</p>
+        </td>
+        <td>
+         <p>noMatchEntity</p>
+        </td>
+        <td>
+         <p>"lead"</p>
+        </td>
+        <td>
+         <p>In case there is no record found in the entities searched, then we need to tell the CRM which entity should be created. For example, as per this configuration, the CTI connector will open the Lead entity form, then you can save it by providing necessary information like name etc.&nbsp;</p>
+         <p>We can also set the value to "<strong>phonecall</strong>" so that in case of no match, an anonymous activity(not linked to any CRM account/contact/lead) is created.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>16</p>
+        </td>
+        <td>
+         <p>sso</p>
+        </td>
+        <td>
+         <p>true</p>
+        </td>
+        <td>
+         <p>This configuration is for auto-login in CTI connector. It is a boolean field, it can have 2 values:</p>
+         <ul>
+          <li>
+           <p>true</p>
+          </li>
+          <li>
+           <p>false</p>
+           <p>
+            <br>
+           </p>
+           <p>Note</p>
+           <p>For mobile agent this configuration value will always remains false.&nbsp;</p>
+           <p>
+            <br>
+           </p>
+           <p>
+            <br>
+           </p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>17</p>
+        </td>
+        <td>
+         <p>sso_prefix</p>
+        </td>
+        <td>
+         <p>"new"</p>
+        </td>
+        <td>
+         <p>This is a CRM prefix for custom fields in the user entity. It is "new" by default.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>18</p>
+        </td>
+        <td>
+         <p>agent_field_name</p>
+        </td>
+        <td>
+         <p>"new_agentid"</p>
+        </td>
+        <td>
+         <p>Id of custom field in CRM for agent id in user entity</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>19</p>
+        </td>
+        <td>
+         <p>password_field_name</p>
+        </td>
+        <td>
+         <p>"new_password"</p>
+        </td>
+        <td>
+         <p>Id of custom field in CRM for the password&nbsp; in user entity</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>20</p>
+        </td>
+        <td>
+         <p>extension_field_name</p>
+        </td>
+        <td>
+         <p>"new_extension"</p>
+        </td>
+        <td>
+         <p>Id of custom field in CRM for extension in user entity</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>21</p>
+        </td>
+        <td>
+         <p>ssoAgent_field_name</p>
+        </td>
+        <td>
+         <p>"new_ssoagent"</p>
+        </td>
+        <td>
+         <p>Id of custom field in CRM for SSO agent in user entity</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>22</p>
+        </td>
+        <td>
+         <p>licenseKey</p>
+        </td>
+        <td>
+         <p>"licenseKey"</p>
+        </td>
+        <td>
+         <p>License key generated by Expertflow</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>23</p>
+        </td>
+        <td>
+         <p>getQueuesDelay</p>
+        </td>
+        <td>
+         <p>6000</p>
+        </td>
+        <td>
+         <p>This is only applicable for UCCE/PCCE deployment. This is the time by which CTI Toolbar queries the UCCE Database to display the Queue Stats</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>24</p>
+        </td>
+        <td>
+         <p>logoutFlag</p>
+        </td>
+        <td>
+         <p>True</p>
+        </td>
+        <td>
+         <p>Used in Team Performance gadget, to display the logout agent as well.&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>25</p>
+        </td>
+        <td>
+         <p>ssoBackendURL</p>
+        </td>
+        <td>
+         <p><span style="--color: var(--blue, #4c9aff);">https://192.168.*.*:8084</span></p>
+        </td>
+        <td>
+         <p>Javascript CTI Toolbar supports Finesse SSO login as well, and for that EF has developed its own Utility which needs to be deployed First. The Deployment Guide for SSO is available&nbsp;<a href="https://docs.expertflow.com/javascript-cti/3.0.3/ef-sso-server-deployment-guide" data-scope="external" rel="external noreferrer">here</a>. Once you deploy that Utility, you can then provide the link here. If Finesse is not SSO enabled, please ignore this property&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>26</p>
+        </td>
+        <td>
+         <p>isGadget</p>
+        </td>
+        <td>
+         <p>False</p>
+        </td>
+        <td>
+         <p>A System property should remain false always.&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>27</p>
+        </td>
+        <td>
+         <p>registeredNumberVariable&nbsp;</p>
+        </td>
+        <td>
+         <p>"callVariable5"</p>
+        </td>
+        <td>
+         <p>This is a property used for the popup, the possible values for this property can be any call variable name or "Ani". By default we pop up on Ani, if you want the popup to happen on a number other than Ani then you can set any call variable.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>28</p>
+        </td>
+        <td>
+         <p>makeNotReadyOutboundCall</p>
+        </td>
+        <td>
+         <p>false</p>
+        </td>
+        <td>
+         <p>This property is used for making outbound calls in a Ready state, for CCE 12.5+ we can make calls in Ready state without any issues, but for below versions we need to set this property to&nbsp;<strong>true&nbsp;</strong>in order to make calls in ready state.</p>
+         <p><strong>Note:</strong>&nbsp;The agent will be in Not Ready state after the call ends if the property is set to true.&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>29</p>
+        </td>
+        <td>
+         <p>defaultNotReadyReasonCode</p>
+        </td>
+        <td>
+         <p>27</p>
+        </td>
+        <td>
+         <p>This property is used for changing the agent state to Not ready for the outbound calls if made in Ready state and the&nbsp;<strong>makeNotReadyOutboundCall</strong>&nbsp;property is set to true.&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>30</p>
+        </td>
+        <td>
+         <p>aniLength</p>
+        </td>
+        <td>
+         <p>7</p>
+        </td>
+        <td>
+         <p>This is the number of digits from (right to left) that need to be considered for searching records</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>31</p>
+        </td>
+        <td>
+         <p>searchPrefix</p>
+        </td>
+        <td>
+         <p>"92"</p>
+        </td>
+        <td>
+         <p>This is the searrch prefix that is appended to the ani, if you don't want any search prefix to be appended then you can set it's value to empty string.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>32</p>
+        </td>
+        <td>
+         <p>outboundPrefix</p>
+        </td>
+        <td>
+         <p>"0"</p>
+        </td>
+        <td>
+         <p>This is the outbound prefix that is appended to the ani, if you don't want any outbound code to be appended then you can set it's value to empty string.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>33</p>
+        </td>
+        <td>
+         <p>callVariablesList</p>
+        </td>
+        <td>
+         <p>{"callVariable1": "Language"}</p>
+        </td>
+        <td>
+         <p>The call variables list is the config where you can decide which variables you want to display on the UI and with what name they should appear on the UI. In the list, you mention the call variable name followed by the value that will appear on the UI. So for example, if you want only call variable 1 to be displayed with the key 'language' then your config should be {"callVariable1": "Language"}.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>34</p>
+        </td>
+        <td>
+         <p>newWindowAutoLogin</p>
+        </td>
+        <td>
+         <p>true/false</p>
+        </td>
+        <td>
+         <p>This is for auto login to new tab of same browser. If value is true then it will allow to auto login to new tab else will not allow. This will work everywhere except in Ms Dynamics crm on premise version when SSO is true.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>35</p>
+        </td>
+        <td>
+         <p>tabIconChange</p>
+        </td>
+        <td>
+         <p>true/false</p>
+        </td>
+        <td>
+         <p>This will change the icon of browser tab where it is currently login after logout it will changed the icon to normal. This will not work in Ms Dynamics Online(CIF).&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>36</p>
+        </td>
+        <td>
+         <p>statesDropDown</p>
+        </td>
+        <td>
+         <p>true/false</p>
+        </td>
+        <td>
+         <p>This will block the agent states drop down list on CTI by default it value must be false.&nbsp;</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<ol start="2">
+ <li>
+  <p>Update the configurations and save the file.</p>
+ </li>
+</ol>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" data-component="image" data-align="align-start">
+   <img src="/__attachments/a_de2faa9057310afc7c0865ad47c2cab123ccd6a402603bbd1d4ace27d450d9ca/2023-09-14_11-17-59.jpg?cb=ca7df5f52f6fe64b4d4d614962220658" alt="2023-09-14_11-17-59.jpg" data-scope="internal" width="792" height="578">
+  </div>
+ </image-lightbox>
+</div>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 680px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_750942217316fbca02d335aa66f57d7e8f33831bcbe1096dc23a03a6bdca666a/Screenshot%202024-02-20%20111101.png?cb=9c5931536f2d148c07fe755c405d2ff9" alt="Screenshot 2024-02-20 111101.png" data-scope="internal" width="1280" height="549">
+  </div>
+ </image-lightbox>
+</div>
+<p>Browse the configured FQDN and the application should be accessible as shown below.
+ <br>
+ <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 710px;"> <img src="/__attachments/a_2d89336a1309a4e14742d5e6d7207623e02538e2711f199b4b9f7a6b6c02c508/2024-02-20_11-07-07.jpg?cb=aaaa0dc6ec5602bb794cd629c49d97e8" alt="2024-02-20_11-07-07.jpg" data-scope="internal"> </span> </image-lightbox> </span></p>
+<h2 id="Configure-the-CIF-on-Dynamics-CRM-UCI-for-javascript-cti-toolbar"><span id="CIF1.0BasedMSCRM(Cloud)Web-CTIConnectorDeploymentGuide-ConfiguretheCIFonDynamicsCRMUCIforjavascript-cti-toolbar"></span>Configure the CIF on Dynamics CRM UCI for javascript-cti-toolbar
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/dynamics-web/3.0.5/cif-1-0-based-ms-crm-cloud-web-cti-connector-deplo#Configure-the-CIF-on-Dynamics-CRM-UCI-for-javascript-cti-toolbar">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<ol>
+ <li>
+  <p>Login to the CRM and go to the published apps then select the&nbsp;<strong>‘ channel integrated framework’</strong>.</p>
+ </li>
+</ol>
+<p>Note</p>
+<p>If&nbsp;<strong>CIF</strong>&nbsp;is not installed on your CRM then you can follow&nbsp;<a href="https://docs.microsoft.com/en-us/dynamics365/customer-service/channel-integration-framework/get-channel-integration-framework" data-scope="external" rel="external noreferrer">this</a>&nbsp;guide to install on your CRM.&nbsp;</p>
+<ol>
+ <li>
+  <p>Click on the&nbsp;<strong>new</strong>&nbsp;<strong>button</strong>&nbsp;to create a new active channel provider and fill in the details as given in the screenshot below.</p>
+ </li>
+</ol>
+<ul>
+ <li>
+  <p><strong>Name</strong>&nbsp;: EFCTI</p>
+ </li>
+ <li>
+  <p><strong>Label</strong>: CTI</p>
+ </li>
+ <li>
+  <p><strong>Channel Url</strong>&nbsp;:&nbsp;<a href="http://192.168.1.104:8080/javascript-cti-toolbar" data-scope="external" rel="external noreferrer">http://&lt;Server-IP&gt;:&lt;Port&gt;/javascript-cti-toolbar</a>&nbsp;</p>
+ </li>
+ <li>
+  <p><strong>Enabled outbound Communication</strong>: Yes</p>
+ </li>
+ <li>
+  <p><strong>Channel Order</strong>&nbsp;: 0</p>
+ </li>
+</ul>
+<ol>
+ <li>
+  <p>&nbsp;&nbsp;Select Unified Interface Apps for the Channel</p>
+ </li>
+ <li>
+  <p>&nbsp;&nbsp;Select the Unified app on where you want to embed the CTI.&nbsp;</p>
+ </li>
+ <li>
+  <p>&nbsp;&nbsp;Assign roles according to your requirements.&nbsp;</p>
+ </li>
+ <li>
+  <p>&nbsp;&nbsp;Click on Save Button.&nbsp;</p>
+ </li>
+</ol>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 680px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_6880582d0de8d69ebcecea712502c2ad74673fc02452881032d90b5ef48ff174/CIF%20intergration.jpg?cb=b3ebdb431eccc7a05887257343bc4030" alt="CIF intergration.jpg" data-scope="internal" width="1280" height="683">
+  </div>
+ </image-lightbox>
+</div>
+<ol>
+ <li>
+  <p>Go to the <span style="--color: var(--bold-gray, #172b4d);">Unified app that you selected. For example for the&nbsp;</span><strong>Customer Service workspace,</strong> it will look like the following screenshot.</p>
+ </li>
+</ol>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 680px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_1951145350122adbb72572d9785053fcf21f991bad21c4703765913dfc73059a/2024-02-20_11-04-06.jpg?cb=f2c43d7ee8234356d1e7f4025f5c19f1" alt="2024-02-20_11-04-06.jpg" data-scope="internal" width="1280" height="630">
+  </div>
+ </image-lightbox>
+</div>
+<h2 id="Configure-Click-to-Call"><span id="CIF1.0BasedMSCRM(Cloud)Web-CTIConnectorDeploymentGuide-ConfigureClick-to-Call"></span>Configure Click-to-Call
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/dynamics-web/3.0.5/cif-1-0-based-ms-crm-cloud-web-cti-connector-deplo#Configure-Click-to-Call">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>Follow the steps to configure and click to call on the Account page. You can configure it on multiple entities as per your requirement like <strong>Contact, and Leads</strong>.&nbsp;</p>
+<ul>
+ <li>
+  <p>Click on the setting button&nbsp;→ Advance Setting</p>
+ </li>
+</ul>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 442px" data-component="image" data-align="align-start">
+   <img src="/__attachments/a_71ca33a7be294d9527befb178c598f07c27bebc1bec621e0753e9738c1c5b94e/image2023-12-8_11-57-50.png?cb=d2b685d8836a807bf377008e4a9a95dc" alt="image2023-12-8_11-57-50.png" data-scope="internal" width="758" height="553">
+  </div>
+ </image-lightbox>
+</div>
+<ul>
+ <li>
+  <p>Go to setting -&gt; Customizations -&gt;&nbsp;Customize the System&nbsp;</p>
+ </li>
+</ul>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 442px" data-component="image" data-align="align-start">
+   <img src="/__attachments/a_2bb717c66a41f3666502f65b62c1190cbf9a8773e0c345e03c3cdc68d6d79aca/image2023-12-8_11-55-8.png?cb=de22e9b631417963fd84cd5d90ce89d3" alt="image2023-12-8_11-55-8.png" data-scope="internal" width="1280" height="676">
+  </div>
+ </image-lightbox>
+</div>
+<ul>
+ <li>
+  <p>double click phone field -&gt; controls -&gt;add controls -&gt; add ‘&nbsp;<strong>channel communication control&nbsp;</strong>’.</p>
+ </li>
+ <li>
+  <p>Save and publish</p>
+ </li>
+</ul>
+<p>After following all these steps, your CTI is configured properly and now you can use EF MS CRM WEB-CTI Connector&nbsp;</p>
+<h2 id="CRM-Configurations-for-Single-Sign-On"><span id="CIF1.0BasedMSCRM(Cloud)Web-CTIConnectorDeploymentGuide-CRMConfigurationsforSingleSignOn"></span>CRM Configurations for Single Sign On
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/dynamics-web/3.0.5/cif-1-0-based-ms-crm-cloud-web-cti-connector-deplo#CRM-Configurations-for-Single-Sign-On">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>To configure SSO for CRM, follow <a href="/dynamics-web/3.0.4/crm-configuration-for-sso" data-scope="internal">this</a> guide and go Configure Single Sign-On Section. After completing the section, do the following steps.</p>
+<ol>
+ <li>
+  <p>Go to Setting → Security → User</p>
+ </li>
+ <li>
+  <p>Select the CRM user and open it.</p>
+ </li>
+ <li>
+  <p>Provide Cisco Agent details in Agent id, password and extension fields and click Save. Refresh the page.</p>
+ </li>
+</ol>
+<h2 id="CORS-Cisco-Finesse"><span id="CIF1.0BasedMSCRM(Cloud)Web-CTIConnectorDeploymentGuide-CORSCiscoFinesse"></span><a href="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-CORSCiscoFinesse" data-scope="external" rel="external noreferrer">CORS Cisco Finesse</a>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/dynamics-web/3.0.5/cif-1-0-based-ms-crm-cloud-web-cti-connector-deplo#CORS-Cisco-Finesse">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="c3bdaeef57c09c4b-39" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="c3bdaeef57c09c4b-39">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/dynamics-web/3.0.5/deployment-guide">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Deployment Guide</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/dynamics-web/3.0.5/cif-2-0-based-ms-crm-cloud-web-cti-connector-deplo">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">CIF 2.0 Based MS CRM(Cloud) Web-CTI Connector Deployment Guide</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

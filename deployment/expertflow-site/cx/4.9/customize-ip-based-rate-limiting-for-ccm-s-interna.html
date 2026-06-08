@@ -1,0 +1,3685 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_4ee58896ddcab98561d70541cdafc0e4a170b60b6cb23749d72dcd8f6fdb272c" data-confluence-content-id="1109000193"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/cx/4.9/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="CX">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>Customize IP-based Rate Limiting for CCM&#39;s Internal WCM Access Route | Expertflow CX</title>
+		<meta property="og:title" content="Customize IP-based Rate Limiting for CCM&#39;s Internal WCM Access Route | Expertflow CX">
+		<meta property="twitter:title" content="Customize IP-based Rate Limiting for CCM&#39;s Internal WCM Access Route | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna">
+		<meta property="og:url" content="https://docs.expertflow.com/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna">
+
+		<meta name="description" content="This guide provides end-users with the understanding and step-by-step procedure to customize the IP-based rate limiting settings for the Customer Channel Manag…">
+		<meta property="og:description" content="This guide provides end-users with the understanding and step-by-step procedure to customize the IP-based rate limiting settings for the Customer Channel Manag…">
+		<meta property="twitter:description" content="This guide provides end-users with the understanding and step-by-step procedure to customize the IP-based rate limiting settings for the Customer Channel Manag…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2025-05-27T10:49:01.304Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": true
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.js"></script>
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="b3edce25cf86d263-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="b3edce25cf86d263-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="b3edce25cf86d263-19">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="b3edce25cf86d263-19" name="version" onchange="self.location.assign(this.value)" >
+				<option id="b3edce25cf86d263-3"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="b3edce25cf86d263-4"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="b3edce25cf86d263-5"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="b3edce25cf86d263-6"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="b3edce25cf86d263-7"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="b3edce25cf86d263-8"  value="/cx/4.10"  >
+					4.10
+				</option>
+				<option id="b3edce25cf86d263-9"  value="/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna"  selected="">
+					4.9
+				</option>
+				<option id="b3edce25cf86d263-10"  value="/cx/4.8"  >
+					4.8
+				</option>
+				<option id="b3edce25cf86d263-11"  value="/cx/4.7"  >
+					4.7
+				</option>
+				<option id="b3edce25cf86d263-12"  value="/cx/4.6"  >
+					4.6
+				</option>
+				<option id="b3edce25cf86d263-13"  value="/cx/4.5.3"  >
+					4.5.3
+				</option>
+				<option id="b3edce25cf86d263-14"  value="/cx/4.5.2"  >
+					4.5.2
+				</option>
+				<option id="b3edce25cf86d263-15"  value="/cx/4.5.1"  >
+					4.5.1
+				</option>
+				<option id="b3edce25cf86d263-16"  value="/cx/4.5"  >
+					4.5
+				</option>
+				<option id="b3edce25cf86d263-17"  value="/cx/4.4"  >
+					4.4
+				</option>
+				<option id="b3edce25cf86d263-18"  value="/cx/4.3"  >
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('b3edce25cf86d263-19');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-b3edce25cf86d263-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-b3edce25cf86d263-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-b3edce25cf86d263-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="b3edce25cf86d263-20" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="b3edce25cf86d263-20">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-b3edce25cf86d263-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-b3edce25cf86d263-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="b3edce25cf86d263-37">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="b3edce25cf86d263-37" name="version" onchange="self.location.assign(this.value)" >
+				<option id="b3edce25cf86d263-21"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="b3edce25cf86d263-22"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="b3edce25cf86d263-23"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="b3edce25cf86d263-24"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="b3edce25cf86d263-25"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="b3edce25cf86d263-26"  value="/cx/4.10"  >
+					4.10
+				</option>
+				<option id="b3edce25cf86d263-27"  value="/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna"  selected="">
+					4.9
+				</option>
+				<option id="b3edce25cf86d263-28"  value="/cx/4.8"  >
+					4.8
+				</option>
+				<option id="b3edce25cf86d263-29"  value="/cx/4.7"  >
+					4.7
+				</option>
+				<option id="b3edce25cf86d263-30"  value="/cx/4.6"  >
+					4.6
+				</option>
+				<option id="b3edce25cf86d263-31"  value="/cx/4.5.3"  >
+					4.5.3
+				</option>
+				<option id="b3edce25cf86d263-32"  value="/cx/4.5.2"  >
+					4.5.2
+				</option>
+				<option id="b3edce25cf86d263-33"  value="/cx/4.5.1"  >
+					4.5.1
+				</option>
+				<option id="b3edce25cf86d263-34"  value="/cx/4.5"  >
+					4.5
+				</option>
+				<option id="b3edce25cf86d263-35"  value="/cx/4.4"  >
+					4.4
+				</option>
+				<option id="b3edce25cf86d263-36"  value="/cx/4.3"  >
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('b3edce25cf86d263-37');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="b3edce25cf86d263-38" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="b3edce25cf86d263-39" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="b3edce25cf86d263-40" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="b3edce25cf86d263-41" href="/cx/4.9/cx-release-history" >CX Release History</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-42"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-42" href="/cx/4.9/cx-release-notes" >CX Release Notes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="b3edce25cf86d263-44" href="/cx/4.9/expertflow-cx-data-sheet" >CX Data Sheet</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="b3edce25cf86d263-45" href="/cx/4.9/hc-3-x-vs-expertflow-cx-features-comparison" >HC 3.x vs Expertflow CX - Features Comparison</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-46"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-46" href="/cx/4.9/conversation-studio" >Conversation Studio</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-48"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-48" href="/cx/4.9/customer-identities" >Customer</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-50"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-50" href="/cx/4.9/conversation-control" >Conversation Objects</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-52"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-52" href="/cx/4.9/customer-channels" >Channels</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-54"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-54" href="/cx/4.9/cx-events-and-activity-types" >CX-Activities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-56"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-56" href="/cx/4.9/solution-architecture" >Solution Architecture</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-58"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-58" href="/cx/4.9/expertflow-etl-data-platform" >Expertflow ETL - Data Platform</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-60"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-60" href="/cx/4.9/agent-capabilities" >Agent Capabilities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-62"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-62" href="/cx/4.9/supervisor-controls" >Supervisor Controls</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-64"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-64" href="/cx/4.9/deployment-guides" >Deployment Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-66"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-66" href="/cx/4.9/developer-guides" >Developer Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-68"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-68" href="/cx/4.9/unified-admin-guide" >Unified Admin Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-70"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-70" href="/cx/4.9/integrations" >Integrations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="b3edce25cf86d263-73"						aria-labelledby="b3edce25cf86d263-72"
+					></button>
+				<a id="b3edce25cf86d263-72" href="/cx/4.9/security" >Security</a>
+			</div>
+
+<ul  id="b3edce25cf86d263-73" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="b3edce25cf86d263-75"						aria-labelledby="b3edce25cf86d263-74"
+					></button>
+				<a id="b3edce25cf86d263-74" href="/cx/4.9/identity-and-access-management" >Identity and Access Management</a>
+			</div>
+
+<ul  id="b3edce25cf86d263-75" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-76"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-76" href="/cx/4.9/application-management" >Application Management</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="b3edce25cf86d263-79"						aria-labelledby="b3edce25cf86d263-78"
+					></button>
+				<a id="b3edce25cf86d263-78" href="/cx/4.9/api-authentication-using-apisix" >API Authentication using Application Gateway</a>
+			</div>
+
+<ul  id="b3edce25cf86d263-79" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="b3edce25cf86d263-80" href="/cx/4.9/apisix-route-configuration-guide" >APISIX Route Configuration Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="b3edce25cf86d263-81" href="/cx/4.9/increase-file-size-apisix-ingress" >Increase File Size - APISIX Ingress</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="b3edce25cf86d263-82" href="/cx/4.9/advanced-apisix-routing-a-guide-to-create-exceptio" >Advanced APISIX Routing: A Guide to Create Exception Routes via Helm</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="b3edce25cf86d263-83" href="/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna" aria-current="page">Customize IP-based Rate Limiting for CCM&#39;s Internal WCM Access Route</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="b3edce25cf86d263-84" href="/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe" >Comprehensive Guide to Customize APISIX Plugins &amp; Features via Helm</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-85"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-85" href="/cx/4.9/api-authentication-integration-guide" >API Authentication - Integration Guide</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-87"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-87" href="/cx/4.9/user-management-in-keycloack" >User Management in KeyCloack</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-89"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-89" href="/cx/4.9/keycloack-guides" >KeyCloack Guides</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-91"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-91" href="/cx/4.9/compliance" >Security and Privacy Compliances</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-93"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-93" href="/cx/4.9/security-features" >Security Features</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-95"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-95" href="/cx/4.9/vulnerability-assessments" >Vulnerability Assessments</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="b3edce25cf86d263-97" href="/cx/4.9/letsencrypt-ssl-for-ef-cx" >LetsEncrypt SSL for EF-CX</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="b3edce25cf86d263-98" href="/cx/4.9/implementing-security-policies" >Implementing Security Policies</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="b3edce25cf86d263-99" href="/cx/4.9/configurable-log-masking" >Configurable Log Masking</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-100"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-100" href="/cx/4.9/voice-recording-solution" >Voice Recording Solution</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="b3edce25cf86d263-102" href="/cx/4.9/compatibility-guides" >Compatibility Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="b3edce25cf86d263-103" href="/cx/4.9/list-of-open-source-software" >List of Open-source Software</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-104"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-104" href="/cx/4.9/business-calendars" >Business Calendars</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-106"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-106" href="/cx/4.9/outbound-campaigns" >Outbound Campaigns</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-108"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-108" href="/cx/4.9/cx-surveys" >CX Surveys</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-110"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-110" href="/cx/4.9/reports" >Reports</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-112"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-112" href="/cx/4.9/superset-deployment-for-reporting" >Superset Deployment for Reporting</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="b3edce25cf86d263-114" href="/cx/4.9/reporting-database-schema-vcx-4-3" >Reporting Database Schema</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="b3edce25cf86d263-115" href="/cx/4.9/cx-historical-reports-supporting-tables" >CX Historical Reports- Supporting Tables</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="b3edce25cf86d263-116"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="b3edce25cf86d263-116" href="/cx/4.9/key-reporting-concepts" >Key Reporting Concepts</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="b3edce25cf86d263-118" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="b3edce25cf86d263-118">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.9">
+										Expertflow CX
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.9/security">
+										Security
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.9/identity-and-access-management">
+										Identity and Access Management
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.9/api-authentication-using-apisix">
+										API Authentication using Application Gateway
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="b3edce25cf86d263-119">
+			<h2 class="toc-heading" id="b3edce25cf86d263-119">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>Customize IP-based Rate Limiting for CCM&#39;s Internal WCM Access Route</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+
+	
+
+
+	
+
+	
+
+
+	
+	
+	
+	
+	
+	
+		
+		
+	
+	
+	
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<p>This guide provides end-users with the understanding and step-by-step procedure to customize the IP-based rate limiting settings for the Customer Channel Manager's (CCM) <code>internal-wcm-access</code> route using APISIX plugin configurations in your Helm <code>values.yaml</code> file.</p>
+<h2 id="Introduction-to-IP-Rate-Limiting-on-CCM's-internal-wcm-access-Route"><span id="CustomizeIP-basedRateLimitingforCCM&amp;#39;sInternalWCMAccessRoute-IntroductiontoIPRateLimitingonCCM&amp;#39;sinternal-wcm-accessRoute"></span>Introduction to IP Rate Limiting on CCM's <code>internal-wcm-access</code> Route
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna#Introduction-to-IP-Rate-Limiting-on-CCM&amp;#39;s-internal-wcm-access-Route">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="A.-Purpose-of-Rate-Limiting"><span id="CustomizeIP-basedRateLimitingforCCM&amp;#39;sInternalWCMAccessRoute-A.PurposeofRateLimiting"></span>A. Purpose of Rate Limiting
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna#A.-Purpose-of-Rate-Limiting">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>The <code>internal-wcm-access</code> route for the CCM component (typically handling traffic from the Web Channel Manager via paths like <code>/internal-wcm-to-ccm/*</code>) has IP-based rate limiting configured. The primary purposes are to:</p>
+<ul>
+ <li>
+  <p><strong>Protect the CCM service:</strong> Prevents the service from being overwhelmed by an excessive number of requests originating from a single IP address (likely the Web Channel Manager instances or internal systems).</p>
+ </li>
+ <li>
+  <p><strong>Prevent Abuse &amp; Ensure Fair Usage:</strong> Deters potential misuse or runaway processes from degrading service performance.</p>
+ </li>
+ <li>
+  <p><strong>Enhance Service Stability &amp; Availability:</strong> Contributes to the overall reliability of the CCM service by mitigating certain types of denial-of-service or high-load scenarios from specific sources.</p>
+ </li>
+</ul>
+<h3 id="B.-How-it's-Implemented"><span id="CustomizeIP-basedRateLimitingforCCM&amp;#39;sInternalWCMAccessRoute-B.Howit&amp;#39;sImplemented"></span>B. How it's Implemented
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna#B.-How-it&amp;#39;s-Implemented">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>This rate limiting is achieved using the <code>limit-count</code> plugin within APISIX. Key aspects of its implementation on this route include:</p>
+<ul>
+ <li>
+  <p>It's defined within the <code>customPlugins</code> list for the <code>internal-wcm-access</code> route specific to the <code>ccm</code> component in your Helm <code>values.yaml</code> (typically found in your "Core" chart or equivalent).</p>
+ </li>
+ <li>
+  <p>It works in conjunction with the <code>real-ip</code> plugin, which is configured to run before <code>limit-count</code>. The <code>real-ip</code> plugin ensures that APISIX uses the actual client IP address (e.g., from the <code>X-Forwarded-For</code> header) for rate limiting, rather than the IP of an intermediate proxy.</p>
+ </li>
+</ul>
+<h3 id="C.-Example-Current-Configuration"><span id="CustomizeIP-basedRateLimitingforCCM&amp;#39;sInternalWCMAccessRoute-C.ExampleCurrentConfiguration"></span>C. Example Current Configuration
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna#C.-Example-Current-Configuration">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Based on a typical configuration from your "Core" chart, the <code>limit-count</code> plugin for this route might be set to something like:</p>
+<ul>
+ <li>
+  <p><strong>Limit:</strong> 10 requests</p>
+ </li>
+ <li>
+  <p><strong>Time Window:</strong> 1 second</p>
+ </li>
+ <li>
+  <p><strong>Per:</strong> Client IP Address</p>
+ </li>
+ <li>
+  <p><strong>Rejection Code:</strong> 429 (Too Many Requests)</p>
+ </li>
+</ul>
+<p><em>Always refer to your actual deployed </em><code>values.yaml</code><em> for the precise current settings.</em></p>
+<h2 id="Understanding-Key-limit-count-Plugin-Parameters"><span id="CustomizeIP-basedRateLimitingforCCM&amp;#39;sInternalWCMAccessRoute-UnderstandingKeylimit-countPluginParameters"></span>Understanding Key <code>limit-count</code> Plugin Parameters
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna#Understanding-Key-limit-count-Plugin-Parameters">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>When customizing, you'll primarily interact with the following parameters within the <code>config</code> block of the <code>limit-count</code> plugin definition:</p>
+<div class="theme-table" style="--width: 1800px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <tbody>
+       <tr>
+        <th>
+         <p>Parameter</p>
+        </th>
+        <th>
+         <p>Description</p>
+        </th>
+        <th>
+         <p>Impact of Customization</p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p><code>count</code></p>
+        </td>
+        <td>
+         <p>The maximum number of requests allowed from a single key (in this case, an IP address) within the defined <code>time_window</code>.</p>
+        </td>
+        <td>
+         <p>Increasing allows more requests (less restrictive); decreasing allows fewer (more restrictive).</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>time_window</code></p>
+        </td>
+        <td>
+         <p>The duration in seconds for which the <code>count</code> is enforced. After this window, the count for the key resets.</p>
+        </td>
+        <td>
+         <p>A shorter window resets limits more frequently. Balance this with <code>count</code> (e.g., 10 reqs/1 sec is different from 600 reqs/60 secs).</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>key_type</code></p>
+        </td>
+        <td>
+         <p>The type of key to be used for rate limiting. For IP-based limiting, this is typically <code>"var"</code>.</p>
+        </td>
+        <td>
+         <p>Usually kept as <code>"var"</code> for IP-based limiting when used with <code>key: "remote_addr"</code>.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>key</code></p>
+        </td>
+        <td>
+         <p>The specific variable or identifier used for rate limiting. For IP-based, this is <code>"remote_addr"</code>, which refers to the client's IP address (resolved by the <code>real-ip</code> plugin).</p>
+        </td>
+        <td>
+         <p>Changing this would alter the basis of rate limiting (e.g., to a specific header or argument, which is a more advanced scenario not covered here). For IP limiting, keep as <code>"remote_addr"</code>.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>rejected_code</code></p>
+        </td>
+        <td>
+         <p>The HTTP status code returned to the client when the rate limit is exceeded.</p>
+        </td>
+        <td>
+         <p>Typically <code>429</code> (Too Many Requests). Can be changed if a different error code is desired for specific client handling.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>rejected_msg</code></p>
+        </td>
+        <td>
+         <p>The JSON message body returned when the rate limit is exceeded.</p>
+        </td>
+        <td>
+         <p>Can be customized to provide a more specific or user-friendly error message (ensure valid JSON format).</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>show_limit_quota_header</code></p>
+        </td>
+        <td>
+         <p>If set to <code>true</code>, APISIX adds response headers like <code>X-RateLimit-Limit</code> (total allowed), <code>X-RateLimit-Remaining</code> (remaining in window), and <code>X-RateLimit-Reset</code> (seconds until reset).</p>
+        </td>
+        <td>
+         <p>Setting to <code>true</code> is recommended as it helps clients understand their current limit status and adjust behavior programmatically.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><code>enable</code> (within this plugin's entry)</p>
+        </td>
+        <td>
+         <p>A boolean (<code>true</code> or <code>false</code>) that activates or deactivates this specific <code>limit-count</code> plugin instance.</p>
+        </td>
+        <td>
+         <p>Set to <code>false</code> to temporarily disable IP rate limiting on this route without removing the configuration.</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h2 id="Procedure-for-Customizing-the-IP-Rate-Limit"><span id="CustomizeIP-basedRateLimitingforCCM&amp;#39;sInternalWCMAccessRoute-ProcedureforCustomizingtheIPRateLimit"></span>Procedure for Customizing the IP Rate Limit
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna#Procedure-for-Customizing-the-IP-Rate-Limit">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="A.-Prerequisites"><span id="CustomizeIP-basedRateLimitingforCCM&amp;#39;sInternalWCMAccessRoute-A.Prerequisites"></span>A. Prerequisites
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna#A.-Prerequisites">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>Administrative or appropriate write access to the Helm <code>values.yaml</code> file for the "Core" chart (or the chart containing the <code>ccm</code> component definition).</p>
+ </li>
+ <li>
+  <p>A basic understanding of YAML syntax.</p>
+ </li>
+ <li>
+  <p>Access to tools or processes for deploying Helm chart changes (e.g., <code>helm</code> CLI, GitOps pipeline).</p>
+ </li>
+</ul>
+<h3 id="B.-Locate-the-Configuration"><span id="CustomizeIP-basedRateLimitingforCCM&amp;#39;sInternalWCMAccessRoute-B.LocatetheConfiguration"></span>B. Locate the Configuration
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna#B.-Locate-the-Configuration">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ol>
+ <li>
+  <p>Open your primary Helm <code>values.yaml</code> file (e.g., the "Core" chart's values).</p>
+ </li>
+ <li>
+  <p>Navigate to the <code>ccm:</code> component section.</p>
+ </li>
+ <li>
+  <p>Inside <code>ccm:</code>, find the <code>apisixRoutes:</code> list.</p>
+ </li>
+ <li>
+  <p>Identify the specific route definition that has <code>nameSuffix: "internal-wcm-access"</code>. This route typically handles paths like <code>/internal-wcm-to-ccm/*</code>.</p>
+ </li>
+ <li>
+  <p>Within this route's definition, find the <code>plugins:</code> block, and then the <code>customPlugins:</code> list.</p>
+ </li>
+ <li>
+  <p>Locate the item (dictionary) in the <code>customPlugins</code> list where <code>name: "limit-count"</code>.</p>
+ </li>
+</ol>
+<h3 id="C.-Modify-Parameters"><span id="CustomizeIP-basedRateLimitingforCCM&amp;#39;sInternalWCMAccessRoute-C.ModifyParameters"></span>C. Modify Parameters
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna#C.-Modify-Parameters">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>You will edit the <code>config:</code> block for the <code>limit-count</code> plugin.</p>
+<p><strong>Example YAML snippet to modify (from </strong><code>ccm.apisixRoutes</code><strong> for </strong><code>internal-wcm-access</code><strong>):</strong></p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>
+# ... (other parts of the route definition) ...
+customPlugins:
+  - name: "real-ip"
+    enable: true
+    config:
+      source: "X-Forwarded-For"
+      trusted_addresses: ["10.42.0.0/16"] # Example: Ensure this matches your K8s Pod CIDR or trusted proxy ranges
+  - name: "limit-count"
+    enable: true  # Ensure this is true to keep rate limiting active
+    config:
+      count: 10                             # &lt;-- To change max requests, modify this (e.g., to 50)
+      time_window: 1                        # &lt;-- To change time window, modify this (e.g., to 60 for 1 minute)
+      key_type: "var"
+      key: "remote_addr"                    # Identifies users by IP
+      rejected_code: 429                    # HTTP code for rejected requests
+      rejected_msg: "{\"error\":\"Internal rate limit exceeded .\"}" # &lt;-- Customize this JSON message if needed
+      show_limit_quota_header: true         # Set to true/false to control informative headers
+# ... (other custom plugins or end of list) ...
+    
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<ul>
+ <li>
+  <p>To change the **maximum allowed requests** within the time window, modify the <code>count:</code> value.</p>
+ </li>
+ <li>
+  <p>To change the **duration of the time window**, modify the <code>time_window:</code> value (specified in seconds).</p>
+ </li>
+ <li>
+  <p>To change the **error message** for rejected requests, modify the <code>rejected_msg:</code> value. Ensure it remains valid JSON.</p>
+ </li>
+ <li>
+  <p>To **disable rate limiting temporarily** for this route, you can set <code>enable: false</code> for the <code>limit-count</code> plugin entry. Remember to set it back to <code>true</code> to re-enable.</p>
+ </li>
+</ul>
+<h3 id="D.-Important-Note-on-the-real-ip-Plugin"><span id="CustomizeIP-basedRateLimitingforCCM&amp;#39;sInternalWCMAccessRoute-D.ImportantNoteonthereal-ipPlugin"></span>D. Important Note on the <code>real-ip</code> Plugin
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna#D.-Important-Note-on-the-real-ip-Plugin">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>The <code>limit-count</code> plugin on this route relies on the <code>real-ip</code> plugin being configured correctly and enabled before it in the <code>customPlugins</code> list. The <code>real-ip</code> plugin (usually configured with <code>source: "X-Forwarded-For"</code> and appropriate <code>trusted_addresses</code>) ensures that the <code>remote_addr</code> variable used by <code>limit-count</code> contains the actual originating client IP address, not the IP of an internal Kubernetes proxy or load balancer.
+ <br>
+ <em>Generally, you should not need to modify the </em><code>real-ip</code><em> plugin's settings unless your cluster's network ingress topology changes significantly or if you notice IPs from your internal proxy ranges being rate-limited.</em></p>
+<h3 id="E.-Apply-and-Verify-Changes"><span id="CustomizeIP-basedRateLimitingforCCM&amp;#39;sInternalWCMAccessRoute-E.ApplyandVerifyChanges"></span>E. Apply and Verify Changes
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna#E.-Apply-and-Verify-Changes">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ol>
+ <li>
+  <p><strong>Save</strong> your modified <code>values.yaml</code> file.</p>
+ </li>
+ <li>
+  <p><strong>Deploy</strong> the changes using your standard Helm chart deployment process (e.g., <code>helm upgrade &lt;release-name&gt; &lt;chart-path&gt; -f values.yaml</code> or via your GitOps pipeline).</p>
+ </li>
+ <li>
+  <p><strong>Verify Thoroughly:</strong></p>
+  <ul>
+   <li>
+    <p>Send a number of requests below the new <code>count</code> limit (from a single test IP) within the <code>time_window</code> to the <code>/internal-wcm-to-ccm/*</code> path. Confirm these requests are successful (e.g., HTTP 200).</p>
+   </li>
+   <li>
+    <p>Send a number of requests exceeding the new <code>count</code> limit (from the same IP) within the <code>time_window</code>. Confirm these excess requests are rejected with the configured <code>rejected_code</code> (e.g., 429) and <code>rejected_msg</code>.</p>
+   </li>
+   <li>
+    <p>If <code>show_limit_quota_header: true</code>, inspect the response headers of successful requests to see <code>X-RateLimit-Limit</code>, <code>X-RateLimit-Remaining</code>, and <code>X-RateLimit-Reset</code>.</p>
+   </li>
+   <li>
+    <p>Monitor APISIX logs (if accessible) for entries related to rate limiting actions.</p>
+   </li>
+   <li>
+    <p>Monitor the <code>ccm</code> service logs to ensure it's behaving as expected and not showing an unusual number of errors that might indicate overly restrictive limits affecting legitimate traffic.</p>
+   </li>
+  </ul>
+ </li>
+</ol>
+<h2 id="Considerations-&amp;-Best-Practices-for-Customization"><span id="CustomizeIP-basedRateLimitingforCCM&amp;#39;sInternalWCMAccessRoute-Considerations&amp;amp;BestPracticesforCustomization"></span>Considerations &amp; Best Practices for Customization
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna#Considerations-&amp;amp;-Best-Practices-for-Customization">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="A.-Determining-Appropriate-Limits"><span id="CustomizeIP-basedRateLimitingforCCM&amp;#39;sInternalWCMAccessRoute-A.DeterminingAppropriateLimits"></span>A. Determining Appropriate Limits
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna#A.-Determining-Appropriate-Limits">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p><strong>Analyze Traffic Patterns:</strong> Before changing limits, try to understand the typical and peak request rates for the <code>/internal-wcm-to-ccm/*</code> endpoint from its legitimate source (usually the Web Channel Manager). If you have metrics or logs, review them.</p>
+ </li>
+ <li>
+  <p><strong>Service Capacity:</strong> Consider the capacity of the CCM service itself. The rate limit should help protect it, not be the bottleneck if the service can handle more.</p>
+ </li>
+ <li>
+  <p><strong>Start Conservatively or Incrementally:</strong> If significantly changing limits, it's often safer to make incremental adjustments and monitor the impact rather than making very large changes at once.</p>
+ </li>
+ <li>
+  <p><strong>Business Needs:</strong> Balance the need for protection against the risk of impacting legitimate service operations.</p>
+ </li>
+</ul>
+<h3 id="B.-Impact-of-Changes"><span id="CustomizeIP-basedRateLimitingforCCM&amp;#39;sInternalWCMAccessRoute-B.ImpactofChanges"></span>B. Impact of Changes
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna#B.-Impact-of-Changes">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p><strong>Too Restrictive Limits:</strong> May block legitimate traffic from the Web Channel Manager (or other internal systems using this route), leading to functional issues in the customer interaction flow. Symptoms might include failed operations in the Web Channel Manager or errors reported by it.</p>
+ </li>
+ <li>
+  <p><strong>Too Permissive Limits:</strong> May not offer adequate protection against accidental high load (e.g., a misbehaving script in WCM) or potential abuse if the endpoint were ever indirectly exposed.</p>
+ </li>
+</ul>
+<h3 id="C.-Communication"><span id="CustomizeIP-basedRateLimitingforCCM&amp;#39;sInternalWCMAccessRoute-C.Communication"></span>C. Communication
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna#C.-Communication">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>If other teams or systems rely on or manage the Web Channel Manager (the typical client for this internal route), inform them of any planned changes to the rate limits, as it might affect their troubleshooting or understanding of system behavior.</p>
+ </li>
+</ul>
+<h3 id="D.-Monitoring"><span id="CustomizeIP-basedRateLimitingforCCM&amp;#39;sInternalWCMAccessRoute-D.Monitoring"></span>D. Monitoring
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna#D.-Monitoring">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>After applying changes, closely monitor:</p>
+  <ul>
+   <li>
+    <p>APISIX metrics or logs for the occurrence of <code>429</code> responses on this route. A sudden spike might indicate limits are too tight.</p>
+   </li>
+   <li>
+    <p>The performance, error rates, and logs of the <code>ccm</code> service and the Web Channel Manager.</p>
+   </li>
+  </ul>
+ </li>
+</ul>
+<h2 id="What-the-End-User-Should-Expect"><span id="CustomizeIP-basedRateLimitingforCCM&amp;#39;sInternalWCMAccessRoute-WhattheEnd-UserShouldExpect"></span>What the End-User Should Expect
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna#What-the-End-User-Should-Expect">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="A.-Before-Modification"><span id="CustomizeIP-basedRateLimitingforCCM&amp;#39;sInternalWCMAccessRoute-A.BeforeModification"></span>A. Before Modification
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna#A.-Before-Modification">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>The CCM component's <code>/internal-wcm-to-ccm/*</code> path is protected by its existing IP-based rate limit (e.g., the example of 10 requests/1 second per IP).</p>
+ </li>
+ <li>
+  <p>IP addresses (typically the Web Channel Manager instances) exceeding this limit will receive an HTTP 429 error with the configured JSON message.</p>
+ </li>
+</ul>
+<h3 id="B.-During-Modification-(Deployment)"><span id="CustomizeIP-basedRateLimitingforCCM&amp;#39;sInternalWCMAccessRoute-B.DuringModification(Deployment)"></span>B. During Modification (Deployment)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna#B.-During-Modification-(Deployment)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>The Helm deployment process (<code>helm upgrade</code> or GitOps sync) will update the APISIX configuration.</p>
+ </li>
+ <li>
+  <p>APISIX typically reloads its configuration gracefully without dropping active connections. New requests will start adhering to the new rate limit rules very quickly after the update is effective in APISIX.</p>
+ </li>
+</ul>
+<h3 id="C.-After-Modification"><span id="CustomizeIP-basedRateLimitingforCCM&amp;#39;sInternalWCMAccessRoute-C.AfterModification"></span>C. After Modification
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/customize-ip-based-rate-limiting-for-ccm-s-interna#C.-After-Modification">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>The <code>/internal-wcm-to-ccm/*</code> path will enforce the newly configured rate limits (new <code>count</code>, <code>time_window</code>, etc.).</p>
+ </li>
+ <li>
+  <p>If the <code>rejected_code</code> or <code>rejected_msg</code> was changed, clients exceeding the limit will receive this new response.</p>
+ </li>
+ <li>
+  <p>The system (CCM and its interaction with Web Channel Manager) should operate normally under the new limits.</p>
+ </li>
+ <li>
+  <p><strong>Crucially, verify that the change has achieved the desired outcome (e.g., reduced unnecessary 429s if limits were too low, or maintained protection if limits were adjusted for other reasons) without negatively impacting legitimate service functionality.</strong></p>
+ </li>
+</ul>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="b3edce25cf86d263-120" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="b3edce25cf86d263-120">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/cx/4.9/advanced-apisix-routing-a-guide-to-create-exceptio">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Advanced APISIX Routing: A Guide to Create Exception Routes via Helm</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/cx/4.9/comprehensive-guide-to-customize-apisix-plugins-fe">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Comprehensive Guide to Customize APISIX Plugins &amp; Features via Helm</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

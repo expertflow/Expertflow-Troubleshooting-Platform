@@ -1,0 +1,3154 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_e70453daa320e5de58349ed7a21a66ae036b5c16d9ad1610bf827942cfecfcc8" data-confluence-content-id="30212344"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/salesforce-cti/3.1/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="SC">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>Deployment Guide | Expertflow CX</title>
+		<meta property="og:title" content="Deployment Guide | Expertflow CX">
+		<meta property="twitter:title" content="Deployment Guide | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide">
+		<meta property="og:url" content="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide">
+
+		<meta name="description" content="Purpose The purpose of this document is to describe how to deploy CTI connector in Salesforce. Intended Audience This document is intended for IT operations pe…">
+		<meta property="og:description" content="Purpose The purpose of this document is to describe how to deploy CTI connector in Salesforce. Intended Audience This document is intended for IT operations pe…">
+		<meta property="twitter:description" content="Purpose The purpose of this document is to describe how to deploy CTI connector in Salesforce. Intended Audience This document is intended for IT operations pe…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2024-08-19T10:31:22.261Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": true
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="d16dcbd56a16fd76-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="d16dcbd56a16fd76-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-d16dcbd56a16fd76-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-d16dcbd56a16fd76-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-d16dcbd56a16fd76-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="d16dcbd56a16fd76-3" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="d16dcbd56a16fd76-3">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-d16dcbd56a16fd76-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-d16dcbd56a16fd76-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d16dcbd56a16fd76-4" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d16dcbd56a16fd76-5" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d16dcbd56a16fd76-6" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d16dcbd56a16fd76-7" href="/salesforce-cti/3.1/3-1-solution-security" >Solution Security</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d16dcbd56a16fd76-8" href="/salesforce-cti/3.1/3-1-compatibility-guide" > Compatibility Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d16dcbd56a16fd76-9" href="/salesforce-cti/3.1/3-1-release-notes" >Release Notes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="d16dcbd56a16fd76-10"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="d16dcbd56a16fd76-10" href="/salesforce-cti/3.1/3-1-business-features" >Business Features</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="d16dcbd56a16fd76-13"						aria-labelledby="d16dcbd56a16fd76-12"
+					></button>
+				<a id="d16dcbd56a16fd76-12" href="/salesforce-cti/3.1/3-1-deployment-guide" aria-current="page">Deployment Guide</a>
+			</div>
+
+<ul  id="d16dcbd56a16fd76-13" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d16dcbd56a16fd76-14" href="/salesforce-cti/3.1/3-1-high-availability-ha-duplex-deployment" >High Availability (HA) / Duplex Deployment</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d16dcbd56a16fd76-15" href="/salesforce-cti/3.1/solution-components-and-architecture" >Solution Components and Architecture</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d16dcbd56a16fd76-16" href="/salesforce-cti/3.1/3-1-solution-prerequisites" >Solution Prerequisites</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d16dcbd56a16fd76-17" href="/salesforce-cti/3.1/sitemap-xml" >sitemap.xml</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d16dcbd56a16fd76-18" href="/salesforce-cti/3.1/future-roadmap" >Future Roadmap</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="d16dcbd56a16fd76-19" href="/salesforce-cti/3.1/3-1-user-acceptance-tests-uats" >User Acceptance Tests (UATs)</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="d16dcbd56a16fd76-20" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="d16dcbd56a16fd76-20">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/salesforce-cti/3.1">
+										Salesforce Embedded CTI Connector for Cisco
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="d16dcbd56a16fd76-21">
+			<h2 class="toc-heading" id="d16dcbd56a16fd76-21">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>Deployment Guide</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+	
+	
+	
+
+
+	
+	
+	
+	
+	
+	
+		
+		
+	
+	
+	
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+
+	
+	<div data-component="layout-section" class="layout-section" style="--columns: 2fr 1fr;">
+ <div class="layout-cell">
+  <h2 id="id-(3.1)DeploymentGuide-Purpose"><span id="DeploymentGuide-Purpose"></span>Purpose
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-Purpose">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h2>
+  <p>The purpose of this document is to describe how to deploy CTI connector in Salesforce.&nbsp;</p>
+  <h2 id="id-(3.1)DeploymentGuide-IntendedAudience"><span id="DeploymentGuide-IntendedAudience"></span>Intended Audience
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-IntendedAudience">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h2>
+  <p>This document is intended for IT operations personnel and system administrators who want to deploy Salesforce embedded CTI connector.</p>
+  <h2 id="id-(3.1)DeploymentGuide-Prerequisites"><span id="DeploymentGuide-Prerequisites"></span>Prerequisites
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-Prerequisites">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h2>
+  <ul>
+   <li>
+    <p>Salesforce Account. Visit <a href="https://developer.salesforce.com/signup" data-scope="external" rel="external noreferrer">https://developer.salesforce.com/signup</a> (Free-developer account) to create one if you do not have one.</p>
+   </li>
+  </ul>
+  <p>
+   <br>
+  </p>
+  <h2 id="id-(3.1)DeploymentGuide-ExpertflowPackageInstallation"><span id="DeploymentGuide-ExpertflowPackageInstallation"></span>Expertflow Package Installation
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-ExpertflowPackageInstallation">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h2>
+  <p>Following are the to-dos for deployment:</p>
+  <h3 id="id-(3.1)DeploymentGuide-Step1:InstallExpertflowpackage"><span id="DeploymentGuide-Step1:InstallExpertflowpackage"></span>Step 1: Install Expertflow package
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-Step1:InstallExpertflowpackage">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <p>1.&nbsp;If you have previously installed the package then update the package via the below link: <a href="https://login.salesforce.com/packaging/installPackage.apexp?p0=04t5g000000FNUT&amp;isdtp=p1" data-scope="external" rel="external noreferrer">https://login.salesforce.com/packaging/installPackage.apexp?p0=04t5g000000FNUT&amp;isdtp=p1</a></p>
+  <p>2. Login to Salesforce and copy-paste the installation link given for the package.</p>
+  <p>3. Select the “Install for all users” option from the installation wizard, it will start installing the package and notify you when it’s done.&nbsp;</p>
+  <div data-component="panel" role="note" data-appearance="warning">
+   <div class="panel-content">
+    <ul>
+     <li>
+      <p>In case of issues in installation, refer to the relevant documentation at: <a href="https://help.salesforce.com/articleView?id=distribution_installing_packages.htm&amp;type=5" data-scope="external" rel="external noreferrer">https://help.salesforce.com/articleView?id=distribution_installing_packages.htm&amp;type=5</a></p>
+     </li>
+    </ul>
+   </div>
+  </div>
+  <h3 id="id-(3.1)DeploymentGuide-Step2:ConfigureCTIAdapterURL"><span id="DeploymentGuide-Step2:ConfigureCTIAdapterURL"></span>Step 2:&nbsp;Configure CTI Adapter URL
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-Step2:ConfigureCTIAdapterURL">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <p>1.&nbsp;From Setup, in the Quick Find box, enter Call Centers, then select Call Centers.</p>
+  <p>2. On the next page, press Continue.</p>
+  <p>3. Open Call Center with the name “Expertflow&nbsp; Call Center Adapter” and click Edit.</p>
+  <p>4. Populate the "<span style="--color: #4a4a56">CTI Adapter URL</span>" field as "/apex/efCti__loginUI" (for multiple adapter fields, provide the same value)</p>
+  <div data-component="panel" role="note" data-appearance="warning">
+   <div class="panel-content">
+    <p>Documentation reference:&nbsp;<a href="https://developer.salesforce.com/wiki/lightning_open_cti" data-scope="external" rel="external noreferrer">https://developer.salesforce.com/wiki/lightning_open_cti</a></p>
+   </div>
+  </div>
+  <h3 id="id-(3.1)DeploymentGuide-Step3:AssignUserstocallcenter"><span id="DeploymentGuide-Step3:AssignUserstocallcenter"></span>Step 3: Assign Users to call center
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-Step3:AssignUserstocallcenter">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <p>1.&nbsp;Open Call Center with the name “Expertflow&nbsp; Call Center Adapter”.</p>
+  <p>2. At the bottom you’ll find the “Manage call center users” option. If you can’t find manage “Manage call center users”, then first save the call center and then look for the same option.</p>
+  <p>3. Click this option and on the next page click “Add more users”, select desired user(s), and then click “Add to call center”.</p>
+  <div data-component="panel" role="note" data-appearance="warning">
+   <div class="panel-content">
+    <p>Documentation Reference:&nbsp;<a href="https://help.salesforce.com/articleView?id=cti_admin_manageagentsadd.htm&amp;type=5" data-scope="external" rel="external noreferrer">https://help.salesforce.com/articleView?id=cti_admin_manageagentsadd.htm&amp;type=5</a></p>
+   </div>
+  </div>
+  <h3 id="id-(3.1)DeploymentGuide-Step4:Enablecustomobjecttab"><span id="DeploymentGuide-Step4:Enablecustomobjecttab"></span>Step 4: Enable custom object tab
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-Step4:Enablecustomobjecttab">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <p>1.&nbsp;From Setup, in the Quick Find box, enter Tabs, then select Tabs.</p>
+  <p>2. Click New in the Custom Object Tabs related list.</p>
+  <p>3. Select the custom object “agent” to appear in the custom tab.</p>
+  <p>4. Click the <strong>Tab Style</strong>&nbsp;lookup icon to show the Tab Style Selector and select any according to your preference.</p>
+  <p>5. Rest of the fields are optional. Once done, click next.</p>
+  <p>6. Choose the user profiles that you want to have access to the new custom tab, preferably select all profiles if not already and click next.</p>
+  <p>7. Choose the user profiles that you want to have access to the new custom tab, go with defaults. You must select your application if not selected already.</p>
+  <p>8. Select the <strong>Append tab to users existing personal customizations, </strong>then press “save”.&nbsp;</p>
+  <div data-component="panel" role="note" data-appearance="warning">
+   <div class="panel-content">
+    <p>Reference documentation link:&nbsp;<a href="https://help.salesforce.com/articleView?id=creating_custom_object_tabs.htm&amp;type=5" data-scope="external" rel="external noreferrer">https://help.salesforce.com/articleView?id=creating_custom_object_tabs.htm&amp;type=5</a></p>
+   </div>
+  </div>
+  <h3 id="id-(3.1)DeploymentGuide-Step5:Createandconfigurealightningapp"><span id="DeploymentGuide-Step5:Createandconfigurealightningapp"></span>Step 5: Create and configure a lightning app
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-Step5:Createandconfigurealightningapp">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <p>1.&nbsp;From Setup, in the Quick Find box enter App Manager.</p>
+  <p>2. Open the app manager, click “New Lightning App” from the top right corner.</p>
+  <p>3. Enter the name of the app and developer, other options are not mandatory but if you want you can choose according to your preferences and select next.</p>
+  <p>4. Go with the default options and click next.</p>
+  <p>5. Click “Add Utility Items”, type “Open CTI softphone” and add the softphone to your app by clicking it. Set panel height to 500 and width to 400 and click next.</p>
+  <p>6. On the next screen, add accounts, contacts, leads, tasks, and agents from available items.</p>
+  <p>7. Last but not least select all profiles and add them. After adding them click “Save &amp; Finish”.</p>
+  <h2 id="id-(3.1)DeploymentGuide-Addconfigurationsincustomsettings"><span id="DeploymentGuide-Addconfigurationsincustomsettings"></span>Add configurations in custom settings
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-Addconfigurationsincustomsettings">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h2>
+  <h3 id="id-(3.1)DeploymentGuide-AdminConfigurations"><span id="DeploymentGuide-AdminConfigurations"></span>Admin Configurations
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-AdminConfigurations">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <ol>
+   <li>
+    <p>From Setup, in the quick find box, search “Custom settings”. Open custom settings.</p>
+   </li>
+   <li>
+    <p>Select “Manage” from the “<strong>admin</strong>” setting.</p>
+   </li>
+   <li>
+    <p>At the top of “Default Organization Level Value,” you will find “new”, click it.</p>
+   </li>
+   <li>
+    <p>In the <strong>username</strong> field provide an admin username value like "admin".</p>
+   </li>
+   <li>
+    <p>In the <strong>password</strong> field provide an admin password value like "password", then save.</p>
+   </li>
+  </ol>
+  <h3 id="id-(3.1)DeploymentGuide-FinesseCallTypes"><span id="DeploymentGuide-FinesseCallTypes"></span>Finesse Call Types
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-FinesseCallTypes">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <ol>
+   <li>
+    <p>From Setup, in the quick find box, search “Custom settings”. Open custom settings.</p>
+   </li>
+   <li>
+    <p>Select “Manage” from the “<strong>callStates</strong>” setting.</p>
+   </li>
+   <li>
+    <p>Click “New”.</p>
+   </li>
+   <li>
+    <p>The values for callStates will be already set, just click Save.</p>
+   </li>
+  </ol>
+  <h3 id="id-(3.1)DeploymentGuide-URLsConfiguration"><span id="DeploymentGuide-URLsConfiguration"></span>URLs Configuration
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-URLsConfiguration">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <ol>
+   <li>
+    <p>From Setup, in the quick find box, search “Custom settings”. Open custom settings.</p>
+   </li>
+   <li>
+    <p>Select “Manage” from “<strong>Configuration Url</strong>” setting.</p>
+   </li>
+   <li>
+    <p>At the top of “Default Organization Level Value,” you will find “new”, click it.</p>
+   </li>
+   <li>
+    <p>On the next page enter your finesse url in “<strong>connectionurl</strong>” field with port 7443 and protocol http-bind like this “https://uccx116p.ef.com:7443/http-bind/”</p>
+   </li>
+   <li>
+    <p>In the <strong>domain</strong> field enter your domain for finesse as “uccx116p.ef.com”</p>
+   </li>
+   <li>
+    <p>Similar to step 4, provide your subscriber finesse url in “<strong>subConnectionUrl</strong>” field with port 7443 and protocol http-bind like this “https://uccx116sub.ef.com:7443/http-bind/”</p>
+   </li>
+   <li>
+    <p>Similar to step 5, in the <strong>subdomain</strong> field enter your domain for subscriber finesse as “uccx116sub.ef.com”</p>
+   </li>
+   <li>
+    <p>In the&nbsp;<strong>salesforce_domain</strong> field provide your salesforce domain for example "expertflow4-dev-ed.lightning.force.com".</p>
+   </li>
+   <li>
+    <p>In the&nbsp;<strong>xmlNamespace&nbsp;</strong>field provide xml namespace value to be "http://jabber.org/protocol/pubsub#event".</p>
+   </li>
+   <li>
+    <p>Once added, click Save.</p>
+   </li>
+  </ol>
+  <div data-component="panel" role="note" data-appearance="warning">
+   <div class="panel-content">
+    <p>In case there is no subscriber node for finesse, you can provide the same values (provided for primary finesse) in subscriber finesse-related fields that are subConnectionUrl and subdomain.</p>
+   </div>
+  </div>
+  <h3 id="id-(3.1)DeploymentGuide-ReasonCodeConfiguration"><span id="DeploymentGuide-ReasonCodeConfiguration"></span><span style="--color: #4a4a56">Reason Code Configuration</span>
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-ReasonCodeConfiguration">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <ol>
+   <li>
+    <p>From Setup, in the quick find box, search “Custom settings”. Open custom settings.</p>
+   </li>
+   <li>
+    <p>Select&nbsp;“Manage” from the&nbsp;"DefaultReasonCode" setting.</p>
+   </li>
+   <li>
+    <p><span style="--color: #4a4a56">Click “new” and then in the&nbsp;</span><span style="--color: #4a4a56"><strong>notReadyCode</strong></span><span style="--color: #4a4a56"> field&nbsp;provide one NotReady reason code like "26".</span></p>
+   </li>
+  </ol>
+  <div data-component="panel" role="note" data-appearance="warning">
+   <div class="panel-content">
+    <p>You can get reason codes as:</p>
+    <ul>
+     <li>
+      <p>Get NotReady reason codes from API. It can be accessed via&nbsp;https://fdqn:8445/finesse/api/ReasonCodes?category=NOT_READY.&nbsp;Provide credentials for admin to access Reason codes.&nbsp;</p>
+     </li>
+     <li>
+      <p>From the list of reason codes choose a reason code from URI tag. For example, &lt;uri&gt;/finesse/api/ReasonCode/19&lt;/uri&gt; then in this case code will be 19.</p>
+     </li>
+     <li>
+      <p>Once you have the reason code, place it in notReadyReasonCode field and save.&nbsp;</p>
+     </li>
+    </ul>
+   </div>
+  </div>
+  <h3 id="id-(3.1)DeploymentGuide-FinesseTypeConfiguration"><span id="DeploymentGuide-FinesseTypeConfiguration"></span>Finesse Type Configuration
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-FinesseTypeConfiguration">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <ol>
+   <li>
+    <p>From Setup, in the quick find box, search “Custom settings”. Open custom settings.</p>
+   </li>
+   <li>
+    <p>Select&nbsp;“Manage” from the&nbsp;"finesseDeploymentMode" setting.</p>
+   </li>
+   <li>
+    <p>Click “new” and then in the&nbsp;<span style="--color: #4a4a56"><strong>finesseFlavor</strong></span><span style="--color: #4a4a56"> field&nbsp;</span><span style="--color: #4a4a56">provide either "UCCE" or "UCCX" and save.</span></p>
+   </li>
+  </ol>
+  <h3 id="id-(3.1)DeploymentGuide-GeneralConfiguration"><span id="DeploymentGuide-GeneralConfiguration"></span>General Configuration
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-GeneralConfiguration">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <ol>
+   <li>
+    <p>From Setup, in the quick find box, search “Custom settings”. Open custom settings.</p>
+   </li>
+   <li>
+    <p>Select&nbsp;“Manage” from the "General Configurations" setting.</p>
+   </li>
+   <li>
+    <p>Click “new” and then in the&nbsp;<span style="--color: #4a4a56"><strong>ReClassify Options</strong></span><span style="--color: #4a4a56">&nbsp;field&nbsp;</span><span style="--color: #4a4a56">provide the values for the reclassify feature, by default values would be set to "Voice,Answering Machine,Fax,Invalid Number" (CCE options). If these are fine according to the finesse click save.</span></p>
+   </li>
+   <li>
+    <p><span style="--color: #4a4a56">In the&nbsp;</span><span style="--color: #4a4a56"><strong>Activity Type</strong></span><span style="--color: #4a4a56"> field you can specify whether you want the activity to be created at the end of call to be of type Call or Task. By default it would be set "Call". If that's fine for you then just click save.</span></p>
+   </li>
+   <li>
+    <p><span style="--color: #4a4a56">In the&nbsp;</span><span style="--color: #4a4a56"><strong>Make Ready Outbound Call</strong></span><span style="--color: #4a4a56"> field you can specify whether you want the outbound call to be in Ready state or not. By deafault it would be unchecked, If that's fine for you then just click save.</span></p>
+   </li>
+  </ol>
+  <p>
+   <br>
+  </p>
+  <div data-component="panel" role="note" data-appearance="warning">
+   <div class="panel-content">
+    <ul>
+     <li>
+      <p>In case of CCX there are usually 5 options. Apart from the options mentioned above for reclassifying, there is also an option "Busy" in CCX.</p>
+     </li>
+     <li>
+      <p>Regarding the outbound call in a ready state, it is supported in CCE version 12.5 and above, so there you won't need to enable this future to make an outbound call in a ready state. If you enable this feature then the state after Wrapup (once the call is completed) would be Not Ready, even if it was in Ready state before.</p>
+     </li>
+    </ul>
+   </div>
+  </div>
+  <h3 id="id-(3.1)DeploymentGuide-LicenseConfiguration"><span id="DeploymentGuide-LicenseConfiguration"></span>License Configuration
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-LicenseConfiguration">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <ol>
+   <li>
+    <p>From Setup, in the quick find box, search “Custom settings”. Open custom settings.</p>
+   </li>
+   <li>
+    <p>Select “Manage” from the “<strong>License</strong>” setting.</p>
+   </li>
+   <li>
+    <p>Click “new” and then in the key field provide the license key.</p>
+   </li>
+  </ol>
+  <div data-component="panel" role="note" data-appearance="info">
+   <div class="panel-content">
+    <p>For License key contact us at <a href="mailto:helpdesk@expertflow.com" data-scope="external" rel="external noreferrer">helpdesk@expertflow.com</a>.</p>
+   </div>
+  </div>
+  <h3 id="id-(3.1)DeploymentGuide-ScreenPopConfiguration"><span id="DeploymentGuide-ScreenPopConfiguration"></span>Screen Pop Configuration
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-ScreenPopConfiguration">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <p>To manage our priority for searching records when a call is ringing/initiated you need to provide your preferences here.</p>
+  <ol>
+   <li>
+    <p>From Setup, in the quick find box, search “Custom settings”. Open custom settings.</p>
+   </li>
+   <li>
+    <p>Select “Manage” from the “search_records”.</p>
+   </li>
+   <li>
+    <p>Click “new” and then in the <strong>priority</strong> field enter the priority for searching Contacts, Accounts, and Leads in your application like “Contacts, Accounts, Leads”.</p>
+   </li>
+   <li>
+    <p>Then we need to set&nbsp;<strong>searchFields</strong> property, enter the fields you want to be searched for phone number like&nbsp;"Phone,HomePhone,MobilePhone".</p>
+   </li>
+   <li>
+    <p>Then we set&nbsp;<strong>newRecord</strong> field, you need to provide whatever new entity you want to create when there is no matching number in CRM like&nbsp;"Account".</p>
+   </li>
+   <li>
+    <p>Then we set&nbsp;<strong>LeadsCompany</strong> field, it is used to populate the Leads entity's company (required field in case of Leads) when creating a new Lead object like&nbsp;"Expertflow"</p>
+   </li>
+   <li>
+    <p>After that we need to set&nbsp;<strong>AniLength</strong> field, it is used to trim the AniLength upto x number of digits, for example is populated like "10".&nbsp;</p>
+   </li>
+  </ol>
+  <p><strong>&nbsp; &nbsp; &nbsp; Example</strong></p>
+  <ul>
+   <li>
+    <p>In the <strong>priority</strong> field if you enter “Contacts, Accounts, Leads” in your field then contacts will be searched first then accounts and lead at the end. If you don’t want to search for any specific object among these, then don’t include it.</p>
+   </li>
+   <li>
+    <p>For&nbsp;<strong>searchFields</strong> property, you can provide&nbsp;multiple fields for searching phone number. For example, if you want to search the phone number in 3 fields Phone, HomePhone and MobilePhone then you need to enter "Phone, HomePhone, and MobilePhone" (field names can be seen from Object manager → Choose Object → Click Fields and Relationships) and it will search these fields while matching the phone number during the call for a popup.</p>
+   </li>
+   <li>
+    <p>For&nbsp;<strong>newRecord</strong> field for example, In case of no match you want to create a new Account then you provide "Account" as a value. Other options include Contact and Leads.</p>
+   </li>
+   <li>
+    <p>For&nbsp;<strong>LeadsCompany</strong> field for example, you want the company name to Expertflow when a new lead is created in case of no match, then you enter "Expertflow".
+     <br>
+     <br></p>
+   </li>
+   <li>
+    <p>For&nbsp;<strong>AniLength</strong> field, for example, you have a number "0300123456789" and you want the only 10 digits that will be "0123456789", then you enter value "10" in field. The point to note here is that it counts digits from right to left.&nbsp;</p>
+   </li>
+  </ul>
+  <h3 id="id-(3.1)DeploymentGuide-CallVariableConfiguration"><span id="DeploymentGuide-CallVariableConfiguration"></span>Call Variable Configuration
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-CallVariableConfiguration">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <ol>
+   <li>
+    <p>From Setup, in the quick find box, search “Custom settings”. Open custom settings.</p>
+   </li>
+   <li>
+    <p>Select&nbsp;“Manage” from the&nbsp;"Variable" setting.</p>
+   </li>
+   <li>
+    <p><span style="--color: #4a4a56">Click “new” and then in the&nbsp;</span><span style="--color: #4a4a56"><strong>Call/ECE Varaiable Name</strong></span><span style="--color: #4a4a56"> field&nbsp;</span>provide the call variable name or ece variable name for example "callVariable5".</p>
+   </li>
+  </ol>
+  <p><strong>&nbsp; &nbsp;</strong></p>
+  <div data-component="panel" role="note" data-appearance="warning">
+   <div class="panel-content">
+    <p>Provide a variable name that is not already set at the time of landing an inbound call i.e. its value should be null beforehand.</p>
+   </div>
+  </div>
+  <h3 id="id-(3.1)DeploymentGuide-SupervisorConfiguration"><span id="DeploymentGuide-SupervisorConfiguration"></span>Supervisor Configuration
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-SupervisorConfiguration">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <ol>
+   <li>
+    <p>From Setup, in the quick find box, search “Custom settings”. Open custom settings.</p>
+   </li>
+   <li>
+    <p>Select&nbsp;“Manage” from the "Supervisor Configs" setting.</p>
+   </li>
+   <li>
+    <p><span style="--color: #4a4a56">Click “new” and then in the&nbsp;</span><span style="--color: #4a4a56"><strong>ssoBackendUrl</strong></span><span style="--color: #4a4a56"> field&nbsp;</span>provide the URL link where EF SSO Backend API is exposed for example https://&lt;ServerIP&gt;:&lt;PORT&gt;.</p>
+    <div data-component="panel" role="note" data-appearance="error">
+     <div class="panel-meta">
+      <div class="panel-title">NOTE</div>
+     </div>
+     <div class="panel-content">
+      <p>ssoBackendURL is only required if you want to login SSO Enable Agent on EF Salesforce Connector, else you can leave this property as it is (by default it is set to be <strong>url.com</strong> as an example, just save that).&nbsp; To deploy the EF SSO Server please follow this <a href="https://expertflow-docs.atlassian.net/wiki/spaces/JCCC/pages/3542424/EF+SSO+Server+Deployment+Guide" data-scope="external" rel="external noreferrer">guide</a></p>
+     </div>
+    </div>
+    <p>
+     <br>
+    </p>
+   </li>
+   <li>
+    <p><span style="--color: #4a4a56">Then in the </span><span style="--color: #4a4a56"><strong>getQueueDataDelay</strong></span><span style="--color: #4a4a56"> field&nbsp;</span>provide the number of seconds to be delayed for updating queue stats data for example 20.</p>
+   </li>
+  </ol>
+  <div data-component="panel" role="note" data-appearance="info">
+   <div class="panel-meta">
+    <div class="panel-title">INFO</div>
+   </div>
+   <div class="panel-content">
+    <ul>
+     <li>
+      <p>Please provide data in both fields, the acceptable limit for queue delay is 0 - 10000. Recommended Value: 30</p>
+     </li>
+    </ul>
+   </div>
+  </div>
+  <p>Documentation Reference: <a href="https://help.salesforce.com/articleView?id=cs_add_data.htm&amp;type=5" data-scope="external" rel="external noreferrer">https://help.salesforce.com/articleView?id=cs_add_data.htm&amp;type=5</a></p>
+  <h3 id="id-(3.1)DeploymentGuide-EnableLogs"><span id="DeploymentGuide-EnableLogs"></span>Enable Logs
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-EnableLogs">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <ol>
+   <li>
+    <p>From Setup, open “Object Manager” in the top left adjacent to “Home”. Open it and then open search “agent”, once found open that.</p>
+   </li>
+   <li>
+    <p>From the left pane, select “Page Layouts”.&nbsp;</p>
+   </li>
+   <li>
+    <p>Open agent Layout, there will be multiple sections on the next page. From the top section, navigate to the drop-down list provided and select “Related lists”.</p>
+   </li>
+   <li>
+    <p>Select “Notes and Attachments” from the right panel and then drag it to the “Related Lists” panel at the bottom.</p>
+   </li>
+   <li>
+    <p>Once added, click save from the top left.</p>
+   </li>
+  </ol>
+  <h3 id="id-(3.1)DeploymentGuide-ConfigureFieldsfortasks"><span id="DeploymentGuide-ConfigureFieldsfortasks"></span>Configure Fields for tasks
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-ConfigureFieldsfortasks">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <p>From Setup, open “Object Manager” adjacent to “Home” and search for “Task”, open Task. Click “Fields &amp; Relationships” from the left panel. For the fields “Call Duration”, “Call Result”, “Call Type” perform the following set of actions for each of these</p>
+  <ul>
+   <li>
+    <p>Click the Field, such as “Call Duration”</p>
+   </li>
+   <li>
+    <p>Click “View Field Accessibility”</p>
+   </li>
+   <li>
+    <p>From Field Accessibility for Field drop-down menu, Select respective field such as “Call Duration”</p>
+   </li>
+   <li>
+    <p>Select Field Access (Read-only) from “Standard User”</p>
+   </li>
+   <li>
+    <p>In the “Page Layout” section tick the checkbox “Visible”.</p>
+   </li>
+   <li>
+    <p>Click Save</p>
+   </li>
+  </ul>
+  <p>Perform these steps for all three fields separately.</p>
+  <h2 id="id-(3.1)DeploymentGuide-ConnecttoVPN"><span id="DeploymentGuide-ConnecttoVPN"></span>Connect to VPN
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-ConnecttoVPN">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h2>
+  <p>In order to use the application, make sure you are connected to VPN if your finesse services access is restricted to a VPN connection. Otherwise, you do not need to connect to VPN.</p>
+  <h2 id="id-(3.1)DeploymentGuide-SSLCertificates"><span id="DeploymentGuide-SSLCertificates"></span>SSL Certificates
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-SSLCertificates">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h2>
+  <p>Before using application, accept SSL Certificates for Finesse and <span style="--color: #4a4a56">ssoBackendUrl</span>&nbsp;to avoid any issue.</p>
+  <h2 id="id-(3.1)DeploymentGuide-Loginagent"><span id="DeploymentGuide-Loginagent"></span>Login agent
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-Loginagent">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h2>
+  <ol>
+   <li>
+    <p>Open your application from the top left 9-dotted pattern icon, adjacent to “Setup”. If you can’t find it, search using the name you used while creating an application.</p>
+   </li>
+   <li>
+    <p>Once opened, Maximize Softphone by click on “Phone” from the bottom left corner, enter agent credentials, and press login.</p>
+   </li>
+  </ol>
+  <h2 id="id-(3.1)DeploymentGuide-CORSCiscoFinesse"><span id="DeploymentGuide-CORSCiscoFinesse"></span>CORS Cisco Finesse
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/salesforce-cti/3.1/3-1-deployment-guide#id-(3.1)DeploymentGuide-CORSCiscoFinesse">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h2>
+  <p>To check the status of CORS configuration for finesse, access finesse via CLI (SSH) and run the command "utils finesse cors status". By default, it should return that CORS is enabled for all origins. If it is not enabled, then you can enable it via two methods:</p>
+  <ul>
+   <li>
+    <p>To enable CORS for all origins, run command "utils finesse cors enable_all". After this, you will need to restart two finesse services by "<span style="--color: #202124">utils service restart Cisco Finesse Tomcat" and "</span><span style="--color: #202124">utils service restart Cisco Unified CCX Notification Service"</span></p>
+   </li>
+   <li>
+    <p>To enable just for some specific origin, run command "utils finesse cors enable" and then "utils finesse cors allowed_origin add https://xyz.com".&nbsp;After this, you will need to restart two finesse services by "<span style="--color: #202124">utils service restart Cisco Finesse Tomcat" and "</span><span style="--color: #202124">utils service restart Cisco Unified CCX Notification Service"</span></p>
+   </li>
+  </ul>
+  <p>We have experienced that these methods do the job for most finesse versions, however, we came across one specific version (CCX 11.6.2) where CORS wasn't enabled for Salesforce CTI even after executing these commands. If you encounter such an issue, please run commands in the following order:</p>
+  <ul>
+   <li>
+    <p><span style="--color: #202124">- utils finesse cors disable </span></p>
+   </li>
+   <li>
+    <p><span style="--color: #202124">- utils service restart Cisco Finesse Tomcat </span></p>
+   </li>
+   <li>
+    <p><span style="--color: #202124">- utils service restart Cisco Unified CCX Notification Service </span></p>
+   </li>
+   <li>
+    <p><span style="--color: #202124">- utils finesse cors enable </span></p>
+   </li>
+   <li>
+    <p><span style="--color: #202124">- utils service restart Cisco Finesse Tomcat </span></p>
+   </li>
+   <li>
+    <p><span style="--color: #202124">- utils service restart Cisco Unified CCX Notification Service </span></p>
+   </li>
+   <li>
+    <p><span style="--color: #202124">- utils finesse cors allowed_origin add&nbsp;</span><span style="--color: #202124">https://xyz.com</span></p>
+   </li>
+   <li>
+    <p><span style="--color: #202124">- utils service restart Cisco Finesse Tomcat </span></p>
+   </li>
+   <li>
+    <p><span style="--color: #202124">- utils service restart Cisco Unified CCX Notification Service </span></p>
+   </li>
+   <li>
+    <p><span style="--color: #202124">- utils finesse cors status</span></p>
+   </li>
+  </ul>
+ </div>
+ <div class="layout-cell">
+  <p>
+   <br>
+  </p>
+  <div data-component="panel" role="note" data-appearance="custom">
+   <div class="panel-meta">
+    <div class="panel-title">On this Page</div>
+   </div>
+   <div class="panel-content"></div>
+  </div>
+  <p>
+   <br>
+  </p>
+ </div>
+</div>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="d16dcbd56a16fd76-22" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="d16dcbd56a16fd76-22">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/salesforce-cti/3.1/3-1-supervisor-controls">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Supervisor Controls</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/salesforce-cti/3.1/3-1-high-availability-ha-duplex-deployment">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">High Availability (HA) / Duplex Deployment</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

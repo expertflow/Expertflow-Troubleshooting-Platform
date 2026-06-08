@@ -1,0 +1,3517 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_3e096a1bf48c813f35526501a0347982c74ddab152622ea7bd6fa90201e9eeaf" data-confluence-content-id="2036367364"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/super-whisper-gadget/2.3.0/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="SWFG">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>Deployment Guide | Expertflow CX</title>
+		<meta property="og:title" content="Deployment Guide | Expertflow CX">
+		<meta property="twitter:title" content="Deployment Guide | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/super-whisper-gadget/2.3.0/deployment-guide">
+		<meta property="og:url" content="https://docs.expertflow.com/super-whisper-gadget/2.3.0/deployment-guide">
+
+		<meta name="description" content="This document describes the process of whisper coaching gadget deployment. Gadget Deployment Planning The whisper coaching gadget is a combination of the 2 com…">
+		<meta property="og:description" content="This document describes the process of whisper coaching gadget deployment. Gadget Deployment Planning The whisper coaching gadget is a combination of the 2 com…">
+		<meta property="twitter:description" content="This document describes the process of whisper coaching gadget deployment. Gadget Deployment Planning The whisper coaching gadget is a combination of the 2 com…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__attachments/a_7ff7ca5ac0e9f88e1a1bd0acad3143251b99b8c6d53a4ac01590efcfadf0a9d3/whispergadget1.png?cb=909bde77154569dedc90015c07d1372a">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__attachments/a_7ff7ca5ac0e9f88e1a1bd0acad3143251b99b8c6d53a4ac01590efcfadf0a9d3/whispergadget1.png?cb=909bde77154569dedc90015c07d1372a">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2026-05-22T07:45:57.932Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": true
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="68b54f36ea433722-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="68b54f36ea433722-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="68b54f36ea433722-5">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="68b54f36ea433722-5" name="version" onchange="self.location.assign(this.value)" >
+				<option id="68b54f36ea433722-3"  value="/super-whisper-gadget/2.3.0/deployment-guide"  selected="">
+					2.3.0
+				</option>
+				<option id="68b54f36ea433722-4"  value="/super-whisper-gadget/2.1.0/deployment-guide"  >
+					2.1.0
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('68b54f36ea433722-5');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-68b54f36ea433722-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-68b54f36ea433722-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-68b54f36ea433722-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="68b54f36ea433722-6" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="68b54f36ea433722-6">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-68b54f36ea433722-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-68b54f36ea433722-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="68b54f36ea433722-9">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="68b54f36ea433722-9" name="version" onchange="self.location.assign(this.value)" >
+				<option id="68b54f36ea433722-7"  value="/super-whisper-gadget/2.3.0/deployment-guide"  selected="">
+					2.3.0
+				</option>
+				<option id="68b54f36ea433722-8"  value="/super-whisper-gadget/2.1.0/deployment-guide"  >
+					2.1.0
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('68b54f36ea433722-9');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="68b54f36ea433722-10" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="68b54f36ea433722-11" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="68b54f36ea433722-12" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="68b54f36ea433722-13" href="/super-whisper-gadget/2.3.0/component-level-diagram" >Component Level Diagram</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="68b54f36ea433722-14" href="/super-whisper-gadget/2.3.0/deployment-guide" aria-current="page">Deployment Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="68b54f36ea433722-15" href="/super-whisper-gadget/2.3.0/supervisor-whisper-reports" >Supervisor Whisper Reports</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="68b54f36ea433722-16" href="/super-whisper-gadget/2.3.0/user-guide" >User Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="68b54f36ea433722-17" href="/super-whisper-gadget/2.3.0/sitemap-xml" >sitemap.xml</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="68b54f36ea433722-18" href="/super-whisper-gadget/2.3.0/release-note" >Release Note</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="68b54f36ea433722-19" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="68b54f36ea433722-19">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/super-whisper-gadget/2.3.0">
+										Supervisor Whisper Finesse Gadget
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="68b54f36ea433722-20">
+			<h2 class="toc-heading" id="68b54f36ea433722-20">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>Deployment Guide</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+
+	
+	
+
+
+	
+	
+	
+	
+		
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+			
+
+		
+	
+	
+	
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<p>This document describes the process of whisper coaching gadget deployment.</p>
+<h2 id="Gadget-Deployment-Planning"><span id="DeploymentGuide-GadgetDeploymentPlanning"></span><strong>Gadget Deployment Planning</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/super-whisper-gadget/2.3.0/deployment-guide#Gadget-Deployment-Planning">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>The whisper coaching gadget is a combination of the 2 components.</p>
+<div class="theme-table" style="--width: 4000px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <tbody>
+       <tr>
+        <th>
+         <p>Solution Components</p>
+        </th>
+        <th>
+         <p>Description</p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p>API Service</p>
+        </td>
+        <td>
+         <p>This is a Java-based rest service that requires tomcat to run.&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Gadget Specifications files for Finesse</p>
+        </td>
+        <td>
+         <p>Finesse gadget specifications files which render frontend inside Cisco Finesse.</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="Prerequisites"><span id="DeploymentGuide-Prerequisites"></span>Prerequisites
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/super-whisper-gadget/2.3.0/deployment-guide#Prerequisites">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Following are the mandatory prerequisites for a smooth installation.</p>
+<h3 id="Hardware-Requirements"><span id="DeploymentGuide-HardwareRequirements"></span><strong>Hardware Requirements</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/super-whisper-gadget/2.3.0/deployment-guide#Hardware-Requirements">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>These requirements suffice for deployment with 300 agents or less.</p>
+<div class="theme-table" style="--width: 4000px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 91px">
+       <col style="width: 120px">
+       <col style="width: 196px">
+       <col style="width: 140px">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Item</p>
+        </th>
+        <th>
+         <p>For 300 Agents</p>
+        </th>
+        <th>
+         <p>For More Than 300 Agents</p>
+        </th>
+        <th>
+         <p>With Reporting</p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>CPU</strong></p>
+        </td>
+        <td>
+         <p>2 vCPU</p>
+        </td>
+        <td>
+         <p>4 vCPU</p>
+        </td>
+        <td>
+         <p>Add 4 vCPU to the Existing System for Reporting</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Memory</strong></p>
+        </td>
+        <td>
+         <p>4 GB</p>
+        </td>
+        <td>
+         <p>8 GB</p>
+        </td>
+        <td>
+         <p>Add 4GB RAM to the existing System for Reporting</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Disk Space</strong></p>
+        </td>
+        <td>
+         <p>50 GB&nbsp;</p>
+        </td>
+        <td>
+         <p>200 GB</p>
+        </td>
+        <td>
+         <p>Add 250 GB Hard-disk&nbsp; for Reporting</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p>The gadget can be co-hosted with other Expertflow or third-party products.</p>
+<h3 id="Software-Requirements"><span id="DeploymentGuide-SoftwareRequirements"></span><strong>Software Requirements</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/super-whisper-gadget/2.3.0/deployment-guide#Software-Requirements">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<div class="theme-table" style="--width: 4000px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <tbody>
+       <tr>
+        <th>
+         <p>Item</p>
+        </th>
+        <th>
+         <p>Recommended</p>
+        </th>
+        <th>
+         <p>Notes</p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Operating System</strong></p>
+        </td>
+        <td>
+         <p>Windows Server 2012 Standard Edition (x64)</p>
+        </td>
+        <td>
+         <p>supported on this operating system</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>JDK</strong></p>
+        </td>
+        <td>
+         <p><a href="https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html" data-scope="external" rel="external noreferrer">JRE 21</a> or higher&nbsp;</p>
+        </td>
+        <td>
+         <p>Tested with JRE 21</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Tomcat</strong></p>
+        </td>
+        <td>
+         <p><a href="https://tomcat.apache.org/download-10.cgi" data-scope="external" rel="external noreferrer">Tomcat 10.1.0</a></p>
+        </td>
+        <td>
+         <p>Tested with Tomcat 10.10.0</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Browser</strong></p>
+        </td>
+        <td>
+         <p>Tested on latest Firefox</p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Domain Signed Certificate</strong></p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+        <td>
+         <p>Of Machine</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>MS SQL SERVER</strong></p>
+        </td>
+        <td>
+         <p>SQL Server Version 2016&nbsp;</p>
+        </td>
+        <td>
+         <p>SQL SERVER would only be required if reporting is included, for reporting HA, the Customer needs to provide the SQL Cluster&nbsp;</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <p><strong>Note</strong></p>
+  <p><code>Reporting is Optional, </code>
+   <br>
+   <code>If customer required reporting SQL Server would be required</code>
+   <br>
+   <code>If customer want High Availability for reporting,SQL Cluster would be required&nbsp;</code></p>
+ </div>
+</div>
+<h3 id="Port-Utilization-Requirements"><span id="DeploymentGuide-PortUtilizationRequirements"></span><strong>Port Utilization Requirements</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/super-whisper-gadget/2.3.0/deployment-guide#Port-Utilization-Requirements">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Whisper gadget rest API is deployed in tomcat. Any available port can be assigned to the service. The default&nbsp;<strong>HTTP </strong>port is <strong>8080 </strong>and the&nbsp;<strong>HTTPS </strong>port is <strong>8443</strong>. Local &amp; network security policy should allow communication on the configured port.</p>
+<h3 id="System-Access-Requirements"><span id="DeploymentGuide-SystemAccessRequirements"></span><strong>System Access Requirements</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/super-whisper-gadget/2.3.0/deployment-guide#System-Access-Requirements">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>Tomcat admin access</p>
+ </li>
+ <li>
+  <p>Windows machine Users with Admin rights&nbsp;</p>
+ </li>
+ <li>
+  <p>Cisco Finesse Administration access</p>
+ </li>
+ <li>
+  <p>Finesse Administration credentials.</p>
+ </li>
+ <li>
+  <p>Cisco Finesse agent desktop/supervisor desktop access</p>
+ </li>
+ <li>
+  <p>Finesse agent\supervisor users configured properly as per guidelines</p>
+ </li>
+</ul>
+<h3 id="Finesse-Agent/Supervisor-Configuration"><span id="DeploymentGuide-FinesseAgent/SupervisorConfiguration"></span><strong>Finesse Agent/Supervisor Configuration</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/super-whisper-gadget/2.3.0/deployment-guide#Finesse-Agent/Supervisor-Configuration">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ul>
+ <li>
+  <p>The agent should have a hard phone.</p>
+ </li>
+ <li>
+  <p>Enable Built-In Bridge on both Extensions.</p>
+ </li>
+ <li>
+  <p>Monitoring Search Space enables both.</p>
+ </li>
+ <li>
+  <p>Disable G.722 codec from Agent and Supervisor Extensions</p>
+ </li>
+</ul>
+<h3 id="Application-User-Detail"><span id="DeploymentGuide-ApplicationUserDetail"></span><strong>Application User Detail</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/super-whisper-gadget/2.3.0/deployment-guide#Application-User-Detail">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>One application/RMCM user required with the following property.&nbsp;</p>
+<ul>
+ <li>
+  <p>Permission and roles should be:
+   <br>
+   <br></p>
+ </li>
+</ul>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 700px" data-component="image" data-align="align-start">
+   <img src="/__attachments/a_7ff7ca5ac0e9f88e1a1bd0acad3143251b99b8c6d53a4ac01590efcfadf0a9d3/whispergadget1.png?cb=909bde77154569dedc90015c07d1372a" alt="whispergadget1.png" data-scope="internal" width="949" height="308">
+  </div>
+ </image-lightbox>
+</div>
+<p>
+ <br>
+</p>
+<p>Ensure that only below Roles are added against the Application User:</p>
+<ol>
+ <li>
+  <p>Standard CTI Allow Call Monitoring</p>
+ </li>
+ <li>
+  <p>Standard CCM End Users</p>
+ </li>
+ <li>
+  <p>Standard CTI Allow Call Park Monitoring</p>
+ </li>
+ <li>
+  <p>Standard CTI Allow Control of All Devices</p>
+ </li>
+ <li>
+  <p>Standard CTI Call Recording</p>
+ </li>
+ <li>
+  <p>Standard CTI Allow Control of Phones supporting Connected Xfer and conf</p>
+ </li>
+ <li>
+  <p>Standard CTI Allow Control of Phones supporting Rollover Mode</p>
+ </li>
+ <li>
+  <p>Standard CTI Enabled</p>
+ </li>
+</ol>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<ul>
+ <li>
+  <p>Supervisor devices part controlled Devices:</p>
+ </li>
+</ul>
+<p>
+ <br>
+</p>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 700px" data-component="image" data-align="align-start">
+   <img src="/__attachments/a_1ff8a6046f070198c2f8334e1e49bb1a25eece881e2e71f482e4cd1e4da6a0c2/whispergadget2.png?cb=8e321923afc84ba3d63a6fe9e55ad492" alt="whispergadget2.png" data-scope="internal" width="512" height="257">
+  </div>
+ </image-lightbox>
+</div>
+<ul>
+ <li>
+  <p>Credential configuration of user should be:
+   <br></p>
+ </li>
+</ul>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 700px" data-component="image" data-align="align-start">
+   <img src="/__attachments/a_2e06a1f6136f732a0c2b3e353f4b129e3a184f5760bc880fa0bf533d91a80e97/whisergadget3.png?cb=2b9d5a89bf0a39ef70eadd746df137a0" alt="whisergadget3.png" data-scope="internal" width="973" height="491">
+  </div>
+ </image-lightbox>
+</div>
+<h3 id="Time-Synchronization-Requirements"><span id="DeploymentGuide-TimeSynchronizationRequirements"></span><strong>Time Synchronization Requirements</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/super-whisper-gadget/2.3.0/deployment-guide#Time-Synchronization-Requirements">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>If the system date and time are not synchronized the system can produce unpredictable results. Therefore, please make every effort to adhere to the following time synchronization guidelines:</p>
+<p>The server machine and Cisco Finesse should have their Time Zone and time configured properly according to the geographic region and synchronized. To configure the time zone, please see the instructions from the hardware or software manufacturer of NTP server. The application servers should be synchronized to the second. This synchronization should be maintained continuously and validated on a regular basis. For security reasons, Network Time Protocol (NTP) V 4.1+ is recommended.</p>
+<h3 id="Compatibility"><span id="DeploymentGuide-Compatibility"></span><strong>Compatibility</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/super-whisper-gadget/2.3.0/deployment-guide#Compatibility">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<div class="theme-table" style="--width: 4000px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <tbody>
+       <tr>
+        <th>
+         <p>Item</p>
+        </th>
+        <th>
+         <p>Recommended versions</p>
+        </th>
+        <th>
+         <p>Notes</p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>UCCE</strong></p>
+        </td>
+        <td>
+         <p>11.0</p>
+        </td>
+        <td>
+         <p>Tested on version 11.0&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>UCCX</strong></p>
+        </td>
+        <td>
+         <p>11.0</p>
+        </td>
+        <td>
+         <p>Tested on version 11.0&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>CUCM&nbsp;</strong></p>
+        </td>
+        <td>
+         <p>11.0</p>
+        </td>
+        <td>
+         <p>Tested on version 11.0&nbsp;</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="Browser-Compatibility"><span id="DeploymentGuide-BrowserCompatibility"></span><strong>Browser Compatibility</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/super-whisper-gadget/2.3.0/deployment-guide#Browser-Compatibility">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<div class="theme-table" style="--width: 4000px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <tbody>
+       <tr>
+        <th>
+         <p>Item</p>
+        </th>
+        <th>
+         <p>Recommended versions</p>
+        </th>
+        <th>
+         <p>Notes</p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Firefox</strong></p>
+        </td>
+        <td>
+         <p>Recent versions</p>
+        </td>
+        <td>
+         <p>Tested&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Chrome</strong></p>
+        </td>
+        <td>
+         <p>Recent versions</p>
+        </td>
+        <td>
+         <p>Tested</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Internet Explorer</strong></p>
+        </td>
+        <td>
+         <p>Recent versions</p>
+        </td>
+        <td>
+         <p>Not tested</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="Phones-Compatibility"><span id="DeploymentGuide-PhonesCompatibility"></span>Phones Compatibility
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/super-whisper-gadget/2.3.0/deployment-guide#Phones-Compatibility">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p><span style="--color: #222">The Expertflow Supervisor Whisper Gadget uses the BiB (Built-in Bridge) feature of Cisco phones. Any Cisco Hard phone that supports BiB should work. See </span><a href="http://docs.expertflow.com/x/9oC4Bg" data-scope="external" rel="external noreferrer"><span style="--color: #222">here</span></a><span style="--color: #222"> a list of those that do. Formal testing and QA is executed however only with phones listed in the tables below.</span></p>
+<div class="theme-table" style="--width: 4000px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <tbody>
+       <tr>
+        <td>
+         <p>Item</p>
+        </td>
+        <td>
+         <p>Tested Versions</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Hard Phone(s)</p>
+        </td>
+        <td>
+         <p>CP-7965G</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Cisco Jabber Supported Version</p>
+        </td>
+        <td>
+         <p>jabber Version 12.6.2.38119 Build 288119</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <p><strong>Important Note</strong></p>
+  <p><span style="--color: #202124">Officially Cisco supports the Whisper feature only with Hardphone, IP Phone bug is mention </span><a href="https://bst.cloudapps.cisco.com/bugsearch/bug/CSCtl05098" data-scope="external" rel="external noreferrer"><span style="--color: #202124">here</span></a><span style="--color: #202124">, However, we found during testing that this feature works with a certain version of Jabber. But there are limitations and technical constraints due to limited support at Cisco end</span></p>
+ </div>
+</div>
+<h2 id="Configure-Tomcat-Service-for-SSL-(Skip-if-you-want-to-run-on-HTTP)"><span id="DeploymentGuide-ConfigureTomcatServiceforSSL(SkipifyouwanttorunonHTTP)"></span><strong>Configure Tomcat Service for SSL (Skip if you want to run on HTTP)</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/super-whisper-gadget/2.3.0/deployment-guide#Configure-Tomcat-Service-for-SSL-(Skip-if-you-want-to-run-on-HTTP)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>To install and configure SSL/TLS support on Tomcat, follow these simple steps:</p>
+<p>1. Open the windows <strong>Command Prompt</strong> as administrator.</p>
+<p>2. Navigate to <strong>JAVA_Installation/bin</strong> directory as shown below:</p>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 700px" data-component="image" data-align="align-start">
+   <img src="/__attachments/a_b7821718cc97095ab5a82ea273ba151e06cbc99fabad22d503526596075dbb4b/whispergadget4.png?cb=3d57864c293ce0fd5093ab1a7ab0a969" alt="whispergadget4.png" data-scope="internal" width="667" height="212">
+  </div>
+ </image-lightbox>
+</div>
+<p>3. Create a keystore file to store the server's private key and self-signed certificate by executing the following command in windows terminal:</p>
+<p>keytool -genkey -alias tomcat -keyalg RSA</p>
+<p>After executing this command system will prompt you to answer the following questions:</p>
+<p>Enter keystore password:&nbsp; password (choose any 6 digit password. Default is <strong>changeit</strong>)
+ <br>
+ Re-enter new password: password
+ <br>
+ What is your first and last name?
+ <br>
+ &nbsp; [Unknown]: XXXXX e.g Nabeel
+ <br>
+ What is the name of your organizational unit?
+ <br>
+ &nbsp; [Unknown]:&nbsp; XXXXX e.g. Call Center
+ <br>
+ What is the name of your organization?
+ <br>
+ &nbsp; [Unknown]:&nbsp; XXXXX e.g, Expertflow
+ <br>
+ What is the name of your City or Locality?
+ <br>
+ &nbsp; [Unknown]:&nbsp; XXXXX e.g Bern
+ <br>
+ What is the name of your State or Province?
+ <br>
+ &nbsp; [Unknown]:&nbsp; switzerland
+ <br>
+ What is the two-letter country code for this unit?
+ <br>
+ &nbsp; [Unknown]:&nbsp; XXXXX e.g. CH
+ <br>
+ Is CN=Nabeel,OU=Call Center, O=Expertflow, L=Bern, ST=switzerland, C=ch correct?
+ <br>
+ &nbsp; [no]:&nbsp; yes
+ <br>
+ Enter key password for
+ <br>
+ (RETURN if same as keystore password):&nbsp; <strong>changeit</strong>
+ <br>
+ Re-enter new password: password</p>
+<p>This command will create a new file, in the home directory (e.g. in this case “<em>C:\Program Files\Java\bin</em>” ) of the user under which you run it, named ".keystore". To specify a different location or filename, add the -keystore parameter, followed by the complete pathname to your keystore file, to the keytool command shown above.&nbsp;</p>
+<p>keytool -genkey -alias tomcat -keyalg RSA -keystore \path\to\my\keystore</p>
+<ol>
+ <li>
+  <p>UPdate the "SSL HTTP/1.1 Connector" entry in Tomcat_Home/conf/server.xml and modify as describe. Default configuration will look as show below:</p>
+ </li>
+</ol>
+<p>&nbsp;&nbsp;&lt;!--
+ <br>
+ &lt;Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
+ <br>
+ &nbsp; &nbsp; maxThreads="150" scheme="https" secure="true"
+ <br>
+ &nbsp; &nbsp; clientAuth="false" sslProtocol="TLS"
+ <br>
+ /&gt;</p>
+<p>Un-comment it and modify it to look like the following:</p>
+<p>&lt;Connector SSLEnabled="true" acceptCount="100" clientAuth="false"
+ <br>
+ &nbsp; &nbsp; disableUploadTimeout="true" enableLookups="false" maxThreads="25"
+ <br>
+ &nbsp; &nbsp; port="8443" keystoreFile="/Users/Zain/.keystore" keystorePass="password"
+ <br>
+ &nbsp; &nbsp; protocol="org.apache.coyote.http11.Http11NioProtocol" scheme="https"
+ <br>
+ &nbsp; &nbsp; secure="true" sslProtocol="TLS" /&gt;</p>
+<p>If everything was successful, you now have a keystore file with a Certificate that can be used by your server. Start tomcat service and try to access <a href="https://localhost:8443/" data-scope="external" rel="external noreferrer"><strong>https://localhost:8443</strong></a> &amp;&nbsp; <a href="https://localhost:8443/" data-scope="external" rel="external noreferrer"><strong>http://localhost:8080</strong></a> Urls in browser, You&nbsp; should be able to see the tomcat’s local home page.</p>
+<h2 id="Deployment"><span id="DeploymentGuide-Deployment"></span><strong>Deployment&nbsp;</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/super-whisper-gadget/2.3.0/deployment-guide#Deployment">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="Web-Service-Deployment"><span id="DeploymentGuide-WebServiceDeployment"></span><strong>Web Service Deployment&nbsp;</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/super-whisper-gadget/2.3.0/deployment-guide#Web-Service-Deployment">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>1. Download the latest copy of the whisper coaching rest WhisperCoaching .war file from <a href="https://drive.google.com/drive/u/0/folders/1H-Tt8ID_8haKNjCmxvK0cyG2w-AxuujA" data-scope="external" rel="external noreferrer">here</a>, put the whisper coaching web service .war file inside the tomcat’s webapps directory.</p>
+<p>2.&nbsp;Navigate to Apache-tomcat-home\webapps\WhisperCoaching\WEB-INF\classes directory and copy the jtapi.ini file and past that file to&nbsp; Apache-tomcat-home directory and then restart the tomcat server.</p>
+<p>3. Navigate to Apache-tomcat-home\webapps\WhisperCoaching\WEB-INF\classes directory and update the following entries in config.properties file according to UCCE/UCCX deployment.
+ <br>
+ 4. Add license key (If you don't have contact Expertflow )&nbsp;</p>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 1224px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_ea28567b85b008e7af651a69d9d2e06046198fa23bdb2d0cfdadd3771346827f/image-20260521-144134.png?cb=f3764fb61949553d3181ffbd6cb30db6" alt="image-20260521-144134.png" data-scope="internal" width="1393" height="392">
+  </div>
+ </image-lightbox>
+</div>
+<p>
+ <br>
+</p>
+<div class="theme-table" style="--width: 4000px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <tbody>
+       <tr>
+        <th>
+         <p>Variable</p>
+        </th>
+        <th>
+         <p>Value</p>
+        </th>
+        <th>
+         <p>Description</p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p>CUCM_IP_ADDRESS</p>
+        </td>
+        <td>
+         <p>192.168.1.26</p>
+        </td>
+        <td>
+         <p>agent and supervisors cucm ip address</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>RMCM_USER</p>
+        </td>
+        <td>
+         <p>RMCM_29</p>
+        </td>
+        <td>
+         <p>RMCM user used to connect jtapi with cucm</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>RMCM_PASSWORD</p>
+        </td>
+        <td>
+         <p>-----------</p>
+        </td>
+        <td>
+         <p>RMCM password</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>MASK_PASSWORD</p>
+        </td>
+        <td>
+         <p>TRUE</p>
+        </td>
+        <td>
+         <p>If true not printing the password in gadget logs&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>STARTMONITOR</p>
+        </td>
+        <td>
+         <p>TRUE</p>
+        </td>
+        <td>
+         <p>If false used update monitor else used start monitor</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>BUILD_VERSION</p>
+        </td>
+        <td>
+         <p>2.3</p>
+        </td>
+        <td>
+         <p>print build version in logs</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>JTAPI_TIMROUT</p>
+        </td>
+        <td>
+         <p>5</p>
+        </td>
+        <td>
+         <p>max time for a request to wait for terminal connection and coaching to start, after that the request will be sent back with a failed response</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>PLAYTONEDIRECTION</p>
+        </td>
+        <td>
+         <p>3</p>
+        </td>
+        <td>
+         <p>use to determine to play tone on start of whisper coaching on not etc.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>LICENCE_KEY</p>
+        </td>
+        <td>
+         <p>-------------</p>
+        </td>
+        <td>
+         <p>Expertflow gadget license key&nbsp;</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <p><strong>Note</strong></p>
+  <p>If you enable StartMonitoring from the config then during start coaching two calls will be displayed on the agent desktop one call is from an agent to a customer call and the other is an agent to supervisor call for silent whispering. Once you end the coaching you have to restart the monitoring if you want to do silent monitoring.</p>
+ </div>
+</div>
+<p>5. You can check the Web service accessibility from browser or postman app with the appropriate agent and supervisor’s extension you wish to coach and “Start” respectively. For example,</p>
+<p>
+ <br>
+</p>
+<p><a href="https://192.168.1.36:8443/WhisperCoaching/rest/whisper/43002/43004/Start" data-scope="external" rel="external noreferrer">https://192.168.1.36:8443/WhisperCoaching/rest/whisper/43002/43004/Start</a></p>
+<p>Where 43002, is the agent extension</p>
+<p>43004, is the supervisor extension</p>
+<p>The start is the coaching status switch. This informs the web service to create a whisper monitoring session.</p>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 700px" data-component="image" data-align="align-start">
+   <img src="/__attachments/a_6b10f0a3b7ff0a302938e940f6f327a9ccc9ed5deca03df4136538352c13f218/web%20service%20deployment%204.png?cb=ab7a17d81ac44fc9268ba43c87bd2749" alt="web service deployment 4.png" data-scope="internal" width="512" height="171">
+  </div>
+ </image-lightbox>
+</div>
+<p>
+ <br>
+</p>
+<p>5. Repeat the same steps for deploying the web service on the secondary server if you want to deploy the gadget in <strong>High Availability</strong> mode.</p>
+<h3 id="Finesse-Gadget-Deployment"><span id="DeploymentGuide-FinesseGadgetDeployment"></span><strong>Finesse Gadget Deployment</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/super-whisper-gadget/2.3.0/deployment-guide#Finesse-Gadget-Deployment">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Gadgets can be installed on your own web server or directly on the Finesse server. In order to install on the Finesse server follow these steps:</p>
+<p>1. Down the latest gadget’s specifications&nbsp; files from <a href="https://drive.google.com/drive/u/0/folders/1RTh4w88IMwsZlQwP6qDETMT8REvnrDrY" data-scope="external" rel="external noreferrer">here</a> and extract files on the desired directory.</p>
+<p>2. Open the Whisper.js file and update the web service Urls as per your deployment. If you are not deploying gadget in High Availability mode keep both Urls the same.</p>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 700px" data-component="image" data-align="align-start">
+   <img src="/__attachments/a_2f81187741aea8d5a9e58b848acf65759dbdc23ff355f2e5698762a433698d34/whispergadget5.png?cb=5529f378649592e99f7a0edf4dc76021" alt="whispergadget5.png" data-scope="internal" width="845" height="44">
+  </div>
+ </image-lightbox>
+</div>
+<p>3. Run FileZilla and login to finesse using following credentials&nbsp;</p>
+<ol>
+ <li>
+  <p>
+   <br>
+  </p>
+  <ol>
+   <li>
+    <p>Host e.g. <em>192.168.39 </em>&nbsp;(IP of the finesse where gadget will be deployed)</p>
+   </li>
+   <li>
+    <p>Username <em><strong>3rdpartygadget</strong></em><strong> &amp; </strong>Password e.g. 123456 <em>(ask administrator for the password) and port </em><em><strong>22</strong></em><em>.</em></p>
+   </li>
+  </ol>
+ </li>
+</ol>
+<p>4. Create a folder e.g. <strong>WhisperGadget </strong>into the files directory on finesse server and upload the specifications files and finesse server.</p>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 700px" data-component="image" data-align="align-start">
+   <img src="/__attachments/a_80a57d885adf3a798ee24ac693f66a495a185b941c1824839583ba0e5c3a7573/whispergadget6.png?cb=d4db1b7b7220f78b659b48fdc8e9b561" alt="whispergadget6.png" data-scope="internal" width="1183" height="556">
+  </div>
+ </image-lightbox>
+</div>
+<p>
+ <br>
+</p>
+<p>5. Repeat the same steps for deploying the gadget on secondary finesse server.&nbsp;</p>
+<h2 id="Finesse-Gadget-Layout-Configuration[hardBreak]"><span id="DeploymentGuide-FinesseGadgetLayoutConfiguration"></span><strong>Finesse Gadget Layout Configuration</strong>
+ <br>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/super-whisper-gadget/2.3.0/deployment-guide#Finesse-Gadget-Layout-Configuration[hardBreak]">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>
+ <br>
+ Next, we will update the Finesse layout to point to the new gadget. Load the Finesse administration by going to: https://&lt;hostname or ip&gt;:8445/cfadmin/
+</p>
+<ul>
+ <li>
+  <p>If your teams are utilizing the default layout, Click on the desktop layout tab. Otherwise,&nbsp; click on the Team Resources tab to edit a specific team's layout.</p>
+ </li>
+</ul>
+<ul>
+ <li>
+  <p>Where you place the Gadget is your preference. In this example I am placing the gadget under the HOME tab in a column under the supervisor role as shown below:&nbsp; &nbsp;&nbsp;
+   <br>
+   <br>
+   <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--width: 700px;"> <img src="/__attachments/a_9ab4619456ee76500d684714e06c83bbc328231e45e3929b87ee55e56f544ac7/whispergadget7.png?cb=829a428889cd7a31205e104de60b131e" alt="whispergadget7.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+</ul>
+<p>
+ <br>
+</p>
+<h2 id="Adding-SSL-Exception-in-Browser"><span id="DeploymentGuide-AddingSSLExceptioninBrowser"></span><strong>Adding SSL Exception in Browser&nbsp;</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/super-whisper-gadget/2.3.0/deployment-guide#Adding-SSL-Exception-in-Browser">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>To avoid this add domain signed certificate.</p>
+<p>This step should be repeated on all users (i.e. supervisor) machines where gadget is loading for the first time. Open the following URL in the browser and add the ssl certificate exception manually.&nbsp;</p>
+<p><a href="https://rest_url_aport/" data-scope="external" rel="external noreferrer">https://Rest_URL_A:port/</a></p>
+<p>
+ <br>
+</p>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 700px" data-component="image" data-align="align-start">
+   <img src="/__attachments/a_4b23052b71e4449a934ae9ac0d5085138a73b8c4e17ea5330d38900b5137cc1a/whispergadget8.png?cb=be427782141f593a91d9fe385500a4ce" alt="whispergadget8.png" data-scope="internal" width="1298" height="647">
+  </div>
+ </image-lightbox>
+</div>
+<p>
+ <br>
+</p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="68b54f36ea433722-21" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="68b54f36ea433722-21">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/super-whisper-gadget/2.3.0/component-level-diagram">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Component Level Diagram</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/super-whisper-gadget/2.3.0/supervisor-whisper-reports">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Supervisor Whisper Reports</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

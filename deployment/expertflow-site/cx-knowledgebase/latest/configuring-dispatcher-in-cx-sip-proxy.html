@@ -1,0 +1,3119 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_0d56ea526a1b5f570dc0e8ef8bcb998fbe9ce062a6292bf459fba84730b23ed0" data-confluence-content-id="725188626"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/cx-knowledgebase/latest/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="SBT">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>Configuring dispatcher in CX SIP PROXY | Expertflow CX</title>
+		<meta property="og:title" content="Configuring dispatcher in CX SIP PROXY | Expertflow CX">
+		<meta property="twitter:title" content="Configuring dispatcher in CX SIP PROXY | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/cx-knowledgebase/latest/configuring-dispatcher-in-cx-sip-proxy">
+		<meta property="og:url" content="https://docs.expertflow.com/cx-knowledgebase/latest/configuring-dispatcher-in-cx-sip-proxy">
+
+		<meta name="description" content="Login to the cxSIPproxy control panel by visiting http://host-ip/cp (replace host-ip with the actual IP of your VM) and use the following credentials( username…">
+		<meta property="og:description" content="Login to the cxSIPproxy control panel by visiting http://host-ip/cp (replace host-ip with the actual IP of your VM) and use the following credentials( username…">
+		<meta property="twitter:description" content="Login to the cxSIPproxy control panel by visiting http://host-ip/cp (replace host-ip with the actual IP of your VM) and use the following credentials( username…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__attachments/a_31ac22e89a366dfd89eb4fbc51539f5c20e6df6e886e9a18c8b73ee680bf2315/image-20241204-104454.png?cb=f7156fb5436a94ef9bc96af5c6b7fc6d">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__attachments/a_31ac22e89a366dfd89eb4fbc51539f5c20e6df6e886e9a18c8b73ee680bf2315/image-20241204-104454.png?cb=f7156fb5436a94ef9bc96af5c6b7fc6d">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2026-03-06T10:51:52.677Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": true
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.js"></script>
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="2d2c7dae9a6a0e74-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="2d2c7dae9a6a0e74-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-2d2c7dae9a6a0e74-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-2d2c7dae9a6a0e74-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-2d2c7dae9a6a0e74-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="2d2c7dae9a6a0e74-3" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="2d2c7dae9a6a0e74-3">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-2d2c7dae9a6a0e74-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-2d2c7dae9a6a0e74-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="2d2c7dae9a6a0e74-4" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="2d2c7dae9a6a0e74-5" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="2d2c7dae9a6a0e74-6" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="2d2c7dae9a6a0e74-7"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="2d2c7dae9a6a0e74-7" href="/cx-knowledgebase/latest/expertflow-cx-overview" >ExpertFlow CX Overview</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="2d2c7dae9a6a0e74-9"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="2d2c7dae9a6a0e74-9" href="/cx-knowledgebase/latest/expertflow-cx-platform-overview" >Expertflow CX Platform Overview</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="2d2c7dae9a6a0e74-12"						aria-labelledby="2d2c7dae9a6a0e74-11"
+					></button>
+				<a id="2d2c7dae9a6a0e74-11" href="/cx-knowledgebase/latest/solutions" >Solutions</a>
+			</div>
+
+<ul  id="2d2c7dae9a6a0e74-12" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="2d2c7dae9a6a0e74-14"						aria-labelledby="2d2c7dae9a6a0e74-13"
+					></button>
+				<a id="2d2c7dae9a6a0e74-13" href="/cx-knowledgebase/latest/customer-channels" >Omnichannel Engagement</a>
+			</div>
+
+<ul  id="2d2c7dae9a6a0e74-14" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="2d2c7dae9a6a0e74-15"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="2d2c7dae9a6a0e74-15" href="/cx-knowledgebase/latest/digital-channels" >Digital Channels</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="2d2c7dae9a6a0e74-17"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="2d2c7dae9a6a0e74-17" href="/cx-knowledgebase/latest/email" >Email</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="2d2c7dae9a6a0e74-20"						aria-labelledby="2d2c7dae9a6a0e74-19"
+					></button>
+				<a id="2d2c7dae9a6a0e74-19" href="/cx-knowledgebase/latest/cx-voice" >Voice and Video</a>
+			</div>
+
+<ul  id="2d2c7dae9a6a0e74-20" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="2d2c7dae9a6a0e74-21"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="2d2c7dae9a6a0e74-21" href="/cx-knowledgebase/latest/voice-calls-in-expertflow-cx-overview" >Voice Calls in Expertflow CX Overview</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="2d2c7dae9a6a0e74-23" href="/cx-knowledgebase/latest/web-app-calls" >Web &amp; App Calls</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="2d2c7dae9a6a0e74-25"						aria-labelledby="2d2c7dae9a6a0e74-24"
+					></button>
+				<a id="2d2c7dae9a6a0e74-24" href="/cx-knowledgebase/latest/cx-sip-proxy" >CX SIP Proxy</a>
+			</div>
+
+<ul  id="2d2c7dae9a6a0e74-25" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="2d2c7dae9a6a0e74-27"						aria-labelledby="2d2c7dae9a6a0e74-26"
+					></button>
+				<a id="2d2c7dae9a6a0e74-26" href="/cx-knowledgebase/latest/cx-sip-proxy-deployment-guide" >CX SIP Proxy Deployment Guide</a>
+			</div>
+
+<ul  id="2d2c7dae9a6a0e74-27" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="2d2c7dae9a6a0e74-28" href="/cx-knowledgebase/latest/cx-sip-proxy-installation-guide" >CX SIP Proxy Installation Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="2d2c7dae9a6a0e74-29" href="/cx-knowledgebase/latest/dialplan-implementation-in-ef-sip-proxy" >Dialplan implementation in EF SIP Proxy</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="2d2c7dae9a6a0e74-30" href="/cx-knowledgebase/latest/dialog-and-profile-replication-in-a-cluster-in-ef-" >Dialog and Profile replication in a cluster in EF SIP Proxy</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="2d2c7dae9a6a0e74-31" href="/cx-knowledgebase/latest/load-balancing-in-ef-sip-proxy-through-the-dispatc" >Load balancing in EF SIP Proxy through the dispatcher module</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="2d2c7dae9a6a0e74-32" href="/cx-knowledgebase/latest/ha-in-ef-sip-proxy" >HA in EF SIP Proxy</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="2d2c7dae9a6a0e74-33" href="/cx-knowledgebase/latest/configuring-dispatcher-in-cx-sip-proxy" aria-current="page">Configuring dispatcher in CX SIP PROXY</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="2d2c7dae9a6a0e74-34" href="/cx-knowledgebase/latest/configuring-load-balancer-in-cx-sip-proxy" >Configuring load balancer in CX SIP PROXY</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="2d2c7dae9a6a0e74-35"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="2d2c7dae9a6a0e74-35" href="/cx-knowledgebase/latest/cx-media-server" >CX Media Server</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="2d2c7dae9a6a0e74-37" href="/cx-knowledgebase/latest/call-forking-concepts" >Call Forking Concepts</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="2d2c7dae9a6a0e74-38"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="2d2c7dae9a6a0e74-38" href="/cx-knowledgebase/latest/ef-dialer-release-notes" >CX Dialer</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="2d2c7dae9a6a0e74-40"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="2d2c7dae9a6a0e74-40" href="/cx-knowledgebase/latest/cx-voice-deployment" >CX Voice Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="2d2c7dae9a6a0e74-42"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="2d2c7dae9a6a0e74-42" href="/cx-knowledgebase/latest/cx-voice-configuration-guide" >CX Voice Channel Configuration Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="2d2c7dae9a6a0e74-44"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="2d2c7dae9a6a0e74-44" href="/cx-knowledgebase/latest/troubleshooting-for-cx-voice" >Troubleshooting for CX Voice</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="2d2c7dae9a6a0e74-46"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="2d2c7dae9a6a0e74-46" href="/cx-knowledgebase/latest/cx-voice-upgrade-guides" >CX Voice Upgrade Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="2d2c7dae9a6a0e74-48" href="/cx-knowledgebase/latest/cx-voice-limitations" >CX-Voice Limitations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="2d2c7dae9a6a0e74-49" href="/cx-knowledgebase/latest/livekit-deployment-guide" >LiveKit - Deployment Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="2d2c7dae9a6a0e74-50" href="/cx-knowledgebase/latest/ai-voice-agent-system-livekit-automated-call-handling-intelligent-routing" >AI Voice Agent System (LiveKit) — Automated Call Handling &amp; Intelligent Routing</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="2d2c7dae9a6a0e74-51"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="2d2c7dae9a6a0e74-51" href="/cx-knowledgebase/latest/channel-connector-developer-guide" >Channel Connector Developer Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="2d2c7dae9a6a0e74-53"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="2d2c7dae9a6a0e74-53" href="/cx-knowledgebase/latest/nlu-digital-bots" >NLU / Digital Bots</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="2d2c7dae9a6a0e74-55" href="/cx-knowledgebase/latest/ai-self-service" >AI &amp; Self-Service</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="2d2c7dae9a6a0e74-56" href="/cx-knowledgebase/latest/agent-ai-assistance" >Agent Assistance</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="2d2c7dae9a6a0e74-57"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="2d2c7dae9a6a0e74-57" href="/cx-knowledgebase/latest/quality-management" >Quality Management</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="2d2c7dae9a6a0e74-59"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="2d2c7dae9a6a0e74-59" href="/cx-knowledgebase/latest/cx-surveys" >Surveys</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="2d2c7dae9a6a0e74-61"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="2d2c7dae9a6a0e74-61" href="/cx-knowledgebase/latest/browser-based-calling" >Browser-Based Calling</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="2d2c7dae9a6a0e74-63" href="/cx-knowledgebase/latest/untitled-live-doc-2026-04-13" >Untitled live doc 2026-04-13</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="2d2c7dae9a6a0e74-64"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="2d2c7dae9a6a0e74-64" href="/cx-knowledgebase/latest/platform" >Platform</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="2d2c7dae9a6a0e74-66"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="2d2c7dae9a6a0e74-66" href="/cx-knowledgebase/latest/deployment-installation" >Deployment &amp; Installation</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="2d2c7dae9a6a0e74-68"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="2d2c7dae9a6a0e74-68" href="/cx-knowledgebase/latest/reports" >Reports and Analytics</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="2d2c7dae9a6a0e74-70"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="2d2c7dae9a6a0e74-70" href="/cx-knowledgebase/latest/resources" >Resources</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="2d2c7dae9a6a0e74-72"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="2d2c7dae9a6a0e74-72" href="/cx-knowledgebase/latest/contact-center-personas" >Contact Center Personas</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="2d2c7dae9a6a0e74-74" href="/cx-knowledgebase/latest/user-inactivity-logout" >User Inactivity Logout</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="2d2c7dae9a6a0e74-75" href="/cx-knowledgebase/latest/agent-desk-release-strategy" >Agent Desk Release Strategy</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="2d2c7dae9a6a0e74-76" href="/cx-knowledgebase/latest/channels-integration-onboarding-guide-s" >Channels Integration - Onboarding guide(s)</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="2d2c7dae9a6a0e74-77" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="2d2c7dae9a6a0e74-77">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest">
+										Expertflow CX
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest/solutions">
+										Solutions
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest/customer-channels">
+										Omnichannel Engagement
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest/cx-voice">
+										Voice and Video
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest/cx-sip-proxy">
+										CX SIP Proxy
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest/cx-sip-proxy-deployment-guide">
+										CX SIP Proxy Deployment Guide
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="2d2c7dae9a6a0e74-78">
+			<h2 class="toc-heading" id="2d2c7dae9a6a0e74-78">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>Configuring dispatcher in CX SIP PROXY</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+	
+
+	
+
+	
+
+
+	
+
+	
+
+
+	
+	
+		
+
+	
+		
+	
+	
+	
+	
+	
+
+	
+		
+		
+	
+	
+	
+
+	
+	
+	
+	<ol>
+ <li>
+  <p>Login to the cxSIPproxy control panel by visiting <a href="http://host-ip/cp" data-scope="external" rel="external noreferrer">http://host-ip/cp</a> (replace host-ip with the actual IP of your VM) and use the following credentials( username: efuser, password: efuser)</p>
+ </li>
+ <li>
+  <p>To add a Dispatcher go to <strong>System</strong> &gt; <strong>Dispatcher</strong></p>
+ </li>
+</ol>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 1440px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_31ac22e89a366dfd89eb4fbc51539f5c20e6df6e886e9a18c8b73ee680bf2315/image-20241204-104454.png?cb=f7156fb5436a94ef9bc96af5c6b7fc6d" alt="image-20241204-104454.png" data-scope="internal" width="1733" height="831">
+  </div>
+ </image-lightbox>
+</div>
+<p>
+ <br>
+</p>
+<ol start="3">
+ <li>
+  <p>To add a destination click on <strong>Add Destination</strong>.</p>
+ </li>
+</ol>
+<p data-indentation-level="1">We need to organize destinations into specific <strong>sets</strong> based on their type. Each destination type will be organized into a distinct set. For example, All CVP destinations will belong to <strong>Set ID 1</strong>. Similarly, other destinations like Cube, VVB, CUCM, and Dialer will have their own respective sets like:</p>
+<ul>
+ <li>
+  <p><strong>Set 1</strong>: CVP destinations</p>
+ </li>
+ <li>
+  <p><strong>Set 2</strong>: Cube destinations</p>
+ </li>
+ <li>
+  <p><strong>Set 3</strong>: VVB destinations</p>
+ </li>
+ <li>
+  <p><strong>Set 4</strong>: CUCM</p>
+ </li>
+ <li>
+  <p><strong>Set 5</strong>: Dialer.</p>
+ </li>
+</ul>
+<p data-indentation-level="1">The grouping ensures that when a call is routed to a specific set (e.g., Set ID 1 for CVP), the dispatcher will select the destination within that set according to its weight.</p>
+<ol start="4">
+ <li>
+  <p>Now add the required information as specified below.</p>
+ </li>
+</ol>
+<div class="theme-table" style="--width: 1028px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="center" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 304px">
+       <col style="width: 723px">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p><strong>Parameter</strong></p>
+        </th>
+        <th>
+         <p><strong>Explanation</strong></p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p>Set ID</p>
+        </td>
+        <td>
+         <p>The <strong>numerical ID</strong> of the dispatcher set/group for the new destination.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>SIP URI</p>
+        </td>
+        <td>
+         <p>SIP URI pointing to the destination. To define the destination, use the following SIP URI format:</p>
+         <p><code>sip:&lt;IP&gt;:&lt;port&gt;</code></p>
+         <ul>
+          <li>
+           <p><code>&lt;IP&gt;</code>: The destination’s IP address.</p>
+          </li>
+          <li>
+           <p><code>&lt;port&gt;</code>: The port number on which the destination is listening.</p>
+          </li>
+         </ul>
+         <p>Example:
+          <br>
+          For a CVP destination with IP <code>192.168.1.10</code> and port <code>5060</code>, the SIP URI would be:
+          <br>
+          <code>sip:192.168.1.10:5060</code></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Socket</p>
+        </td>
+        <td>
+         <p>The cxSIPproxy network listener (as <code>sip:&lt;IP&gt;:&lt;port&gt;</code>) to be used for reaching the destination <span style="--bg-color: var(--orange, #fedec8);">(leave it empty)</span></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>State</p>
+        </td>
+        <td>
+         <p>The intial state of the destination.</p>
+         <ol>
+          <li>
+           <p><strong>Active: </strong>The destination will be shown active and available for call routing.</p>
+          </li>
+          <li>
+           <p><strong>Inactive:</strong> The destination will be shown inactive and will not be available for call routing. You’ll have to edit this destination again to make it active.</p>
+          </li>
+         </ol>
+         <p><span style="--bg-color: var(--orange, #fedec8);">Always keep the state active.</span></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Probing</p>
+        </td>
+        <td>
+         <p>Probing determines the health status of each destination to ensure calls are not routed to unavailable destinations. There are two probing options to decide either the destination should be probed(for availability) or not.</p>
+         <ol>
+          <li>
+           <p><strong>Default</strong>: In this mode, the default setting for probing will be used I:e only the destinations with probing state Always will be probed.</p>
+          </li>
+          <li>
+           <p><strong>Always</strong>: Always probe this destination, regardless its status.</p>
+          </li>
+         </ol>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Weight</p>
+        </td>
+        <td>
+         <p>The weight of a destination is currently used in the hashing algorithms and it increases the probability of the destination being chosen(if we have two destinations with weights 1 respectively 4 then the second one is 4 times more likely to be selected than the other). The sum of all weights does not need to add up to a specific number.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Attributes</p>
+        </td>
+        <td>
+         <p>String of custom Attributes, to be passed to the cxSIPproxy script. <span style="--bg-color: var(--orange, #fedec8);">Leave this column empty.</span></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Description</p>
+        </td>
+        <td>
+         <p>The description is in DB and is not used by cxSIPproxy. Provide clear and concise descriptions for each destination. For example, if the destination is a CVP, include "CVP" in its description for easy identification.</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>After adding the data it should look like this</p>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 686px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_e7d7f190342963e69044f3670e26978814021693327e6a71b89304b4395e1770/image-20241209-040241.png?cb=37bbb39c186eb597be0e4ced2b255aec" alt="image-20241209-040241.png" data-scope="internal" width="686" height="561">
+  </div>
+ </image-lightbox>
+</div>
+<p>
+ <br>
+</p>
+<ol start="6">
+ <li>
+  <p>Now click on <strong>Add</strong> to save it and it should look like this.</p>
+ </li>
+</ol>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 1014px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_0d1812d7abd268af263884088a51b42e471b6040f20215b0ad74de714b3b2f3c/image-20241209-040418.png?cb=dcd6ece4d03dd2d7e04eb4cbef5ed0de" alt="image-20241209-040418.png" data-scope="internal" width="1014" height="228">
+  </div>
+ </image-lightbox>
+</div>
+<p>
+ <br>
+</p>
+<p data-indentation-level="1">If the memory state indicator is not shown as <span style="--bg-color: var(--lime, #d3f1a7);">green</span>, click on the <span style="--color: var(--red, #ff5630);"><strong>red</strong></span> Memory state indicator, and then click <strong>OK</strong> to make it active. If it’s still not green, confirm that the destination is up and accessible.</p>
+<p data-indentation-level="1">The dispatcher destination has been added. To add destinations for other sets, repeat these steps for those sets.</p>
+<ol start="9">
+ <li>
+  <p>Now go to System&gt; Dialplan and click on the gear icon</p>
+ </li>
+</ol>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 1197px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_e940d45dcfc770e1d1d0750f9f14bb14d72eea495571237233bd1420473091cd/image-20241206-115108.png?cb=039422eb09a00aaadd6032cbd66dadb9" alt="image-20241206-115108.png" data-scope="internal" width="1687" height="662">
+  </div>
+ </image-lightbox>
+</div>
+<p>
+ <br>
+</p>
+<ol start="10">
+ <li>
+  <p>In <strong>General settings </strong>from the <strong>Dialplan attributes modes</strong> drop-down select <code>Checkboxes</code></p>
+ </li>
+</ol>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 529px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_7cd9dd54a8e27001be038ffa6745a47331f7f4697268ad5c544fb0907e15a3c1/image-20241206-115418.png?cb=1cdf042caae2e8838a477916b9c5af4c" alt="image-20241206-115418.png" data-scope="internal" width="855" height="313">
+  </div>
+ </image-lightbox>
+</div>
+<p>
+ <br>
+</p>
+<ol start="11">
+ <li>
+  <p>Now replace the following attributes into the<strong> Attributes list</strong> data. The code below will add attributes for five groups of load balancers and five sets/groups of dispatchers. You can add more attributes in a similar manner.</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>{
+    "LB-1": "LB-1",
+    "LB-2": "LB-2",
+    "LB-3": "LB-3",
+    "LB-4": "LB-4",
+    "LB-5": "LB-5",
+    "DS-1": "DS-1",
+    "DS-2": "DS-2",
+    "DS-3": "DS-3",
+    "DS-4": "DS-4",
+    "DS-5": "DS-5"
+}
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+</ol>
+<p data-indentation-level="1">It will look like this. Click on <strong>Save</strong> to save these settings.</p>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 475px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_95dc58ec9627d9a14b97a1811b5f646a60a5cd618af5ae673c465621eaac6647/image-20241203-071437.png?cb=8d6cab9f4fc0ff0ead287cee71cd4ad6" alt="image-20241203-071437.png" data-scope="internal" width="1049" height="988">
+  </div>
+ </image-lightbox>
+</div>
+<ol start="11">
+ <li>
+  <p>To add a new rule, click on <strong>Add New Rule </strong>in the System &gt; Dialplan section and enter the required information as specified below.</p>
+ </li>
+</ol>
+<div class="theme-table" style="--width: 1028px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="center" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 305px">
+       <col style="width: 723px">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p><strong>Parameter</strong></p>
+        </th>
+        <th>
+         <p><strong>Explanation</strong></p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p>Dialplan ID</p>
+        </td>
+        <td>
+         <p>This is the unique ID that is used in the cxSIPproxy script. <span style="--bg-color: var(--orange, #fedec8);">Always keep it equal to 1.</span></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Rule priority</p>
+        </td>
+        <td>
+         <p>Assign a priority value or level to the rule. Use lower values for higher priority, <span style="--bg-color: var(--orange, #fedec8);">set it to 0 for the highest priority.</span></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Matching operator</p>
+        </td>
+        <td>
+         <p>What method will be used to match the string/username of the “To” header of the SIP message?</p>
+         <ul>
+          <li>
+           <p>REGEX: Use Perl Compatible Regular Expressions to match against the string/username/prefix of the “To” header of the SIP message.</p>
+          </li>
+          <li>
+           <p>EQUAL: Perform a string equality test against the string/username/prefix of the “To” header of the input SIP message.&nbsp;</p>
+          </li>
+         </ul>
+         <p>Select one of these options accordingly.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Matching Regular Expression</p>
+        </td>
+        <td>
+         <p>For this rule, the exact <strong>regex</strong> or <strong>string</strong> used to be matched against the string/username of the incoming message. For regex, you can use <a href="https://regex101.com/" data-scope="external" rel="external noreferrer">this link</a> to confirm the regex. For prefix-based routing, a common regex used in SIP proxies is ^&lt;prefix&gt;.*, where, for example, a regex of ^4433.* will capture all traffic that starts with "4433," such as 434466779788@domainA, 4433322344@domainB, and so on.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Matching Flags</p>
+        </td>
+        <td>
+         <p>The case of the characters can be ignored by selecting <strong>case insensitive</strong>, or the matching can be kept case sensitive by choosing the <strong>case sensitive</strong> option.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Match Only</p>
+        </td>
+        <td>
+         <p>Check this option if you want to route SIP traffic to the next destination without substituting the prefix or username.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Substitution Regular Expression</p>
+        </td>
+        <td>
+         <p>If the <strong>Match Only </strong>option is not checked, enter the exact value used in the <strong>Matching Regular Expression</strong> here. This means that the username/prefix part of the “To” header in the SIP message will be updated by the <strong>Replacement Expression</strong> (the value provided below).</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Replacement Expression</p>
+        </td>
+        <td>
+         <p>Provide the value that will replace the username of the “To” header of the SIP message.</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="2" style="--bg-color: var(--subtle-teal, #e6fcff);">
+         <p>Please choose <strong>only one attribute</strong> from the list below. Attributes beginning with "DS" will route the call to specific set of dispatcher. For example, select "DS-1" to route the call to Set 1 of the dispatcher, or "DS-2" for Set 2. After adding this information, the final result should resemble the image provided below.</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<div class="theme-block-image">
+ <image-lightbox>
+  <figure data-component="figure">
+   <div class="block-image" style="--width: 832px" data-component="image" data-align="align-center">
+    <img src="/__attachments/a_97f2558f6280761b821ff391d640b2d3c28f4a044ee16e0874f75f9ee0988bcf/image-20241204-104205.png?cb=4a79c0ce94a154e6a540d01f3bb5dac0" alt="image-20241204-104205.png" data-scope="internal" width="832" height="927">
+   </div>
+   <figcaption>This configuration shown in this image is routing the call with username/prefix starting with 1122 to the Set 1 of Dispatcher. Set 1 can be any CVP, VVB or CUCM.</figcaption>
+  </figure>
+ </image-lightbox>
+</div>
+<p data-indentation-level="1">Click on <strong>Add</strong> to save it.</p>
+<p>Prefix-based routing can be implemented for CVPs, CUCM, or any other sets of destinations this way.</p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="2d2c7dae9a6a0e74-79" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="2d2c7dae9a6a0e74-79">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/cx-knowledgebase/latest/ha-in-ef-sip-proxy">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">HA in EF SIP Proxy</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/cx-knowledgebase/latest/configuring-load-balancer-in-cx-sip-proxy">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Configuring load balancer in CX SIP PROXY</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

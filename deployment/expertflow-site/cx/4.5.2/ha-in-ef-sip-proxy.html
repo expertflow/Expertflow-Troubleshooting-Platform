@@ -1,0 +1,4135 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_d9b7fe1aebcccfa7f6da9ddeb68579545a2399699b730bdbe272f2c3284ae88a" data-confluence-content-id="519700619"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/cx/4.5.2/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="CX">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>HA in EF SIP Proxy | Expertflow CX</title>
+		<meta property="og:title" content="HA in EF SIP Proxy | Expertflow CX">
+		<meta property="twitter:title" content="HA in EF SIP Proxy | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/cx/4.5.2/ha-in-ef-sip-proxy">
+		<meta property="og:url" content="https://docs.expertflow.com/cx/4.5.2/ha-in-ef-sip-proxy">
+
+		<meta name="description" content="Description High Availability (HA) is essential for ensuring uninterrupted service and resilience in real-time communication systems. HA ensures that in case o…">
+		<meta property="og:description" content="Description High Availability (HA) is essential for ensuring uninterrupted service and resilience in real-time communication systems. HA ensures that in case o…">
+		<meta property="twitter:description" content="Description High Availability (HA) is essential for ensuring uninterrupted service and resilience in real-time communication systems. HA ensures that in case o…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__attachments/a_75a39b12a949854f9423734e0cdd9f1e36ab4c4e55d44133bfa35b213c1b675b/CX_SIP_Proxy-20240314-074951.png?cb=7894c448b31388b64229bd1fb841a460">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__attachments/a_75a39b12a949854f9423734e0cdd9f1e36ab4c4e55d44133bfa35b213c1b675b/CX_SIP_Proxy-20240314-074951.png?cb=7894c448b31388b64229bd1fb841a460">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2024-09-16T11:24:53.354Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": true
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.js"></script>
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="7737bfb7482cd417-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="7737bfb7482cd417-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="7737bfb7482cd417-19">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="7737bfb7482cd417-19" name="version" onchange="self.location.assign(this.value)" >
+				<option id="7737bfb7482cd417-3"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="7737bfb7482cd417-4"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="7737bfb7482cd417-5"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="7737bfb7482cd417-6"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="7737bfb7482cd417-7"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="7737bfb7482cd417-8"  value="/cx/4.10"  >
+					4.10
+				</option>
+				<option id="7737bfb7482cd417-9"  value="/cx/4.9/ha-in-ef-sip-proxy"  >
+					4.9
+				</option>
+				<option id="7737bfb7482cd417-10"  value="/cx/4.8/ha-in-ef-sip-proxy"  >
+					4.8
+				</option>
+				<option id="7737bfb7482cd417-11"  value="/cx/4.7/ha-in-ef-sip-proxy"  >
+					4.7
+				</option>
+				<option id="7737bfb7482cd417-12"  value="/cx/4.6/ha-in-ef-sip-proxy"  >
+					4.6
+				</option>
+				<option id="7737bfb7482cd417-13"  value="/cx/4.5.3/ha-in-ef-sip-proxy"  >
+					4.5.3
+				</option>
+				<option id="7737bfb7482cd417-14"  value="/cx/4.5.2/ha-in-ef-sip-proxy"  selected="">
+					4.5.2
+				</option>
+				<option id="7737bfb7482cd417-15"  value="/cx/4.5.1/ha-in-ef-sip-proxy"  >
+					4.5.1
+				</option>
+				<option id="7737bfb7482cd417-16"  value="/cx/4.5"  >
+					4.5
+				</option>
+				<option id="7737bfb7482cd417-17"  value="/cx/4.4"  >
+					4.4
+				</option>
+				<option id="7737bfb7482cd417-18"  value="/cx/4.3"  >
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('7737bfb7482cd417-19');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-7737bfb7482cd417-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-7737bfb7482cd417-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-7737bfb7482cd417-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="7737bfb7482cd417-20" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="7737bfb7482cd417-20">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-7737bfb7482cd417-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-7737bfb7482cd417-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="7737bfb7482cd417-37">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="7737bfb7482cd417-37" name="version" onchange="self.location.assign(this.value)" >
+				<option id="7737bfb7482cd417-21"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="7737bfb7482cd417-22"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="7737bfb7482cd417-23"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="7737bfb7482cd417-24"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="7737bfb7482cd417-25"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="7737bfb7482cd417-26"  value="/cx/4.10"  >
+					4.10
+				</option>
+				<option id="7737bfb7482cd417-27"  value="/cx/4.9/ha-in-ef-sip-proxy"  >
+					4.9
+				</option>
+				<option id="7737bfb7482cd417-28"  value="/cx/4.8/ha-in-ef-sip-proxy"  >
+					4.8
+				</option>
+				<option id="7737bfb7482cd417-29"  value="/cx/4.7/ha-in-ef-sip-proxy"  >
+					4.7
+				</option>
+				<option id="7737bfb7482cd417-30"  value="/cx/4.6/ha-in-ef-sip-proxy"  >
+					4.6
+				</option>
+				<option id="7737bfb7482cd417-31"  value="/cx/4.5.3/ha-in-ef-sip-proxy"  >
+					4.5.3
+				</option>
+				<option id="7737bfb7482cd417-32"  value="/cx/4.5.2/ha-in-ef-sip-proxy"  selected="">
+					4.5.2
+				</option>
+				<option id="7737bfb7482cd417-33"  value="/cx/4.5.1/ha-in-ef-sip-proxy"  >
+					4.5.1
+				</option>
+				<option id="7737bfb7482cd417-34"  value="/cx/4.5"  >
+					4.5
+				</option>
+				<option id="7737bfb7482cd417-35"  value="/cx/4.4"  >
+					4.4
+				</option>
+				<option id="7737bfb7482cd417-36"  value="/cx/4.3"  >
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('7737bfb7482cd417-37');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7737bfb7482cd417-38" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7737bfb7482cd417-39" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7737bfb7482cd417-40" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7737bfb7482cd417-41"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7737bfb7482cd417-41" href="/cx/4.5.2/cx-release-notes" >CX Release Notes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7737bfb7482cd417-43" href="/cx/4.5.2/cx-release-history" >CX Release History</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7737bfb7482cd417-44" href="/cx/4.5.2/expertflow-cx-data-sheet" >CX Data Sheet</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7737bfb7482cd417-45" href="/cx/4.5.2/hc-3-x-vs-expertflow-cx-features-comparison" >HC 3.x vs Expertflow CX - Features Comparison</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7737bfb7482cd417-46"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7737bfb7482cd417-46" href="/cx/4.5.2/conversation-studio" >Conversation Studio</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7737bfb7482cd417-48"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7737bfb7482cd417-48" href="/cx/4.5.2/conversation-control" >Conversation Objects</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7737bfb7482cd417-50" href="/cx/4.5.2/customer-identities" >Customer Identities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="7737bfb7482cd417-52"						aria-labelledby="7737bfb7482cd417-51"
+					></button>
+				<a id="7737bfb7482cd417-51" href="/cx/4.5.2/customer-channels" >Channels</a>
+			</div>
+
+<ul  id="7737bfb7482cd417-52" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7737bfb7482cd417-53"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7737bfb7482cd417-53" href="/cx/4.5.2/digital-channels" >Digital Channels</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7737bfb7482cd417-55"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7737bfb7482cd417-55" href="/cx/4.5.2/email" >Email</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="7737bfb7482cd417-58"						aria-labelledby="7737bfb7482cd417-57"
+					></button>
+				<a id="7737bfb7482cd417-57" href="/cx/4.5.2/cx-voice" >Voice and Video</a>
+			</div>
+
+<ul  id="7737bfb7482cd417-58" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="7737bfb7482cd417-60"						aria-labelledby="7737bfb7482cd417-59"
+					></button>
+				<a id="7737bfb7482cd417-59" href="/cx/4.5.2/cx-sip-proxy" >CX SIP Proxy</a>
+			</div>
+
+<ul  id="7737bfb7482cd417-60" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="7737bfb7482cd417-62"						aria-labelledby="7737bfb7482cd417-61"
+					></button>
+				<a id="7737bfb7482cd417-61" href="/cx/4.5.2/cx-sip-proxy-deployment-guide" >CX SIP Proxy Deployment Guide</a>
+			</div>
+
+<ul  id="7737bfb7482cd417-62" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7737bfb7482cd417-63" href="/cx/4.5.2/cx-sip-proxy-installation-guide" >CX SIP Proxy Installation Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7737bfb7482cd417-64" href="/cx/4.5.2/dialplan-implementation-in-ef-sip-proxy" >Dialplan implementation in EF SIP Proxy</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7737bfb7482cd417-65" href="/cx/4.5.2/dialog-and-profile-replication-in-a-cluster-in-ef-" >Dialog and Profile replication in a cluster in EF SIP Proxy</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7737bfb7482cd417-66" href="/cx/4.5.2/load-balancing-in-ef-sip-proxy-through-the-dispatc" >Load balancing in EF SIP Proxy through the dispatcher module</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7737bfb7482cd417-67" href="/cx/4.5.2/ha-in-ef-sip-proxy" aria-current="page">HA in EF SIP Proxy</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7737bfb7482cd417-68" href="/cx/4.5.2/cx-media-server" >CX Media Server</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7737bfb7482cd417-69" href="/cx/4.5.2/fs-js-api-3-2-8" >FreeSWITCH JS API (v3.2.8)</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7737bfb7482cd417-70" href="/cx/4.5.2/call-forking-concepts" >Call Forking Concepts</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7737bfb7482cd417-71"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7737bfb7482cd417-71" href="/cx/4.5.2/ef-dialer-release-notes" >CX Dialer</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7737bfb7482cd417-73"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7737bfb7482cd417-73" href="/cx/4.5.2/cx-voice-deployment" >CX Voice Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7737bfb7482cd417-75"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7737bfb7482cd417-75" href="/cx/4.5.2/cx-voice-configuration-guide" >CX Voice Configuration Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7737bfb7482cd417-77"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7737bfb7482cd417-77" href="/cx/4.5.2/troubleshooting-for-cx-voice" >Troubleshooting for CX Voice</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7737bfb7482cd417-79"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7737bfb7482cd417-79" href="/cx/4.5.2/cx-voice-upgrade-guides" >CX Voice Upgrade Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7737bfb7482cd417-81" href="/cx/4.5.2/cx-voice-limitations" >CX-Voice Limitations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7737bfb7482cd417-82" href="/cx/4.5.2/siprec-based-recording-using-a-drachtio-server-and" >SIPrec-based recording using a drachtio server, and FreeSWITCH as the media server</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7737bfb7482cd417-83"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7737bfb7482cd417-83" href="/cx/4.5.2/channel-connector-developer-guide" >Channel Connector Developer Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7737bfb7482cd417-85"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7737bfb7482cd417-85" href="/cx/4.5.2/nlu-digital-bots" >NLU / Digital Bots</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7737bfb7482cd417-87"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7737bfb7482cd417-87" href="/cx/4.5.2/cx-events-and-activity-types" >CX-Activities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7737bfb7482cd417-89" href="/cx/4.5.2/solution-architecture" >Solution Architecture</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7737bfb7482cd417-90"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7737bfb7482cd417-90" href="/cx/4.5.2/reports" >Reports</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7737bfb7482cd417-92" href="/cx/4.5.2/cx-historical-reports-supporting-tables" >CX Historical Reports- Supporting Tables</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7737bfb7482cd417-93"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7737bfb7482cd417-93" href="/cx/4.5.2/key-reporting-concepts" >Key Reporting Concepts</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7737bfb7482cd417-95"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7737bfb7482cd417-95" href="/cx/4.5.2/reporting-connector" >Reporting Connector</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7737bfb7482cd417-97"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7737bfb7482cd417-97" href="/cx/4.5.2/agent-capabilities" >Agent Capabilities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7737bfb7482cd417-99"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7737bfb7482cd417-99" href="/cx/4.5.2/supervisor-controls" >Supervisor Controls</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7737bfb7482cd417-101"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7737bfb7482cd417-101" href="/cx/4.5.2/deployment-guides" >Deployment Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7737bfb7482cd417-103"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7737bfb7482cd417-103" href="/cx/4.5.2/developer-guides" >Developer Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7737bfb7482cd417-105"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7737bfb7482cd417-105" href="/cx/4.5.2/unified-admin-guide" >Unified Admin Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7737bfb7482cd417-107"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7737bfb7482cd417-107" href="/cx/4.5.2/security" >Security</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="7737bfb7482cd417-109"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="7737bfb7482cd417-109" href="/cx/4.5.2/integrations" >Integrations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7737bfb7482cd417-111" href="/cx/4.5.2/compatibility-guides" >Compatibility Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7737bfb7482cd417-112" href="/cx/4.5.2/updating-the-language-at-agent-desk" >Updating the Language at Agent Desk</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="7737bfb7482cd417-113" href="/cx/4.5.2/agent-desk-app" >Agent Desk App</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="7737bfb7482cd417-114" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="7737bfb7482cd417-114">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.5.2">
+										Expertflow CX
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.5.2/customer-channels">
+										Channels
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.5.2/cx-voice">
+										Voice and Video
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.5.2/cx-sip-proxy">
+										CX SIP Proxy
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.5.2/cx-sip-proxy-deployment-guide">
+										CX SIP Proxy Deployment Guide
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="7737bfb7482cd417-115">
+			<h2 class="toc-heading" id="7737bfb7482cd417-115">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>HA in EF SIP Proxy</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+	
+	
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+	
+
+
+	
+	
+		
+	
+
+	
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+		
+		
+	
+	
+	
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<h3 id="Description"><span id="HAinEFSIPProxy-Description"></span>Description
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.5.2/ha-in-ef-sip-proxy#Description">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>High Availability (HA) is essential for ensuring uninterrupted service and resilience in real-time communication systems. HA ensures that in case of hardware failures, network issues, or planned maintenance, the service remains available without interruption. In an HA setup, EF SIP Proxy is deployed in a redundant manner, with failover mechanisms in place to automatically switch traffic to a backup instance in case of a failure.</p>
+<h3 id="Keepalived.service"><span id="HAinEFSIPProxy-Keepalived.service"></span>Keepalived.service
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.5.2/ha-in-ef-sip-proxy#Keepalived.service">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>The <code>keepalived.service</code> plays a crucial role in achieving High Availability (HA) through the use of a Virtual IP (VIP). Keepalived is a Linux-based utility that implements the Virtual Router Redundancy Protocol (VRRP), allowing multiple servers to share a common VIP. By configuring keepalived on multiple servers within a cluster, one server is elected as the master while the other acts as a backup. The master server assumes ownership of the VIP and handles incoming traffic. In the event of a failure on the master server, such as a hardware or software issue, keepalived automatically transfers the VIP to a backup server, ensuring seamless failover without service interruption. This allows the EF SIP proxy to continue processing the SIP requests. Keepalived monitors the health of servers and network connectivity to determine when failover is necessary, providing a reliable mechanism for achieving High Availability through Virtual IP.</p>
+<h3 id="Keepalived-module"><span id="HAinEFSIPProxy-Keepalivedmodule"></span>Keepalived module 
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.5.2/ha-in-ef-sip-proxy#Keepalived-module">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>The keepalived module helps to see and control the status of a keepalived cluster through EF SIP proxy control panel. This tool connects to each machine or node in the cluster using SSH to check its status, which is then shown on the main page. In the display, green nodes are Primary nodes, meaning they currently have the Virtual IP active. Gray nodes are Backup nodes. If a node appears red, it means there's a problem, like bad communication through SSH. With this tool, we can also change a node's status to Primary by clicking on it. When we do this, a command is sent to each node in the cluster. The command makes the clicked node Primary and switches all other nodes to Backup mode.</p>
+<h3 id="Requirements"><span id="HAinEFSIPProxy-Requirements"></span>Requirements
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.5.2/ha-in-ef-sip-proxy#Requirements">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>To set up HA for EF SIP Proxy we need at least two EF SIP Proxy servers and one virtual IP. Also, ensure that the machine is using PHP 7.4. The control panel may not function smoothly with other PHP versions. Keepalived module depends on the ssh2 php extension to run, thus it has to be manually installed and set up before using the module. For example, on Debian 12, run <code>apt-get install php7.4-ssh2.</code> Run these commands to ensure the installation of dependencies.</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>sudo apt-get install -y lsb-release apt-transport-https ca-certificates
+sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
+sudo sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" &gt; /etc/apt/sources.list.d/php.list'
+sudo apt-get update
+apt-get install -y php7.4 php7.4-curl php7.4-gd php-pear php7.4-cli php7.4-mysql php7.4-apcu;
+apt-get install libapache2-mod-php7.4 
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="Overview-of-process-to-follow"><span id="HAinEFSIPProxy-Overviewofprocesstofollow"></span>Overview of process to follow
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.5.2/ha-in-ef-sip-proxy#Overview-of-process-to-follow">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>The following steps provide an overview to achieve HA for EF SIP proxy.</p>
+<ol>
+ <li>
+  <p>Setting up the cluster</p>
+ </li>
+ <li>
+  <p>Adding nodes</p>
+ </li>
+ <li>
+  <p>Keepalived utility configuration for assigning Virtual IP</p>
+ </li>
+ <li>
+  <p>Making changes in keepalived module functions</p>
+ </li>
+ <li>
+  <p>Making the Virtual IP operational</p>
+ </li>
+ <li>
+  <p>Keepalived module configuration</p>
+ </li>
+</ol>
+<hr>
+<h3 id="Step-1:-Setting-up-the-cluster"><span id="HAinEFSIPProxy-Step1:Settingupthecluster"></span>Step 1: Setting up the cluster
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.5.2/ha-in-ef-sip-proxy#Step-1:-Setting-up-the-cluster">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Setting up clustering in EF SIP Proxy involves configuring multiple EF SIP Proxy instances to work together as a cluster, typically for high availability.</p>
+<ul>
+ <li>
+  <p>Open <code>opensips.cfg</code> file in server 1 to change the user location module configuration, add binary transport protocol, and add the clusterer module in the modules section.</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>nano /etc/opensips/opensips.cfg
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+ <li>
+  <p>Change the user location module configuration in the modules section</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>#### USeR LOCation module
+loadmodule "usrloc.so"
+modparam("usrloc", "location_cluster", CLUSTER_ID)
+modparam("usrloc", "working_mode_preset", "full-sharing-cluster")
+modparam("usrloc", "db_url", "mysql://opensips:opensipsrw@localhost/opensips")
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+ <li>
+  <p>Replace<code> CLUSTER_ID </code>with any integer that is not yet assigned as cluster_id for any other cluster.</p>
+ </li>
+ <li>
+  <p>Add these lines in the modules section to add the clustering module</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>#### Clustering modules
+loadmodule "clusterer.so"
+modparam("clusterer", "my_node_id", MY_NODE_ID)
+modparam("clusterer", "db_mode", 1)
+modparam("clusterer", "db_url",
+        "mysql://opensips:opensipsrw@localhost/opensips")
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+ <li>
+  <p>Replace <code>MY_NODE_ID</code> with the node id of this SIP Proxy server. We can use any random integer that is not assigned to any other node.</p>
+ </li>
+ <li>
+  <p>Add <code>proto_bin</code> module for the intercommunication of nodes of the cluster.</p>
+ </li>
+ <li>
+  <p>Insert these lines in the modules section</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>#### BINary protocol
+loadmodule "proto_bin.so"
+socket = bin:IP:5555
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+ <li>
+  <p>Replace the “IP” with the IP of the server.</p>
+ </li>
+ <li>
+  <p>Save this file and restart opensips.</p>
+ </li>
+</ul>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>sudo systemctl restart opensips.service
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<div data-component="panel" role="note" data-appearance="note">
+ <div class="panel-content">
+  <p>Repeat the same process for the other node server as well and make sure to allow 5060 and 5555 ports.</p>
+ </div>
+</div>
+<hr>
+<h3 id="Step2:-Adding-nodes"><span id="HAinEFSIPProxy-Step2:Addingnodes"></span>Step2: Adding nodes
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.5.2/ha-in-ef-sip-proxy#Step2:-Adding-nodes">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>To add nodes we’ll use EF SIP Proxy control panel.</p>
+<ul>
+ <li>
+  <p>To access the EF SIP Proxy Control Panel, navigate to the following URL: <a href="http://server-ip/cp" data-scope="external" rel="external noreferrer">http://server-ip/cp</a>, where 'server-ip' represents the IP address of the server hosting the EF SIP proxy. The login credentials are as follows: Username: admin &amp; Password: opensips.</p>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 756px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_75a39b12a949854f9423734e0cdd9f1e36ab4c4e55d44133bfa35b213c1b675b/CX_SIP_Proxy-20240314-074951.png?cb=7894c448b31388b64229bd1fb841a460" alt="CX_SIP_Proxy-20240314-074951.png" data-scope="internal" width="756" height="306">
+    </div>
+   </image-lightbox>
+  </div>
+ </li>
+ <li>
+  <p>Once logged in, proceed to the 'System' section, followed by 'CLusterer'.</p>
+ </li>
+</ul>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 760px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_d77970816cae18d3dd2e052d18fe4453d392eed52ef3bffef6701aa169f8469c/image-20240319-114435.png?cb=28bd0b2992694c8d3dffcd40ea66093d" alt="image-20240319-114435.png" data-scope="internal" width="1104" height="543">
+  </div>
+ </image-lightbox>
+</div>
+<ul>
+ <li>
+  <p>Click on Add Node</p>
+ </li>
+</ul>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 583px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_b22c25445ad1e7282cc841e4e2ec2306bb7f26b53684e8056bec1e82608e4f61/image-20240319-114618.png?cb=d238a6c6313951b6dbdfaac882814b30" alt="image-20240319-114618.png" data-scope="internal" width="583" height="527">
+  </div>
+ </image-lightbox>
+</div>
+<ul>
+ <li>
+  <p><code>Cluster ID</code> is the same ID that we put in<code> opensips.cfg</code> file.</p>
+ </li>
+ <li>
+  <p><code>Node ID</code> for the node is the same one that we set for each node.</p>
+ </li>
+ <li>
+  <p><code>BIN URL</code> is the address we set for<code> proto_bin</code> module in<code> opensips.cfg</code> file. The syntax is "bin:192.168.1.173:5555"</p>
+ </li>
+ <li>
+  <p>Leave<code> SIP address</code> empty</p>
+ </li>
+ <li>
+  <p>Enter “seed” in <code>Flags</code>. Keep in mind that this flag will just be set for primary node. For backup node it will be empty.</p>
+ </li>
+ <li>
+  <p>Enter <code>Description.</code></p>
+ </li>
+</ul>
+<p>This will look like</p>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 690px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_3f0dcf1f52ba4046b84499bd78e5995eca67ed649161dfccd724b5ccef2b2cdc/image-20240319-115325.png?cb=4785d8365c3604c14cedb13e0ddf446a" alt="image-20240319-115325.png" data-scope="internal" width="690" height="517">
+  </div>
+ </image-lightbox>
+</div>
+<ul>
+ <li>
+  <p>Click on <code>Add</code> and then <code>Reload on Server</code>.</p>
+ </li>
+ <li>
+  <p>Add the second node as a backup node by following the same steps.</p>
+ </li>
+ <li>
+  <p>In the end, it would look like</p>
+ </li>
+</ul>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 760px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_c7e415ddd3e38a03ae0ff45bf58d6455af0132d315998dbdacc030ce2854cb56/image-20240319-115957.png?cb=ee61b7149bbd75de57a518413de2ffc4" alt="image-20240319-115957.png" data-scope="internal" width="810" height="234">
+  </div>
+ </image-lightbox>
+</div>
+<ul>
+ <li>
+  <p>Add this information to the other node by repeating this process for the other server.</p>
+ </li>
+</ul>
+<div data-component="panel" role="note" data-appearance="note">
+ <div class="panel-content">
+  <p>Cluster id for all the nodes in same cluster will be same while each node will have unique node id. Also in the cluster the Flag will be set to seed just for the primary node.</p>
+ </div>
+</div>
+<h3 id="Step-3:-Keepalived-configuration-for-assigning-virtual-IP"><span id="HAinEFSIPProxy-Step3:KeepalivedconfigurationforassigningvirtualIP"></span>Step 3: Keepalived configuration for assigning virtual IP
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.5.2/ha-in-ef-sip-proxy#Step-3:-Keepalived-configuration-for-assigning-virtual-IP">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Keepalived provides high availability by managing a floating virtual IP (VIP) shared among servers. It monitors server health, triggers failover upon detection of failure, and migrates the VIP to a standby server.</p>
+<ul>
+ <li>
+  <p>To install keepalived in server open the terminal and run this command.</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>sudo apt-get install keepalived
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+ <li>
+  <p>Once installed open <code>/etc/keepalived/keepalived.conf</code> and add these lines</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>vrrp_instance VI_1 {
+    state MASTER
+    interface ens192
+    virtual_router_id 51
+    priority 100
+    advert_int 1
+    unicast_src_ip 192.168.1.173
+    unicast_peer {
+        192.168.1.90
+    }
+    authentication {
+        auth_type PASS
+        auth_pass 12345678
+    }
+    virtual_ipaddress {
+        192.168.1.202/24
+    }
+}
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+ <li>
+  <p><code>state</code> -&gt; It would be MASTER for the primary node and BACKUP for backup node</p>
+ </li>
+ <li>
+  <p><code>interface</code> -&gt; replace it with the network interface of your server. Confirm interface by running <code>ip addr</code>.</p>
+ </li>
+ <li>
+  <p><code>virtual_router_id </code>-&gt; it should be any random value</p>
+ </li>
+ <li>
+  <p><code>priority</code> -&gt; this value should be greater for the master node</p>
+ </li>
+ <li>
+  <p><code>unicast_src_ip</code> -&gt; IP of the current machine</p>
+ </li>
+ <li>
+  <p><code>unicast_peer</code> -&gt; contains IP of the other nodes</p>
+ </li>
+ <li>
+  <p><code>virtual_ipaddress</code> -&gt; The floating virtual IP, Ensure that this IP is available in the local network.</p>
+ </li>
+</ul>
+<hr>
+<ul>
+ <li>
+  <p>Start keepalived</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>sudo systemctl start keepalived.service
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+</ul>
+<div data-component="panel" role="note" data-appearance="note">
+ <div class="panel-content">
+  <p>Don’t enable the keepalived.service. Keep it disable. The issue is that if the machine restarts after crashing or any other reason the keepalived.service will start if it is enabled. This will switch the primary node automatically. In order to keep the switching controlled keep this service disabled.</p>
+ </div>
+</div>
+<ul>
+ <li>
+  <p>Install and configure keepalived in the other server by repeating these steps.</p>
+ </li>
+ <li>
+  <p>Check the status of keepalived</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>sudo systemctl status keepalived.service
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+ <li>
+  <p>Ensure that the server designated to be primary should show that it is in master state and the other server should be in backup state</p>
+ </li>
+</ul>
+<p>
+ <br>
+</p>
+<div class="theme-block-image">
+ <image-lightbox>
+  <figure data-component="figure">
+   <div class="block-image" style="--width: 581px" data-component="image" data-align="align-center">
+    <img src="/__attachments/a_eee15c4fc962915680c41fcb084985fb6e8410dfa5876f759efe41da271d0501/image-20240319-124106.png?cb=a60db8e1ece44af33863085b77c3e928" alt="image-20240319-124106.png" data-scope="internal" width="581" height="49">
+   </div>
+   <figcaption>The backup server</figcaption>
+  </figure>
+ </image-lightbox>
+</div>
+<div class="theme-block-image">
+ <image-lightbox>
+  <figure data-component="figure">
+   <div class="block-image" style="--width: 573px" data-component="image" data-align="align-center">
+    <img src="/__attachments/a_e3111eb973689619c59da7d02bb239ff7e25ee4a7636bec6eb73dec540b4d7af/image-20240319-124218.png?cb=834da841a731d92bc513be429515d04c" alt="image-20240319-124218.png" data-scope="internal" width="573" height="61">
+   </div>
+   <figcaption>The Primary server</figcaption>
+  </figure>
+ </image-lightbox>
+</div>
+<p>The virtual IP would be mapped to the primary node until it is active. When the primary node goes down the virtual IP would be mapped to the backup node.</p>
+<hr>
+<h3 id="Step-4:-Making-changes-in-keepalived-module-functions"><span id="HAinEFSIPProxy-Step4:Makingchangesinkeepalivedmodulefunctions"></span>Step 4: Making changes in keepalived module functions
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.5.2/ha-in-ef-sip-proxy#Step-4:-Making-changes-in-keepalived-module-functions">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>To load the keepalived module smoothly and run it without any errors we need to make some changes in the PHP files of the module. The module tries to authenticate the remote connection with the node/machine using the ssh2_auth_pubkey_file() function. Various attempts were made to add nodes and authenticate through the original code, but couldn’t make it. Some similar issues regarding ssh2_auth_pubkey_file() have already been reported. <a href="https://docs.acquia.com/acquia-cloud-platform/manage-apps/command-line/ssh/getting-started/passphrase" data-scope="external" rel="external noreferrer">Issue#1, </a><a href="https://bugs.php.net/bug.php?id=78661" data-scope="external" rel="external noreferrer">Issue#2</a>, <a href="https://stackoverflow.com/questions/3407503/trying-to-connect-using-ssh2-auth-pubkey-file" data-scope="external" rel="external noreferrer">Issue#3</a>.</p>
+<p>The issue regarding the keepalived module was raised and its solution was also uploaded and the possible solution was also updated. <a href="https://stackoverflow.com/questions/78217184/how-to-configure-in-build-keepalived-of-opensips/78231717#78231717" data-scope="external" rel="external noreferrer">Keepalived opensips issue.</a></p>
+<p>The first issue was that no nodes appeared after adding these to the module. Since OpenSIPS is more suitable with PHP 7.4, install php7.4-ssh2 instead of just php-ssh2. Use the command 'sudo apt install php7.4-ssh2'. This will resolve the problem of loading the nodes in the control panel. The second issue was related to authentication while making the SSH2 connection. So I used an alternative authentication method. OpenSIPS uses the ssh2_auth_pubkey_file() function for authentication of remote machines. To bypass this, I used the ssh2_auth_password() function.</p>
+<p>To replace the authentication function open function.inc.php file.</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>nano /var/www/html/opensips-cp/web/tools/system/keepalived/lib/functions.inc.php     
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Comment out the line or remove it</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>//       $auth=ssh2_auth_pubkey_file($connection, $user, $pub_key, $prv_key, $pass);        
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Add this line in the place of removed/commented line</p>
+<code-snippet class="theme-code-snippet">
+ <scroll-shadow>
+  <div data-component="code">
+   <pre><code>        $auth = ssh2_auth_password($connection, $user, 'Expertflow123');
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Save this file and exit.</p>
+<p>Restart apache2 service. <code>sudo systemctl restart apache2.service</code></p>
+<hr>
+<h3 id="Step-5:-Making-the-Virtual-IP-operational"><span id="HAinEFSIPProxy-Step5:MakingtheVirtualIPoperational"></span>Step 5: Making the Virtual IP operational
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.5.2/ha-in-ef-sip-proxy#Step-5:-Making-the-Virtual-IP-operational">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>The configuration is almost done. Now we just need to update <code>opensips.cfg </code>for both servers to assign them virtual IP.</p>
+<ul>
+ <li>
+  <p>Open <code>opensips.cfg</code> file in the backup node server first to add the virtual IP as SIP listener.</p>
+ </li>
+ <li>
+  <p>Add virtual IP as UDP and TCP listener</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code># SIP listerner
+socket=udp:192.168.1.202:5060  #Customize me --&gt; Virtual IP
+socket=tcp:192.168.1.202:5060  #Customize me --&gt; Virtual IP
+socket=udp:192.168.1.90:5060   #Customize me --&gt; Server IP 
+socket=tcp:192.168.1.90:5060   #Customize me --&gt; Server IP
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+ <li>
+  <p>Save these changes</p>
+ </li>
+</ul>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <p>If the keepalived.service is active and running in both servers then the virtual IP will be assigned just to primary server. In this case when we restart opensips there will be error as opensips could not assign the virtual IP.</p>
+ </div>
+</div>
+<ul>
+ <li>
+  <p>Stop the keepalived.service in the primary server</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>sudo systemctl stop keepalived.service
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+ <li>
+  <p>Ensure using <code>ip addr</code> either virtual IP is assigned to this server or not</p>
+ </li>
+ <li>
+  <p>Now restart opensips</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>sudo systemctl restart opensips.server
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+ <li>
+  <p>Add virtual IP for the primary server by following the same steps</p>
+ </li>
+ <li>
+  <p>Before restarting opensips, start the keepalived service</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>sudo systemctl start keepalived.service
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+ <li>
+  <p>Now the EF SIP proxy is running on both servers</p>
+ </li>
+ <li>
+  <p>Run the following commands in both servers to,</p>
+ </li>
+ <li>
+  <p>List the other nodes of the cluster</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>opensips-cli -x mi clusterer_list
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+ <li>
+  <p>List the info of all nodes of the cluster</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>opensips-cli -x mi clusterer_list_topology
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+ <li>
+  <p>List the capabilities of the cluster</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>opensips-cli -x mi clusterer_list_cap
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+ <li>
+  <p>List the sharing tags of the current node</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>opensips-cli -x mi clusterer_list_shtags
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+</ul>
+<p>At this point, the EF SIP proxy is running in the cluster(active-backup) setting. When the active server goes down the keepalived service will map the virtual IP to the backup node and it will start processing the proxy processes.</p>
+<hr>
+<h3 id="Step-6:-Keepalived-module-configuration"><span id="HAinEFSIPProxy-Step6:Keepalivedmoduleconfiguration"></span>Step 6: Keepalived module configuration 
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.5.2/ha-in-ef-sip-proxy#Step-6:-Keepalived-module-configuration">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>To see the nodes in the control panel and switch the primary node we need to configure the keepalived module.</p>
+<ul>
+ <li>
+  <p>To access the EF SIP Proxy Control Panel, navigate to the following URL: <a href="http://server-ip/cp" data-scope="external" rel="external noreferrer">http://server-ip/cp</a>, where 'server-ip' represents the IP address of the server hosting the EF SIP proxy. The login credentials are as follows: Username: admin &amp; Password: opensips.</p>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 756px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_75a39b12a949854f9423734e0cdd9f1e36ab4c4e55d44133bfa35b213c1b675b/CX_SIP_Proxy-20240314-074951.png?cb=7894c448b31388b64229bd1fb841a460" alt="CX_SIP_Proxy-20240314-074951.png" data-scope="internal" width="756" height="306">
+    </div>
+   </image-lightbox>
+  </div>
+ </li>
+ <li>
+  <p>Once logged in, proceed to the 'System' section, followed by 'Keepalived'.</p>
+ </li>
+</ul>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 760px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_2524db3568be4330e3260a60dcaf11f91cbbdd5a9236d2ebc9a53469d35bf57b/image-20240328-015222.png?cb=a4aa91b791607157a47684306b0ed409" alt="image-20240328-015222.png" data-scope="internal" width="854" height="514">
+  </div>
+ </image-lightbox>
+</div>
+<ul>
+ <li>
+  <p>Click on the gear icon to add configuration</p>
+ </li>
+</ul>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 596px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_e84af50287433b57043be32c968730880f70bbf93b238d5dd2375f4825fd5ca4/image-20240328-015427.png?cb=6647c888ceaebd86b1b56f7b5a63d963" alt="image-20240328-015427.png" data-scope="internal" width="596" height="483">
+  </div>
+ </image-lightbox>
+</div>
+<ul>
+ <li>
+  <p>The format of the machine node is a JSON list, where each element consists of two nodes: → name: the title of the keepalived instance. → boxes: a list of boxes that are part of the keepalived instance</p>
+ </li>
+ <li>
+  <p>Each box consists of the following nodes: → box: the name of the Box or keepalived node → ssh_ip: the IP of the machine; if missing and a known box is used, the MI conn_ip is considered → ssh_port: the SSH port to connect to; default is 22 → ssh_user: the SSH user to authenticate with; default is root → ssh_pubkey: the SSH public key to authenticate with; → ssh_key: the SSH private key to authenticate with; → check_exec: script that is executed to check if the mode of the node; the output is compared against the 'check_pattern' value; → check_pattern: a pattern that is applied on 'check_exec' output to check if the node is Primary; → backup_exec: command to run when the machine is put in backup mode; → primary_exec: command to run when the machine is put in primary mode;</p>
+ </li>
+ <li>
+  <p>The default JSON object for two nodes is</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>[
+    {
+        "name": "Virtual IP",
+        "boxes": [
+            {
+                "box": "Primary",
+                "ssh_ip": "192.168.1.90",
+                "ssh_pubkey": "\/.ssh\/id_rsa.pub",
+                "ssh_key": "\/.ssh\/id_rsa",
+                "check_exec": "ip a s",
+                "check_pattern": "192.168.1.202",
+                "backup_exec": "\/etc\/init.d\/keepalived stop",
+                "primary_exec": "\/etc\/init.d\/keepalived stop"
+            },
+            {
+                "box": "Secondary",
+                "ssh_ip": "192.168.1.173",
+                "ssh_pubkey": "\/.ssh\/id_rsa.pub",
+                "ssh_key": "\/.ssh\/id_rsa",
+                "check_exec": "ip a s",
+                "check_pattern": "192.168.1.202",
+                "backup_exec": "\/etc\/init.d\/keepalived stop",
+                "primary_exec": "\/etc\/init.d\/keepalived stop"
+            }
+        ]
+    }
+]
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+ <li>
+  <p>As we are not going to use public key authentication we’ll use the following object for two nodes. The remaining values will be inserted in the boxes. Copy and paste the following lines into machines box</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>[
+    {
+        "name": "Cluster 1",
+        "boxes": [
+            {
+                "box": "Primary(1.90)",
+                "ssh_ip": "192.168.1.90"
+            },
+            {
+                "box": "Secondary(1.173)",
+                "ssh_ip": "192.168.1.173"
+            }
+        ]
+    }
+]
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+ <li>
+  <p>Customize the “box” and the “ssh-ip” accordingly</p>
+ </li>
+</ul>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 760px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_a5425a6f39a1f3ba20b39cc224b867ca0c4dd26e9b1ca2005897b0423d05fbb2/image-20240328-025427.png?cb=d2309c4bee357e6261270aa0d6f9d9d1" alt="image-20240328-025427.png" data-scope="internal" width="766" height="371">
+  </div>
+ </image-lightbox>
+</div>
+<ul>
+ <li>
+  <p>Now add the other values as shown below</p>
+ </li>
+</ul>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 609px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_f8e9a86240c35f1766b48869fb8aabfa7ac3a164740333ab3deed0a05a981833/image-20240328-025629.png?cb=549e37bbf1cd89a295a38f4491277ba7" alt="image-20240328-025629.png" data-scope="internal" width="609" height="362">
+  </div>
+ </image-lightbox>
+</div>
+<ul>
+ <li>
+  <p>ip a s → This command will show the IP addresses of a node when the node state is checked. If the the virtual IP (192.168.1.202 in this case) is present in the IP addresses the node will be considered primary otherwise secondary. Change the Pattern to check the Primary mode with your virtual IP.</p>
+ </li>
+ <li>
+  <p><code>/etc/init.d/keepalived stop </code> → this command will stop the keepalived service to make some other node primary.</p>
+ </li>
+ <li>
+  <p><code>/etc/init.d/keepalived start</code> → this command will start the keepalived service to make the node primary.</p>
+ </li>
+ <li>
+  <p>When switching a node to primary by clicking on it, a command is executed on each node within the cluster: a command to turn the node as Primary is executed on the primary node, and a command to turn the nodes as backups is executed on all the others.</p>
+ </li>
+ <li>
+  <p>Click on save and it will be displayed as</p>
+ </li>
+</ul>
+<div class="theme-block-image">
+ <image-lightbox>
+  <div class="block-image" style="--width: 672px" data-component="image" data-align="align-center">
+   <img src="/__attachments/a_c020e9786246a3ae77c0321bda05e209d3ac5a01e751a797627cece36326c9d0/image-20240328-030638.png?cb=af56e999653b0ace85def16d8e54f9ae" alt="image-20240328-030638.png" data-scope="internal" width="672" height="294">
+  </div>
+ </image-lightbox>
+</div>
+<ul>
+ <li>
+  <p>Click once on the node box to make it active and receive the SIP requests.</p>
+ </li>
+</ul>
+<div data-component="panel" role="note" data-appearance="note">
+ <div class="panel-content">
+  <p>If the node box color doesn’t change refresh the page</p>
+ </div>
+</div>
+<h3 id="Limitation-with-keepalived.service"><span id="HAinEFSIPProxy-Limitationwithkeepalived.service"></span>Limitation with keepalived.service
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.5.2/ha-in-ef-sip-proxy#Limitation-with-keepalived.service">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>This is for the case if we want to switch the active node automatically when the master node/machine restarts after some issue. It works fine when the active node goes down (the backup node becomes live). The issue arises when the active node server comes back online and attempts to restart OpenSIPS. At that time, the Keepalived service (if this service is enabled) does not assign the virtual IP immediately to the active node, preventing OpenSIPS from starting with the virtual IP at startup. Consequently, when the virtual IP is reassigned to the active node after a few moments, it cannot process SIP requests as OpenSIPS is not running.</p>
+<p>The limited solution is to add a cronjob to wait for some time before starting OpenSIPS, allowing Keepalived to assign the virtual IP during that period.</p>
+<ul>
+ <li>
+  <p>Run the following command in the active node server</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>crontab -e
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+ <li>
+  <p>Add this line at the end</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>@reboot sleep 5 &amp;&amp; sudo systemctl restart opensips.service
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+</ul>
+<p>
+ <br>
+</p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="7737bfb7482cd417-116" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="7737bfb7482cd417-116">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/cx/4.5.2/load-balancing-in-ef-sip-proxy-through-the-dispatc">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Load balancing in EF SIP Proxy through the dispatcher module</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/cx/4.5.2/cx-media-server">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">CX Media Server</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

@@ -1,0 +1,3750 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_de6a2176661d2503e1b57a03f6ac156c3e2e8808d9198a4d6df8d99c014020e8" data-confluence-content-id="1645641890"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/sf-cucm/1.0.0/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="SCUCM">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>Deployment Guide | Expertflow CX</title>
+		<meta property="og:title" content="Deployment Guide | Expertflow CX">
+		<meta property="twitter:title" content="Deployment Guide | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/sf-cucm/1.0.0/deployment-guide">
+		<meta property="og:url" content="https://docs.expertflow.com/sf-cucm/1.0.0/deployment-guide">
+
+		<meta name="description" content="Generic Connector Configuration Connector Configuration Parameters The following are the CUCM configurations that can be set in the env file. Parameter Default…">
+		<meta property="og:description" content="Generic Connector Configuration Connector Configuration Parameters The following are the CUCM configurations that can be set in the env file. Parameter Default…">
+		<meta property="twitter:description" content="Generic Connector Configuration Connector Configuration Parameters The following are the CUCM configurations that can be set in the env file. Parameter Default…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__attachments/a_6beb4b61974446728f9ab5d274f364c28480664ddef3f881c3d5f0a151c81623/image-20260126-134022.png?cb=cf649b993bfee54751b60cb077a8bcfa">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__attachments/a_6beb4b61974446728f9ab5d274f364c28480664ddef3f881c3d5f0a151c81623/image-20260126-134022.png?cb=cf649b993bfee54751b60cb077a8bcfa">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2026-02-13T18:19:06.186Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": true
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.js"></script>
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="a48d0c79c5b3ed4e-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="a48d0c79c5b3ed4e-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="a48d0c79c5b3ed4e-5">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="a48d0c79c5b3ed4e-5" name="version" onchange="self.location.assign(this.value)" >
+				<option id="a48d0c79c5b3ed4e-3"  value="/sf-cucm/1.1.0"  >
+					1.1.0
+				</option>
+				<option id="a48d0c79c5b3ed4e-4"  value="/sf-cucm/1.0.0/deployment-guide"  selected="">
+					1.0.0
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('a48d0c79c5b3ed4e-5');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-a48d0c79c5b3ed4e-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-a48d0c79c5b3ed4e-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-a48d0c79c5b3ed4e-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="a48d0c79c5b3ed4e-6" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="a48d0c79c5b3ed4e-6">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-a48d0c79c5b3ed4e-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-a48d0c79c5b3ed4e-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="a48d0c79c5b3ed4e-9">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="a48d0c79c5b3ed4e-9" name="version" onchange="self.location.assign(this.value)" >
+				<option id="a48d0c79c5b3ed4e-7"  value="/sf-cucm/1.1.0"  >
+					1.1.0
+				</option>
+				<option id="a48d0c79c5b3ed4e-8"  value="/sf-cucm/1.0.0/deployment-guide"  selected="">
+					1.0.0
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('a48d0c79c5b3ed4e-9');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="a48d0c79c5b3ed4e-10" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="a48d0c79c5b3ed4e-11" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="a48d0c79c5b3ed4e-12" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="a48d0c79c5b3ed4e-13" href="/sf-cucm/1.0.0/release-notes" >Release Notes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="a48d0c79c5b3ed4e-14" href="/sf-cucm/1.0.0/solution-prerequisites" >Solution Prerequisites</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="a48d0c79c5b3ed4e-15" href="/sf-cucm/1.0.0/business-features" >Business Features</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="a48d0c79c5b3ed4e-16" href="/sf-cucm/1.0.0/compatibility-guide" >Compatibility Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="a48d0c79c5b3ed4e-17" href="/sf-cucm/1.0.0/deployment-guide" aria-current="page">Deployment Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="a48d0c79c5b3ed4e-18" href="/sf-cucm/1.0.0/limitations" >Limitations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="a48d0c79c5b3ed4e-19" href="/sf-cucm/1.0.0/solution-architecture" >Solution Architecture</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="a48d0c79c5b3ed4e-20" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="a48d0c79c5b3ed4e-20">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/sf-cucm/1.0.0">
+										Salesforce Connector for Cisco CUCM
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="a48d0c79c5b3ed4e-21">
+			<h2 class="toc-heading" id="a48d0c79c5b3ed4e-21">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>Deployment Guide</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+	
+
+	
+	
+
+	
+
+	
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+	
+
+
+	
+	
+	
+	
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+		
+		
+	
+	
+	
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<p>
+ <br>
+</p>
+<h2 id="Generic-Connector-Configuration"><span id="DeploymentGuide-GenericConnectorConfiguration"></span><strong>Generic Connector Configuration</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/sf-cucm/1.0.0/deployment-guide#Generic-Connector-Configuration">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="Connector-Configuration-Parameters"><span id="DeploymentGuide-ConnectorConfigurationParameters"></span><strong>Connector Configuration Parameters</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/sf-cucm/1.0.0/deployment-guide#Connector-Configuration-Parameters">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>The following are the CUCM configurations that can be set in the env file.</p>
+<div class="theme-table" style="--width: 1563px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="center" data-number-column="true">
+     <table>
+      <colgroup>
+       <col>
+       <col style="width: 285px">
+       <col style="width: 390px">
+       <col style="width: 846px">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th></th>
+        <th>
+         <p><strong>Parameter</strong></p>
+        </th>
+        <th>
+         <p><strong>Default Value</strong></p>
+        </th>
+        <th>
+         <p><strong>Description</strong></p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p>1</p>
+        </td>
+        <td>
+         <p>KEY</p>
+        </td>
+        <td>
+         <p>ASDFGHJKLZXCVBNM234RFGHUIOKJMNBFEWSDFGHNJMNBV</p>
+        </td>
+        <td>
+         <p>License key. Must be obtained from EF Team</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>2</p>
+        </td>
+        <td>
+         <p>CUCM_IP1</p>
+        </td>
+        <td>
+         <p>CUCM_Server_IP1</p>
+        </td>
+        <td>
+         <p>Primary CUCM</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>3</p>
+        </td>
+        <td>
+         <p>CUCM_IP2</p>
+        </td>
+        <td>
+         <p>CUCM_Server_IP2</p>
+        </td>
+        <td>
+         <p>Secondary CUCM</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>4</p>
+        </td>
+        <td>
+         <p>HEARTBEAT_SLEEP</p>
+        </td>
+        <td>
+         <p>5</p>
+        </td>
+        <td>
+         <p>Delay in ping to check ping service&nbsp;(seconds)&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>5</p>
+        </td>
+        <td>
+         <p>ACTIVEMQ1</p>
+        </td>
+        <td>
+         <p>localhost:61616</p>
+        </td>
+        <td>
+         <p>ActiveMQ Primary URL</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>6</p>
+        </td>
+        <td>
+         <p>ACTIVEMQ2</p>
+        </td>
+        <td>
+         <p>localhost:61616</p>
+        </td>
+        <td>
+         <p>ActiveMQ Secondary URL</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>7</p>
+        </td>
+        <td>
+         <p>CUCM_USER</p>
+        </td>
+        <td>
+         <p>Jtapi_USer</p>
+        </td>
+        <td>
+         <p>Jtapi users are required to login into CUCM</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>8</p>
+        </td>
+        <td>
+         <p>CUCM_PASSWORD</p>
+        </td>
+        <td>
+         <p>Jtapi_Password</p>
+        </td>
+        <td>
+         <p>Password for the jtapi user to login</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>9</p>
+        </td>
+        <td>
+         <p>ACTIVEMQ_TIMEOUT</p>
+        </td>
+        <td>
+         <p>30000</p>
+        </td>
+        <td>
+         <p>ActiveMQ connection timeout (in milliseconds)</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>10</p>
+        </td>
+        <td>
+         <p>PREFECT_SIZE</p>
+        </td>
+        <td>
+         <p>20000</p>
+        </td>
+        <td>
+         <p>Prefect Size of the messages</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>11</p>
+        </td>
+        <td>
+         <p>GRC_CONSUMER_PRIORITY</p>
+        </td>
+        <td>
+         <p>127</p>
+        </td>
+        <td>
+         <p>0-127 priority to read the message first in case of multiple consumers. Details are mentioned in HA section.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>12</p>
+        </td>
+        <td>
+         <p>PRIORITY_BACKUP</p>
+        </td>
+        <td>
+         <p>true</p>
+        </td>
+        <td>
+         <p>Property to enable amq failover support. Details are mentioned in HA section.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>13</p>
+        </td>
+        <td>
+         <p><code>RANDOMIZE</code></p>
+        </td>
+        <td>
+         <p>false</p>
+        </td>
+        <td>
+         <p>Property to randomize traffic on amqs! This will be required for HA. Details are mentioned in HA section.</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>14</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>AGENT_STATES_PUBLISHER_DURATION</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>5000</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Time after which states of all agents will be published on the topic</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>15</p>
+        </td>
+        <td>
+         <p>MESSAGE_FORMAT</p>
+        </td>
+        <td>
+         <p>JSON</p>
+        </td>
+        <td>
+         <p>Type of Events returned to the client (Only JSON supported currently)</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>16</p>
+        </td>
+        <td>
+         <p>LOG LEVEL</p>
+        </td>
+        <td>
+         <p>TRACE</p>
+        </td>
+        <td>
+         <p>Log Level&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>17</p>
+        </td>
+        <td>
+         <p>AGENT_LOGS_PATH</p>
+        </td>
+        <td>
+         <p>/app/logs/agents/</p>
+        </td>
+        <td>
+         <p>Agent Logs Storage path</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>18</p>
+        </td>
+        <td>
+         <p>AGENT_LOGS_LEVEL</p>
+        </td>
+        <td>
+         <p>TRACE</p>
+        </td>
+        <td>
+         <p>Agent Logs Level</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>19</p>
+        </td>
+        <td>
+         <p>AGENT_LOGS_MAX_FILES</p>
+        </td>
+        <td>
+         <p>10</p>
+        </td>
+        <td>
+         <p>Max No of Files per agent for logs</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>20</p>
+        </td>
+        <td>
+         <p>AGENT_LOGS_FILE_SIZE</p>
+        </td>
+        <td>
+         <p>10MB</p>
+        </td>
+        <td>
+         <p>Max file size for agent logs</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>21</p>
+        </td>
+        <td>
+         <p><code>AMQ_MSG_EXPIRY</code></p>
+        </td>
+        <td>
+         <p><code>30000</code></p>
+        </td>
+        <td>
+         <p>Expiry time for a message to read in a queue</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="Deployment-Steps"><span id="DeploymentGuide-DeploymentSteps"></span>Deployment Steps
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/sf-cucm/1.0.0/deployment-guide#Deployment-Steps">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<ol>
+ <li>
+  <p>Run the following command to create a network</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>// For docker based deplyment
+docker network create appnet
+
+// For podman based deployment
+podman network create appnet
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+  <ol>
+   <li>
+    <p>In case of if podman network creation fails and user sees following error</p>
+    <div class="theme-block-image">
+     <image-lightbox>
+      <div class="block-image" style="--width: 800px" data-component="image" data-align="align-start">
+       <img src="/__attachments/a_6beb4b61974446728f9ab5d274f364c28480664ddef3f881c3d5f0a151c81623/image-20260126-134022.png?cb=cf649b993bfee54751b60cb077a8bcfa" alt="image-20260126-134022.png" data-scope="internal" width="366" height="36">
+      </div>
+     </image-lightbox>
+    </div>
+   </li>
+   <li>
+    <p>In that case user needs to configure a subnet pool, run following command to do so or you can refer to the official podman <a href="https://docs.podman.io/en/stable/markdown/podman-network-create.1.html" data-scope="external" rel="external noreferrer">documentation</a> .</p>
+    <code-snippet class="theme-code-snippet">
+     <scroll-shadow>
+      <div data-component="code">
+       <pre><code>podman network create \
+  --subnet 10.88.0.0/16 \
+  --gateway 10.88.0.1 \
+  appnet
+
+</code></pre>
+      </div>
+     </scroll-shadow>
+     <copy-clipboard class="theme-code-snippet-copy">
+      <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+       <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+      </svg>
+     </copy-clipboard>
+    </code-snippet>
+   </li>
+  </ol>
+ </li>
+ <li>
+  <p>Download the deploy.sh file from <a href="https://drive.google.com/file/d/1imr-IWFoxb63gWDmZXkggG3QiJGhj1cl/view?usp=share_link" data-scope="external" rel="external noreferrer">here</a>.</p>
+ </li>
+ <li>
+  <p>Place deploy.sh file inside some folder eg. Jtapi_Connector.</p>
+ </li>
+ <li>
+  <p>Run the following commands to start the procedure.</p>
+  <p><strong>Commands to execute deploy.sh file</strong></p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>cd /root/Jtapi_Connector
+bash deploy.sh
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 800px" data-component="image" data-align="align-start">
+     <img src="/__attachments/a_2d3c385ed0ca2f9a58e8d993f2fa97eaf12024b274f9e683541681a9749fb301/image2022-12-9_17-2-22.png?cb=ec695d8011e846f8753f235dc6e1c6fc" alt="image2022-12-9_17-2-22.png" data-scope="internal" width="890" height="382">
+    </div>
+   </image-lightbox>
+  </div>
+ </li>
+ <li>
+  <p>A cloned folder 'cucm_connector_deployment' can be seen on the command ls.&nbsp;</p>
+ </li>
+ <li>
+  <p>Go into the cloned folder, where two folders can be seen.</p>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 800px" data-component="image" data-align="align-start">
+     <img src="/__attachments/a_c338e968b6d876589d47f8238a3ee405230e3c3d46261c984616cda979b53490/image2022-12-9_17-5-38.png?cb=37331bc336ed30da8c1df426b8a6675f" alt="image2022-12-9_17-5-38.png" data-scope="internal" width="530" height="129">
+    </div>
+   </image-lightbox>
+  </div>
+ </li>
+ <li>
+  <p>Run the following set of commands to install ActiveMQ.</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>cd Stand_alone_Active_MQ
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+ <li>
+  <p>Create ssl self sigined certs (broker.ts and broker.ks) if not provided by the customer. Run the following command</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>// Genrate Keystore
+keytool -genkeypair \
+  -alias broker \
+  -keyalg RSA \
+  -keysize 2048 \
+  -validity 365 \
+  -keystore broker.ks \
+  -storepass password \
+  -dname "CN=10.192.9.35"
+
+// Export Certificate
+keytool -exportcert \
+  -alias broker \
+  -keystore broker.ks \
+  -storepass password \
+  -file broker.crt
+
+// Create Trust Store
+keytool -importcert \
+  -alias broker \
+  -file broker.crt \
+  -keystore broker.ts \
+  -storepass password \
+  -noprompt
+
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+ <li>
+  <p>Now edit activemq.xml file available on the same path and update the passwords</p>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 800px" data-component="image" data-align="align-start">
+     <img src="/__attachments/a_250da6926f2cb45e4a983ac02b9468855378e92a21217c07dd3a35ab9a2213a3/image-20260126-135805.png?cb=7d8d1e9c6e82bc096f4fa33cc698de3d" alt="image-20260126-135805.png" data-scope="internal" width="663" height="188">
+    </div>
+   </image-lightbox>
+  </div>
+ </li>
+ <li>
+  <p>If you are using podman deployment, then do this step else skip</p>
+  <ol>
+   <li>
+    <p>Edit docker-compose file and update the volumes as follow (add :Z at the end)</p>
+   </li>
+  </ol>
+ </li>
+ <li>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 800px" data-component="image" data-align="align-start">
+     <img src="/__attachments/a_bbe51146f76ced8643771137041ce8ccc29ffcbd9df6faed3adf461aa3f8d2ff/image-20260126-142057.png?cb=5c29fcb021089b5cbfc0329a202e7be6" alt="image-20260126-142057.png" data-scope="internal" width="585" height="126">
+    </div>
+   </image-lightbox>
+  </div>
+  <p>Now run following command to install activemq</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>// Docker
+docker-compose up -d
+
+// Podman
+podman-compose up -d
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+ <li>
+  <p>After above command user can access admin console on a browser to confirm its availability.
+   <br>
+   <a href="http://192.168.2.162:8161/admin/queues.jsp" data-scope="external" rel="external noreferrer">http://machine_ip:8161/admin/queues.jsp</a></p>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 800px" data-component="image" data-align="align-start">
+     <img src="/__attachments/a_9abf0ef0620e24084569f304f3a4e37570230e4fb98c5339ed8600145a0ef916/image2022-12-9_17-9-46.png?cb=0bb4cc98f43815207e9f8d95f43606c6" alt="image2022-12-9_17-9-46.png" data-scope="internal" width="1280" height="599">
+    </div>
+   </image-lightbox>
+  </div>
+ </li>
+ <li>
+  <p>After amq installation, go back to the main repo directory '<strong>cucm_connector_deployment</strong>'. And go into the connector folder <strong>'Connector_Compose_Env'.</strong></p>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 800px" data-component="image" data-align="align-start">
+     <img src="/__attachments/a_80a8e6ecc4448e9c6e58d80886e03725ad864d9c9c9201573bd031f3417730f2/image2022-12-9_17-21-13.png?cb=d8b49b6db6b9cbde826613526ed7790b" alt="image2022-12-9_17-21-13.png" data-scope="internal" width="472" height="52">
+    </div>
+   </image-lightbox>
+  </div>
+ </li>
+ <li>
+  <p>You can see the files like this.</p>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 800px" data-component="image" data-align="align-center">
+     <img src="/__attachments/a_d6733c4cef8e136498ef724adb8ee928c3ee5d07da7a4a69037b27f3cbce3f1a/131e1917-f2c8-4cdc-994c-4ffc5a964091.png?cb=9c29b0b9e1204c473ecb8184c3e61580" alt="131e1917-f2c8-4cdc-994c-4ffc5a964091.png" data-scope="internal" width="602" height="92">
+    </div>
+   </image-lightbox>
+  </div>
+ </li>
+ <li>
+  <p>Edit the env file and add the required configurations as explained <a href="https://docs.expertflow.com/display/CC/Deployment+Guide#DeploymentGuide-ConnectorConfigurationParameters" data-scope="external" rel="external noreferrer">here</a>!</p>
+ </li>
+ <li>
+  <p>After adding configurations, run the following commands to install connector application:</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>docker-compose up -d
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </li>
+ <li>
+  <p>After successful execution of step 13, run the following command to check if the container is up and running!</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>docker container ps -a
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 800px" data-component="image" data-align="align-start">
+     <img src="/__attachments/a_ab1de3e2bfb3778f48a70d62e09347f1a8526c2e347d392cfa4c78a89ec18660/image2022-12-9_17-30-33.png?cb=8aeedd729c78838568e62e71b98d8fda" alt="image2022-12-9_17-30-33.png" data-scope="internal" width="1048" height="67">
+    </div>
+   </image-lightbox>
+  </div>
+ </li>
+</ol>
+<h3 id="ActiveMQ-Configuration-(Redundant-Deployment-Only)"><span id="DeploymentGuide-ActiveMQConfiguration(RedundantDeploymentOnly)"></span><strong>ActiveMQ Configuration (Redundant Deployment Only)</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/sf-cucm/1.0.0/deployment-guide#ActiveMQ-Configuration-(Redundant-Deployment-Only)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>ActiveMQ “Config” button opens the ActiveMQ configuration file&nbsp;<strong>%ACTIVEMQ%/conf/activemq.xml</strong>&nbsp;in your default text editor (e.g. notepad).&nbsp;</p>
+<h4 id="Configuring-Network-of-Brokers"><span id="DeploymentGuide-ConfiguringNetworkofBrokers"></span><strong>Configuring Network of Brokers&nbsp;</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/sf-cucm/1.0.0/deployment-guide#Configuring-Network-of-Brokers">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>Settings for a network of brokers are mandatory for redundant deployment only. These configurations should however be done on one side only.&nbsp;</p>
+<p>ActiveMQ brokers should be configured to run as a network of brokers to communicate with each other both for Active-Active and Active-Passive deployment models.</p>
+<ol>
+ <li>
+  <p>Edit the ActiveMQ Network brokers in activemq.xml file</p>
+ </li>
+</ol>
+<p>In activemq.xml, the “Network of Broker” configuration please add the following configuration mentioned in the screenshot below. There are 2 instances of&nbsp;&lt;networkConnector&gt; (i) for Queues, (ii) for topics, where you need to set the value of the URI parameter specifying other broker’s (site-B) address.&nbsp;</p>
+<div data-component="panel" role="note" data-appearance="note">
+ <div class="panel-content">
+  <p><em>Make sure that the configurations are active on only one side. On the other side, it should remain commented out.</em></p>
+ </div>
+</div>
+<p>If the above-commented configurations are not available in activemq.xml file then copy following and add it inside &lt;broker&gt; tag.</p>
+<div data-component="panel" role="note" data-appearance="note">
+ <div class="panel-content">
+  <p>Here the URI IP should be IP of the remote amq.</p>
+ </div>
+</div>
+<h4 id="Configurations"><span id="DeploymentGuide-Configurations"></span><strong>Configurations</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/sf-cucm/1.0.0/deployment-guide#Configurations">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>&lt;networkConnectors&gt;
+	&lt;networkConnector
+    	name="T:broker1-&gt;broker2"
+        uri="static:(tcp://192.168.2.162:61616)"
+        duplex="true"
+        decreaseNetworkConsumerPriority="true"
+        networkTTL="2"
+        dynamicOnly="true"&gt;
+        &lt;excludedDestinations&gt;
+        	&lt;queue physicalName="&gt;" /&gt;
+        &lt;/excludedDestinations&gt;
+
+    &lt;/networkConnector&gt;
+
+    &lt;networkConnector
+    	name="Q:broker1-&gt;broker2"
+        uri="static:(tcp://192.168.2.162:61616)"
+        duplex="true"
+        decreaseNetworkConsumerPriority="true"
+        networkTTL="2"
+        dynamicOnly="true"&gt;
+        &lt;excludedDestinations&gt;
+        	&lt;topic physicalName="&gt;" /&gt;
+        &lt;/excludedDestinations&gt;
+    &lt;/networkConnector&gt;
+&lt;/networkConnectors&gt;
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<div data-component="panel" role="note" data-appearance="note">
+ <div class="panel-content">
+  <p>After adding the above configuration, the user needs to restart the same service.</p>
+ </div>
+</div>
+<p>Run the following commands to restart the Service</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>docker-compose down
+docker-compose up -d
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>The URI on site-A should point to site-B URI&nbsp;“static:(<a href="#" data-scope="external" rel="external noreferrer">tcp://SITE-B:PORT</a>)”&nbsp;to configure it in network bridge mode.&nbsp;</p>
+<p>For more information about configuring a network of brokers, see this&nbsp;<a href="http://activemq.apache.org/networks-of-brokers.html" data-scope="external" rel="external noreferrer">article</a>.</p>
+<h2 id="Frontend-CUCM-Docker/Podman-Based-Deployment-Guide"><span id="DeploymentGuide-FrontendCUCMDocker/PodmanBasedDeploymentGuide"></span>Frontend CUCM Docker/Podman Based Deployment Guide 
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/sf-cucm/1.0.0/deployment-guide#Frontend-CUCM-Docker/Podman-Based-Deployment-Guide">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<details class="expand" data-component="expand" data-align="wide" style="--width: 1800px">
+ <summary class="expand-control"> CUCM Frontend Docker/Podman Based Deployment Guide </summary>
+ <div class="expand-body">
+  <p>This document provides instructions for the automated deployment of the CUCM Frontend application using Podman and Nginx on RHEL 9.</p>
+  <h3 id="1.-Prepare-the-Environment"><span id="DeploymentGuide-1.PreparetheEnvironment"></span>1. Prepare the Environment
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/sf-cucm/1.0.0/deployment-guide#1.-Prepare-the-Environment">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <p>First, create a dedicated directory to house the deployment script and any certificate files.</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>mkdir -p ~/cucm-frontend-docker
+cd ~/cucm-fro0ntend-docker
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+  <h3 id="2.-Download-the-Deployment-Script"><span id="DeploymentGuide-2.DownloadtheDeploymentScript"></span>2. Download the Deployment Script
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/sf-cucm/1.0.0/deployment-guide#2.-Download-the-Deployment-Script">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <p>Download the <a href="https://drive.google.com/file/d/1ihjSmKJHnjaegGh5kr-PulQm93JlZdHN/view?usp=drive_link" data-scope="external" rel="external noreferrer">deploy_frontend.sh</a> file and place it inside cucm-frontend-docker folder.</p>
+  <h3 id="3.-Provide-Authentic-SSL-Certificates-(Optional)"><span id="DeploymentGuide-3.ProvideAuthenticSSLCertificates(Optional)"></span>3. Provide Authentic SSL Certificates (Optional) 
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/sf-cucm/1.0.0/deployment-guide#3.-Provide-Authentic-SSL-Certificates-(Optional)">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <p>If you have CA-signed certificates, place them in the <strong>same directory</strong> . The script will automatically detect and use them if they follow this naming convention:</p>
+  <div class="theme-table" style="--width: 1288px;">
+   <table-expand>
+    <scroll-shadow>
+     <table-sort>
+      <div data-component="table" data-align="center" data-number-column="false">
+       <table>
+        <tbody>
+         <tr>
+          <td>
+           <p><strong>File Type</strong></p>
+          </td>
+          <td>
+           <p><strong>Required Name</strong></p>
+          </td>
+          <td>
+           <p><strong>Description</strong></p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p><strong>Certificate</strong></p>
+          </td>
+          <td>
+           <p><code>customer_cert.pem</code></p>
+          </td>
+          <td>
+           <p>Your public certificate (and intermediate chain)</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p><strong>Private Key</strong></p>
+          </td>
+          <td>
+           <p><code>customer_key.pem</code></p>
+          </td>
+          <td>
+           <p>Your private key file</p>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </table-sort>
+    </scroll-shadow>
+   </table-expand>
+  </div>
+  <h3 id="4.-Execute-Deployment"><span id="DeploymentGuide-4.ExecuteDeployment"></span>4. Execute Deployment
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/sf-cucm/1.0.0/deployment-guide#4.-Execute-Deployment">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <p>Run the following commands to ensure the file format is correct and to begin the installation.</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code># Remove hidden Windows characters and set permissions
+sed -i 's/\r$//' deploy_frontend.sh
+chmod +x deploy_frontend.sh
+
+# Run the deployment
+sudo ./deploy_frontend.sh
+
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+  <h4 id="5.-Verification"><span id="DeploymentGuide-5.Verification"></span>5. Verification
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/sf-cucm/1.0.0/deployment-guide#5.-Verification">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h4>
+  <p>Once the script completes, you should see the message: <strong>"BOOM! Deployment Successful"</strong>.</p>
+  <ul>
+   <li>
+    <p><strong>Access URL:</strong> <code>https://&lt;YOUR_SERVER_IP&gt;:8443</code></p>
+   </li>
+   <li>
+    <p><strong>Security Note:</strong> If using self-signed certificates (default), you must click "Advanced -&gt; Proceed" in your browser to bypass the privacy warning.</p>
+   </li>
+  </ul>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 800px" data-component="image" data-align="align-start">
+     <img src="/__attachments/a_8fcaa599d17eaa7005ad5c535cb186ab58743f56dea31f8e701a4b462d7f6c23/image2022-10-26_17-34-45.png?cb=7d7756cd9d0e9ec704f60b661c82bc74" alt="image2022-10-26_17-34-45.png" data-scope="internal" width="1363" height="633">
+    </div>
+   </image-lightbox>
+  </div>
+  <h3 id="6.-Updating-Frontend-Configuration"><span id="DeploymentGuide-6.UpdatingFrontendConfiguration"></span>6. Updating Frontend Configuration
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/sf-cucm/1.0.0/deployment-guide#6.-Updating-Frontend-Configuration">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <ol>
+   <li>
+    <p>open deploy_frontend.sh file and locate <strong>Section 5 (CREATE APP CONFIG)</strong> inside the script, update the values and save it.</p>
+   </li>
+  </ol>
+  <div class="theme-table" style="--width: 1753px;">
+   <table-expand>
+    <scroll-shadow>
+     <table-sort>
+      <div data-component="table" data-align="center" data-number-column="true">
+       <table>
+        <colgroup>
+         <col>
+         <col style="width: 182px">
+         <col style="width: 388px">
+         <col style="width: 439px">
+        </colgroup>
+        <tbody>
+         <tr>
+          <th></th>
+          <th>
+           <p><strong>Property Name</strong></p>
+          </th>
+          <th>
+           <p><strong>Value</strong></p>
+          </th>
+          <th>
+           <p><strong>&nbsp;Description</strong></p>
+          </th>
+         </tr>
+         <tr>
+          <td>
+           <p>1</p>
+          </td>
+          <td>
+           <p>amqUrl1</p>
+          </td>
+          <td>
+           <p>ws://&lt;server-ip/FQDN&gt;:61615/stomp or wss://&lt;activemq-server-ip&gt;:61615/stomp</p>
+          </td>
+          <td>
+           <p>For communicating with CUCM Connector. For Http use ws and for Https use wss.</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>2</p>
+          </td>
+          <td>
+           <p>amqUrl2</p>
+          </td>
+          <td>
+           <p>ws://&lt;activemq-server-ip&gt;:61615/stomp or wss://&lt;activemq-server-ip&gt;:61615/stomp</p>
+          </td>
+          <td>
+           <p>For communicating with CUCM Connector. For Http use ws and for Https use wss.</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>3</p>
+          </td>
+          <td>
+           <p>powered_by</p>
+          </td>
+          <td>
+           <p>true/false</p>
+          </td>
+          <td>
+           <p>System variable should always remain True</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>4</p>
+          </td>
+          <td>
+           <p>crm</p>
+          </td>
+          <td>
+           <p>0/1</p>
+          </td>
+          <td>
+           <p>A possible value for this key would be 0 or 1</p>
+           <p>0= When web CTI is deployed as a standalone project without any CRM Integration&nbsp;</p>
+           <p>1= When Web CTI is deployed with some CRM, The CRM can be any. If the value for this property is 1, then the&nbsp;<strong>crmFilePath</strong>&nbsp;variable must be set</p>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <p>5</p>
+          </td>
+          <td>
+           <p><strong>crmFilepath</strong></p>
+          </td>
+          <td>
+           <p>The predefined path of the CRM file</p>
+          </td>
+          <td>
+           <p>To make this property work, the above property CRM must be set 1 . Value for this property depends on the CRM you are using.&nbsp; Possible values are&nbsp;</p>
+           <p><strong>Value&nbsp;</strong>=&nbsp; <code>new_Salesforce.js</code></p>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </table-sort>
+    </scroll-shadow>
+   </table-expand>
+  </div>
+  <ol start="2">
+   <li>
+    <p>Run this command</p>
+    <code-snippet class="theme-code-snippet">
+     <scroll-shadow>
+      <div data-component="code">
+       <pre><code>sudo ./deploy_frontend.sh
+</code></pre>
+      </div>
+     </scroll-shadow>
+     <copy-clipboard class="theme-code-snippet-copy">
+      <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+       <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+      </svg>
+     </copy-clipboard>
+    </code-snippet>
+   </li>
+  </ol>
+  <h2 id="Integration-with-Salesforce"><span id="DeploymentGuide-IntegrationwithSalesforce"></span>Integration with Salesforce
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/sf-cucm/1.0.0/deployment-guide#Integration-with-Salesforce">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h2>
+  <h3 id="Step-1:-Configure-CTI-Adapter-URL"><span id="DeploymentGuide-Step1:ConfigureCTIAdapterURL"></span><strong>Step 1: Configure CTI Adapter URL</strong>
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/sf-cucm/1.0.0/deployment-guide#Step-1:-Configure-CTI-Adapter-URL">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <div data-component="panel" role="note" data-appearance="note">
+   <div class="panel-content">
+    <p>The user must have administrator rights in Salesforce.</p>
+   </div>
+  </div>
+  <ol>
+   <li>
+    <p>Download <a href="https://drive.google.com/file/d/1NXq3h6yBqIPJUrOSQikxqLtDpYr_8bLY/view?usp=drive_link" data-scope="external" rel="external noreferrer">callCenterDefinition.xml </a> .</p>
+   </li>
+   <li>
+    <p>From Setup on Salesforce, in the Quick Find box, enter Call Centers, then select Call Centers.</p>
+   </li>
+   <li>
+    <p>On the next page, press Continue.</p>
+   </li>
+   <li>
+    <p>Click on Import on the next page.</p>
+   </li>
+   <li>
+    <p>Upload the callCenterDefinition.xml file and click on import.</p>
+   </li>
+   <li>
+    <p>On the next page, you can see the general information about the call center and you can edit it by clicking the Edit option.</p>
+   </li>
+   <li>
+    <p>Once you click on Edit option, on the next page all the fields will be filled with the data in callCenterDefinition file.</p>
+   </li>
+   <li>
+    <p>Change the Adapter URL with the URL on which CUCM Connector is running.</p>
+   </li>
+  </ol>
+  <h3 id="Step-2:-Assign-Users-to-call-center"><span id="DeploymentGuide-Step2:AssignUserstocallcenter"></span><strong>Step 2: Assign Users to call center</strong>
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/sf-cucm/1.0.0/deployment-guide#Step-2:-Assign-Users-to-call-center">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <ol>
+   <li>
+    <p>Open Call Center with the name “ExpertflowCTI“.</p>
+   </li>
+   <li>
+    <p>At the bottom you’ll find the “Manage call center users” option. If you can’t find manage “Manage call center users”, then first save the call center and then look for the same option.</p>
+   </li>
+   <li>
+    <p>Click this option and on the next page click “Add more users”, select desired user(s), and then click “Add to call center”.</p>
+   </li>
+  </ol>
+  <h3 id="Step-3:-Create-and-configure-a-lightning-app"><span id="DeploymentGuide-Step3:Createandconfigurealightningapp"></span><strong>Step 3: Create and configure a lightning app</strong>
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/sf-cucm/1.0.0/deployment-guide#Step-3:-Create-and-configure-a-lightning-app">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h3>
+  <ol>
+   <li>
+    <p>From Setup, in the Quick Find box enter App Manager.</p>
+   </li>
+   <li>
+    <p>Open the app manager, click “New Lightning App” from the top right corner.</p>
+   </li>
+   <li>
+    <p>Enter the name of the app and developer, other options are not mandatory but if you want you can choose according to your preferences and select next.</p>
+   </li>
+   <li>
+    <p>Go with the default options and click next.</p>
+   </li>
+   <li>
+    <p>Click “Add Utility Items”, type “Open CTI softphone” and add the softphone to your app by clicking it. Set panel height to 500 and width to 400 and click next.</p>
+   </li>
+   <li>
+    <p>On the next screen, add accounts, contacts, leads and tasks from available items.</p>
+   </li>
+   <li>
+    <p>Last but not least select all profiles and add them. After adding them click “Save &amp; Finish”</p>
+   </li>
+  </ol>
+  <h2 id="Login-agent"><span id="DeploymentGuide-Loginagent"></span><strong>Login agent</strong>
+   <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+    <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/sf-cucm/1.0.0/deployment-guide#Login-agent">
+     <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+      <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+     </svg>
+    </copy-clipboard>
+   </i18n-message></h2>
+  <ol>
+   <li>
+    <p>Open your application from the top left 9-dotted pattern icon, adjacent to “Setup”. If you can’t find it, search using the name you used while creating an application.</p>
+   </li>
+   <li>
+    <p>Once opened, Maximize Softphone by click on “Icon” from the bottom left corner, enter extension, and press register button.</p>
+   </li>
+  </ol>
+  <div class="theme-block-image">
+   <image-lightbox>
+    <div class="block-image" style="--width: 800px" data-component="image" data-align="align-start">
+     <img src="/__attachments/a_a6c4539b61d69a7450077a6f3c2d3822405f4b4742d4e260a4c3d9e5ed4d3fa5/Registration.PNG?cb=85ed5a8f5957ca07d7747af3431be7ab" alt="Registration.PNG" data-scope="internal" width="1025" height="478">
+    </div>
+   </image-lightbox>
+  </div>
+ </div>
+</details>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="a48d0c79c5b3ed4e-22" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="a48d0c79c5b3ed4e-22">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/sf-cucm/1.0.0/compatibility-guide">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Compatibility Guide</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/sf-cucm/1.0.0/limitations">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Limitations</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

@@ -1,0 +1,5338 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_8e61e47f33750d6480c66be1106a8fa6df52756ccb8fc5de031ed5eed91ea589" data-confluence-content-id="1615921161"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/cx-knowledgebase/latest/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="SBT">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>Release Items v4.10.x Merging into 5.0 Analysis | Expertflow CX</title>
+		<meta property="og:title" content="Release Items v4.10.x Merging into 5.0 Analysis | Expertflow CX">
+		<meta property="twitter:title" content="Release Items v4.10.x Merging into 5.0 Analysis | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/cx-knowledgebase/latest/release-items-v4-10-x-merging-into-5-0-analysis">
+		<meta property="og:url" content="https://docs.expertflow.com/cx-knowledgebase/latest/release-items-v4-10-x-merging-into-5-0-analysis">
+
+		<meta name="description" content="fCX4.10.1 Feature / Issue Description Merge Status Owner Remarks (Update here after merging into 5.x based develop) Quick Dev Testing Status CXIM-551 Implement…">
+		<meta property="og:description" content="fCX4.10.1 Feature / Issue Description Merge Status Owner Remarks (Update here after merging into 5.x based develop) Quick Dev Testing Status CXIM-551 Implement…">
+		<meta property="twitter:description" content="fCX4.10.1 Feature / Issue Description Merge Status Owner Remarks (Update here after merging into 5.x based develop) Quick Dev Testing Status CXIM-551 Implement…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2026-02-10T07:44:06.786Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": true
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="735d20d1b91b63c9-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="735d20d1b91b63c9-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-735d20d1b91b63c9-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-735d20d1b91b63c9-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-735d20d1b91b63c9-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="735d20d1b91b63c9-3" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="735d20d1b91b63c9-3">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-735d20d1b91b63c9-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-735d20d1b91b63c9-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="735d20d1b91b63c9-4" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="735d20d1b91b63c9-5" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="735d20d1b91b63c9-6" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="735d20d1b91b63c9-7"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="735d20d1b91b63c9-7" href="/cx-knowledgebase/latest/expertflow-cx-overview" >ExpertFlow CX Overview</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="735d20d1b91b63c9-9"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="735d20d1b91b63c9-9" href="/cx-knowledgebase/latest/expertflow-cx-platform-overview" >Expertflow CX Platform Overview</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="735d20d1b91b63c9-11"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="735d20d1b91b63c9-11" href="/cx-knowledgebase/latest/solutions" >Solutions</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="735d20d1b91b63c9-14"						aria-labelledby="735d20d1b91b63c9-13"
+					></button>
+				<a id="735d20d1b91b63c9-13" href="/cx-knowledgebase/latest/platform" >Platform</a>
+			</div>
+
+<ul  id="735d20d1b91b63c9-14" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="735d20d1b91b63c9-15" href="/cx-knowledgebase/latest/comparing-hybrid-chat-3-x-and-expertflow-cx-features-capabilities-and-migration-insights" >Comparing Hybrid Chat 3.x and Expertflow CX: Features, Capabilities, and Migration Insights</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="735d20d1b91b63c9-16" href="/cx-knowledgebase/latest/expertflow-cx-data-sheet" >CX Data Sheet</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="735d20d1b91b63c9-17"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="735d20d1b91b63c9-17" href="/cx-knowledgebase/latest/security-concepts" >Security and Compliances</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="735d20d1b91b63c9-19"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="735d20d1b91b63c9-19" href="/cx-knowledgebase/latest/tenant-management" >Tenant Management</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="735d20d1b91b63c9-21"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="735d20d1b91b63c9-21" href="/cx-knowledgebase/latest/multitenancy" >CCaaS Provider Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="735d20d1b91b63c9-23"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="735d20d1b91b63c9-23" href="/cx-knowledgebase/latest/third-party-integrations" >Integrations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="735d20d1b91b63c9-25"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="735d20d1b91b63c9-25" href="/cx-knowledgebase/latest/conversation-studio" >Understanding Conversation Studio</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="735d20d1b91b63c9-27"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="735d20d1b91b63c9-27" href="/cx-knowledgebase/latest/routing-engine" >Routing</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="735d20d1b91b63c9-29"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="735d20d1b91b63c9-29" href="/cx-knowledgebase/latest/forms" >Forms</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="735d20d1b91b63c9-31"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="735d20d1b91b63c9-31" href="/cx-knowledgebase/latest/business-calendars" >Business Calendars</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="735d20d1b91b63c9-33" href="/cx-knowledgebase/latest/embed-a-web-application" >Embed a Web Application</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="735d20d1b91b63c9-35"						aria-labelledby="735d20d1b91b63c9-34"
+					></button>
+				<a id="735d20d1b91b63c9-34" href="/cx-knowledgebase/latest/release-management" >Release Management</a>
+			</div>
+
+<ul  id="735d20d1b91b63c9-35" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="735d20d1b91b63c9-36" href="/cx-knowledgebase/latest/expertflow-cx-releases-and-versioning" >Expertflow CX Release Versioning</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="735d20d1b91b63c9-37" href="/cx-knowledgebase/latest/cx-release-history" >CX Release History</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="735d20d1b91b63c9-38" href="/cx-knowledgebase/latest/release-items-v4-10-x-merging-into-5-0-analysis" aria-current="page">Release Items v4.10.x Merging into 5.0 Analysis</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="735d20d1b91b63c9-39"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="735d20d1b91b63c9-39" href="/cx-knowledgebase/latest/key-objects" >Key Objects</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="735d20d1b91b63c9-41"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="735d20d1b91b63c9-41" href="/cx-knowledgebase/latest/customer-identities" >Customers – CX Customer Interaction Profiles</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="735d20d1b91b63c9-43"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="735d20d1b91b63c9-43" href="/cx-knowledgebase/latest/user-interface-languages" >User Interface Languages</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="735d20d1b91b63c9-45"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="735d20d1b91b63c9-45" href="/cx-knowledgebase/latest/cx-events-and-activity-types" >Messages, Events, and Activities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="735d20d1b91b63c9-47"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="735d20d1b91b63c9-47" href="/cx-knowledgebase/latest/voice-recording-solution" >Voice Recording Solution</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="735d20d1b91b63c9-49" href="/cx-knowledgebase/latest/quick-links" >Quick Links</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="735d20d1b91b63c9-50"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="735d20d1b91b63c9-50" href="/cx-knowledgebase/latest/deployment-installation" >Deployment &amp; Installation</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="735d20d1b91b63c9-52"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="735d20d1b91b63c9-52" href="/cx-knowledgebase/latest/reports" >Reports and Analytics</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="735d20d1b91b63c9-54"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="735d20d1b91b63c9-54" href="/cx-knowledgebase/latest/resources" >Resources</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="735d20d1b91b63c9-56"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="735d20d1b91b63c9-56" href="/cx-knowledgebase/latest/contact-center-personas" >Contact Center Personas</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="735d20d1b91b63c9-58" href="/cx-knowledgebase/latest/user-inactivity-logout" >User Inactivity Logout</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="735d20d1b91b63c9-59" href="/cx-knowledgebase/latest/agent-desk-release-strategy" >Agent Desk Release Strategy</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="735d20d1b91b63c9-60" href="/cx-knowledgebase/latest/channels-integration-onboarding-guide-s" >Channels Integration - Onboarding guide(s)</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="735d20d1b91b63c9-61" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="735d20d1b91b63c9-61">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest">
+										Expertflow CX
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest/platform">
+										Platform
+								</a>
+							</li>
+							<li>
+								<a href="/cx-knowledgebase/latest/release-management">
+										Release Management
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="735d20d1b91b63c9-62">
+			<h2 class="toc-heading" id="735d20d1b91b63c9-62">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>Release Items v4.10.x Merging into 5.0 Analysis</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+
+	
+	
+
+
+	
+	
+	
+	
+	
+	
+		
+		
+	
+	
+	
+
+	
+	
+	
+	<p><strong>fCX4.10.1</strong></p> 
+<div class="theme-table" style="--width: 1800px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="align-start" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 329px">
+       <col style="width: 333px">
+       <col style="width: 333px">
+       <col style="width: 317px">
+       <col style="width: 348px">
+       <col style="width: 140px">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p><strong>Feature / Issue</strong></p>
+        </th>
+        <th>
+         <p><strong>Description</strong></p>
+        </th>
+        <th>
+         <p><strong>Merge Status</strong></p>
+        </th>
+        <th>
+         <p><strong>Owner</strong></p>
+        </th>
+        <th>
+         <p><strong>Remarks (Update here after merging into 5.x based develop)</strong></p>
+        </th>
+        <th>
+         <p><strong>Quick Dev Testing Status</strong></p>
+        </th>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--subtle-blue, #deebff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CXIM-551" data-scope="external" rel="external noreferrer"><u>CXIM-551</u></a></p>
+        </td>
+        <td style="--bg-color: var(--subtle-blue, #deebff);">
+         <p>Implement authorization mechanism for CX API endpoints</p>
+        </td>
+        <td style="--bg-color: var(--subtle-blue, #deebff);">
+         <p>
+          <br>
+         </p>
+        </td>
+        <td style="--bg-color: var(--subtle-blue, #deebff);">
+         <p>Zaryab</p>
+        </td>
+        <td style="--bg-color: var(--subtle-blue, #deebff);">
+         <p>As per Nasir Khurshid and Zaryad, these changes are already part of 5.0 so no need to add this in 5.1 release.</p>
+        </td>
+        <td style="--bg-color: var(--subtle-blue, #deebff);">
+         <p>Not required</p>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--subtle-blue, #deebff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CXIM-578" data-scope="external" rel="external noreferrer">CXIM-578</a></p>
+        </td>
+        <td style="--bg-color: var(--subtle-blue, #deebff);">
+         <p>Implement Authorization on All the CX APIs</p>
+        </td>
+        <td style="--bg-color: var(--subtle-blue, #deebff);">
+         <p>Needs to be verified</p>
+        </td>
+        <td style="--bg-color: var(--subtle-blue, #deebff);">
+         <p>Zaryab</p>
+        </td>
+        <td style="--bg-color: var(--subtle-blue, #deebff);">
+         <p>As per Nasir Khurshid and Zaryad, these changes are already part of 5.0 so no need to add this in 5.1 release.</p>
+        </td>
+        <td style="--bg-color: var(--subtle-blue, #deebff);">
+         <p>Not required</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-30517" data-scope="external" rel="external noreferrer"><u>CIM-30517</u></a></p>
+        </td>
+        <td>
+         <p>Confusion in Email Chain</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Nabeel Jh.</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 and added its change log as part of <a href="https://expertflow-docs.atlassian.net/browse/CIM-32525" data-scope="external" rel="external noreferrer">CIM-32525</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="61090620-f138-42b2-b27e-b26fefc992fb" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="61090620-f138-42b2-b27e-b26fefc992fb"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="5866b481-0c50-40c7-93d2-4d83583f79f8" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="5866b481-0c50-40c7-93d2-4d83583f79f8"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-30467" data-scope="external" rel="external noreferrer">CIM-30467</a></p>
+        </td>
+        <td>
+         <p>Handle FAILED messages in Conversation Transcript</p>
+        </td>
+        <td>
+         <p>Merged (Already merged in develop)</p>
+        </td>
+        <td>
+         <p>Raza</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32526" data-scope="external" rel="external noreferrer">CIM-32526</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="3d8bd9c5-3673-49f4-bed8-b80179cee56e" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="3d8bd9c5-3673-49f4-bed8-b80179cee56e"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="37220865-a241-4af5-b1e0-e5f70b977d96" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="37220865-a241-4af5-b1e0-e5f70b977d96"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-30508" data-scope="external" rel="external noreferrer"><u>CIM-30508</u></a></p>
+        </td>
+        <td>
+         <p>Display Chat End Reason to Agent and add it in the chat History/Transcription</p>
+        </td>
+        <td>
+         <p>Merged (Already merged in develop)</p>
+        </td>
+        <td>
+         <p>Raza</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32527" data-scope="external" rel="external noreferrer">CIM-32527</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="8cac5455-e9aa-4f1d-b5b8-c5ed36be2b8d" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="8cac5455-e9aa-4f1d-b5b8-c5ed36be2b8d"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="7336bda0-abb6-4622-b706-6c0e4c45fa1f" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="7336bda0-abb6-4622-b706-6c0e4c45fa1f"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-30195" data-scope="external" rel="external noreferrer">CIM-30195</a></p>
+        </td>
+        <td>
+         <p>Enable APISIX for QM</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Ahmad Ghani</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32528" data-scope="external" rel="external noreferrer">CIM-32528</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="aead3fc9-9460-4510-94ee-b7976a045f6d" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="aead3fc9-9460-4510-94ee-b7976a045f6d"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="982843f7-2eee-47aa-ae0c-d600e2ea7de3" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="982843f7-2eee-47aa-ae0c-d600e2ea7de3"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-29901" data-scope="external" rel="external noreferrer"><u>CIM-29901</u></a></p>
+        </td>
+        <td>
+         <p>Spell Check using Typo.js</p>
+        </td>
+        <td>
+         <p>Merged (Already merged in develop)</p>
+        </td>
+        <td>
+         <p>Raza</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32531" data-scope="external" rel="external noreferrer">CIM-32531</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="ced789fe-5e6d-415b-97ce-0c196f9c6bdc" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="ced789fe-5e6d-415b-97ce-0c196f9c6bdc"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="e6f91c88-e58e-40f9-9d82-aa5edf564f9a" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="e6f91c88-e58e-40f9-9d82-aa5edf564f9a"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-29898" data-scope="external" rel="external noreferrer"><u>CIM-29898</u></a></p>
+        </td>
+        <td>
+         <p>Encoding of HTML tags on the Web channel manager</p>
+        </td>
+        <td>
+         <p>Merged (Already merged in develop)</p>
+        </td>
+        <td>
+         <p>Raza</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32532" data-scope="external" rel="external noreferrer">CIM-32532</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="ee731c8f-92f0-4aa8-8940-4b1a25dbf9b6" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="ee731c8f-92f0-4aa8-8940-4b1a25dbf9b6"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="e96921a2-7c84-4292-b49f-e8e69e14bd23" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="e96921a2-7c84-4292-b49f-e8e69e14bd23"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--subtle-blue, #deebff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-29497" data-scope="external" rel="external noreferrer"><u>CIM-29497</u></a></p>
+        </td>
+        <td style="--bg-color: var(--subtle-blue, #deebff);">
+         <p>Impact of authentication enablement on QM/survey/campaigns</p>
+        </td>
+        <td style="--bg-color: var(--subtle-blue, #deebff);">
+         <p><strong>Already part of develop (5.0) </strong></p>
+        </td>
+        <td style="--bg-color: var(--subtle-blue, #deebff);">
+         <p>Bilal Alam</p>
+        </td>
+        <td style="--bg-color: var(--subtle-blue, #deebff);">
+         <p>As per Bilal Alam, Ahmad Ghani and Nasir, this change is already release in 5.0 so no need to add this in 5.1 release.</p>
+        </td>
+        <td style="--bg-color: var(--subtle-blue, #deebff);">
+         <p>Not required</p>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-27629" data-scope="external" rel="external noreferrer"><u>CIM-27629</u></a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Display emails in the conversation view</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <ul>
+          <li>
+           <p><code>efpublic/customer-widget</code> repo change needs to be verified</p>
+          </li>
+          <li>
+           <p>Translation file changes needs to be verified</p>
+          </li>
+         </ul>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Usama Shabir</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32533" data-scope="external" rel="external noreferrer">CIM-32533</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="6b638939-2216-408d-a223-91771426ecfc" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="6b638939-2216-408d-a223-91771426ecfc"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="61087211-9dfc-4fe0-a687-0da1ce5dbd2a" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="61087211-9dfc-4fe0-a687-0da1ce5dbd2a"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-30638" data-scope="external" rel="external noreferrer"><u>CIM-30638</u></a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Customer Widget Persistent Channel Session</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged (Already merged in develop)</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Muhammad Bilal</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32536" data-scope="external" rel="external noreferrer">CIM-32536</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="06ac9fd3-2859-4765-8ff1-ac60f7f62705" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="06ac9fd3-2859-4765-8ff1-ac60f7f62705"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="2fb38d67-c31b-4272-9abe-b93a0dd77c86" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="2fb38d67-c31b-4272-9abe-b93a0dd77c86"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-30634" data-scope="external" rel="external noreferrer"><u>CIM-30634</u></a></p>
+        </td>
+        <td>
+         <p>LinkedIn 4.10.1 Patch Release</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Ahmed Hassan</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32537" data-scope="external" rel="external noreferrer">CIM-32537</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="da9d4067-2c52-410a-8a88-c565f0971f54" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="da9d4067-2c52-410a-8a88-c565f0971f54"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="c4677e09-eebb-4ddd-943e-2e0657b00028" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="c4677e09-eebb-4ddd-943e-2e0657b00028"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-30524" data-scope="external" rel="external noreferrer">CIM-30524</a></p>
+        </td>
+        <td>
+         <p>Display TAT Timer upon opening an email</p>
+        </td>
+        <td>
+         <p>Change log specifies the change for Unified Admin only, which is merged, but there are other changes as well in the skeleton MR that needs to verified (such as translation files and widget)</p>
+        </td>
+        <td>
+         <p>Raza</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32538" data-scope="external" rel="external noreferrer">CIM-32538</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="28915481-703a-423c-b8d8-488c549cbeab" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="28915481-703a-423c-b8d8-488c549cbeab"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="fe4fe287-b0d7-4e26-ac11-feb3aef18c45" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="fe4fe287-b0d7-4e26-ac11-feb3aef18c45"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-30010" data-scope="external" rel="external noreferrer"><u>CIM-30010</u></a></p>
+        </td>
+        <td>
+         <p>Editing comments through the connector</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Ahmed Hassan</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32539" data-scope="external" rel="external noreferrer">CIM-32539</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="5bc259ab-c171-495b-8108-bc2c06a39ed4" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="5bc259ab-c171-495b-8108-bc2c06a39ed4"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="fb13b768-4da6-4153-827a-ccddfa4dacc3" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="fb13b768-4da6-4153-827a-ccddfa4dacc3"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-30606" data-scope="external" rel="external noreferrer">CIM-30606</a></p>
+        </td>
+        <td>
+         <p>Only expect data that is to be updated instead of expecting all possible values of a customer Object for validation</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Faraz</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32540" data-scope="external" rel="external noreferrer">CIM-32540</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="852411d7-df5c-41ad-86ac-3d34006c8a80" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="852411d7-df5c-41ad-86ac-3d34006c8a80"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="c96d2799-34ac-4681-a66a-4b8c75f0fb10" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="c96d2799-34ac-4681-a66a-4b8c75f0fb10"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-30559" data-scope="external" rel="external noreferrer">CIM-30559</a></p>
+        </td>
+        <td>
+         <p>Double Exclamation Marks (“!!”) Not Displayed in Received LinkedIn Comments</p>
+        </td>
+        <td>
+         <p><s>No Change log provided - Needs to be verified </s></p>
+         <p>Fixed!</p>
+         <p>this issue was fixed by updated the version of text formating library that we are using at client side components</p>
+        </td>
+        <td>
+         <p>Nabeel Jh</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32541" data-scope="external" rel="external noreferrer">CIM-32541</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="55309d1c-9777-492a-a521-a85ec785191c" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="55309d1c-9777-492a-a521-a85ec785191c"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="8647e512-0809-47b4-b3c2-eaddf7071488" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="8647e512-0809-47b4-b3c2-eaddf7071488"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p><strong>CX4.10.1.1</strong></p>
+<div class="theme-table" style="--width: 1800px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="align-start" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 330px">
+       <col style="width: 333px">
+       <col style="width: 333px">
+       <col style="width: 314px">
+       <col style="width: 350px">
+       <col style="width: 140px">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p><strong>Feature / Issue</strong></p>
+        </th>
+        <th>
+         <p><strong>Description</strong></p>
+        </th>
+        <th>
+         <p><strong>Merge Status</strong></p>
+        </th>
+        <th>
+         <p><strong>Owner</strong></p>
+        </th>
+        <th>
+         <p><strong>Remarks (Update here after merging into 5.x based develop)</strong></p>
+        </th>
+        <th>
+         <p><strong>Quick Dev Testing Status</strong></p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31977" data-scope="external" rel="external noreferrer"><u>CIM-31977</u></a></p>
+        </td>
+        <td>
+         <p>CLONE - Extension type .eml attachment not received on email connector when sent from Gmail</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Ahsan Jalil</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 and added its change log as part of <a href="https://expertflow-docs.atlassian.net/browse/CIM-32525" data-scope="external" rel="external noreferrer">CIM-32525</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="f177f3fa-cccf-48e4-a7ec-9b98cca4f522" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="f177f3fa-cccf-48e4-a7ec-9b98cca4f522"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="c2501d59-7151-48da-ad03-dc23a0e22830" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="c2501d59-7151-48da-ad03-dc23a0e22830"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32070" data-scope="external" rel="external noreferrer">CIM-32070</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Facebook &amp; Instagram - Additional Social Media Features</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Ahsan Jalil / Nabeel Jh</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32542" data-scope="external" rel="external noreferrer">CIM-32542</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="f7c6eb8c-4054-417f-9aab-eeb289e564ea" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="f7c6eb8c-4054-417f-9aab-eeb289e564ea"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="d2c1503d-4775-4270-86bb-e87af0037e41" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="d2c1503d-4775-4270-86bb-e87af0037e41"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31973" data-scope="external" rel="external noreferrer"><u>CIM-31973</u></a></p>
+        </td>
+        <td>
+         <p>Chat stuck at frontend — showing as active even after closure by agent</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Abraham</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32543" data-scope="external" rel="external noreferrer">CIM-32543</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="391bc473-7649-4542-b903-507fc230a103" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="391bc473-7649-4542-b903-507fc230a103"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="eab4f4f4-ddba-490e-890e-52393d68a4ea" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="eab4f4f4-ddba-490e-890e-52393d68a4ea"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31932" data-scope="external" rel="external noreferrer"><u>CIM-31932</u></a></p>
+        </td>
+        <td>
+         <p>Memory Leak in Conversation Studio Causing OOM Kills Due to Switch Nodes Not Triggering onComplete Hook</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Zubair</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32544" data-scope="external" rel="external noreferrer">CIM-32544</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="c10e1d48-bc9c-4e73-9724-b762aaedae4c" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="c10e1d48-bc9c-4e73-9724-b762aaedae4c"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="ad0f081c-81e6-47b5-951d-17ebdd27eb43" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="ad0f081c-81e6-47b5-951d-17ebdd27eb43"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31845" data-scope="external" rel="external noreferrer"><u>CIM-31845</u></a></p>
+        </td>
+        <td>
+         <p>Fix for Conversations Stuck Due to Direct Transfer RONA Events</p>
+        </td>
+        <td>
+         <p>Merged (Testing Pending after merging with 5.0)</p>
+        </td>
+        <td>
+         <p>Faraz</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32545" data-scope="external" rel="external noreferrer">CIM-32545</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="f865a67b-5627-4185-8f6b-25d1aaee55fd" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="f865a67b-5627-4185-8f6b-25d1aaee55fd"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="2824f834-f5a6-412d-b3fe-50a34d794e8a" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="2824f834-f5a6-412d-b3fe-50a34d794e8a"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31847" data-scope="external" rel="external noreferrer">CIM-31847</a></p>
+        </td>
+        <td>
+         <p>Direct Transfer/Consult request not re-presented after agent reconnect</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Zubair</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32546" data-scope="external" rel="external noreferrer">CIM-32546</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="8abc1b1b-b2a0-451e-9c48-731a4a8a00f0" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="8abc1b1b-b2a0-451e-9c48-731a4a8a00f0"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="b0c08171-7d80-439c-b59e-da64f473d1a8" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="b0c08171-7d80-439c-b59e-da64f473d1a8"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31612" data-scope="external" rel="external noreferrer">CIM-31612</a></p>
+        </td>
+        <td>
+         <p>CLONE - Attachments in Agent Desk Emails Appear Without Names or Extensions</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Nabeel Jh / Ahsan Jalil</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 and added its change log as part of <a href="https://expertflow-docs.atlassian.net/browse/CIM-32525" data-scope="external" rel="external noreferrer">CIM-32525</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="5ac0936c-0e4c-45d1-ba4a-4165a84575ea" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="5ac0936c-0e4c-45d1-ba4a-4165a84575ea"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="3f43db0c-62ce-4e49-bad0-4ef5d00a718b" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="3f43db0c-62ce-4e49-bad0-4ef5d00a718b"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32043" data-scope="external" rel="external noreferrer">CIM-32043</a></p>
+        </td>
+        <td>
+         <p>Handle Email cases on failover - MS Exchange Connector</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Ahsan Jalil</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 and added its change log as part of <a href="https://expertflow-docs.atlassian.net/browse/CIM-32525" data-scope="external" rel="external noreferrer">CIM-32525</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="68cb476d-7222-44dc-b359-ffb6df0215da" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="68cb476d-7222-44dc-b359-ffb6df0215da"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="49f9fb1b-bfe9-4cca-bd1b-0f58ce50ab97" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="49f9fb1b-bfe9-4cca-bd1b-0f58ce50ab97"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p><strong>CX4.10.1.2</strong></p>
+<div class="theme-table" style="--width: 1800px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="align-start" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 330px">
+       <col style="width: 333px">
+       <col style="width: 333px">
+       <col style="width: 319px">
+       <col style="width: 345px">
+       <col style="width: 140px">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p><strong>Feature / Issue</strong></p>
+        </th>
+        <th>
+         <p><strong>Description</strong></p>
+        </th>
+        <th>
+         <p><strong>Merge Status</strong></p>
+        </th>
+        <th>
+         <p><strong>Owner</strong></p>
+        </th>
+        <th>
+         <p><strong>Remarks (Update here after merging into 5.x based develop)</strong></p>
+        </th>
+        <th>
+         <p><strong>Quick Dev Testing Status</strong></p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32174" data-scope="external" rel="external noreferrer">CIM-32174</a></p>
+        </td>
+        <td>
+         <p>Make MessagePayloadSize over socket configurable in Agent Manager</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Nabeel Jh</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32547" data-scope="external" rel="external noreferrer">CIM-32547</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="047fa63e-ac50-4dea-a143-48d604dfd03c" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="047fa63e-ac50-4dea-a143-48d604dfd03c"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="7031d0da-90c0-48db-b226-bdecdba89dc3" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="7031d0da-90c0-48db-b226-bdecdba89dc3"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32140" data-scope="external" rel="external noreferrer"><u>CIM-32140</u></a></p>
+        </td>
+        <td>
+         <p>Update Inline Images handling on MS Exchange Email Connector</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Ahsan Jalil</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 and added its change log as part of <a href="https://expertflow-docs.atlassian.net/browse/CIM-32525" data-scope="external" rel="external noreferrer">CIM-32525</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="3fa5f095-01b1-4b60-a03e-18ba16651444" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="3fa5f095-01b1-4b60-a03e-18ba16651444"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="28cff853-fc46-476f-a12e-ed4d3bc0afa7" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="28cff853-fc46-476f-a12e-ed4d3bc0afa7"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32173" data-scope="external" rel="external noreferrer"><u>CIM-32173</u></a></p>
+        </td>
+        <td>
+         <p>Encoding issue when receiving emails in Urdu or any other language.</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Azan / Ahsan</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 and added its change log as part of <a href="https://expertflow-docs.atlassian.net/browse/CIM-32525" data-scope="external" rel="external noreferrer">CIM-32525</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="788212b9-729e-424b-b3cc-d3ea7a5d27f3" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="788212b9-729e-424b-b3cc-d3ea7a5d27f3"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="a4c357b4-fb5b-47e0-848e-305966375ebc" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="a4c357b4-fb5b-47e0-848e-305966375ebc"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p><strong>CX4.10.2</strong></p>
+<div class="theme-table" style="--width: 1800px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="align-start" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 330px">
+       <col style="width: 333px">
+       <col style="width: 333px">
+       <col style="width: 325px">
+       <col style="width: 339px">
+       <col style="width: 140px">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p><strong>Feature / Issue</strong></p>
+        </th>
+        <th>
+         <p><strong>Description</strong></p>
+        </th>
+        <th>
+         <p><strong>Merge Status</strong></p>
+        </th>
+        <th>
+         <p><strong>Owner</strong></p>
+        </th>
+        <th>
+         <p><strong>Remarks (Update here after merging into 5.x based develop)</strong></p>
+        </th>
+        <th>
+         <p><strong>Quick Dev Testing Status</strong></p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31059" data-scope="external" rel="external noreferrer">CIM-31059</a></p>
+        </td>
+        <td>
+         <p>GraalVM Keytool Crash Fixes</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Azan</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32548" data-scope="external" rel="external noreferrer">CIM-32548</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="952405d5-3181-4f10-9811-310f890417b6" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="952405d5-3181-4f10-9811-310f890417b6"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="9eed9d61-6802-415d-ba16-31644f1c8e5b" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="9eed9d61-6802-415d-ba16-31644f1c8e5b"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p><strong>CX4.10.3</strong></p>
+<div class="theme-table" style="--width: 1800px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="align-start" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 330px">
+       <col style="width: 333px">
+       <col style="width: 333px">
+       <col style="width: 325px">
+       <col style="width: 339px">
+       <col style="width: 140px">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p><strong>Feature / Issue</strong></p>
+        </th>
+        <th>
+         <p><strong>Description</strong></p>
+        </th>
+        <th>
+         <p><strong>Merge Status</strong></p>
+        </th>
+        <th>
+         <p><strong>Owner</strong></p>
+        </th>
+        <th>
+         <p><strong>Remarks (Update here after merging into 5.x based develop)</strong></p>
+        </th>
+        <th>
+         <p><strong>Quick Dev Testing Status</strong></p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-30974" data-scope="external" rel="external noreferrer">CIM-30974</a></p>
+        </td>
+        <td>
+         <p>Implement Multi-level Server Pagination for Wrapup Form Schema</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Usama Shabbir</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32552" data-scope="external" rel="external noreferrer">CIM-32552</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="cf9c4f37-be81-4ab4-8e3b-4eb85bc7e536" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="cf9c4f37-be81-4ab4-8e3b-4eb85bc7e536"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="f96bfd1c-fe95-4f4b-9cda-9c7e85481143" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="f96bfd1c-fe95-4f4b-9cda-9c7e85481143"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31195" data-scope="external" rel="external noreferrer">CIM-31195</a></p>
+        </td>
+        <td>
+         <p>Implement In-Form Keyword Search for Wrap-Up Codes</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Usama Shabbir</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32551" data-scope="external" rel="external noreferrer">CIM-32551</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="14175b5c-7192-4b4d-95d5-6e11b6176e62" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="14175b5c-7192-4b4d-95d5-6e11b6176e62"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="0ec68a1d-bffc-4214-8c59-4a8a89c6dc6a" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="0ec68a1d-bffc-4214-8c59-4a8a89c6dc6a"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31062" data-scope="external" rel="external noreferrer">CIM-31062</a></p>
+        </td>
+        <td>
+         <p>Prioritize Emails with CEO/COO in CC – Route to Trained Agents</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Ahsan Jalil</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 and added its change log as part of <a href="https://expertflow-docs.atlassian.net/browse/CIM-32525" data-scope="external" rel="external noreferrer">CIM-32525</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="2c413ae3-d726-4a94-8217-9bb267caba82" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="2c413ae3-d726-4a94-8217-9bb267caba82"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="9aea5e48-91ed-4e03-88e2-ab7dfb51a5b0" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="9aea5e48-91ed-4e03-88e2-ab7dfb51a5b0"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-30987" data-scope="external" rel="external noreferrer">CIM-30987</a></p>
+        </td>
+        <td>
+         <p>Implement Multi-Level Infinite Scroll on Agent Desk Wrap-up Form</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Usama Shabbir</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32553" data-scope="external" rel="external noreferrer">CIM-32553</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="a235a8e6-e6fd-40f5-8efb-d8c22dd84c80" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="a235a8e6-e6fd-40f5-8efb-d8c22dd84c80"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="b56cbbad-9506-4cd7-acb2-a28f7acceafb" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="b56cbbad-9506-4cd7-acb2-a28f7acceafb"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-30975" data-scope="external" rel="external noreferrer">CIM-30975</a></p>
+        </td>
+        <td>
+         <p>Implement Partial Updates for Form Schema using HTTP PATCH</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Usama Shabbir</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32554" data-scope="external" rel="external noreferrer">CIM-32554</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="cf562632-4e15-45d4-8962-86a608a17fa6" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="cf562632-4e15-45d4-8962-86a608a17fa6"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="38a437df-7100-4cc1-a3a2-ab263aa407ef" class="task-item"><input class="task-item-icon" type="checkbox" checked disabled aria-labelledby="38a437df-7100-4cc1-a3a2-ab263aa407ef"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31173" data-scope="external" rel="external noreferrer">CIM-31173</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Agent Performance Dashboard 4.10.3</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged (Already in develop)</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Abraham</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32555" data-scope="external" rel="external noreferrer">CIM-32555</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="1dd8842f-37af-4ea2-8c9f-f903cb2768e7" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="1dd8842f-37af-4ea2-8c9f-f903cb2768e7"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="2759168e-5fcc-4660-bdb1-0cb0cebc9f43" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="2759168e-5fcc-4660-bdb1-0cb0cebc9f43"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-29899" data-scope="external" rel="external noreferrer">CIM-29899</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Hand raise notification - if supervisor is on another tab</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Qasim Hayat</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32556" data-scope="external" rel="external noreferrer">CIM-32556</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="78280cee-3f0a-48eb-b82c-266cf127d946" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="78280cee-3f0a-48eb-b82c-266cf127d946"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="09813ce2-4438-42d6-827d-8a15d5ccdb26" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="09813ce2-4438-42d6-827d-8a15d5ccdb26"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31174" data-scope="external" rel="external noreferrer">CIM-31174</a></p>
+        </td>
+        <td>
+         <p>Embedding dashboards in Agent Desk</p>
+        </td>
+        <td>
+         <p>Merged (Already in develop)</p>
+        </td>
+        <td>
+         <p>Raza</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32557" data-scope="external" rel="external noreferrer">CIM-32557</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="c657a2f8-62e4-4f1d-9956-bd528f213115" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="c657a2f8-62e4-4f1d-9956-bd528f213115"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="bdf84428-4fb0-44ad-8700-201009594670" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="bdf84428-4fb0-44ad-8700-201009594670"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31141" data-scope="external" rel="external noreferrer">CIM-31141</a></p>
+        </td>
+        <td>
+         <p>Update email editor client angular</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Nabeel Jh / Ahsan Jalil</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 and added its change log as part of <a href="https://expertflow-docs.atlassian.net/browse/CIM-32525" data-scope="external" rel="external noreferrer">CIM-32525</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="0fb35aca-fd7a-42b2-8e48-fb4187497b45" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="0fb35aca-fd7a-42b2-8e48-fb4187497b45"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="abc0cf12-52a9-4ef1-af35-4e31f9a8c50e" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="abc0cf12-52a9-4ef1-af35-4e31f9a8c50e"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/BI-252" data-scope="external" rel="external noreferrer">BI-252</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Supervisor Dashboard 4.10.3</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Osja</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32558" data-scope="external" rel="external noreferrer">CIM-32558</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="4b13604c-35c7-4ff8-85a5-9db5f02104f7" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="4b13604c-35c7-4ff8-85a5-9db5f02104f7"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="a07622a8-7fd6-4d77-ac46-34747d898155" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="a07622a8-7fd6-4d77-ac46-34747d898155"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/BI-246" data-scope="external" rel="external noreferrer">BI-246</a></p>
+        </td>
+        <td>
+         <p>Agent Team Stats Dashboard 4..10.3</p>
+        </td>
+        <td>
+         <p>Merged (Same change log as of <a href="https://expertflow-docs.atlassian.net/browse/CIM-31173" data-scope="external" rel="external noreferrer">CIM-31173</a>)</p>
+        </td>
+        <td>
+         <p>Abraham</p>
+        </td>
+        <td>
+         <p>Reused its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32555" data-scope="external" rel="external noreferrer">CIM-32555</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="0d65a4b6-dae3-4439-94bb-385e88c04d87" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="0d65a4b6-dae3-4439-94bb-385e88c04d87"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="8c201d46-83d7-4d6c-bd0e-d0f7d1824bd2" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="8c201d46-83d7-4d6c-bd0e-d0f7d1824bd2"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/BI-205" data-scope="external" rel="external noreferrer">BI-205</a></p>
+        </td>
+        <td>
+         <p>ETL for Message Level Data</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Sami / Rohail</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32559" data-scope="external" rel="external noreferrer">CIM-32559</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="da09cf31-d49f-4492-afd1-0533aa322e88" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="da09cf31-d49f-4492-afd1-0533aa322e88"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="c3ae1407-0e89-4cca-a997-e2f6018e134e" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="c3ae1407-0e89-4cca-a997-e2f6018e134e"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31575" data-scope="external" rel="external noreferrer">CIM-31575</a></p>
+        </td>
+        <td>
+         <p>CLONE - Messages appear blurred and not delivered until page refresh</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Nabeel Jh</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32563" data-scope="external" rel="external noreferrer">CIM-32563</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="7799d663-867e-46b5-94a7-04996613f282" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="7799d663-867e-46b5-94a7-04996613f282"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="0d228165-d7db-4fc6-8937-bce06689ea74" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="0d228165-d7db-4fc6-8937-bce06689ea74"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31176" data-scope="external" rel="external noreferrer"><u>CIM-31176</u></a></p>
+        </td>
+        <td>
+         <p>Incorrect Session End Event Triggered After Agent Finding Time Expires</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Ahsan Jalil</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32564" data-scope="external" rel="external noreferrer">CIM-32564</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="74dedf9f-6b7f-425e-8cd2-52a61bb6fde7" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="74dedf9f-6b7f-425e-8cd2-52a61bb6fde7"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="67b894dc-dc82-4dcf-8edb-b06136b566d0" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="67b894dc-dc82-4dcf-8edb-b06136b566d0"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31063" data-scope="external" rel="external noreferrer"><u>CIM-31063</u></a></p>
+        </td>
+        <td>
+         <p>WrapUp Forms removed on Unified Admin Pod restart</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Usama Shabbir</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32565" data-scope="external" rel="external noreferrer">CIM-32565</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="f4c72ff6-d346-49ee-83d8-291f403fe388" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="f4c72ff6-d346-49ee-83d8-291f403fe388"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="9c5f40ea-cada-4b74-9619-7706e654af91" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="9c5f40ea-cada-4b74-9619-7706e654af91"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31329" data-scope="external" rel="external noreferrer">CIM-31329</a></p>
+        </td>
+        <td>
+         <p>Handle exception while returning interruptible MRD to previous state</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Zubair</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32566" data-scope="external" rel="external noreferrer">CIM-32566</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="ff6cf098-82c0-46b1-adc7-244f98732718" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="ff6cf098-82c0-46b1-adc7-244f98732718"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="657b7392-efb1-4131-b4f7-c7e7be838e51" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="657b7392-efb1-4131-b4f7-c7e7be838e51"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31194" data-scope="external" rel="external noreferrer">CIM-31194</a></p>
+        </td>
+        <td>
+         <p>Display first name + last name instead of username on Agent Desk’s Available Agents Detail</p>
+        </td>
+        <td>
+         <p>Merged (Already in develop)</p>
+        </td>
+        <td>
+         <p>Abraham</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32567" data-scope="external" rel="external noreferrer">CIM-32567</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="eec169b9-3df9-4f16-b03f-e94b234053a6" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="eec169b9-3df9-4f16-b03f-e94b234053a6"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="6f186c21-2868-4257-a16d-ae00481ef6a2" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="6f186c21-2868-4257-a16d-ae00481ef6a2"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p><strong>CX4.10.3.1</strong></p>
+<div class="theme-table" style="--width: 1800px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="align-start" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 330px">
+       <col style="width: 333px">
+       <col style="width: 333px">
+       <col style="width: 325px">
+       <col style="width: 339px">
+       <col style="width: 140px">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p><strong>Feature / Issue</strong></p>
+        </th>
+        <th>
+         <p><strong>Description</strong></p>
+        </th>
+        <th>
+         <p><strong>Merge Status</strong></p>
+        </th>
+        <th>
+         <p><strong>Owner</strong></p>
+        </th>
+        <th>
+         <p><strong>Remarks (Update here after merging into 5.x based develop)</strong></p>
+        </th>
+        <th>
+         <p><strong>Quick Dev Testing Status</strong></p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32111" data-scope="external" rel="external noreferrer">CIM-32111</a></p>
+        </td>
+        <td>
+         <p>Object ID is being feteched as "Empty" string from MongoDB</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Faraz</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32063" data-scope="external" rel="external noreferrer">CIM-32063</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="72f7c321-e935-477e-997a-593387b54f72" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="72f7c321-e935-477e-997a-593387b54f72"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="264cd086-908d-4a60-89e7-3cd132c7bff7" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="264cd086-908d-4a60-89e7-3cd132c7bff7"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32190" data-scope="external" rel="external noreferrer">CIM-32190</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Add index on conversationId for ActivityEntity in Conversation Manager</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Azan</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32570" data-scope="external" rel="external noreferrer">CIM-32570</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="88c9a77e-655d-483f-90bf-33e1393b5161" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="88c9a77e-655d-483f-90bf-33e1393b5161"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="bb30fda8-8866-4e7c-8343-a76274aad757" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="bb30fda8-8866-4e7c-8343-a76274aad757"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32189" data-scope="external" rel="external noreferrer"><u>CIM-32189</u></a></p>
+        </td>
+        <td>
+         <p>Segregate SM and DM in instagram messages using additionalData based message_type in header</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Ahsan Jalil</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32568" data-scope="external" rel="external noreferrer">CIM-32568</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="d4705654-e1e4-4e05-a710-f35a7788be68" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="d4705654-e1e4-4e05-a710-f35a7788be68"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="e0e4a712-23f4-4457-a261-3bf9b5dabb4c" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="e0e4a712-23f4-4457-a261-3bf9b5dabb4c"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32158" data-scope="external" rel="external noreferrer">CIM-32158</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Team announcement Feature not working</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Sabahat</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32569" data-scope="external" rel="external noreferrer">CIM-32569</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="7ee12b21-90b7-489a-aaac-1d7593e4251f" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="7ee12b21-90b7-489a-aaac-1d7593e4251f"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="e56970ca-781d-4c9d-9191-17f753dfa9b1" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="e56970ca-781d-4c9d-9191-17f753dfa9b1"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32147" data-scope="external" rel="external noreferrer">CIM-32147</a></p>
+        </td>
+        <td>
+         <p>QUEUED conversations Not Routed After Routing Engine Restart</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Zubair</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32571" data-scope="external" rel="external noreferrer">CIM-32571</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="5023a001-521b-41bb-bc7a-1246f92fda16" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="5023a001-521b-41bb-bc7a-1246f92fda16"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="1762becf-bcb4-4eea-bb01-b0a70d0ac245" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="1762becf-bcb4-4eea-bb01-b0a70d0ac245"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32046" data-scope="external" rel="external noreferrer"><u>CIM-32046</u></a></p>
+        </td>
+        <td>
+         <p>Invalid Image handling in case of Forwarding</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Nabeel Jh / Ahsan Jalil</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32572" data-scope="external" rel="external noreferrer">CIM-32572</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="499d1a02-68a6-4984-9c82-7604c23ecf07" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="499d1a02-68a6-4984-9c82-7604c23ecf07"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="74b1b605-9389-49fb-96b0-e830b917e463" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="74b1b605-9389-49fb-96b0-e830b917e463"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31851" data-scope="external" rel="external noreferrer">CIM-31851</a></p>
+        </td>
+        <td>
+         <p>Frequent Frontend Refresh and Draft Loss Due to Repeated Socket Reconnection</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Nabeel Jh</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32573" data-scope="external" rel="external noreferrer">CIM-32573</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="9f86aa00-d5a1-42b6-967f-efa0851e0487" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="9f86aa00-d5a1-42b6-967f-efa0851e0487"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="8e04161e-abb8-4ad2-a6a6-0210f24dffc6" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="8e04161e-abb8-4ad2-a6a6-0210f24dffc6"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p><strong>CX4.10.5</strong></p>
+<div class="theme-table" style="--width: 1800px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="align-start" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 330px">
+       <col style="width: 333px">
+       <col style="width: 333px">
+       <col style="width: 325px">
+       <col style="width: 339px">
+       <col style="width: 140px">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p><strong>Feature / Issue</strong></p>
+        </th>
+        <th>
+         <p><strong>Description</strong></p>
+        </th>
+        <th>
+         <p><strong>Merge Status</strong></p>
+        </th>
+        <th>
+         <p><strong>Owner</strong></p>
+        </th>
+        <th>
+         <p><strong>Remarks (Update here after merging into 5.x based develop)</strong></p>
+        </th>
+        <th>
+         <p><strong>Quick Dev Testing Status</strong></p>
+        </th>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32023" data-scope="external" rel="external noreferrer">CIM-32023</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Service Based Accounts</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged Generally but it will not be part of 5.1 release due to different databases in muti tenant environment.</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Azan</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 and added its change log as part of <a href="https://expertflow-docs.atlassian.net/browse/CIM-32593" data-scope="external" rel="external noreferrer">CIM-32593</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="8239994d-5a8a-4fb7-bbf3-8dfcb99baec0" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="8239994d-5a8a-4fb7-bbf3-8dfcb99baec0"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="3896dbcd-73ad-47c6-b0b9-008375cfd970" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="3896dbcd-73ad-47c6-b0b9-008375cfd970"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31672" data-scope="external" rel="external noreferrer">CIM-31672</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Vault Implementation in Core</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Azan / Faraz</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 and added its change log as part of <a href="https://expertflow-docs.atlassian.net/browse/CIM-32593" data-scope="external" rel="external noreferrer">CIM-32593</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="b2253aed-52ad-4349-8d48-301cb8d78542" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="b2253aed-52ad-4349-8d48-301cb8d78542"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="b3a736a8-a7b1-4407-9d54-83d4793d2ba6" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="b3a736a8-a7b1-4407-9d54-83d4793d2ba6"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31766" data-scope="external" rel="external noreferrer">CIM-31766</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Converting Typing indicator events types from Message to Notification</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Azan</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32594" data-scope="external" rel="external noreferrer">CIM-32594</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="a6010f87-412c-4ebe-a00d-ee664b9e578c" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="a6010f87-412c-4ebe-a00d-ee664b9e578c"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="ebaf4ad4-7268-4c99-8467-3950494d3dc6" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="ebaf4ad4-7268-4c99-8467-3950494d3dc6"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31027" data-scope="external" rel="external noreferrer">CIM-31027</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Data is not being encoded properly coming from CCM</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Azan</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32595" data-scope="external" rel="external noreferrer">CIM-32595</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="141b69b7-a441-47f0-b52f-10a7e4d6014b" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="141b69b7-a441-47f0-b52f-10a7e4d6014b"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="10ebc981-e419-4a64-bb14-3ac70c209d0f" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="10ebc981-e419-4a64-bb14-3ac70c209d0f"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-30826" data-scope="external" rel="external noreferrer">CIM-30826</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Bulgarian text and emojis corrupted when messages are loaded from CCM</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Azan</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32596" data-scope="external" rel="external noreferrer">CIM-32596</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="069e1671-d459-478e-b0c5-cf5bacfba949" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="069e1671-d459-478e-b0c5-cf5bacfba949"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="8b5ebd4d-a4d3-4981-91ee-e716a38f92c1" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="8b5ebd4d-a4d3-4981-91ee-e716a38f92c1"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32221" data-scope="external" rel="external noreferrer">CIM-32221</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Conversation Manager Changes related to Encoding issues</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Azan</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32597" data-scope="external" rel="external noreferrer">CIM-32597</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="68bae6ff-ef30-44a4-a904-54c483082a51" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="68bae6ff-ef30-44a4-a904-54c483082a51"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="8142b616-7152-40a8-b4b9-39324650fd2d" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="8142b616-7152-40a8-b4b9-39324650fd2d"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-29739" data-scope="external" rel="external noreferrer">CIM-29739</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Implement the Push Screen Recordings API</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Azan</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32600" data-scope="external" rel="external noreferrer">CIM-32600</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="55b62f45-66a2-4bf6-921a-c1339543401d" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="55b62f45-66a2-4bf6-921a-c1339543401d"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="9512999f-9e17-4e9f-bf9c-a083f3f78fd2" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="9512999f-9e17-4e9f-bf9c-a083f3f78fd2"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-30512" data-scope="external" rel="external noreferrer">CIM-30512</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Conversation Filtering &amp; Table Columns Enhancements in Quality Management - <strong>API Enhancement</strong></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Muhammad Bilal Alam / Azan</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32341" data-scope="external" rel="external noreferrer">CIM-32341</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="1b92b7b6-7055-4d70-a699-e43393ac21ff" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="1b92b7b6-7055-4d70-a699-e43393ac21ff"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="2cbfbbdb-bf5d-4563-aba5-6e0b9d29798a" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="2cbfbbdb-bf5d-4563-aba5-6e0b9d29798a"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32148" data-scope="external" rel="external noreferrer">CIM-32148</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Enhance searchConversation GQL API to return channel info in response</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Azan</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32601" data-scope="external" rel="external noreferrer">CIM-32601</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="c3c8392a-9bf8-4d7f-8bb8-a7298719f147" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="c3c8392a-9bf8-4d7f-8bb8-a7298719f147"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="28149300-5e87-440d-b000-7d4afbd29887" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="28149300-5e87-440d-b000-7d4afbd29887"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32149" data-scope="external" rel="external noreferrer">CIM-32149</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Enhance searchConversation GQL API to support generic search via "searchTerm" and also allow search for customer firstName</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Azan</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32602" data-scope="external" rel="external noreferrer">CIM-32602</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="399d9f9d-bb41-4913-9b38-561f77a8a9af" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="399d9f9d-bb41-4913-9b38-561f77a8a9af"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="b5dd0572-0310-4b31-b8e4-da42a6e0975e" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="b5dd0572-0310-4b31-b8e4-da42a6e0975e"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32255" data-scope="external" rel="external noreferrer">CIM-32255</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Use CimMessage Intent as CimEvent and Activity Name in Third Party Activity API - <strong>API Enhancement</strong></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Azan</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32603" data-scope="external" rel="external noreferrer">CIM-32603</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="56335e99-db64-490f-a8f6-142bdc6262e2" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="56335e99-db64-490f-a8f6-142bdc6262e2"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="3295a0ba-96f4-436c-8da1-95b59b3cd79a" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="3295a0ba-96f4-436c-8da1-95b59b3cd79a"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32263" data-scope="external" rel="external noreferrer">CIM-32263</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Update the snackbar notification text and color when agent is unsubscribed from conversation due to callback state</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Faraz</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32604" data-scope="external" rel="external noreferrer">CIM-32604</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="cf6f09e8-775d-46ea-8dc4-e79af367b48c" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="cf6f09e8-775d-46ea-8dc4-e79af367b48c"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="5f12d2ba-7dc7-436d-a8c3-02510d74bb50" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="5f12d2ba-7dc7-436d-a8c3-02510d74bb50"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32044" data-scope="external" rel="external noreferrer">CIM-32044</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Introduce Recent/Past Conversation Dashboard</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Faraz</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32329" data-scope="external" rel="external noreferrer">CIM-32329</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="291d5fa7-92be-4bae-b7d7-829dd9b6e5d2" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="291d5fa7-92be-4bae-b7d7-829dd9b6e5d2"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="ad85a95f-606b-4c3a-b598-8ac2fc6a305d" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="ad85a95f-606b-4c3a-b598-8ac2fc6a305d"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32045" data-scope="external" rel="external noreferrer">CIM-32045</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Agent-Initiated Outbound Email</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Faraz</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32330" data-scope="external" rel="external noreferrer">CIM-32330</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="b4ed488b-0bf8-4aef-9113-4ae2cdf6451e" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="b4ed488b-0bf8-4aef-9113-4ae2cdf6451e"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="3700e0d0-b8c1-4499-8693-bb9127920508" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="3700e0d0-b8c1-4499-8693-bb9127920508"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31918" data-scope="external" rel="external noreferrer"><u>CIM-31918</u></a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Implement Screen Recording Playback on QM with Call Recordings</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Bilal Alam</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32605" data-scope="external" rel="external noreferrer">CIM-32605</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="80fd8e2d-4924-485e-a734-705227e5421f" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="80fd8e2d-4924-485e-a734-705227e5421f"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="bad468bb-29c8-4ebe-bab9-47c87536aec7" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="bad468bb-29c8-4ebe-bab9-47c87536aec7"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-28179" data-scope="external" rel="external noreferrer">CIM-28179</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Showing form data activities in the conversation view</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Not Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Bilal Alam</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32338" data-scope="external" rel="external noreferrer">CIM-32338</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="4b45f796-c6c2-42bc-82cd-56bc05e25bbe" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="4b45f796-c6c2-42bc-82cd-56bc05e25bbe"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="e84c7306-369f-47b7-a0b6-6e3323dcafe7" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="e84c7306-369f-47b7-a0b6-6e3323dcafe7"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32211" data-scope="external" rel="external noreferrer"><u>CIM-32211</u></a></p>
+        </td>
+        <td>
+         <p>Secure Sensitive Information in channel connector/provider setting</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Ahsan Jalil</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32606" data-scope="external" rel="external noreferrer">CIM-32606</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="d474d7db-cf56-4431-a088-31a881af4b3e" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="d474d7db-cf56-4431-a088-31a881af4b3e"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="179936d5-6e2c-4e52-a250-d889a5f58114" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="179936d5-6e2c-4e52-a250-d889a5f58114"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32105" data-scope="external" rel="external noreferrer"><u>CIM-32105</u></a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Conversation Rerouting on Agent state change ("Not Ready - Callback")</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Zubair</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32607" data-scope="external" rel="external noreferrer">CIM-32607</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="0ab926c5-200a-4baa-8aa4-3056ba894a8a" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="0ab926c5-200a-4baa-8aa4-3056ba894a8a"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="c5b1ec98-2052-442c-a6a2-5284ef9dd259" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="c5b1ec98-2052-442c-a6a2-5284ef9dd259"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-28167" data-scope="external" rel="external noreferrer"><u>CIM-28167</u></a></p>
+        </td>
+        <td>
+         <p>UI Integration with EF Customer Widget</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Nabeel Jh / Ahsan Jalil</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32608" data-scope="external" rel="external noreferrer">CIM-32608</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="896fd387-02a9-4c68-acbd-db77dc17143b" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="896fd387-02a9-4c68-acbd-db77dc17143b"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="14df65c7-b122-4ebe-8a93-140c567fad35" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="14df65c7-b122-4ebe-8a93-140c567fad35"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--subtle-blue, #deebff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32325" data-scope="external" rel="external noreferrer">CIM-32325</a></p>
+        </td>
+        <td style="--bg-color: var(--subtle-blue, #deebff);">
+         <p>Make request payload size configurable in Survey Backend</p>
+        </td>
+        <td style="--bg-color: var(--subtle-blue, #deebff);">
+         <p>Not Required</p>
+        </td>
+        <td style="--bg-color: var(--subtle-blue, #deebff);">
+         <p>Nasir Hussain</p>
+        </td>
+        <td style="--bg-color: var(--subtle-blue, #deebff);">
+         <p>The changes done for this, don't need to be marged for 5.x.
+          <br>
+          Since the 5.0 release, <code>survey backend</code> is no more part of the solution. So the changes neither need to be merged nor tested.</p>
+        </td>
+        <td style="--bg-color: var(--subtle-blue, #deebff);">
+         <p>Not required</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32280" data-scope="external" rel="external noreferrer">CIM-32280</a></p>
+        </td>
+        <td>
+         <p>CLONE - Add Search Functionality for Dropdown in Prechat Form</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Muhammad Bilal</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32609" data-scope="external" rel="external noreferrer">CIM-32609</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="766be358-4b22-4748-98ae-5833e3efe4d9" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="766be358-4b22-4748-98ae-5833e3efe4d9"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="9d139521-de30-45ec-9350-331d3687f82d" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="9d139521-de30-45ec-9350-331d3687f82d"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-30521" data-scope="external" rel="external noreferrer"><u>CIM-30521</u></a></p>
+        </td>
+        <td>
+         <p>Low-Score Evaluation Alerts for Agents</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Bilal Alam</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32339" data-scope="external" rel="external noreferrer">CIM-32339</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="905ea8d8-51c8-4a83-bba5-7205383fc8ed" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="905ea8d8-51c8-4a83-bba5-7205383fc8ed"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="c001ae28-19d1-4e27-bf25-4815b3982cf3" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="c001ae28-19d1-4e27-bf25-4815b3982cf3"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-27632" data-scope="external" rel="external noreferrer">CIM-27632</a></p>
+        </td>
+        <td>
+         <p>Integrate QM with Centralized Audit Logging Service</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Bilal Alam</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32340" data-scope="external" rel="external noreferrer">CIM-32340</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="21a1826f-fa1b-4c0f-9638-2f9818924cb4" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="21a1826f-fa1b-4c0f-9638-2f9818924cb4"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="e361468e-2726-4c09-820c-f738a6bcfb5f" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="e361468e-2726-4c09-820c-f738a6bcfb5f"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32272" data-scope="external" rel="external noreferrer">CIM-32272</a></p>
+        </td>
+        <td>
+         <p>Standard Widget Enhancements</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Muhammad Bilal / Nabeel Jh</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32610" data-scope="external" rel="external noreferrer">CIM-32610</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="29f0a573-6c1e-486a-a9ab-512306dcfb14" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="29f0a573-6c1e-486a-a9ab-512306dcfb14"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="972c6be8-6f35-4e19-87c3-b036339a7973" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="972c6be8-6f35-4e19-87c3-b036339a7973"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32222" data-scope="external" rel="external noreferrer"><u>CIM-32222</u></a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Web Channel Manager - Include Carousel message support</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Muhammad Junaid</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32611" data-scope="external" rel="external noreferrer">CIM-32611</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="40229913-6685-42d6-ab8a-b03e03f5b043" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="40229913-6685-42d6-ab8a-b03e03f5b043"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="58cdc3ad-0fe6-48a4-bed8-ee275cb5ae33" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="58cdc3ad-0fe6-48a4-bed8-ee275cb5ae33"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31054" data-scope="external" rel="external noreferrer">CIM-31054</a></p>
+        </td>
+        <td>
+         <p>Support for adding dynamic fields in web widget</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Ahsan Jalil</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32612" data-scope="external" rel="external noreferrer">CIM-32612</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="60838379-137e-4326-a501-adf0d0ab2aa1" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="60838379-137e-4326-a501-adf0d0ab2aa1"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="fb7807c7-d332-4ff3-bdd7-a0146647476a" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="fb7807c7-d332-4ff3-bdd7-a0146647476a"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31832" data-scope="external" rel="external noreferrer">CIM-31832</a></p>
+        </td>
+        <td>
+         <p>Not able to store conversation data via customer widget other then string type.</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Muhammad Junaid</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32613" data-scope="external" rel="external noreferrer">CIM-32613</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="96f9c98d-2461-4387-8db0-5a3ea0e3aba6" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="96f9c98d-2461-4387-8db0-5a3ea0e3aba6"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="3e5de2d4-cbf7-4dac-9df7-8fc7c6be189e" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="3e5de2d4-cbf7-4dac-9df7-8fc7c6be189e"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32316" data-scope="external" rel="external noreferrer">CIM-32316</a></p>
+        </td>
+        <td>
+         <p>Comment truncation issue on Facebook page for agent responses.</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Ahsan Jalil</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32614" data-scope="external" rel="external noreferrer">CIM-32614</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="797beefe-3efd-4bd9-b832-b16697aa8a00" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="797beefe-3efd-4bd9-b832-b16697aa8a00"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="522fbf68-ef00-4d54-b32b-69cc03aa4d7d" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="522fbf68-ef00-4d54-b32b-69cc03aa4d7d"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32237" data-scope="external" rel="external noreferrer">CIM-32237</a></p>
+        </td>
+        <td>
+         <p>Form Multiple submission against a single conversation</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Bilal Alam</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32615" data-scope="external" rel="external noreferrer">CIM-32615</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="a8f32230-842a-4150-818a-0d5e37058585" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="a8f32230-842a-4150-818a-0d5e37058585"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="b49bd5e1-71a8-42bb-b18c-88bd71dcd527" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="b49bd5e1-71a8-42bb-b18c-88bd71dcd527"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32228" data-scope="external" rel="external noreferrer">CIM-32228</a></p>
+        </td>
+        <td>
+         <p>Use custom generated InternetMessageId for sending MS Exchange Id. and Handling Invalid Img source and Content-Id case sensitivity cases.</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Ahsan Jalil</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 and added its change log as part of <a href="https://expertflow-docs.atlassian.net/browse/CIM-32525" data-scope="external" rel="external noreferrer">CIM-32525</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="2da38f8e-f815-47f3-891e-59084e03084a" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="2da38f8e-f815-47f3-891e-59084e03084a"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="11cf1640-a548-4394-9beb-61b252acfc96" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="11cf1640-a548-4394-9beb-61b252acfc96"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32216" data-scope="external" rel="external noreferrer">CIM-32216</a></p>
+        </td>
+        <td>
+         <p>Clone 4.10.5 - Handling on missing inline image incase of no content during reply/forward scenario's due to initial spacing in editor</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Nabeel Jh</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 and added its change log as part of <a href="https://expertflow-docs.atlassian.net/browse/CIM-32525" data-scope="external" rel="external noreferrer">CIM-32525</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="ee558d76-e5d2-43e9-a056-de928fd475c4" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="ee558d76-e5d2-43e9-a056-de928fd475c4"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="703d15c1-210d-4a1d-8091-0a98ff95d84b" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="703d15c1-210d-4a1d-8091-0a98ff95d84b"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32186" data-scope="external" rel="external noreferrer">CIM-32186</a></p>
+        </td>
+        <td>
+         <p>In case of 2FA, QM is unable to call evaluator from keycloak</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Bilal Alam</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32616" data-scope="external" rel="external noreferrer">CIM-32616</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="87397bbc-3584-484b-beb2-98630ecd1603" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="87397bbc-3584-484b-beb2-98630ecd1603"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="d7d3bd2a-2df1-4017-b8dc-5fd0137186f2" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="d7d3bd2a-2df1-4017-b8dc-5fd0137186f2"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31890" data-scope="external" rel="external noreferrer">CIM-31890</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>CLONE - Outbound SMS Window Auto-Close Issue</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Sabahat</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32617" data-scope="external" rel="external noreferrer">CIM-32617</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="f28b6812-7ecd-4d9a-8b42-398d573c71f5" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="f28b6812-7ecd-4d9a-8b42-398d573c71f5"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="00361c76-f5b5-4aa3-bb7a-2869d5fab5d6" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="00361c76-f5b5-4aa3-bb7a-2869d5fab5d6"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CCC-1997" data-scope="external" rel="external noreferrer">CCC-1997</a></p>
+        </td>
+        <td>
+         <p>Finesse Re-Login issue.</p>
+        </td>
+        <td>
+         <p>Not Merged</p>
+        </td>
+        <td>
+         <p>Faraz</p>
+        </td>
+        <td>
+         <p>requires QA testing to check whether the issue is already fixed in keycloak adapter running version</p>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CCC-2124" data-scope="external" rel="external noreferrer">CCC-2124</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="bc5a344b-a9cf-4f05-b4c4-0ee91685c107" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="bc5a344b-a9cf-4f05-b4c4-0ee91685c107"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="b7cdbc58-c59a-4016-af25-8fad053bedd2" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="b7cdbc58-c59a-4016-af25-8fad053bedd2"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CCC-2023" data-scope="external" rel="external noreferrer">CCC-2023</a></p>
+        </td>
+        <td>
+         <p>Agent MRD State Incorrect After Outbound Call Transfers</p>
+        </td>
+        <td>
+         <p>Merged on top of 5.0 and needs to be verified as part regression for the next 5.x version.</p>
+        </td>
+        <td>
+         <p>Saud</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CCC-2125" data-scope="external" rel="external noreferrer">CCC-2125</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="3915896e-b174-4e4b-a3b8-d32d9a62f529" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="3915896e-b174-4e4b-a3b8-d32d9a62f529"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="49c4384c-565f-4c2f-8ad4-1eae65d19fd5" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="49c4384c-565f-4c2f-8ad4-1eae65d19fd5"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32327" data-scope="external" rel="external noreferrer">CIM-32327</a></p>
+        </td>
+        <td>
+         <p>CLONE - 0001330: To open links in from chat in agent desk in new tab</p>
+        </td>
+        <td>
+         <p>Merged</p>
+        </td>
+        <td>
+         <p>Nabeel Jh</p>
+        </td>
+        <td>
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32618" data-scope="external" rel="external noreferrer">CIM-32618</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="62de039e-1206-435f-818e-bc224dd2f64b" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="62de039e-1206-435f-818e-bc224dd2f64b"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="66af8b37-b5fc-4e02-a3ef-e4f276c178c6" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="66af8b37-b5fc-4e02-a3ef-e4f276c178c6"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CRM-573" data-scope="external" rel="external noreferrer">CRM-573</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Realtime Rest Template issue Fix for Timeouts when calling Unified Admin API.</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Abraham</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 and added its change log as part of <a href="https://expertflow-docs.atlassian.net/browse/CIM-32593" data-scope="external" rel="external noreferrer">CIM-32593</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="0c3deb02-d076-4526-848f-043d6165c0d7" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="0c3deb02-d076-4526-848f-043d6165c0d7"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="3efe56d8-9e9c-4b87-8abf-e1478b839714" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="3efe56d8-9e9c-4b87-8abf-e1478b839714"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CRM-576" data-scope="external" rel="external noreferrer">CRM-576</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>License Manager Fix for Vault DB credentials connectivity.</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Abraham</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 and added its change log as part of <a href="https://expertflow-docs.atlassian.net/browse/CIM-32593" data-scope="external" rel="external noreferrer">CIM-32593</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="a5250de7-766f-4ca4-a52b-dd9cfc4f3bfb" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="a5250de7-766f-4ca4-a52b-dd9cfc4f3bfb"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="23d93543-0e5e-49d9-98bd-dbefe85ab4e8" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="23d93543-0e5e-49d9-98bd-dbefe85ab4e8"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--white, #fff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CRM-570?actionerId=640f1c19c35660c269b965a4&amp;sourceType=assign&amp;atlOrigin=eyJpIjoiMTRhYzkwNTBiZTMwNGJjMGFkM2Y3ZDZkYmQ3MzQ3MDkiLCJwIjoiaiJ9" data-scope="external" rel="external noreferrer">CRM-570</a></p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Issues with Conference and Silent Monitoring on Dashboards</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Abraham</p>
+        </td>
+        <td style="--bg-color: var(--white, #fff);">
+         <p>Made its clone for 5.1 <a href="https://expertflow-docs.atlassian.net/browse/CIM-32379" data-scope="external" rel="external noreferrer">CIM-32379</a></p>
+        </td>
+        <td>
+         <div data-component="task-list" class="task-list">
+          <ul>
+           <li id="578a8a35-b42c-48df-a8f0-dbdb87b008bd" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="578a8a35-b42c-48df-a8f0-dbdb87b008bd"><span style="--color: var(--green, #36b37e);">Pass</span></li>
+           <li id="9d7db947-7be1-453b-b646-a9217b6ab30b" class="task-item"><input class="task-item-icon" type="checkbox" disabled aria-labelledby="9d7db947-7be1-453b-b646-a9217b6ab30b"><span style="--color: var(--red, #ff5630);">Fail</span></li>
+          </ul>
+         </div>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p><strong>CX-5.0.1</strong></p>
+<div class="theme-table" style="--width: 1800px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="align-start" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 330px">
+       <col style="width: 333px">
+       <col style="width: 333px">
+       <col style="width: 325px">
+       <col style="width: 339px">
+       <col style="width: 140px">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p><strong>Feature / Issue</strong></p>
+        </th>
+        <th>
+         <p><strong>Description</strong></p>
+        </th>
+        <th>
+         <p><strong>Merge Status</strong></p>
+        </th>
+        <th>
+         <p><strong>Owner</strong></p>
+        </th>
+        <th>
+         <p><strong>Remarks (Update here after merging into 5.x based develop)</strong></p>
+        </th>
+        <th>
+         <p><strong>Quick Dev Testing Status</strong></p>
+        </th>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--blue, #b3d4ff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32210" data-scope="external" rel="external noreferrer">CIM-32210</a></p>
+        </td>
+        <td style="--bg-color: var(--blue, #b3d4ff);">
+         <p>Update Email Connector (IMAP/SMTP) to latest</p>
+        </td>
+        <td style="--bg-color: var(--blue, #b3d4ff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--blue, #b3d4ff);">
+         <p>Ahsan</p>
+         <p>Nabeel Jr.</p>
+        </td>
+        <td style="--bg-color: var(--blue, #b3d4ff);">
+         <p>No need to test as its already release in 5.0.1</p>
+        </td>
+        <td style="--bg-color: var(--blue, #b3d4ff);">
+         <p>No required</p>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--blue, #b3d4ff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32215" data-scope="external" rel="external noreferrer">CIM-32215</a></p>
+        </td>
+        <td style="--bg-color: var(--blue, #b3d4ff);">
+         <p>Handling on missing inline image incase of no content during reply/forward scenario's due to initial spacing in editor</p>
+        </td>
+        <td style="--bg-color: var(--blue, #b3d4ff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--blue, #b3d4ff);">
+         <p>Nabeel Jr.</p>
+        </td>
+        <td style="--bg-color: var(--blue, #b3d4ff);">
+         <p>No need to test as its already release in 5.0.1</p>
+        </td>
+        <td style="--bg-color: var(--blue, #b3d4ff);">
+         <p>No required</p>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--blue, #b3d4ff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-32160" data-scope="external" rel="external noreferrer">CIM-32160</a></p>
+        </td>
+        <td style="--bg-color: var(--blue, #b3d4ff);">
+         <p>2FA for unified agent not working</p>
+        </td>
+        <td style="--bg-color: var(--blue, #b3d4ff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--blue, #b3d4ff);">
+         <p>Sabahat</p>
+        </td>
+        <td style="--bg-color: var(--blue, #b3d4ff);">
+         <p>No need to test as its already release in 5.0.1</p>
+        </td>
+        <td style="--bg-color: var(--blue, #b3d4ff);">
+         <p>No required</p>
+        </td>
+       </tr>
+       <tr>
+        <td style="--bg-color: var(--blue, #b3d4ff);">
+         <p><a href="https://expertflow-docs.atlassian.net/browse/CIM-31957" data-scope="external" rel="external noreferrer">CIM-31957</a></p>
+        </td>
+        <td style="--bg-color: var(--blue, #b3d4ff);">
+         <p>Customer name is not shown in Arabic</p>
+        </td>
+        <td style="--bg-color: var(--blue, #b3d4ff);">
+         <p>Merged</p>
+        </td>
+        <td style="--bg-color: var(--blue, #b3d4ff);">
+         <p>Ahsan</p>
+        </td>
+        <td style="--bg-color: var(--blue, #b3d4ff);">
+         <p>No need to test as its already release in 5.0.1</p>
+        </td>
+        <td style="--bg-color: var(--blue, #b3d4ff);">
+         <p>No required</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="735d20d1b91b63c9-63" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="735d20d1b91b63c9-63">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/cx-knowledgebase/latest/cx-release-history">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">CX Release History</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/cx-knowledgebase/latest/key-objects">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Key Objects</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

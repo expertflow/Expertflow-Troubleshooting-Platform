@@ -1,0 +1,4729 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_18454a256e1a5116bd088c26013e6b4e1dc67e4fe51505c70da61e0a2ef941fe" data-confluence-content-id="6292587"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/cx/4.3/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="CX">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>Unified Admin Guide | Expertflow CX</title>
+		<meta property="og:title" content="Unified Admin Guide | Expertflow CX">
+		<meta property="twitter:title" content="Unified Admin Guide | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/cx/4.3/unified-admin-guide">
+		<meta property="og:url" content="https://docs.expertflow.com/cx/4.3/unified-admin-guide">
+
+		<meta name="description" content="Unified Admin is an Admin console for the configuration of ExpertflowCX services and solution components. This includes general settings, the configuration of the Routing Engine (RE), Customer Channel Manager (CCM), Bot Framework, and more.">
+		<meta property="og:description" content="Unified Admin is an Admin console for the configuration of ExpertflowCX services and solution components. This includes general settings, the configuration of the Routing Engine (RE), Customer Channel Manager (CCM), Bot Framework, and more.">
+		<meta property="twitter:description" content="Unified Admin is an Admin console for the configuration of ExpertflowCX services and solution components. This includes general settings, the configuration of the Routing Engine (RE), Customer Channel Manager (CCM), Bot Framework, and more.">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2024-01-16T11:15:48.646Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": true
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="ff7b8902e05da1a7-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="ff7b8902e05da1a7-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="ff7b8902e05da1a7-19">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="ff7b8902e05da1a7-19" name="version" onchange="self.location.assign(this.value)" >
+				<option id="ff7b8902e05da1a7-3"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="ff7b8902e05da1a7-4"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="ff7b8902e05da1a7-5"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="ff7b8902e05da1a7-6"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="ff7b8902e05da1a7-7"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="ff7b8902e05da1a7-8"  value="/cx/4.10/unified-admin-guide"  >
+					4.10
+				</option>
+				<option id="ff7b8902e05da1a7-9"  value="/cx/4.9/unified-admin-guide"  >
+					4.9
+				</option>
+				<option id="ff7b8902e05da1a7-10"  value="/cx/4.8/unified-admin-guide"  >
+					4.8
+				</option>
+				<option id="ff7b8902e05da1a7-11"  value="/cx/4.7/unified-admin-guide"  >
+					4.7
+				</option>
+				<option id="ff7b8902e05da1a7-12"  value="/cx/4.6/unified-admin-guide"  >
+					4.6
+				</option>
+				<option id="ff7b8902e05da1a7-13"  value="/cx/4.5.3/unified-admin-guide"  >
+					4.5.3
+				</option>
+				<option id="ff7b8902e05da1a7-14"  value="/cx/4.5.2/unified-admin-guide"  >
+					4.5.2
+				</option>
+				<option id="ff7b8902e05da1a7-15"  value="/cx/4.5.1/unified-admin-guide"  >
+					4.5.1
+				</option>
+				<option id="ff7b8902e05da1a7-16"  value="/cx/4.5/unified-admin-guide"  >
+					4.5
+				</option>
+				<option id="ff7b8902e05da1a7-17"  value="/cx/4.4/unified-admin-guide"  >
+					4.4
+				</option>
+				<option id="ff7b8902e05da1a7-18"  value="/cx/4.3/unified-admin-guide"  selected="">
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('ff7b8902e05da1a7-19');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-ff7b8902e05da1a7-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-ff7b8902e05da1a7-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-ff7b8902e05da1a7-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="ff7b8902e05da1a7-20" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="ff7b8902e05da1a7-20">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-ff7b8902e05da1a7-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-ff7b8902e05da1a7-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="ff7b8902e05da1a7-37">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="ff7b8902e05da1a7-37" name="version" onchange="self.location.assign(this.value)" >
+				<option id="ff7b8902e05da1a7-21"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="ff7b8902e05da1a7-22"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="ff7b8902e05da1a7-23"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="ff7b8902e05da1a7-24"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="ff7b8902e05da1a7-25"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="ff7b8902e05da1a7-26"  value="/cx/4.10/unified-admin-guide"  >
+					4.10
+				</option>
+				<option id="ff7b8902e05da1a7-27"  value="/cx/4.9/unified-admin-guide"  >
+					4.9
+				</option>
+				<option id="ff7b8902e05da1a7-28"  value="/cx/4.8/unified-admin-guide"  >
+					4.8
+				</option>
+				<option id="ff7b8902e05da1a7-29"  value="/cx/4.7/unified-admin-guide"  >
+					4.7
+				</option>
+				<option id="ff7b8902e05da1a7-30"  value="/cx/4.6/unified-admin-guide"  >
+					4.6
+				</option>
+				<option id="ff7b8902e05da1a7-31"  value="/cx/4.5.3/unified-admin-guide"  >
+					4.5.3
+				</option>
+				<option id="ff7b8902e05da1a7-32"  value="/cx/4.5.2/unified-admin-guide"  >
+					4.5.2
+				</option>
+				<option id="ff7b8902e05da1a7-33"  value="/cx/4.5.1/unified-admin-guide"  >
+					4.5.1
+				</option>
+				<option id="ff7b8902e05da1a7-34"  value="/cx/4.5/unified-admin-guide"  >
+					4.5
+				</option>
+				<option id="ff7b8902e05da1a7-35"  value="/cx/4.4/unified-admin-guide"  >
+					4.4
+				</option>
+				<option id="ff7b8902e05da1a7-36"  value="/cx/4.3/unified-admin-guide"  selected="">
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('ff7b8902e05da1a7-37');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ff7b8902e05da1a7-38" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ff7b8902e05da1a7-39" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ff7b8902e05da1a7-40" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ff7b8902e05da1a7-41" href="/cx/4.3/key-concepts" >Key Concepts</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ff7b8902e05da1a7-42"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ff7b8902e05da1a7-42" href="/cx/4.3/customer-channels" >Customer Channels</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ff7b8902e05da1a7-44"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ff7b8902e05da1a7-44" href="/cx/4.3/agent-controls" >Agent Controls</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ff7b8902e05da1a7-46"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ff7b8902e05da1a7-46" href="/cx/4.3/supervisor-controls" >Supervisor Controls</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ff7b8902e05da1a7-48"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ff7b8902e05da1a7-48" href="/cx/4.3/conversation-control" >Conversation Control</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ff7b8902e05da1a7-50"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ff7b8902e05da1a7-50" href="/cx/4.3/cx-activities" >CX Activities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ff7b8902e05da1a7-52"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ff7b8902e05da1a7-52" href="/cx/4.3/routing-engine" >Routing Engine</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ff7b8902e05da1a7-54" href="/cx/4.3/solution-architecture" >Solution Architecture</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ff7b8902e05da1a7-55"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ff7b8902e05da1a7-55" href="/cx/4.3/developer-guides" >Developer Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ff7b8902e05da1a7-57"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ff7b8902e05da1a7-57" href="/cx/4.3/deployment-guides" >Deployment Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ff7b8902e05da1a7-59"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ff7b8902e05da1a7-59" href="/cx/4.3/system-administration-guides" >System Administration Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="ff7b8902e05da1a7-62"						aria-labelledby="ff7b8902e05da1a7-61"
+					></button>
+				<a id="ff7b8902e05da1a7-61" href="/cx/4.3/user-guides" >User Guides</a>
+			</div>
+
+<ul  id="ff7b8902e05da1a7-62" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ff7b8902e05da1a7-63" href="/cx/4.3/unified-admin-guide" aria-current="page">Unified Admin Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ff7b8902e05da1a7-64" href="/cx/4.3/agent-guide-vcx-4-3" >Agent Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ff7b8902e05da1a7-65" href="/cx/4.3/agent-states" >Agent States</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ff7b8902e05da1a7-66" href="/cx/4.3/supervisor-guide" >Supervisor Guide</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ff7b8902e05da1a7-67"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ff7b8902e05da1a7-67" href="/cx/4.3/reports" >Reports</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ff7b8902e05da1a7-69"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ff7b8902e05da1a7-69" href="/cx/4.3/security" >Security</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ff7b8902e05da1a7-71"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ff7b8902e05da1a7-71" href="/cx/4.3/forms" >Forms</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ff7b8902e05da1a7-73" href="/cx/4.3/expertflow-cx-data-sheet" >Expertflow CX Data Sheet</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ff7b8902e05da1a7-74" href="/cx/4.3/scheduled-activities-solution-design-vcx-4-3" >Scheduled Activities - Solution Design</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ff7b8902e05da1a7-75"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ff7b8902e05da1a7-75" href="/cx/4.3/integrations" >Integrations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ff7b8902e05da1a7-77" href="/cx/4.3/hc-3-x-vs-expertflow-cx-features-comparison" >HC 3.x vs Expertflow CX - Features Comparison</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="ff7b8902e05da1a7-78" href="/cx/4.3/cx-release-history" >CX Release History</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="ff7b8902e05da1a7-79"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="ff7b8902e05da1a7-79" href="/cx/4.3/cx-release-notes" >CX Release Notes</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="ff7b8902e05da1a7-81" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="ff7b8902e05da1a7-81">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.3">
+										Expertflow CX
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.3/user-guides">
+										User Guides
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="ff7b8902e05da1a7-82">
+			<h2 class="toc-heading" id="ff7b8902e05da1a7-82">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>Unified Admin Guide</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+
+	
+	
+
+
+	
+	
+	
+	
+	
+	
+			
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+		
+	
+	
+	
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<p style="--text-align: center">
+ <br>
+</p>
+<p>Unified Admin is an Admin console for the configuration of ExpertflowCX services and solution components. This includes general settings, the configuration of the Routing Engine (RE), Customer Channel Manager (CCM), Bot Framework, and more.&nbsp;</p>
+<p>
+ <br>
+</p>
+<div class="toc-macro rbtoc1780474439313">
+ <ul class="toc-indentation"></ul>
+</div>
+<p><strong>Table of Contents:</strong></p>
+<p>
+ <style type="text/css">/*<![CDATA[*/
+div.rbtoc1780474439312 {padding: 0px;}
+div.rbtoc1780474439312 ul {list-style: disc;margin-left: 0px;}
+div.rbtoc1780474439312 li {margin-left: 0px;padding-left: 0px;}
+
+/*]]>*/</style>
+</p>
+<div class="toc-macro rbtoc1780474439312">
+ <ul class="toc-indentation">
+  <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-GettingStarted">Getting Started</a>
+   <ul class="toc-indentation">
+    <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Login">Login</a></li>
+    <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-UploadLicense">Upload License</a>
+     <ul class="toc-indentation">
+      <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-1)OnlineverificationbyuploadingLicenseKey">1) Online verification by uploading License Key</a></li>
+      <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-2)OfflineverificationwithaLicenseFile">2) Offline verification with a License File</a></li>
+     </ul></li>
+    <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-LocaleSettings">Locale Settings</a></li>
+   </ul></li>
+  <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Provisioningthesystem">Provisioning the system</a>
+   <ul class="toc-indentation">
+    <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Step1:AddBotConnector">Step 1: Add Bot Connector</a></li>
+    <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Step2:AddMediaRoutingDomain(MRD)">Step 2: Add Media Routing Domain (MRD)</a></li>
+    <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Step3:MapMRDtoChannelType">Step 3: Map MRD to Channel Type</a></li>
+    <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Step4:CreateRoutingAttributes">Step 4: Create Routing Attributes</a></li>
+    <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Step5:AssignAttributestoAgents">Step 5: Assign Attributes to Agents</a></li>
+    <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Step6:CreateaQueue">Step 6: Create a Queue</a></li>
+    <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Step7:AddStepstotheQueue">Step 7: Add Steps to the Queue</a></li>
+    <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Step8:ChangeMaxTasksLimitforAgentsMRD">Step 8: Change Max Tasks Limit for Agents MRD</a></li>
+    <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Step9:AddChannelProvider">Step 9: Add Channel Provider</a></li>
+    <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Step10:AddChannelConnector">Step 10: Add Channel Connector</a></li>
+    <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Step11:SetupanewChannel">Step 11: Set up a new Channel</a></li>
+   </ul></li>
+  <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-OtherConfigurations">Other Configurations</a>
+   <ul class="toc-indentation">
+    <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-AddWebWidget">Add Web Widget</a></li>
+    <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-AddReasonCodes">Add Reason Codes</a></li>
+    <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-AddWrap-upReasons">Add Wrap-up Reasons</a></li>
+    <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-AddNewChannelType">Add New Channel Type</a></li>
+    <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-PullMode-NoRouting">Pull Mode - No Routing</a>
+     <ul class="toc-indentation">
+      <li><a href="/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-AddLists">Add Lists</a></li>
+     </ul></li>
+   </ul></li>
+ </ul>
+</div>
+<p></p>
+<style type="text/css">/*<![CDATA[*/
+div.rbtoc1780474439313 {padding: 0px;}
+div.rbtoc1780474439313 ul {list-style: disc;margin-left: 0px;}
+div.rbtoc1780474439313 li {margin-left: 0px;padding-left: 0px;}
+
+/*]]>*/</style>
+<div class="toc-macro rbtoc1780474439313">
+ <ul class="toc-indentation"></ul>
+</div>
+<p>
+ <br>
+</p>
+<h2 id="id-(4.3)UnifiedAdminGuide-GettingStarted"><span id="UnifiedAdminGuide-GettingStarted"></span>Getting Started
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-GettingStarted">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>Users are created and managed within Keycloak.&nbsp;</p>
+<p>At least one admin user must be created within Keycloak, with <code>admin</code> role, to use the Unified Admin application.&nbsp;</p>
+<div data-component="panel" role="note" data-appearance="success">
+ <div class="panel-content">
+  <p>See <a href="/cx/4.3/keycloak-configuration" data-scope="internal">Keycloak Configuration</a> to see how to create users and assign roles to users.</p>
+  <p>See <a href="/cx/4.3/security-and-user-permissions" data-scope="internal">Security and User Permissions -&gt; User Authorization with Unified Admin</a> to understand the scopes and permissions assigned to the default <code>admin </code>role.</p>
+ </div>
+</div>
+<p>
+ <br>
+</p>
+<h3 id="id-(4.3)UnifiedAdminGuide-Login"><span id="UnifiedAdminGuide-Login"></span>Login
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Login">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Users can log in to&nbsp;Unified Admin using the Keycloak username/password.&nbsp;Once entered, the user authentication request is redirected&nbsp;to Keycloak. Upon verification, the user is allowed to log in. Use this link to login in unified-admin <a href="https://cim-qa.expertflow.com/unified-admin/" data-scope="external" rel="external noreferrer">https://FQDN/unified-admin</a></p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_646b7187de714c01434a7b561fe72444fa69669d2e2b090a6c10276b7b38a1bc/image2021-11-2_11-52-11.png?cb=1ca0b183c17c887ebf6cbce61ab17598" alt="image2021-11-2_11-52-11.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p style="--text-align: center"><em>Log in</em></p>
+<h3 id="id-(4.3)UnifiedAdminGuide-UploadLicense"><span id="UnifiedAdminGuide-UploadLicense"></span><span style="--color: #202124">Upload License</span>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-UploadLicense">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>The Agent Desk application for contact center agents and supervisors works with the Concurrent-user-based licensing model that provides simultaneous access to the system to a certain number of users.&nbsp;</p>
+<p>To let agents start using and logging in to Agent Desk, the admin user must upload the license information to Unified Admin by going to&nbsp;<em>General → License Info&nbsp;</em>page.&nbsp;</p>
+<p>Two flavors of license verification are available.</p>
+<div data-component="panel" role="note" data-appearance="success">
+ <div class="panel-content">
+  <p>See <a href="https://expertflow-docs.atlassian.net/wiki/spaces/LM/pages/3538961/License+Manager" data-scope="external" rel="external noreferrer">License Manager -&gt; Concurrent user licensing</a> to understand more on how this type of licensing works.</p>
+  <p>See&nbsp;<a href="https://expertflow-docs.atlassian.net/wiki/spaces/LM/overview" data-scope="external" rel="external noreferrer">(2.0) License Manager</a> to learn more about the flavors of license verification and key validation workflow.</p>
+ </div>
+</div>
+<p>
+ <br>
+</p>
+<h4 id="id-(4.3)UnifiedAdminGuide-1)OnlineverificationbyuploadingLicenseKey"><span id="UnifiedAdminGuide-1)OnlineverificationbyuploadingLicenseKey"></span>1) Online verification by uploading License Key
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-1)OnlineverificationbyuploadingLicenseKey">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>With online verification, you need to upload the license key to Unified Admin to get it verified online.</p>
+<p>On <strong>General → License Info</strong>, enter the license key, also known as, the Master API key received from the Expertflow shop in the <strong>Master API Key</strong> field under the <strong>Activate Online </strong>tab, and click <strong>Save</strong>.&nbsp;</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_06b3562c47c27ee2b56eecb56ec14cbbd64415c8ddb374ff1a5baa5d167b8dc0/image2022-9-2_11-22-35.png?cb=e54b955c65f3b671567b470f54693ca6" alt="image2022-9-2_11-22-35.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p style="--text-align: center"><em>Add License&nbsp;</em></p>
+<p>
+ <br>
+</p>
+<p>This request is then redirected to the License Manager to be verified. Upon verification, the license key is successfully uploaded.</p>
+<p>Once saved, the uploaded key is visible from the front-end. You won't be able to change the license key.&nbsp;</p>
+<h4 id="id-(4.3)UnifiedAdminGuide-2)OfflineverificationwithaLicenseFile"><span id="UnifiedAdminGuide-2)OfflineverificationwithaLicenseFile"></span>2) Offline verification with a License File
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-2)OfflineverificationwithaLicenseFile">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>In case of offline key verification, Expertflow allows you to upload a license file with pre-activated licenses where all license activations are pre-generated.</p>
+<p>In this case, click the tab,&nbsp;<strong>Activate Offline</strong> to upload the license file that was downloaded locally, and click the&nbsp;<strong>Upload&nbsp;</strong>button.&nbsp;</p>
+<p>The request is redirected to the License Server to verify the license file. Upon verification, the licenses are stored successfully.</p>
+<div data-component="panel" role="note" data-appearance="success">
+ <div class="panel-content">
+  <p>See <a href="https://expertflow-docs.atlassian.net/wiki/spaces/LM/overview" data-scope="external" rel="external noreferrer">License User Guide</a> for details on how to get the offline license file.</p>
+ </div>
+</div>
+<h3 id="id-(4.3)UnifiedAdminGuide-LocaleSettings"><span id="UnifiedAdminGuide-LocaleSettings"></span>Locale Settings
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-LocaleSettings">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>The locale settings allow admins to provision the time zone, and language settings system-wide so that each solution component shares the same locale settings wherever required.&nbsp;</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 30.1906%">
+       <col style="width: 69.8557%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th colspan="1">
+         <p>Field</p>
+        </th>
+        <th colspan="1">
+         <p>Description</p>
+        </th>
+       </tr>
+       <tr>
+        <th style="--bg-color: #808080">
+         <p>Timezone</p>
+        </th>
+        <td>
+         <p>Select a time zone that best suits your servers' location.&nbsp;&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Supported Languages</p>
+        </th>
+        <td colspan="1">
+         <p>Choose the languages that the system should support, for instance, for rendering the UI.</p>
+         <p>For now, the only supported languages include:</p>
+         <ul>
+          <li>
+           <p>English</p>
+          </li>
+          <li>
+           <p>French</p>
+          </li>
+          <li>
+           <p>Spanish</p>
+          </li>
+          <li>
+           <p>Italian&nbsp;</p>
+          </li>
+          <li>
+           <p>German&nbsp;</p>
+          </li>
+         </ul>
+         <p>This setting is currently only used in <strong>Web Widget → Language</strong>&nbsp;settings to show a list of supported languages for the Customer Widget UI.&nbsp;</p>
+         <p>For the other components such as Agent Desk, the UI translation will be available in future updates.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Default Languages</p>
+        </th>
+        <td colspan="1">
+         <p>Based on the supported languages chosen from the dropdown above, choose here the language which should act as a default language. For now, this is set to 'English' by default.</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h2 id="id-(4.3)UnifiedAdminGuide-Provisioningthesystem"><span id="UnifiedAdminGuide-Provisioningthesystem"></span>Provisioning the system
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Provisioningthesystem">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="id-(4.3)UnifiedAdminGuide-Step1:AddBotConnector"><span id="UnifiedAdminGuide-Step1:AddBotConnector"></span>Step 1: Add Bot Connector
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Step1:AddBotConnector">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Make sure that your bot is trained with the essential training data (or is up with the default bot training).&nbsp;</p>
+<div data-component="panel" role="note" data-appearance="success">
+ <div class="panel-meta">
+  <div class="panel-title">Tip</div>
+ </div>
+ <div class="panel-content">
+  <p>You must have a bot configured in the system to start creating new channels.&nbsp;</p>
+  <p>To learn more about Bot-controlled conversations, see <a href="/cx/4.3/conversation-control" data-scope="internal">Conversation Control</a>. To learn more about Bot training, see <a href="/cx/4.3/custom-connector-bot-communication" data-scope="internal">Custom Connector-Bot Communication</a></p>
+ </div>
+</div>
+<p>
+ <br>
+</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_b635a1020367696e15395da47fc49c9bb7c77d4cbdf0bd22784f0c082e3e9ede/image2021-9-14_16-45-33.png?cb=e6ce8067acb29fe69c8dfdd62b5cf606" alt="image2021-9-14_16-45-33.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p style="--text-align: center"><em>Add Bot Connector</em></p>
+<p>Expand the <strong>Rasa</strong> type and click, <strong>Add Bot&nbsp;</strong>to add the default controller bot.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 24.5762%">
+       <col style="width: 75.4701%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Field</p>
+        </th>
+        <th>
+         <p>Description</p>
+        </th>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Bot Name</p>
+        </th>
+        <td colspan="1">
+         <p>Specify a name to be given to the bot.&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>API URL</p>
+        </th>
+        <td colspan="1">
+         <p>Enabled only if the Bot Type is <strong>Rasa</strong> or <strong>Custom</strong>. Provide the URL where the default bot connector is running.</p>
+         <p><u>Example:</u> <code>http://server-ip:30800</code></p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Bot Config JSON</p>
+        </th>
+        <td colspan="1">
+         <p>Enabled only if the Bot Type is <strong>DialogFlow</strong>.</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<div data-component="panel" role="note" data-appearance="warning">
+ <div class="panel-content">
+  <p><span style="--color: #202124">By default, Rasa Bot is supported as the controller bot with default bot training.</span></p>
+  <p><span style="--color: #202124">If a Bot Connector is being used with a Channel or anywhere else, the system does not allow to delete of such a Bot until this association is removed.</span></p>
+ </div>
+</div>
+<h3 id="id-(4.3)UnifiedAdminGuide-Step2:AddMediaRoutingDomain(MRD)"><span id="UnifiedAdminGuide-Step2:AddMediaRoutingDomain(MRD)"></span><span style="--color: #202124">Step 2: </span><span style="--color: #202124">Add Media Routing Domain (MRD)</span>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Step2:AddMediaRoutingDomain(MRD)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p><span style="--color: #202124">You can create, edit, and delete MRDs from the Unified Admin.</span></p>
+<div data-component="panel" role="note" data-appearance="success">
+ <div class="panel-meta">
+  <div class="panel-title">Tip</div>
+ </div>
+ <div class="panel-content">
+  <p><span style="--color: #202124">See </span><a href="/cx/4.3/precision-routing" data-scope="internal">Precision Routing</a><span style="--color: #202124"> to learn more about MRDs.&nbsp;</span></p>
+  <p>The MRD for VOICE is available by default. For chats, a Chat MRD will also be available out-of-the-box in future updates.</p>
+ </div>
+</div>
+<p>To create an MRD, go to the Routing Engine menu on the left and click <strong>MRDs</strong>.</p>
+<p>While creating an MRD, provide the following info:</p>
+<div class="theme-table" style="--width: 66.8539%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 28.9045%">
+       <col style="width: 71.1423%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th colspan="1">
+         <p>Field</p>
+        </th>
+        <th colspan="1">
+         <p>Description</p>
+        </th>
+       </tr>
+       <tr>
+        <th colspan="1" style="--bg-color: #808080">
+         <p>Name</p>
+        </th>
+        <td colspan="1">
+         <p>Give a name to the MRD.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Description</p>
+        </th>
+        <td colspan="1">
+         <p>Provide an optional description of the MRD.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Max Tasks Request&nbsp;</p>
+        </th>
+        <td colspan="1">
+         <p>Specify the maximum number of task requests that any agent can handle on this MRD. When this count reaches, the agent's MRD state will turn to <code>BUSY</code> and the agent will no longer receive any new tasks unless an active task is closed.</p>
+         <p>This works in combination with the Agent-MRD tasks limit. See more in <strong>Step 8.&nbsp;</strong></p>
+         <p>Note that this limit should be greater than or equal to the task limit defined for one agent on this MRD. Therefore, if the maximum tasks count is later modified to make it lesser than an agent's individual tasks limit (during Agent-MRD mapping), an error would be thrown.&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Interruptible</p>
+        </th>
+        <td colspan="1">
+         <p>Reserved for future.</p>
+         <p>When available, this will allow us to turn the flag to ON if the requests on this MRD are considered to be interruptible. This means that the system may interrupt the agent on this MRD (during an active conversation) to route him to a conversation from a different MRD if required.</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_8a0b3b1ad0825de32c8c65cd9bfe12646c2c71bee8b0045faad3e671b1d46c01/image2021-11-5_15-36-47.png?cb=a859cc95457626a9de1615153c3641ec" alt="image2021-11-5_15-36-47.png" data-scope="internal"> </span> </image-lightbox> </span>
+ <br></p>
+<p style="--text-align: center"><em>Add MRD</em></p>
+<div data-component="panel" role="note" data-appearance="warning">
+ <div class="panel-content">
+  <ul>
+   <li>
+    <p>If an MRD is associated with a precision queue or with a Channel Type<span style="--color: #202124">, it cannot be deleted until the association is removed.</span></p>
+   </li>
+   <li>
+    <p><span style="--color: #202124">If some conversations are already active on an MRD, it cannot be deleted.</span></p>
+   </li>
+   <li>
+    <p><span style="--color: #202124">MRD names are case-sensitive.</span></p>
+   </li>
+  </ul>
+ </div>
+</div>
+<h3 id="id-(4.3)UnifiedAdminGuide-Step3:MapMRDtoChannelType"><span id="UnifiedAdminGuide-Step3:MapMRDtoChannelType"></span>Step 3: Map MRD to Channel Type
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Step3:MapMRDtoChannelType">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>The next step is to map one Channel Type to the MRD created in the above step.</p>
+<div data-component="panel" role="note" data-appearance="success">
+ <div class="panel-meta">
+  <div class="panel-title">Tip</div>
+ </div>
+ <div class="panel-content">
+  <p>Learn more about Channel Types in <a href="https://expertflow-docs.atlassian.net/wiki/spaces/CX/pages/2525707/_Channel+related+terms" data-scope="external" rel="external noreferrer">_Channel related terms</a></p>
+ </div>
+</div>
+<p>The following channel types are available by default.</p>
+<ul>
+ <li>
+  <p>WhatsApp</p>
+ </li>
+ <li>
+  <p>Web</p>
+ </li>
+ <li>
+  <p>Facebook</p>
+ </li>
+ <li>
+  <p>Voice</p>
+ </li>
+</ul>
+<p>To map a channel type to an MRD, expand&nbsp;<strong>Channel Manager&nbsp;</strong>from the left and go to <strong>Channel Types</strong>.</p>
+<p>Choose a channel type to associate the MRD with. You can map one MRD to multiple channel types.</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_cb3640c83cbb9ccd6b6603b1ea6616cbbd4913f17952596e3c0f8d1886bc4a47/image2022-9-2_12-14-34.png?cb=f39eb0a5ddac41d94b0e422b06e5e297" alt="image2022-9-2_12-14-34.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p style="--text-align: center"><em>Map Channel Type to MRD</em></p>
+<div data-component="panel" role="note" data-appearance="success">
+ <div class="panel-content">
+  <p>To know how to add more channel types, jump to <strong>Add Channel Type&nbsp;</strong>section.</p>
+ </div>
+</div>
+<p>
+ <br>
+</p>
+<h3 id="id-(4.3)UnifiedAdminGuide-Step4:CreateRoutingAttributes"><span id="UnifiedAdminGuide-Step4:CreateRoutingAttributes"></span>Step 4: Create Routing Attributes
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Step4:CreateRoutingAttributes">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Agent attributes are created and assigned to agents so that customers can always get the right agent.</p>
+<div data-component="panel" role="note" data-appearance="success">
+ <div class="panel-meta">
+  <div class="panel-title">Tip</div>
+ </div>
+ <div class="panel-content">
+  <p>See <a href="/cx/4.3/precision-routing" data-scope="internal">Precision Routing</a> to learn more about Agent Attributes.</p>
+ </div>
+</div>
+<p>Go to <strong>Routing Engine → Routing Attributes </strong>and create a new attribute by clicking on the <strong>Create Attribute </strong>button,&nbsp;using the following table:&nbsp;</p>
+<div class="theme-table" style="--width: 64.9813%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 26.8513%">
+       <col style="width: 73.1954%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th colspan="1">
+         <p>Field</p>
+        </th>
+        <th colspan="1">
+         <p>Description</p>
+        </th>
+       </tr>
+       <tr>
+        <th colspan="1" style="--bg-color: #808080">
+         <p>Name</p>
+        </th>
+        <td colspan="1">
+         <p>Give a name to the Routing Attribute.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Description</p>
+        </th>
+        <td colspan="1">
+         <p>Provide an optional description here.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Type</p>
+        </th>
+        <td colspan="1">
+         <p>Choose from one of the following types:</p>
+         <ul>
+          <li>
+           <p>Proficiency: Specify a default proficiency on a scale from 1 to 10.</p>
+          </li>
+          <li>
+           <p>Boolean: Select the default value, either <code>true</code> or <code>false</code>.</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Default Value</p>
+        </th>
+        <td colspan="1">
+         <p>Specify a default value based on the type of attribute. This default value is automatically assigned to an agent when a Routing Attribute is assigned to the agent. You&nbsp;can overwrite the default value at the time of attribute assignment.</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_6206ff95e3c74cd1bcac26f3cc60b523ec44bc32c4097fb56371276d2f5ce93a/New%20Attribute.gif?cb=d8833bcb9bd0c56c5c36fca0a9843b49" alt="New Attribute.gif" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p style="--text-align: center"><em>Add New Attribute</em></p>
+<h3 id="id-(4.3)UnifiedAdminGuide-Step5:AssignAttributestoAgents"><span id="UnifiedAdminGuide-Step5:AssignAttributestoAgents"></span>Step 5: Assign Attributes to Agents&nbsp;
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Step5:AssignAttributestoAgents">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p><span style="--color: #202124">On </span><span style="--color: #202124"><strong>Routing Engine -&gt;</strong></span><span style="--color: #202124"> </span><span style="--color: #202124"><strong>Agents Attributes </strong></span><span style="--color: #202124">page, all Keycloak users having specified Keycloak role(s) are shown. By default, it contains the list of agents and supervisors with Keycloak roles </span><span style="--color: #202124"><code>agent</code></span><span style="--color: #202124">, </span><span style="--color: #202124"><code>supervisor</code></span><span style="--color: #202124">.&nbsp;&nbsp;</span></p>
+<div data-component="panel" role="note" data-appearance="success">
+ <div class="panel-meta">
+  <div class="panel-title">Tip</div>
+ </div>
+ <div class="panel-content">
+  <p><span style="--color: #202124">See </span><a href="/cx/4.3/precision-routing" data-scope="internal">Precision Routing</a><span style="--color: #202124"> to learn more about how agents or users are synced.&nbsp;</span></p>
+ </div>
+</div>
+<p><span style="--color: #202124">To assign a routing attribute to an agent, hover your mouse to an agent record and click the </span><span style="--color: #202124"><strong>+</strong></span><span style="--color: #202124"> icon to assign or remove an attribute to/from the selected agent.&nbsp;</span></p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_2be9a5cd5ff216169fc6538758ea24068be41551c8cd727199e7c3201f82021c/Assign%20Attribute.gif?cb=930cd027f6f2a20e22dd081820d6eba9" alt="Assign Attribute.gif" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p style="--text-align: center"><em>Assign Attributes to Agents for routing</em></p>
+<p>
+ <br>
+</p>
+<p>Click the contact picture against an agent record on the&nbsp;<strong>Agents List</strong>&nbsp;to view the agent's profile in a read-only mode; this information is fetched from Keycloak User Profile since users are created and managed from within Keycloak.</p>
+<div data-component="panel" role="note" data-appearance="warning">
+ <div class="panel-content">
+  <p>A Routing Attribute assigned to an agent cannot be deleted.</p>
+ </div>
+</div>
+<h3 id="id-(4.3)UnifiedAdminGuide-Step6:CreateaQueue"><span id="UnifiedAdminGuide-Step6:CreateaQueue"></span>Step 6: Create a Queue&nbsp;
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Step6:CreateaQueue">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Expand the <strong>Routing Engine</strong> menu on the left and click <strong>Queues.</strong>&nbsp;</p>
+<div data-component="panel" role="note" data-appearance="success">
+ <div class="panel-meta">
+  <div class="panel-title">Tip</div>
+ </div>
+ <div class="panel-content">
+  <p>Learn more about Queues on <a href="/cx/4.3/precision-routing" data-scope="internal">Precision Routing</a></p>
+ </div>
+</div>
+<p>On the <strong>Queues</strong> List, add a new queue with the basic queue details using the following table:</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 24.5762%">
+       <col style="width: 75.4701%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Field</p>
+        </th>
+        <th>
+         <p>Description</p>
+        </th>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Queue Name</p>
+        </th>
+        <td colspan="1">
+         <p>Specify a queue name.&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Associated MRD</p>
+        </th>
+        <td colspan="1">
+         <p>Choose an MRD you created in step 2.&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Service Level Type</p>
+        </th>
+        <td colspan="1">
+         <p>Type one of the following numbers in the field:&nbsp;</p>
+         <ul>
+          <li>
+           <p>1</p>
+          </li>
+          <li>
+           <p>2</p>
+          </li>
+          <li>
+           <p>3</p>
+          </li>
+         </ul>
+         <p>See more details about these in <a href="/cx/4.3/key-reporting-concepts" data-scope="internal">Key Reporting Concepts</a></p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Service Level Threshold</p>
+        </th>
+        <td colspan="1">
+         <p>This is the service level threshold in seconds. This determines the time until when all requests being enqueued should ideally be picked up from the queue and routed to agents to be answered.&nbsp;</p>
+         <p>This is set by the business as per their business policies and SLA reporting requirements. If a request gets answered within this time, it is considered to be answered within SL.&nbsp;</p>
+         <p>See more on&nbsp; <a href="/cx/4.3/key-reporting-concepts" data-scope="internal">Key Reporting Concepts</a></p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<h3 id="id-(4.3)UnifiedAdminGuide-Step7:AddStepstotheQueue"><span id="UnifiedAdminGuide-Step7:AddStepstotheQueue"></span>Step 7: Add Steps to the Queue
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Step7:AddStepstotheQueue">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Once a queue is added with the above settings, the next step is to add <em>Queue Steps</em> in the queue.&nbsp;</p>
+<div data-component="panel" role="note" data-appearance="success">
+ <div class="panel-meta">
+  <div class="panel-title">Tip</div>
+ </div>
+ <div class="panel-content">
+  <p>Learn more about <strong>Steps</strong>, <strong>Expressions</strong>, and <strong>Terms</strong> on <a href="/cx/4.3/precision-routing" data-scope="internal">Precision Routing</a></p>
+ </div>
+</div>
+<p>On the Queues list, click <strong>Add Step </strong>option<strong> </strong>against the desired queue to start adding steps in the queue using the following table:</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 30.1906%">
+       <col style="width: 69.8557%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th colspan="1">
+         <p>Field</p>
+        </th>
+        <th colspan="1">
+         <p>Description</p>
+        </th>
+       </tr>
+       <tr>
+        <th style="--bg-color: #808080">
+         <p><strong>Step Timeout</strong></p>
+        </th>
+        <td>
+         <p>This is the timeout for this step. It determines the time the system waits before jumping to the next step when no agent is found.&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Expression</p>
+        </th>
+        <td colspan="1">
+         <p>Add a logical expression for the Routing Engine to evaluate and identify an agent matching the criteria.</p>
+         <p>Add the small <strong>+</strong> icon to add another term in the expression. Click&nbsp;<strong>Add Expression</strong> to add another expression to the same step.&nbsp;</p>
+         <p>For instance, the expressions added in the illustration below states:&nbsp;</p>
+         <p>Any agent having <code>(English== 8 AND Sales == true) OR (Science &gt;= 5 AND Sales == true)</code>, is best suited to answer the request being enqueued to this queue.</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+ <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_2cd8d1bae453d9ed249f7f1d1405aabe9ed8cf90fc1b19199d65f7d9b05d82f8/Add%20Queue.gif?cb=19782444d598f40bc51349e7624e16c3" alt="Add Queue.gif" data-scope="internal"> </span> </image-lightbox> </span>
+</p>
+<p style="--text-align: center"><em>Add Precision Queue</em>&nbsp;</p>
+<p>To continue adding more queue steps, go back to the <strong>Queues</strong> List, expand the desired queue, and click <strong>Add Step</strong>.</p>
+<p>If the Routing Engine finds an agent matching to the criteria as a result of the first queue step, it won't jump to evaluate the next steps. Therefore, at the point where it gets an agent available matching the criteria, it stops jumping to the next steps.</p>
+<div data-component="panel" role="note" data-appearance="warning">
+ <div class="panel-content">
+  <ul>
+   <li>
+    <p><span style="--color: #202124">If there're some conversations enqueued to or active against a queue, such a queue cannot be deleted. </span><span style="--color: #202124">The reason is, even if the chat request is routed to an agent, there are scenarios where it can be re-routed such as in the case of RONA. So unless all requests are closed, the queue cannot be deleted.</span></p>
+   </li>
+   <li>
+    <p><span style="--color: #202124">A queue cannot be deleted if it is associated with a channel.</span></p>
+   </li>
+  </ul>
+ </div>
+</div>
+<h3 id="id-(4.3)UnifiedAdminGuide-Step8:ChangeMaxTasksLimitforAgentsMRD"><span id="UnifiedAdminGuide-Step8:ChangeMaxTasksLimitforAgentsMRD"></span>Step 8: Change Max Tasks Limit for Agents MRD
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Step8:ChangeMaxTasksLimitforAgentsMRD">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>By default, each agent added to the system becomes a part of all MRDs with the default max tasks limit set as per the <strong>Maximum Tasks Requests</strong> per MRD. See&nbsp;<strong>Step 2</strong> for more details.&nbsp;</p>
+<p>To change an agent's tasks limit on each MRD, go to <strong>Routing Engine → Agent MRDs</strong> page.&nbsp;</p>
+<p>All MRDs that are created are listed on <strong>Agent MRDs&nbsp;</strong>along with the list of all users created in the system. By default, all agents who are added become a part of all MRDs.</p>
+<p>Select one user to change the maximum number of tasks that the agent can handle on an MRD. The dropdown contains the max limit as per the limit defined in the MRD definition (created in Step 2). Set the limit to 0 to make an agent unavailable for an MRD.&nbsp;</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_33190a18aeeaa835e62671c594a06b1825449d490f42e102b211af57b5fcbc02/agent%20mrds.PNG?cb=1667112ec803ec54281731193fd8c088" alt="agent mrds.PNG" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p style="--text-align: center"><em>Agent MRDs</em></p>
+<h3 id="id-(4.3)UnifiedAdminGuide-Step9:AddChannelProvider"><span id="UnifiedAdminGuide-Step9:AddChannelProvider"></span>Step 9: Add Channel Provider&nbsp;
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Step9:AddChannelProvider">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Channel providers are supported only for Web, WhatsApp via 360 and Facebook channels.&nbsp;</p>
+<p>Channel Providers are used for configuring the third-party vendors who will be used for sending/receiving messages to/from a channel. For instance, Dialog 360 and Twilio could be the two channel providers for WhatsApp channel.&nbsp;&nbsp;</p>
+<div data-component="panel" role="note" data-appearance="success">
+ <div class="panel-meta">
+  <div class="panel-title">Tip</div>
+ </div>
+ <div class="panel-content">
+  <p>Learn more about channel providers in <a href="https://expertflow-docs.atlassian.net/wiki/spaces/CX/pages/2525707/_Channel+related+terms" data-scope="external" rel="external noreferrer">_Channel related terms</a></p>
+ </div>
+</div>
+<p>To add a new channel provider, go to <strong>Channel Manager → </strong>&nbsp;<strong>Channel Providers</strong>.</p>
+<p>While adding a new channel provider, provide the following information.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 33.669%">
+       <col style="width: 66.3774%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th colspan="1">
+         <p>Field</p>
+        </th>
+        <th colspan="1">
+         <p>Description</p>
+        </th>
+       </tr>
+       <tr>
+        <th colspan="1" style="--bg-color: #808080">
+         <p>Name</p>
+        </th>
+        <td colspan="1">
+         <p>Provide a name for the channel provider such as Dialog 360 for WhatsApp.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Supported Channel Types&nbsp;</p>
+        </th>
+        <td colspan="1">
+         <p>This setting is used to determine which channel types this channel provider will&nbsp; support. For instance, you could configure one channel provider to support both WhatsApp and Facebook messages. So one channel provider can be used to serve both types of channels.</p>
+         <p>Based on the supported channel types, you can add corresponding channel connectors and use them while configuring new channels.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Provider Webhook</p>
+        </th>
+        <td colspan="1">
+         <p>Give a webhook URL for the Channel Provider where this channel provider will listen to the events;</p>
+         <p>The provider webhook URL is given in the following format:</p>
+         <p>For Web provider,&nbsp;</p>
+         <p><code>https://&lt;FQDN&gt;/web-channel-manager</code></p>
+         <p>For WhatsApp,&nbsp;</p>
+         <p><code>https://&lt;FQDN&gt;/360connector</code></p>
+         <p>For Facebook,&nbsp;</p>
+         <p><code>https://{FQDN}/facebook-connector</code></p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_0bfab0f499c569d8646eeb4ef681422c33ef03e6e435f9d301371633e0f52689/image2021-11-4_16-36-38.png?cb=2a8685ceda37f53e6083731ae58f9cfd" alt="image2021-11-4_16-36-38.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p style="--text-align: center"><em>Add New Channel Provider</em></p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<div data-component="panel" role="note" data-appearance="success">
+ <div class="panel-content">
+  <p>Follow the <a href="/cx/4.3/360-connector-configuration-guide" data-scope="internal">360-Connector Configuration Guide</a> to configure WhatsApp via Dialog 360.&nbsp;</p>
+  <p>See <a href="/cx/4.3/facebook-connector-deployment-guide" data-scope="internal">Facebook Comment/DM Connector - Configuration Guide</a> for configuring Facebook Social Media.</p>
+ </div>
+</div>
+<p>
+ <br>
+</p>
+<h3 id="id-(4.3)UnifiedAdminGuide-Step10:AddChannelConnector"><span id="UnifiedAdminGuide-Step10:AddChannelConnector"></span>Step 10: Add Channel Connector&nbsp;
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Step10:AddChannelConnector">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>You may create a channel connector for each new <strong>Channel Provider</strong>&nbsp;added to the system.</p>
+<div data-component="panel" role="note" data-appearance="success">
+ <div class="panel-meta">
+  <div class="panel-title">Tip</div>
+ </div>
+ <div class="panel-content">
+  <p>See <a href="https://expertflow-docs.atlassian.net/wiki/spaces/CX/pages/2525707/_Channel+related+terms" data-scope="external" rel="external noreferrer">_Channel related terms</a>&nbsp;to learn more on <strong>Channel Connectors</strong>.</p>
+ </div>
+</div>
+<p>On the&nbsp;<strong>Channel Connector&nbsp;</strong>list,&nbsp;click the&nbsp;<strong>Add New Connector</strong>&nbsp;button to add a new channel connector with the help of the following table:</p>
+<div class="theme-table" style="--width: 80.8989%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 24.5762%">
+       <col style="width: 75.4701%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Field</p>
+        </th>
+        <th>
+         <p>Description</p>
+        </th>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Name</p>
+        </th>
+        <td colspan="1">
+         <p>This is the name of the channel connector.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Channel Provider&nbsp;</p>
+        </th>
+        <td colspan="1">
+         <p>Select the desired Channel Provider (created in the above step) to configure this channel connector for the channel provider. Based on the selected channel provider, you'll see the corresponding configuration attributes to be specified for this channel connector. <em>See the illustration below. </em></p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Custom Attributes</p>
+        </th>
+        <td colspan="1">
+         <p>This shows the list of other custom attributes created while defining the Channel Provider you selected above. Available only if some custom attributes were added while defining the Channel Provider in the above step.&nbsp;</p>
+         <p>For example, for the default Dialog 360,&nbsp;</p>
+         <p><code>HOST-URL</code></p>
+         <p><code>API-KEY</code></p>
+         <p>For details on Dialog 360 connector configurations, see <a href="/cx/4.3/360-connector-configuration-guide" data-scope="internal">360-Connector Configuration Guide for WhatsApp</a></p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_0bb1f2834f5e49e76e8def42b5d7b798e1e4fe42500d02e3f31b3e677fb43312/ChannelConnector.gif?cb=707e699eed0b1fd4d8d25912545ce2d2" alt="ChannelConnector.gif" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p style="--text-align: center"><em>Add a new Channel Connector for a Channel Provider</em>&nbsp;</p>
+<p>
+ <br>
+</p>
+<div data-component="panel" role="note" data-appearance="warning">
+ <div class="panel-content">
+  <ul>
+   <li>
+    <p>If a Channel Connector for a particular Channel Provider exists, the system does not allow to delete such a Channel Provider until the association is removed.</p>
+   </li>
+  </ul>
+ </div>
+</div>
+<p>
+ <br>
+</p>
+<div data-component="panel" role="note" data-appearance="success">
+ <div class="panel-content">
+  <p>Follow the <a href="/cx/4.3/360-connector-configuration-guide" data-scope="internal">360-Connector Configuration Guide</a> to configure WhatsApp via Dialog 360.&nbsp;</p>
+  <p>See <a href="/cx/4.3/facebook-connector-deployment-guide" data-scope="internal">Facebook Comment/DM Connector - Configuration Guide</a> for configuring Facebook Social Media.</p>
+ </div>
+</div>
+<h3 id="id-(4.3)UnifiedAdminGuide-Step11:SetupanewChannel"><span id="UnifiedAdminGuide-Step11:SetupanewChannel"></span>Step 11: Set up a new Channel
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-Step11:SetupanewChannel">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Add customer channels in the system to receive customer requests from relevant channels.</p>
+<div data-component="panel" role="note" data-appearance="success">
+ <div class="panel-meta">
+  <div class="panel-title">Tip</div>
+ </div>
+ <div class="panel-content">
+  <p>Learn more about channels in <a href="https://expertflow-docs.atlassian.net/wiki/spaces/CX/pages/2525707/_Channel+related+terms" data-scope="external" rel="external noreferrer">_Channel related terms</a></p>
+ </div>
+</div>
+<p>
+ <br>
+</p>
+<div class="theme-table" style="--width: 80.8989%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Field</p>
+        </th>
+        <th>
+         <p>Description</p>
+        </th>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Channel Name</p>
+        </th>
+        <td colspan="1">
+         <p>Specify a channel name.&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Service Identifier</p>
+        </th>
+        <td>
+         <p>This is the service identifier of the service that the customer dialed or reached. It could be a DN (Dialed Number) such as a WhatsApp number, any website URL, Facebook ID, Viber ID.&nbsp;&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Bot ID</p>
+        </th>
+        <td>
+         <p>This is the Bot Connector that was added under Bot Settings.&nbsp;</p>
+         <p>You must choose a bot connector here regardless of the Channel Mode. This is because a bot is an integral part of a conversation who acts as an authoring party, monitors the conversation events, identifies intents, and takes appropriate actions (for instance, close a chat if the customer activity timeout reaches).&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Response SLA</p>
+        </th>
+        <td>
+         <p>Reserved for future.</p>
+         <p>This is the threshold in seconds for the agent to respond to a customer message. If this SLA breaches, the bot may decide any next action(s) be taken up such as routing the request to another agent.</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Channel Connector</p>
+        </th>
+        <td>
+         <p>This is the Channel Connector that should be used to send/receive messages to/from the channel. Choose the desired channel connector created in the above step to be associated with this channel.</p>
+         <p>This list is rendered based on the Channel Type.</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Customer Activity Timeout</p>
+        </th>
+        <td>
+         <p>This is the time in seconds that the system waits for the customer's response against a message sent by the agent or bot. When this time reaches, the system considers the chat as inactive. The bot closes the channel session of the customer and the agent receives <code>Channel_Session_Ended</code> notification within the conversation. The message composer on the agent side is greyed out to disable sending messages.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Channel Mode</p>
+        </th>
+        <td colspan="1">
+         <p>Choose a channel mode. Possible values are:</p>
+         <ul>
+          <li>
+           <p>Hybrid: This the default mode of communication where a bot is always there to assist agents in the background (even if not conversating with the customer directly). This is the only available mode as of today.&nbsp;</p>
+          </li>
+          <li>
+           <p>Bot: Choose this option for self-service, Bot-only conversations. Reserved for future use.</p>
+          </li>
+          <li>
+           <p>Agent: Choose this for requests to be routed to agents. Reserved for future use.</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Routing Mode</p>
+        </th>
+        <td colspan="1">
+         <p>This determines if the channel needs to push incoming requests to a queue to be routed to agents, or, broadcast to a Pull-based List to be taken up by any agents subscribed to the List.&nbsp;&nbsp;</p>
+         <p>Possible values are:</p>
+         <ul>
+          <li>
+           <p>Push&nbsp;</p>
+          </li>
+          <li>
+           <p>Pull&nbsp;</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Agent Selection Policy&nbsp;</p>
+        </th>
+        <td>
+         <p>This determines how to select an agent when multiple agents match the criteria.</p>
+         <p>Possible values are:</p>
+         <ul>
+          <li>
+           <p>Longest Available: Picks the agent who's available for the longest time duration with a lesser number of active tasks. This is currently the only one supported.&nbsp;</p>
+          </li>
+          <li>
+           <p>Least Skilled: Picks the agent who's the least skilled on the skills that are required to handle such a customer request. Reserved for future use.</p>
+          </li>
+          <li>
+           <p>Most Skilled: Picks the agent who's most skilled on the skills required to handle such a customer request.&nbsp;Reserved for future use.</p>
+          </li>
+         </ul>
+         <p>This is applicable only if the channel mode selected above is other than&nbsp;<strong>Bot&nbsp;</strong>and the selected Routing Mode is <strong>Push</strong>.</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Agent Request TTL (time-to-live)</p>
+        </th>
+        <td>
+         <p>This is the time in seconds that the system waits for an agent to be assigned to a queued request.&nbsp;</p>
+         <p style="--text-align: left">Once this TTL is elapsed, the&nbsp;<code>No-Agent-Available</code>&nbsp;event is posted to BOT.</p>
+         <p style="--text-align: left">No further action is taken by the system on the&nbsp;<code>NO-AGENT-AVAILABLE</code>&nbsp;event for now.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Default Queue</p>
+        </th>
+        <td colspan="1">
+         <p>This is the default queue where requests coming on the channel will be enqueued.&nbsp;&nbsp;</p>
+         <p>This is enabled only if you have selected the Routing Mode as <strong>Push</strong>.&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Default List</p>
+        </th>
+        <td colspan="1">
+         <p>This is the default list where&nbsp;requests coming on the channel will be published.&nbsp;</p>
+         <p>This is enabled only if you have selected the Routing Mode as <strong>Pull</strong>.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Route to the last agent</p>
+        </th>
+        <td colspan="1">
+         <p>Reserved for future.</p>
+         <p>This setting is used to route the request to the last agent who previously handled a request from the same customer.&nbsp;</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p>On the&nbsp;<strong>Channels&nbsp;</strong>list,&nbsp;you can see a dropdown for each channel type defined in the system. Expand a channel type to add a new channel of this channel type.&nbsp;</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_51b613457a45719346678803c206ce9b8ab30d4accb99a6a3409d9d47caa221a/image2021-11-5_17-32-23.png?cb=f9eabb3b4c2c0c8158744aada5fd4531" alt="image2021-11-5_17-32-23.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p style="--text-align: center"><em>Add new Channel</em></p>
+<h2 id="id-(4.3)UnifiedAdminGuide-OtherConfigurations"><span id="UnifiedAdminGuide-OtherConfigurations"></span>Other Configurations
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-OtherConfigurations">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="id-(4.3)UnifiedAdminGuide-AddWebWidget"><span id="UnifiedAdminGuide-AddWebWidget"></span>&nbsp;<strong>Add Web Widget</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-AddWebWidget">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Web widget is Expertflow's customer chat widget that loads on the company's website when a web visitor initiates a chat.</p>
+<p>This Web widget is loaded based upon the settings defined in <strong>Web Widget</strong> configurations on Unified Admin.</p>
+<p>Business administrators can add multiple web widget instances in Unified Admin, having their own set of configurations that work independently of the other widget instances.</p>
+<p>For instance, if have different configuration requirements for a customer portal and a partner portal, you may define two web widget instances here.</p>
+<p>Using the Web Widget REST APIs, the relevant widget configurations can then be loaded by the chat widget based on the widget identifier.</p>
+<p>To add a new web widget, go to Web Widget on the left, and click&nbsp;<strong>Create Web Widget.</strong></p>
+<p>On the&nbsp;<strong>Web Widget</strong> Settings, fill in&nbsp;the form using the following table:</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 30.1906%">
+       <col style="width: 69.8557%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th colspan="1">
+         <p>Field</p>
+        </th>
+        <th colspan="1">
+         <p>Description</p>
+        </th>
+       </tr>
+       <tr>
+        <th style="--bg-color: #808080">
+         <p>Widget Identifier&nbsp;</p>
+        </th>
+        <td>
+         <p>A short string defining this web-widget instance, such as, <strong>web</strong>, <strong>customer-widget</strong>,&nbsp;<strong>partner-widget </strong>(Alphanumeric code). Following validations are applied to the widget identifier.</p>
+         <ul>
+          <li>
+           <p>All Alphanumeric characters are allowed. Alphabets (A-Z), Numbers (0-9).</p>
+          </li>
+          <li>
+           <p>Special characters are allowed including Esterik (*), Dashes (-) and underscores (_)</p>
+          </li>
+          <li>
+           <p>Maximum character length of 50 characters</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Widget Title&nbsp;</p>
+        </th>
+        <td colspan="1">
+         <p>This is the title text shown on the customer widget. Could be a company name or any short string.&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Widget Subtitle&nbsp;</p>
+        </th>
+        <td colspan="1">
+         <p>This is the subtitle text shown beneath the title text. Could be any short string, for instance, the opening hours of the contact center.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Customer Reconnect Time (in seconds)</p>
+        </th>
+        <td colspan="1">
+         <p style="--text-align: left">Not applicable for now.&nbsp;</p>
+         <p style="--text-align: left">The reconnect time in case the customer chat widget is disconnected in defined in the configuration files for now.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Language&nbsp;</p>
+        </th>
+        <td colspan="1">
+         <p>This determines the language of the web widget.&nbsp;</p>
+         <p style="--text-align: left">This dropdown shows the list of supported languages specified in <strong>General Settings&nbsp;→ Locale</strong> settings.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Color Pallet&nbsp;</p>
+        </th>
+        <td colspan="1">
+         <p style="--text-align: left">Choose a color of the web widget from this color pallet.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Download Transcript&nbsp;</p>
+        </th>
+        <td colspan="1">
+         <p>If enabled,&nbsp;customers can download the full chat transcript at the end of the webchat.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Dynamic Link</p>
+        </th>
+        <td colspan="1">
+         <p>If enabled, this auto-converts a URL to a hyperlink, whether sent by the customer or by the system (agent/bot).</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Emoji</p>
+        </th>
+        <td colspan="1">
+         <p>If enabled, customers can send emojis during the web chat.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>File Transfer</p>
+        </th>
+        <td colspan="1">
+         <p>If enabled, customers can send and receive file attachments</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Font size&nbsp;</p>
+        </th>
+        <td colspan="1">
+         <p>If the value is&nbsp;<code>true, </code>the widget shows 3 font size options for customers to choose from; i.e. <code>Large</code>, <code>Medium</code>, <code>Low</code>.</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="id-(4.3)UnifiedAdminGuide-AddReasonCodes"><span id="UnifiedAdminGuide-AddReasonCodes"></span>Add Reason Codes
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-AddReasonCodes">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Reason codes are configured for agents to select a reason while going not ready and/or logging out.&nbsp;</p>
+<p>To add a reason, go to the <strong>Reason Codes&nbsp;</strong>list and create a new reason using the following table:</p>
+<p>
+ <br>
+</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 30.1906%">
+       <col style="width: 69.8557%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th colspan="1">
+         <p>Field</p>
+        </th>
+        <th colspan="1">
+         <p>Description</p>
+        </th>
+       </tr>
+       <tr>
+        <th style="--bg-color: #808080">
+         <p>Label</p>
+        </th>
+        <td>
+         <p>Specify a reason label. This label will be displayed in the reasons list to agents in Agent Desk.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Type</p>
+        </th>
+        <td colspan="1">
+         <p>Select a type from one of the following:</p>
+         <p><code>Not Ready</code> | <code>Logout</code></p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Description</p>
+        </th>
+        <td colspan="1">
+         <p>An optional description for the reason</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_39533f2ea1cd14df0759f08f787306eca7e5ae0003ed6ce6131a77323a8b606a/image2021-11-5_19-0-44.png?cb=6f2aa00a69f1047476e840c5e1b383f3" alt="image2021-11-5_19-0-44.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p style="--text-align: center"><em>Add Reason</em></p>
+<p>
+ <br>
+</p>
+<div data-component="panel" role="note" data-appearance="warning">
+ <div class="panel-content">
+  <p>Some reasons are available by default. You can add more for agents to choose from.</p>
+ </div>
+</div>
+<h3 id="id-(4.3)UnifiedAdminGuide-AddWrap-upReasons"><span id="UnifiedAdminGuide-AddWrap-upReasons"></span>Add Wrap-up Reasons
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-AddWrap-upReasons">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>A default Wrap-up form is available on the <strong>Forms&nbsp;</strong>page. &nbsp;</p>
+<p>Go to the form, <strong>WrapUp </strong>and select edit action against the form to add wrap-up categories and reasons as per your business needs.&nbsp;</p>
+<p>
+ <br>
+</p>
+<p style="--text-align: center"><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_62ac61e2454eb9f1b6182bd0fbf5d9705401b6bdfb2e9f21ae8b6ce181d4b1a6/image2022-9-1_13-21-48.png?cb=41e637b14ac7e61936bf8fcbf76348b8" alt="image2022-9-1_13-21-48.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p style="--text-align: center"><em>Add Wrap-up Reasons&nbsp;</em></p>
+<p>
+ <br>
+</p>
+<div class="theme-table" style="--width: 74.2509%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 30.1906%">
+       <col style="width: 69.8557%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th colspan="1">
+         <p>Field</p>
+        </th>
+        <th colspan="1">
+         <p>Description</p>
+        </th>
+       </tr>
+       <tr>
+        <th style="--bg-color: #808080">
+         <p>Form Title</p>
+        </th>
+        <td>
+         <p>A default title to the Wrap-up form is provided on Agent Desk. The title changes to the form here won't take any effect on the Agent Desk.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Description&nbsp;</p>
+        </th>
+        <td colspan="1">
+         <p>Specify an optional description of the form here. This won't be shown on Agent Desk.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>New Attribute</p>
+        </th>
+        <td colspan="1">
+         <p>Leave it as it is.</p>
+         <p>In the default Wrap-up form, an attribute with the type <strong>Options</strong> is already added. You cannot change the type of this attribute in the default Wrap-up form.&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Multiple choice</p>
+        </th>
+        <td colspan="1">
+         <p>Turn this on if you want agents to be able to apply multiple reasons.&nbsp;</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Add Category</p>
+        </th>
+        <td colspan="1">
+         <p>A default category with the name, 'Category 1' is added. Change it according to your business requirements of wrap-up categories.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Add Options</p>
+        </th>
+        <td colspan="1">
+         <p>Add options in each category. These are the actual wrap-up reasons per category defined above.</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>You may add as many categories and options as needed in the Wrap-up form.</p>
+<h3 id="id-(4.3)UnifiedAdminGuide-AddNewChannelType"><span id="UnifiedAdminGuide-AddNewChannelType"></span>Add New Channel Type
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-AddNewChannelType">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>You may also create additional channel types to provision new channels of the desired channel type.</p>
+<div data-component="panel" role="note" data-appearance="success">
+ <div class="panel-meta">
+  <div class="panel-title">Tip</div>
+ </div>
+ <div class="panel-content">
+  <p>Learn more about Channel Types in <a href="https://expertflow-docs.atlassian.net/wiki/spaces/CX/pages/2525707/_Channel+related+terms" data-scope="external" rel="external noreferrer">_Channel related terms</a></p>
+ </div>
+</div>
+<p>To add a new channel type, go to the Channel Manager menu on the left and click <strong>Channel Type.&nbsp;</strong></p>
+<p>While adding a new channel type, provide the following info:</p>
+<div class="theme-table" style="--width: 58.5206%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 33.669%">
+       <col style="width: 66.3774%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th colspan="1">
+         <p>Field</p>
+        </th>
+        <th colspan="1">
+         <p>Description</p>
+        </th>
+       </tr>
+       <tr>
+        <th colspan="1" style="--bg-color: #808080">
+         <p>Name</p>
+        </th>
+        <td colspan="1">
+         <p>Provide a name for the channel type.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Media Routing Domain</p>
+        </th>
+        <td colspan="1">
+         <p>Choose the MRD created above for this channel type.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Channel Type Logo</p>
+        </th>
+        <td colspan="1">
+         <p>Upload a logo for this channel type. This logo or icon is then used in Unified Agent to show media channel data.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Interactive</p>
+        </th>
+        <td colspan="1">
+         <p>Reserved for future use.</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_c03ccd64be8907efdba4639ae971cd77e80fdc3493780c95dc6bfa94f9cb571f/image2021-11-4_15-19-18.png?cb=425835738c554f73be492a3b0caa1d48" alt="image2021-11-4_15-19-18.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p style="--text-align: center"><em>Add New Channel Type&nbsp;</em></p>
+<p>
+ <br>
+</p>
+<div data-component="panel" role="note" data-appearance="warning">
+ <div class="panel-content">
+  <p>The following channel types are reserved for future</p>
+  <ul>
+   <li>
+    <p>Viber&nbsp;</p>
+   </li>
+   <li>
+    <p>SMS</p>
+   </li>
+  </ul>
+ </div>
+</div>
+<h3 id="id-(4.3)UnifiedAdminGuide-PullMode-NoRouting"><span id="UnifiedAdminGuide-PullMode-NoRouting"></span>Pull Mode - No Routing
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-PullMode-NoRouting">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Pull mode allows incoming customer requests to be parked to a List instead of being queued to a queue and available to all List Agents (who are subscribed to the List) to pick and join a conversation.</p>
+<div data-component="panel" role="note" data-appearance="success">
+ <div class="panel-meta">
+  <div class="panel-title">Tip</div>
+ </div>
+ <div class="panel-content">
+  <ul>
+   <li>
+    <p>To learn more about Lists and Pull-based Routing, see <a href="/cx/4.3/pull-mode-vs-precision-routing" data-scope="internal">Pull-mode vs Precision Routing</a></p>
+   </li>
+   <li>
+    <p>See <a href="/cx/4.3/agent-guide-vcx-4-3" data-scope="internal">Agent Guide</a> to see how agents get subscribed to and join Pull-based requests</p>
+   </li>
+  </ul>
+ </div>
+</div>
+<p>The Lists created from here are mapped to Channels while setting up a channel, with the <strong>Routing Mode</strong> → <strong>Pull</strong>.&nbsp;</p>
+<h4 id="id-(4.3)UnifiedAdminGuide-AddLists"><span id="UnifiedAdminGuide-AddLists"></span>Add Lists
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.3/unified-admin-guide#id-(4.3)UnifiedAdminGuide-AddLists">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>Go to <strong>Pull Mode List</strong> and click <strong>Create List&nbsp;</strong>button to add a new List using the following table.</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Field</p>
+        </th>
+        <th>
+         <p>Description</p>
+        </th>
+       </tr>
+       <tr>
+        <th>
+         <p>Name</p>
+        </th>
+        <td>
+         <p>Specify the List Name here. List names are not unique. So you can have two Lists having the same names.</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Description</p>
+        </th>
+        <td colspan="1">
+         <p>Specify an optional description of this List. For instance, what type of requests this List is expected to take in.&nbsp;</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_6b0acabec5c79faabcc161bf3d76fe4797c75ce8f39c2b141493df4da22b9eda/Add%20List.gif?cb=2b50fc5db684005551946c3b94d9ecfb" alt="Add List.gif" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p style="--text-align: center"><em>Add a Pull-based List and Assign it to a Channel</em></p>
+<p>
+ <br>
+</p>
+<div data-component="panel" role="note" data-appearance="warning">
+ <div class="panel-content">
+  <p><strong>Lists</strong> can only be deleted if they are not being used by any channel.</p>
+ </div>
+</div>
+<p>
+ <br>
+</p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="ff7b8902e05da1a7-83" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="ff7b8902e05da1a7-83">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/cx/4.3/user-guides">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">User Guides</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/cx/4.3/agent-guide-vcx-4-3">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Agent Guide</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

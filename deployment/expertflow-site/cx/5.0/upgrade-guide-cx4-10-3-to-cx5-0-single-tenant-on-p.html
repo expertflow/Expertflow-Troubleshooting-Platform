@@ -1,0 +1,4567 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_7e194f62292f4513eb0388c566d23b468ca0ae8c6dd1676ba2721fdec5dbb051" data-confluence-content-id="1481572378"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/cx/5.0/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="CX">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>Upgrade Guide CX4.10.3 to CX5.0 (Single Tenant/On-Prem) | Expertflow CX</title>
+		<meta property="og:title" content="Upgrade Guide CX4.10.3 to CX5.0 (Single Tenant/On-Prem) | Expertflow CX">
+		<meta property="twitter:title" content="Upgrade Guide CX4.10.3 to CX5.0 (Single Tenant/On-Prem) | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p">
+		<meta property="og:url" content="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p">
+
+		<meta name="description" content="Before upgrading, ensure that the system is idle, i.e., all agents are logged out of AgentDesk. Make sure to FLUSH the Cache (Redis) before proceeding with the…">
+		<meta property="og:description" content="Before upgrading, ensure that the system is idle, i.e., all agents are logged out of AgentDesk. Make sure to FLUSH the Cache (Redis) before proceeding with the…">
+		<meta property="twitter:description" content="Before upgrading, ensure that the system is idle, i.e., all agents are logged out of AgentDesk. Make sure to FLUSH the Cache (Redis) before proceeding with the…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2026-02-16T13:34:22.193Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": true
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.js"></script>
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="5f6868549fbf2278-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="5f6868549fbf2278-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="5f6868549fbf2278-19">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="5f6868549fbf2278-19" name="version" onchange="self.location.assign(this.value)" >
+				<option id="5f6868549fbf2278-3"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="5f6868549fbf2278-4"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="5f6868549fbf2278-5"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="5f6868549fbf2278-6"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="5f6868549fbf2278-7"  value="/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p"  selected="">
+					5.0
+				</option>
+				<option id="5f6868549fbf2278-8"  value="/cx/4.10"  >
+					4.10
+				</option>
+				<option id="5f6868549fbf2278-9"  value="/cx/4.9"  >
+					4.9
+				</option>
+				<option id="5f6868549fbf2278-10"  value="/cx/4.8"  >
+					4.8
+				</option>
+				<option id="5f6868549fbf2278-11"  value="/cx/4.7"  >
+					4.7
+				</option>
+				<option id="5f6868549fbf2278-12"  value="/cx/4.6"  >
+					4.6
+				</option>
+				<option id="5f6868549fbf2278-13"  value="/cx/4.5.3"  >
+					4.5.3
+				</option>
+				<option id="5f6868549fbf2278-14"  value="/cx/4.5.2"  >
+					4.5.2
+				</option>
+				<option id="5f6868549fbf2278-15"  value="/cx/4.5.1"  >
+					4.5.1
+				</option>
+				<option id="5f6868549fbf2278-16"  value="/cx/4.5"  >
+					4.5
+				</option>
+				<option id="5f6868549fbf2278-17"  value="/cx/4.4"  >
+					4.4
+				</option>
+				<option id="5f6868549fbf2278-18"  value="/cx/4.3"  >
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('5f6868549fbf2278-19');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-5f6868549fbf2278-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-5f6868549fbf2278-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-5f6868549fbf2278-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="5f6868549fbf2278-20" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="5f6868549fbf2278-20">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-5f6868549fbf2278-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-5f6868549fbf2278-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="5f6868549fbf2278-37">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="5f6868549fbf2278-37" name="version" onchange="self.location.assign(this.value)" >
+				<option id="5f6868549fbf2278-21"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="5f6868549fbf2278-22"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="5f6868549fbf2278-23"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="5f6868549fbf2278-24"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="5f6868549fbf2278-25"  value="/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p"  selected="">
+					5.0
+				</option>
+				<option id="5f6868549fbf2278-26"  value="/cx/4.10"  >
+					4.10
+				</option>
+				<option id="5f6868549fbf2278-27"  value="/cx/4.9"  >
+					4.9
+				</option>
+				<option id="5f6868549fbf2278-28"  value="/cx/4.8"  >
+					4.8
+				</option>
+				<option id="5f6868549fbf2278-29"  value="/cx/4.7"  >
+					4.7
+				</option>
+				<option id="5f6868549fbf2278-30"  value="/cx/4.6"  >
+					4.6
+				</option>
+				<option id="5f6868549fbf2278-31"  value="/cx/4.5.3"  >
+					4.5.3
+				</option>
+				<option id="5f6868549fbf2278-32"  value="/cx/4.5.2"  >
+					4.5.2
+				</option>
+				<option id="5f6868549fbf2278-33"  value="/cx/4.5.1"  >
+					4.5.1
+				</option>
+				<option id="5f6868549fbf2278-34"  value="/cx/4.5"  >
+					4.5
+				</option>
+				<option id="5f6868549fbf2278-35"  value="/cx/4.4"  >
+					4.4
+				</option>
+				<option id="5f6868549fbf2278-36"  value="/cx/4.3"  >
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('5f6868549fbf2278-37');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="5f6868549fbf2278-38" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="5f6868549fbf2278-39" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="5f6868549fbf2278-40" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="5f6868549fbf2278-41"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="5f6868549fbf2278-41" href="/cx/5.0/cx-release-notes" >CX Release Notes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="5f6868549fbf2278-44"						aria-labelledby="5f6868549fbf2278-43"
+					></button>
+				<a id="5f6868549fbf2278-43" href="/cx/5.0/upgrade-guide" >Upgrade Guide</a>
+			</div>
+
+<ul  id="5f6868549fbf2278-44" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="5f6868549fbf2278-45" href="/cx/5.0/upgrade-guide-cx5-0-2-to-cx5-0-3" >Upgrade Guide CX5.0.2 to CX5.0.3</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="5f6868549fbf2278-46" href="/cx/5.0/upgrade-guide-cx5-0-1-to-cx5-0-2" >Upgrade Guide CX5.0.1 to CX5.0.2</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="5f6868549fbf2278-47" href="/cx/5.0/upgrade-guide-cx5-0-to-cx5-0-1" >Upgrade Guide CX5.0 to CX5.0.1</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="5f6868549fbf2278-49"						aria-labelledby="5f6868549fbf2278-48"
+					></button>
+				<a id="5f6868549fbf2278-48" href="/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p" aria-current="page">Upgrade Guide CX4.10.3 to CX5.0 (Single Tenant/On-Prem)</a>
+			</div>
+
+<ul  id="5f6868549fbf2278-49" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="5f6868549fbf2278-50" href="/cx/5.0/cx5-0-changelog" >ChangeLog</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="5f6868549fbf2278-51" href="/cx/5.0/upgrade-guide-for-data-platform" >Upgrade guide for Data Platform</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="5f6868549fbf2278-52" href="/cx/5.0/upgrade-guide-to-5-0" >CX Voice upgrade Guide</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="5f6868549fbf2278-53" href="/cx/5.0/vrs-upgrade-guide" >VRS Upgrade Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="5f6868549fbf2278-54" href="/cx/5.0/upgrade-guide-cx5-0-3-to-5-0-4-rc-1-predictive-dialer" >Upgrade Guide CX5.0.3 to 5.0.4-rc.1 (Predictive Dialer)</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="5f6868549fbf2278-55"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="5f6868549fbf2278-55" href="/cx/5.0/cx-performance" >CX Performance</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="5f6868549fbf2278-57"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="5f6868549fbf2278-57" href="/cx/5.0/deployment-guide" >Deployment Guide</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="5f6868549fbf2278-59" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="5f6868549fbf2278-59">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/cx/5.0">
+										Expertflow CX
+								</a>
+							</li>
+							<li>
+								<a href="/cx/5.0/upgrade-guide">
+										Upgrade Guide
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="5f6868549fbf2278-60">
+			<h2 class="toc-heading" id="5f6868549fbf2278-60">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>Upgrade Guide CX4.10.3 to CX5.0 (Single Tenant/On-Prem)</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+
+			
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+		
+
+
+
+	
+
+	
+
+
+	
+	
+	
+	
+	
+	
+		
+		
+	
+	
+	
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<div data-component="panel" role="note" data-appearance="warning">
+ <div class="panel-content">
+  <p>Before upgrading, ensure that the system is idle, i.e., all agents are logged out of AgentDesk.</p>
+  <p>Make sure to FLUSH the Cache (Redis) before proceeding with the upgrade</p>
+ </div>
+</div> 
+<h2 id="Database-Migrations" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-DatabaseMigrations"></span>Database Migrations
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#Database-Migrations">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>Follow <a href="https://expertflow-docs.atlassian.net/wiki/x/KIC6Tw" data-scope="external" rel="external noreferrer">this guide</a> to migrate data for MongoDB.
+ <br>
+ The license manager in PostgreSQL: <a href="/__attachments/a_d4b8d955824c47f970080c01b46edf50dca83b5ecf0df18045db51bdbc180d43/lis-manager-mtt-migration.sql?cb=93e33b2c234a0716b8c5f4ccb5c47bcc" data-scope="internal">lis-manager-mtt-migration.sql</a></p>
+<p>Follow these steps to execute the above SQL script</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code># Check PostgreSQL Helm release status
+helm -n ef-external status ef-postgresql
+
+# This will output some instructions. Follow the next steps based on that output.
+
+# Get the password for "sa"
+# (Copy and run the command that starts with "export" shown after this line in the Helm output)
+export POSTGRES_PASSWORD=$(kubectl get secret --namespace ef-external ef-postgresql -o jsonpath="{.data.password}" | base64 -d)
+
+# Connect to PostgreSQL
+# Copy the 3-line command shown in the Helm output after the text:
+# "To connect to your database run the following command:"
+# Example:
+kubectl run ef-postgresql-client --rm --tty -i --restart='Never' \
+  --namespace ef-external --image gitimages.expertflow.com/general/postgresql:14.5.0-debian-11-r21 \
+  --env="PGPASSWORD=$POSTGRES_PASSWORD" --command -- psql \
+  --host ef-postgresql -U sa -d licenseManager
+
+# Verify you’re inside the PostgreSQL client
+# You should now see a prompt like this:
+# licenseManager=&gt;
+# If not, press Enter once.
+
+# Copy your .sql script into the PostgreSQL pod (if it’s on your local machine)
+# Replace ef-postgresql-client with the actual pod name if it differs.
+kubectl cp ./lis-manager-mtt-migration.sql ef-postgresql-client:/tmp/lis-manager-mtt-migration.sql -n ef-external
+
+# Get inside the PostgreSQL client
+kubectl exec -it -n ef-external ef-postgresql-client -- env PGPASSWORD=$POSTGRES_PASSWORD psql --host ef-postgresql -U sa -d licenseManager
+
+# Inside the PostgreSQL client, execute your .sql script:
+\i /tmp/lis-manager-mtt-migration.sql
+
+# Verify that the table was created
+\dt;
+
+# Exit the PostgreSQL client
+\q
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="Custom-Configuration-Strategy" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-CustomConfigurationStrategy"></span>Custom Configuration Strategy
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#Custom-Configuration-Strategy">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>For detailed guidelines on applying environment-specific configurations using custom <code>values.yaml</code> layering,</p>
+<p>Refer to the <strong>CX Helm Chart Custom Configuration Strategy</strong> <a href="/cx-knowledgebase/latest/customizing-cx-helm-chart-deployments" data-scope="internal">guide</a>.</p>
+<p>Refer to this guide to see the complete <a href="/cx/5.0/cx5-0-changelog" data-scope="internal">change log</a></p>
+<h3 id="1.-Update-Helm-Repo" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-1.UpdateHelmRepo"></span>1. Update Helm Repo
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#1.-Update-Helm-Repo">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash" data-align="wide">
+   <pre><code>helm repo update expertflow
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="2.-Clone-the-CX-Repository-on-the-Target-Server" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-2.ClonetheCXRepositoryontheTargetServer"></span>2. Clone the CX Repository on the Target Server
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#2.-Clone-the-CX-Repository-on-the-Target-Server">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash" data-align="wide">
+   <pre><code># Create CX-5.0 directory from root
+mkdir CX-5.0
+
+# Navigate to CX-5.0
+cd CX-5.0
+
+# Clone the CX-5.0 branch of cim-solution repository
+git clone -b CX-5.0 https://efcx:RecRpsuH34yqp56YRFUb@gitlab.expertflow.com/cim/cim-solution.git $HOME/CX-5.0
+
+# Navigate to root (previous directory)
+cd ..
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="3.-Change-Directory-to-the-Current-Deployment" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-3.ChangeDirectorytotheCurrentDeployment"></span>3. Change Directory to the Current Deployment
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#3.-Change-Directory-to-the-Current-Deployment">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash" data-align="wide">
+   <pre><code>cd CX-4.10.3/kubernetes
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="4.-Apply-Redis-ACL-Secret" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-4.ApplyRedisACLSecret"></span>4. Apply Redis ACL Secret
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#4.-Apply-Redis-ACL-Secret">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash" data-align="wide">
+   <pre><code>kubectl -n ef-external create secret generic ef-redis-acl-secret --from-literal=superuser=Expertflow464
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="5.-Deploy-Redis" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-5.DeployRedis"></span>5. Deploy Redis
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#5.-Deploy-Redis">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash" data-align="wide">
+   <pre><code>helm show values expertflow/redis --version 5.0 &gt; helm-values/ef-redis-custom-values.yaml
+helm upgrade --install=true --namespace=ef-external --values=helm-values/ef-redis-custom-values.yaml redis expertflow/redis --version 5.0
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="6.-Deploy-APISIX" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-6.DeployAPISIX"></span>6. Deploy APISIX
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#6.-Deploy-APISIX">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>helm show values expertflow/apisix --version 5.0  &gt; helm-values/apisix-custom-values.yaml
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>update the <code>apisix-custom-values.yaml</code> file for given parameters</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>global:
+  ingressRouter: &lt;FQDN&gt;   # replace FQDN
+  ingressClassName: "nginx"
+  ingressTlsCertName: "ef-ingress-tls-secret"
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>helm upgrade --install --namespace ef-external --values helm-values/apisix-custom-values.yaml apisix expertflow/apisix --version 5.0
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="7.-Deploy-CX-Bus-(ActiveMQ)" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-7.DeployCXBus(ActiveMQ)"></span>7. Deploy CX Bus (ActiveMQ)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#7.-Deploy-CX-Bus-(ActiveMQ)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash" data-align="wide">
+   <pre><code>helm show values expertflow/activemq --version 5.0 &gt; helm-values/ef-activemq-custom-values.yaml
+helm upgrade --install=true  --namespace=ef-external --values=helm-values/ef-activemq-custom-values.yaml activemq expertflow/activemq --version 5.0
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="8.-Deploy-Vault" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-8.DeployVault"></span>8. Deploy Vault
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#8.-Deploy-Vault">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash" data-align="wide">
+   <pre><code>helm show values expertflow/vault --version 5.0 &gt; helm-values/ef-vault-custom-values.yaml
+helm uninstall -n vault vault
+
+kubectl get secret mongo-mongodb-ca -n ef-external -o yaml | sed 's/namespace: ef-external/namespace: vault/' | kubectl create -f -
+
+helm upgrade --install --namespace vault --create-namespace vault --debug --values helm-values/ef-vault-custom-values.yaml expertflow/vault --version 5.0
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>🔗 <strong>Use the following guide:</strong> <a href="/cx-knowledgebase/latest/configure-vault-for-mongodb-dynamic-database-crede" data-scope="internal">Vault Dynamic Database Configuration</a></p>
+<h3 id="9.-Copy-Schemas-and-Rule-Files-for-Routing-Engine" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-9.CopySchemasandRuleFilesforRoutingEngine"></span>9. Copy Schemas and Rule Files for Routing Engine
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#9.-Copy-Schemas-and-Rule-Files-for-Routing-Engine">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash" data-align="wide">
+   <pre><code># Copy Routing Engine Directory
+cp -r ../../CX-5.0/kubernetes/pre-deployment/routing-engine pre-deployment/
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="10.-Apply-ConfigMaps-for-the-Routing-Engine" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-10.ApplyConfigMapsfortheRoutingEngine"></span>10. Apply ConfigMaps for the Routing Engine
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#10.-Apply-ConfigMaps-for-the-Routing-Engine">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash" data-align="wide">
+   <pre><code>kubectl create configmap -n expertflow routing-engine-graphql-schemas --from-file=./pre-deployment/routing-engine/graphql/schemas
+kubectl create configmap -n expertflow routing-engine-graphql-memory-rules --from-file=./pre-deployment/routing-engine/graphql/graphql-memory-rules.json
+kubectl create configmap -n expertflow routing-engine-graphql-redis-rules --from-file=./pre-deployment/routing-engine/graphql/graphql-redis-rules.json
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="11.-Upgrade-CX-Core" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-11.UpgradeCXCore"></span>11. Upgrade CX Core
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#11.-Upgrade-CX-Core">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>In case if you don’t have any custom training/flows for <code>Conversation Studio</code> then please delete its PVC using the following commands</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>#Execute the followig 1st command and wait until the Conversation Studio pod is removed before executing the 2nd command.
+kubectl delete -n expertflow statefulset ef-cx-conversation-studio 
+kubectl delete -n expertflow pvc/conversation-studio-flow-vol-ef-cx-conversation-studio-0 
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>
+ <br>
+</p>
+<p>In <code>ef-cx-custom-values.yaml</code> add the following:</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>efConnectionVars:
+    ROOT_DOMAIN: "expertflow" 
+# under RealTime Reporting siteEnvVars, update the DATASOURCE_URL value to exclude the SQL db name, as its not required in 5.0
+  realtime-reports:
+    siteEnvVars:
+    - name: DATASOURCE_URL
+      value:  "jdbc:mysql://&lt;ip&gt;:3306"
+# add the following env under conversation-studio
+  conversation-studio:
+    siteEnvVars:
+      - name: TENANT_ID
+        value: "expertflow"
+    
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash" data-align="wide">
+   <pre><code>helm upgrade --install --namespace expertflow --create-namespace ef-cx --debug --values helm-values/ef-cx-custom-values.yaml expertflow/cx --version 5.0
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<div data-component="panel" role="note" data-appearance="info">
+ <div class="panel-content">
+  <p>Survey is now a part of <strong>Conversation-Studio</strong> in CX-Core so current deployment for it should be removed.</p>
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>helm uninstall -n expertflow cx-surveys
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+  <p>Please follow this guide to configure the survey node in Conversation-Studio: <a href="/cx-knowledgebase/latest/conversation-studio-control-flow-configuration-gui" data-scope="internal">Configuration Guide</a></p>
+ </div>
+</div>
+<h3 id="12.-Upgrade-Agent-Desk" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-12.UpgradeAgentDesk"></span>12. Upgrade Agent Desk
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#12.-Upgrade-Agent-Desk">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash" data-align="wide">
+   <pre><code># Copy translation files
+cp -r ../../CX-5.0/kubernetes/pre-deployment/app-translations/unified-agent/i18n pre-deployment/app-translations/unified-agent
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>kubectl -n expertflow delete configmap ef-app-translations-cm
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>kubectl -n expertflow create configmap ef-app-translations-cm --from-file=pre-deployment/app-translations/unified-agent/i18n
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash" data-align="wide">
+   <pre><code># Copy supervisor dashboard file
+cp ../../CX-5.0/kubernetes/post-deployment/config/grafana/supervisor-dashboards/Supervisor_Dashboard_CIM.json post-deployment/config/grafana/supervisor-dashboards
+
+# Copy agent dashboard file
+cp ../../CX-5.0/kubernetes/post-deployment/config/grafana/supervisor-dashboards/Agent_Dashboard_CIM.json post-deployment/config/grafana/supervisor-dashboards
+
+# Copy agent teams dashboard
+cp ../../CX-5.0/kubernetes/post-deployment/config/grafana/supervisor-dashboards/agent_teams_dashboard.json post-deployment/config/grafana/supervisor-dashboards/agent_teams_dashboard.json
+
+# Copy agent performance dashboard
+cp ../../CX-5.0/kubernetes/post-deployment/config/grafana/supervisor-dashboards/agent_performance_dashboard.json post-deployment/config/grafana/supervisor-dashboards/agent_performance_dashboard.json
+
+# Copy social media performance dashboard
+cp ../../CX-5.0/kubernetes/post-deployment/config/grafana/supervisor-dashboards/social_media_performance_trend_dashboard.json post-deployment/config/grafana/supervisor-dashboards/social_media_performance_trend_dashboard.json
+
+# Copy team statistics dashboard
+cp ../../CX-5.0/kubernetes/post-deployment/config/grafana/supervisor-dashboards/team_statistics_dashboard.json post-deployment/config/grafana/supervisor-dashboards/team_statistics_dashboard.json 
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>kubectl -n expertflow delete configmap ef-grafana-supervisor-dashboard
+kubectl -n expertflow create configmap ef-grafana-supervisor-dashboard --from-file=post-deployment/config/grafana/supervisor-dashboards/Supervisor_Dashboard_CIM.json
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>kubectl -n expertflow delete configmap ef-grafana-agent-dashboard
+kubectl -n expertflow create configmap ef-grafana-agent-dashboard --from-file=post-deployment/config/grafana/supervisor-dashboards/Agent_Dashboard_CIM.json
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>kubectl -n expertflow delete configmap ef-grafana-agent-teams-dashboard
+kubectl -n expertflow create configmap ef-grafana-agent-teams-dashboard --from-file=post-deployment/config/grafana/supervisor-dashboards/agent_teams_dashboard.json
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>kubectl -n expertflow delete configmap ef-grafana-agent-performance-dashboard
+kubectl -n expertflow create configmap ef-grafana-agent-performance-dashboard --from-file=post-deployment/config/grafana/supervisor-dashboards/agent_performance_dashboard.json
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>kubectl -n expertflow delete configmap ef-grafana-social-media-performance-trend-dashboard
+kubectl -n expertflow create configmap ef-grafana-social-media-performance-trend-dashboard --from-file=post-deployment/config/grafana/supervisor-dashboards/social_media_performance_trend_dashboard.json
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>kubectl -n expertflow delete configmap ef-grafana-team-statistics-dashboard
+kubectl -n expertflow create configmap ef-grafana-team-statistics-dashboard --from-file=post-deployment/config/grafana/supervisor-dashboards/team_statistics_dashboard.json
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Add the following <code>post-deployment/config/grafana/supervisor-dashboards/datasource.yml</code></p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>############################################  INFINITY API PLUGIN CONFIGURATION ##########################################
+  - name: infinity_cim_json_api
+    jsonData:
+      allowedHosts: #Add the FQDN of the registered Tenants
+        - "https://example1.com"
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Create an SQL database for the tenant with the &lt;tenant name&gt; and in <code>datasource.yml</code> update the SQL database name to this.</p>
+<p>Reapply the <code>datasource.yml</code> file</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>kubectl -n expertflow delete secret generic ef-grafana-datasource-secret
+kubectl -n expertflow create secret generic ef-grafana-datasource-secret --from-file=post-deployment/config/grafana/supervisor-dashboards/datasource.yml
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Add the following in <code>cx-agent-desk-custom-values.yaml</code> and replace IP with host IP</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>grafana:  
+  hostAliases: 
+    - ip: "&lt;IP&gt;"
+      hostnames:
+        - "{{ .Values.global.ingressRouter }}"
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>helm uninstall -n expertflow cx-agent-desk
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash" data-align="wide">
+   <pre><code>helm upgrade --install --namespace expertflow --set global.efCxReleaseName="ef-cx" cx-agent-desk --debug --values helm-values/cx-agent-desk-custom-values.yaml expertflow/agent-desk --version 5.0
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="13.-Upgrade-Channels" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-13.UpgradeChannels"></span>13. Upgrade Channels
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#13.-Upgrade-Channels">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash" data-align="wide">
+   <pre><code>helm upgrade --install --namespace expertflow --set global.efCxReleaseName="ef-cx" --debug cx-channels --values helm-values/cx-channels-custom-values.yaml expertflow/channels --version 5.0
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="14.-Upgrade-Campaigns" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-14.UpgradeCampaigns"></span>14. Upgrade Campaigns
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#14.-Upgrade-Campaigns">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash" data-align="wide">
+   <pre><code>helm upgrade --install --namespace expertflow --set global.efCxReleaseName="ef-cx" cx-campaigns --debug --values helm-values/cx-campaigns-custom-values.yaml expertflow/campaigns --version 5.0
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="15.-Upgrade-QM" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-15.UpgradeQM"></span>15. Upgrade QM
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#15.-Upgrade-QM">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash" data-align="wide">
+   <pre><code>helm upgrade --install --namespace=expertflow --set global.efCxReleaseName="ef-cx" qm  --debug --values=helm-values/cx-qm-custom-values.yaml expertflow/qm --version 5.0
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="16.-Reporting-Configuration" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-16.ReportingConfiguration"></span>16. Reporting Configuration
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#16.-Reporting-Configuration">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Add the following line to <code>pre-deployment/reportingConnector/reporting-connector.conf</code>:</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash" data-align="wide">
+   <pre><code>tenant_id = expertflow
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet> 
+<div class="theme-table" style="--width: 1800px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="align-start" data-number-column="false">
+     <table>
+      <tbody>
+       <tr>
+        <td>
+         <p><strong>Update the following parameters as well</strong></p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>conversation_manager_db_name</p>
+        </td>
+        <td>
+         <p>expertflow</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>bot_framework_db_name</p>
+        </td>
+        <td>
+         <p>expertflow</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ccm_db_name</p>
+        </td>
+        <td>
+         <p>expertflow</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>routing_engine_db_name</p>
+        </td>
+        <td>
+         <p>expertflow</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>cim_customer_db_name</p>
+        </td>
+        <td>
+         <p>expertflow</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>business_calendars_db_name</p>
+        </td>
+        <td>
+         <p>expertflow</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>state_events_logger_db_name</p>
+        </td>
+        <td>
+         <p>expertflow</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>admin_panel_db_name</p>
+        </td>
+        <td>
+         <p>expertflow</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>Also update the SQL database name</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>sql_database_name=expertflow 
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Recreate the ConfigMap:</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash" data-align="wide">
+   <pre><code>kubectl -n expertflow delete configmap ef-reporting-connector-conf-cm
+kubectl -n expertflow create configmap ef-reporting-connector-conf-cm --from-file=pre-deployment/reportingConnector/reporting-connector.conf
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Upgrade Reporting:</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash" data-align="wide">
+   <pre><code>helm upgrade --install --namespace expertflow --set global.efCxReleaseName="ef-cx" cx-reporting --debug --values helm-values/cx-reporting-scheduler-custom-values.yaml expertflow/reporting --version 5.0
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="17.-CiscoSyncService" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-17.CiscoSyncService"></span>17. CiscoSyncService
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#17.-CiscoSyncService">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>vi helm-values/cx-ciscosyncservice-custom-values.yaml
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>In the opened file, add the following section to define the FQDN (Fully Qualified Domain Name) for ingress routing:</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>global:   
+  ingressRouter: &lt;CUSTOM-FQDN&gt; 
+siteEnvVars:
+    - name: AUTH_SERVER_URL
+      value: "https://{{ .Values.global.ingressRouter  }}/auth/"
+    - name: EF_SERVER_URL
+      value: "https://{{ .Values.global.ingressRouter  }}/unified-admin/"   
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Deploy the CiscoSyncService helm chart by</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>helm upgrade --install --namespace expertflow  --set global.efCxReleaseName="ef-cx"  cisco-sync-service  --values helm-values/cx-ciscosyncservice-custom-values.yaml expertflow/cisco-sync-service --version 5.0 
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="18.-Metabase" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-18.Metabase"></span>18. Metabase
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#18.-Metabase">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Navigate to the <code>CX-5.0/kubernetes/</code> directory:</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash" data-align="wide">
+   <pre><code>cd CX-5.0/kubernetes/
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h5 id="Step-1:-Create-Custom-Values-File" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-Step1:CreateCustomValuesFile"></span>Step 1: Create Custom Values File
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#Step-1:-Create-Custom-Values-File">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash" data-align="wide">
+   <pre><code>vi helm-values/metabase-custom-values.yaml
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h5 id="Step-2:-Add-Minimum-Required-Configuration" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-Step2:AddMinimumRequiredConfiguration"></span>Step 2: Add Minimum Required Configuration
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#Step-2:-Add-Minimum-Required-Configuration">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">YAML</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="yaml" data-align="wide">
+   <pre><code>global:
+  ingressRouter: &lt;CUSTOM-FQDN&gt;
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<blockquote>
+ <p>🔁 Replace <code>&lt;CUSTOM-FQDN&gt;</code> with your actual domain, e.g. <code>devops.example.com</code>.</p>
+</blockquote>
+<h5 id="Step-3:-Deploy" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-Step3:Deploy"></span>Step 3: Deploy
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#Step-3:-Deploy">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash" data-align="wide">
+   <pre><code>helm upgrade --install=true --debug --namespace=metabase --create-namespace --values=helm-values/metabase-custom-values.yaml metabase expertflow/metabase --version 5.0-alpha
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h4 id="Check-Pod" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-CheckPod"></span>Check Pod
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#Check-Pod">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <div class="theme-code-snippet-header">Bash</div>
+ <scroll-shadow>
+  <div data-component="code" data-language="bash" data-align="wide">
+   <pre><code>kubectl get pod -n metabase
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h4 id="Access-Metabase" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-AccessMetabase"></span>Access Metabase
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#Access-Metabase">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>Open in browser:</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>https://&lt;FQDN&gt;/metabase
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>You should see the Metabase setup page.</p>
+<p>Follow <a href="/cx-knowledgebase/latest/setup-metabase" data-scope="internal">this guide</a> to complete the setup.</p>
+<p>Login credentials:</p>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>Email: superadmin@admin.com
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="19.-EFCX-Bootstrapping" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-19.EFCX-Bootstrapping"></span>19. <strong>EFCX-Bootstrapping</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#19.-EFCX-Bootstrapping">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p><strong>Webhooks Registration</strong></p>
+<p>Add webhooks information in the mongo database for the components that require bootstrapping upon tenant registration.</p>
+<ul>
+ <li>
+  <p>Export mongo certs using:</p>
+ </li>
+</ul>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>mkdir /tmp/mongodb_certs
+CERTFILES=($(kubectl get secret mongo-mongodb-ca -n ef-external -o go-template='{{range $k,$v := .data}}{{$k}}{{"\n"}}{{end}}'))
+for f in ${CERTFILES[*]}; do   kubectl get secret mongo-mongodb-ca  -n ef-external -o go-template='{{range $k,$v := .data}}{{ if eq $k "'$f'"}}{{$v  | base64decode}}{{end}}{{end}}' &gt; /tmp/mongodb_certs/${f} 2&gt;/dev/null; done
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<ul>
+ <li>
+  <p>Go inside kubernetes directory and execute the command to import data inside the webhook collections. Following are commands</p>
+ </li>
+</ul>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>cd CX-5.0/kubernetes
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>kubectl -n ef-external run mongo-tools --image=mongo:6.0 --restart=Never -- sleep 3600
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>kubectl -n ef-external cp ./post-deployment/cim-tenant.webhooks.json mongo-tools:/tmp/cim-tenant.webhooks.json
+kubectl -n ef-external cp /tmp/mongodb_certs/mongodb-ca-cert mongo-tools:/tmp/mongodb-ca-cert
+kubectl -n ef-external cp /tmp/mongodb_certs/client-pem mongo-tools:/tmp/combined.pem
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>kubectl -n ef-external exec mongo-tools -- \
+  mongoimport \
+  --host mongo-mongodb.ef-external.svc.cluster.local \
+  --port 27017 \
+  --db cim-tenant \
+  --collection webhooks \
+  --file /tmp/cim-tenant.webhooks.json \
+  --jsonArray \
+  --ssl \
+  --sslCAFile /tmp/mongodb-ca-cert \
+  --sslPEMKeyFile /tmp/combined.pem \
+  --username root \
+  --password Expertflow123 \
+  --authenticationDatabase admin
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>kubectl -n ef-external delete pod mongo-tools
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<h3 id="20.-Tenant-Onboarding" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-20.TenantOnboarding"></span>20. Tenant Onboarding
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#20.-Tenant-Onboarding">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<h4 id="Step-1:-Import-the-tenant-configurations" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-Step1:Importthetenantconfigurations"></span>Step 1: Import the tenant configurations
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#Step-1:-Import-the-tenant-configurations">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<ul>
+ <li>
+  <p>Create <code>tenant-config</code> directory on root and place both of these files in it: <a href="/__attachments/a_83b7f1622b3caec6b3c50b05db0eaac2d3edfcec8e1c7f47b32947ae79b29137/import_tenant.sh?cb=6b65264a8e68fce603b041284fc84763" data-scope="internal">import_tenant.sh</a> <a href="/__attachments/a_feaef7a6010623f180cb42e8b73d80ace7409755ce5d6e6c25561a85969a6445/cim-tenant.tenants.json?cb=83bd6e833605e7108836448c54f7e4a9" data-scope="internal">cim-tenant.tenants.json</a></p>
+ </li>
+ <li>
+  <p>Update the dialer variables in <code>cim-tenant.tenants.json</code> file according to the tenant’s environment</p>
+ </li>
+ <li>
+  <p>Use the commands below to execute the script</p>
+ </li>
+</ul>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>cd /root/tenant-config
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>chmod +x import_tenant.sh
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<code-snippet class="theme-code-snippet" style="--width: 1800px;">
+ <scroll-shadow>
+  <div data-component="code" data-align="wide">
+   <pre><code>./import_tenant.sh &lt;tenantId&gt; &lt;FQDN&gt;
+</code></pre>
+  </div>
+ </scroll-shadow>
+ <copy-clipboard class="theme-code-snippet-copy">
+  <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+   <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+  </svg>
+ </copy-clipboard>
+</code-snippet>
+<p>Here, tenantId and FQDN as supplied as arguments to the script</p>
+<h4 id="Step-2:-Register-Tenant-FQDN-on-Grafana-allowedHosts" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-Step2:RegisterTenantFQDNonGrafanaallowedHosts"></span>Step 2: Register Tenant FQDN on Grafana allowedHosts
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#Step-2:-Register-Tenant-FQDN-on-Grafana-allowedHosts">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>Follow the steps in <a href="/cx-knowledgebase/latest/how-to-register-new-tenants-fqdn-on-grafana-allowe" data-scope="internal">this guide</a>.</p>
+<h3 id="21.-CX-Voice" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-21.CXVoice"></span>21. CX Voice
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#21.-CX-Voice">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Follow <a href="/cx/5.0/upgrade-guide-to-5-0" data-scope="internal">this guide</a> to upgrade CX Voice to 5.0</p>
+<h3 id="22.-VRS-Upgrade" style=""><span id="UpgradeGuideCX4.10.3toCX5.0(SingleTenant/On-Prem)-22.VRSUpgrade"></span>22. VRS Upgrade
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/5.0/upgrade-guide-cx4-10-3-to-cx5-0-single-tenant-on-p#22.-VRS-Upgrade">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>Follow <a href="/cx/5.0/vrs-upgrade-guide" data-scope="internal">this guide</a> to upgrade VRS from 14.5 to 14.6</p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="5f6868549fbf2278-61" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="5f6868549fbf2278-61">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/cx/5.0/upgrade-guide-cx5-0-to-cx5-0-1">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Upgrade Guide CX5.0 to CX5.0.1</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/cx/5.0/cx5-0-changelog">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">ChangeLog</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

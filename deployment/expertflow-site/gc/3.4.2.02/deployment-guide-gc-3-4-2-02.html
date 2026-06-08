@@ -1,0 +1,4697 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_6b64d82ff13846c0034be460fd949bde3c07bf1a93c4d1b39ac4d5806f39390b" data-confluence-content-id="574193972"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/gc/3.4.2.02/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="GC">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>Deployment Guide | Expertflow CX</title>
+		<meta property="og:title" content="Deployment Guide | Expertflow CX">
+		<meta property="twitter:title" content="Deployment Guide | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02">
+		<meta property="og:url" content="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02">
+
+		<meta name="description" content="Date &amp;amp; Time Synchronization Variable names and password requirements Supervisor agent requirement Prerequisites for EF Connector Hardware Requirements Software…">
+		<meta property="og:description" content="Date &amp;amp; Time Synchronization Variable names and password requirements Supervisor agent requirement Prerequisites for EF Connector Hardware Requirements Software…">
+		<meta property="twitter:description" content="Date &amp;amp; Time Synchronization Variable names and password requirements Supervisor agent requirement Prerequisites for EF Connector Hardware Requirements Software…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2024-10-30T09:49:53.684Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": true
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="f5c35ba1e169b291-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="f5c35ba1e169b291-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="f5c35ba1e169b291-9">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="f5c35ba1e169b291-9" name="version" onchange="self.location.assign(this.value)" >
+				<option id="f5c35ba1e169b291-3"  value="/gc/4.4.12"  >
+					4.4.12
+				</option>
+				<option id="f5c35ba1e169b291-4"  value="/gc/4.4"  >
+					4.4
+				</option>
+				<option id="f5c35ba1e169b291-5"  value="/gc/3.5.1.05/deployment-guide-gc-3-5-1-05"  >
+					3.5.1.05
+				</option>
+				<option id="f5c35ba1e169b291-6"  value="/gc/3.4.2.02/deployment-guide-gc-3-4-2-02"  selected="">
+					3.4.2.02
+				</option>
+				<option id="f5c35ba1e169b291-7"  value="/gc/3.4.1.03/deployment-guide-gc"  >
+					3.4.1.03
+				</option>
+				<option id="f5c35ba1e169b291-8"  value="/gc/3.4.1.02-trial-agentready"  >
+					3.4.1.02-Trial-AgentReady
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('f5c35ba1e169b291-9');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-f5c35ba1e169b291-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-f5c35ba1e169b291-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-f5c35ba1e169b291-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="f5c35ba1e169b291-10" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="f5c35ba1e169b291-10">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-f5c35ba1e169b291-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-f5c35ba1e169b291-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="f5c35ba1e169b291-17">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="f5c35ba1e169b291-17" name="version" onchange="self.location.assign(this.value)" >
+				<option id="f5c35ba1e169b291-11"  value="/gc/4.4.12"  >
+					4.4.12
+				</option>
+				<option id="f5c35ba1e169b291-12"  value="/gc/4.4"  >
+					4.4
+				</option>
+				<option id="f5c35ba1e169b291-13"  value="/gc/3.5.1.05/deployment-guide-gc-3-5-1-05"  >
+					3.5.1.05
+				</option>
+				<option id="f5c35ba1e169b291-14"  value="/gc/3.4.2.02/deployment-guide-gc-3-4-2-02"  selected="">
+					3.4.2.02
+				</option>
+				<option id="f5c35ba1e169b291-15"  value="/gc/3.4.1.03/deployment-guide-gc"  >
+					3.4.1.03
+				</option>
+				<option id="f5c35ba1e169b291-16"  value="/gc/3.4.1.02-trial-agentready"  >
+					3.4.1.02-Trial-AgentReady
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('f5c35ba1e169b291-17');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="f5c35ba1e169b291-18" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="f5c35ba1e169b291-19" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="f5c35ba1e169b291-20" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="f5c35ba1e169b291-21" href="/gc/3.4.2.02/business-features" >Business Features</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="f5c35ba1e169b291-22" href="/gc/3.4.2.02/deployment-guide-gc-3-4-2-02" aria-current="page">Deployment Guide</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="f5c35ba1e169b291-23" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="f5c35ba1e169b291-23">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/gc/3.4.2.02">
+										Generic Connector
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="f5c35ba1e169b291-24">
+			<h2 class="toc-heading" id="f5c35ba1e169b291-24">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>Deployment Guide</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+
+	
+	
+
+
+	
+	
+	
+	
+	
+	
+			
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+		
+	
+	
+	
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<ul>
+ <li>
+  <ul>
+   <li>
+    <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-Date&amp;TimeSynchronization" data-scope="internal">Date &amp; Time Synchronization</a></p>
+   </li>
+   <li>
+    <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-Variablenamesandpasswordrequirements" data-scope="internal">Variable names and password requirements</a></p>
+   </li>
+   <li>
+    <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-Supervisoragentrequirement" data-scope="internal">Supervisor agent requirement</a></p>
+   </li>
+   <li>
+    <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-PrerequisitesforEFConnector" data-scope="internal">Prerequisites for EF Connector</a></p>
+   </li>
+   <li>
+    <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-HardwareRequirements" data-scope="internal">Hardware Requirements</a></p>
+   </li>
+   <li>
+    <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-SoftwarePrerequisites" data-scope="internal">Software Prerequisites</a></p>
+   </li>
+   <li>
+    <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-NetworkPrerequisites" data-scope="internal">Network Prerequisites</a></p>
+   </li>
+   <li>
+    <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-Access&amp;PrivilegesRequirements" data-scope="internal">Access &amp; Privileges Requirements</a></p>
+   </li>
+   <li>
+    <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-InstallSoftware" data-scope="internal">Install Software</a></p>
+   </li>
+  </ul>
+ </li>
+ <li>
+  <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-UpgradeSoftware" data-scope="internal">Upgrade Software</a></p>
+  <ul>
+   <li>
+    <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-EFServiceManager" data-scope="internal">EF Service Manager</a></p>
+   </li>
+   <li>
+    <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-InstallWindowsServices" data-scope="internal">Install Windows Services</a></p>
+   </li>
+   <li>
+    <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-ManageServices" data-scope="internal">Manage Services</a></p>
+   </li>
+   <li>
+    <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-ConfigurationGenericConnectorConfiguration" data-scope="internal">Generic Connector Configuration</a></p>
+   </li>
+   <li>
+    <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-ConnectorConfigurationParameters" data-scope="internal">Connector Configuration Parameters</a></p>
+   </li>
+   <li>
+    <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-SetupDefaultReasonCode(s)" data-scope="internal">Setup Default Reason Code(s)</a></p>
+   </li>
+  </ul>
+ </li>
+ <li>
+  <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-DeploymentModes" data-scope="internal">Deployment Modes</a></p>
+  <ul>
+   <li>
+    <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-SimplexMode" data-scope="internal">Simplex Mode</a></p>
+   </li>
+   <li>
+    <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-DuplexMode" data-scope="internal">Duplex Mode</a></p>
+    <ul>
+     <li>
+      <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-Active-Passive(Primary/Secondary)Setup" data-scope="internal">Active-Passive (Primary / Secondary) Setup</a></p>
+     </li>
+     <li>
+      <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-ConfigurationsforSite-1" data-scope="internal">Configurations for Site-1</a></p>
+      <ul>
+       <li>
+        <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-ConfigurationsforSite-2" data-scope="internal">Configurations for Site-2</a></p>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+   <li>
+    <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-Active-ActiveSetup" data-scope="internal">&nbsp;Active-Active Setup</a></p>
+   </li>
+  </ul>
+ </li>
+ <li>
+  <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-ActiveMQConfiguration" data-scope="internal">ActiveMQ Configuration</a></p>
+  <ul>
+   <li>
+    <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-ConfiguringNetworkofBrokers(RedundantDeploymentOnly)" data-scope="internal">Configuring Network of Brokers (Redundant Deployment Only)</a></p>
+   </li>
+   <li>
+    <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-ActiveMQWebConsoleSetup" data-scope="internal">ActiveMQ Web Console Setup</a></p>
+   </li>
+   <li>
+    <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-WebConsolePasswordsConfiguration" data-scope="internal">Web Console Passwords Configuration</a></p>
+   </li>
+   <li>
+    <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-SettingupActiveMQwithJettyandActiveDirectory" data-scope="internal">Setting up ActiveMQ with Jetty and Active Directory</a></p>
+    <ul>
+     <li>
+      <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-CreateObjectofTypeGroupOfUniqueNames" data-scope="internal">Create Object of Type GroupOfUniqueNames</a></p>
+     </li>
+     <li>
+      <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-Jetty/ActiveMQConfiguration" data-scope="internal">Jetty/ActiveMQ Configuration</a></p>
+     </li>
+     <li>
+      <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-DescriptionofconfigurationattributesforActiveDirectory" data-scope="internal">Description of configuration attributes for&nbsp; Active Directory</a></p>
+     </li>
+    </ul>
+   </li>
+   <li>
+    <p><a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-SettingupSSLtoaccessActiveMQconsole" data-scope="internal">Setting up&nbsp; SSL to access ActiveMQ console</a></p>
+   </li>
+  </ul>
+ </li>
+</ul>
+<h4 id="id-(3.4.2.02)DeploymentGuide-Date&amp;TimeSynchronization" style=""><span id="DeploymentGuide-Date&amp;amp;TimeSynchronization"></span>Date &amp; Time Synchronization
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-Date&amp;amp;TimeSynchronization">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>An important consideration is time synchronization between related components. Communication between EF Connector, client applications and Cisco Finesse carry timestamps. If the system dates and time are not synchronized the system can produce unpredictable results. Therefore, please make every effort to adhere to the following time synchronization guidelines:</p>
+<p>EF Connector, client applications and Cisco Finesse should have their Time Zone and time configured properly according to the geographic region and synchronized. To configure the time zone, please see the instructions from the hardware or software manufacturer of NTP server. Client applications and EF Connector should be synchronized to the second. This synchronization should be maintained continuously and validated on a regular basis. For security reasons, Network Time Protocol (NTP) V 4.1+ is recommended.</p>
+<h4 id="id-(3.4.2.02)DeploymentGuide-Variablenamesandpasswordrequirements" style=""><span id="DeploymentGuide-Variablenamesandpasswordrequirements"></span>Variable names and password requirements
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-Variablenamesandpasswordrequirements">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>All the variables include team name, agent id’s, passwords and call variables shouldn't contain the following special characters.</p>
+<ol>
+ <li>
+  <p>,</p>
+ </li>
+ <li>
+  <p>#</p>
+ </li>
+ <li>
+  <p>|</p>
+ </li>
+</ol>
+<h4 id="id-(3.4.2.02)DeploymentGuide-Supervisoragentrequirement" style=""><span id="DeploymentGuide-Supervisoragentrequirement"></span>Supervisor agent requirement
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-Supervisoragentrequirement">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>Each of the Supervisor agents must be assigned at least one team.</p>
+<h4 id="id-(3.4.2.02)DeploymentGuide-PrerequisitesforEFConnector" style=""><span id="DeploymentGuide-PrerequisitesforEFConnector"></span>Prerequisites for EF Connector
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-PrerequisitesforEFConnector">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>EF Connector consists of 2 independent components, (i) ActiveMQ Broker and (ii) Generic Connector. This section covers necessary prerequisites.</p>
+<h4 id="id-(3.4.2.02)DeploymentGuide-HardwareRequirements" style=""><span id="DeploymentGuide-HardwareRequirements"></span>Hardware Requirements
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-HardwareRequirements">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>For a simplex (single server) deployment, minimum and recommended hardware requirements are as following:</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+        <td>
+         <p><strong>Minimum</strong></p>
+        </td>
+        <td>
+         <p><strong>Recommended</strong></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>vCPU</strong></p>
+        </td>
+        <td>
+         <p>2 Cores</p>
+        </td>
+        <td>
+         <p>4 Cores</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>vRAM</strong></p>
+        </td>
+        <td>
+         <p>4 GB</p>
+        </td>
+        <td>
+         <p>8 GB</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>vDISK</strong></p>
+        </td>
+        <td>
+         <p>20 GB</p>
+        </td>
+        <td>
+         <p>160 GB</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>For a redundant deployment, two servers of the same specifications (as mentioned above) are needed.</p>
+<h4 id="id-(3.4.2.02)DeploymentGuide-SoftwarePrerequisites" style=""><span id="DeploymentGuide-SoftwarePrerequisites"></span>Software Prerequisites
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-SoftwarePrerequisites">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>
+ <br>
+</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p><strong>Recommended Items</strong></p>
+        </td>
+        <td>
+         <p><strong>Notes</strong></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <ol>
+          <li>
+           <p>Microsoft Windows Server 2019 Standard Edition x64</p>
+          </li>
+          <li>
+           <p>Microsoft Windows Server 2012 standard Edition x64 R2</p>
+          </li>
+         </ol>
+        </td>
+        <td>
+         <p>The Windows server 2019 x64 is recommended</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Locale Settings</p>
+        </td>
+        <td>
+         <p>English (recommended)</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Java Runtime (64 bit)</p>
+        </td>
+        <td>
+         <p>Java Runtime (JRE) 8 is required</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Antivirus</p>
+        </td>
+        <td>
+         <p>Any of the antivirus as mentioned in Software License Requirements</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>WinRAR</p>
+        </td>
+        <td>
+         <p>A package extractor to modify embedded configuration properties</p>
+        </td>
+       </tr>
+       <tr>
+        <td colspan="1">
+         <p>.Net Framework</p>
+        </td>
+        <td colspan="1">
+         <p><a href="https://www.microsoft.com/en-pk/download/details.aspx?id=42642" data-scope="external" rel="external noreferrer">.Net Framework 4.5.2</a>&nbsp;for Service Manager</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<h4 id="id-(3.4.2.02)DeploymentGuide-NetworkPrerequisites" style=""><span id="DeploymentGuide-NetworkPrerequisites"></span>Network Prerequisites
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-NetworkPrerequisites">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>EF Connector requires communication with the following:</p>
+<ul>
+ <li>
+  <p>&lt;Client Server&gt;</p>
+ </li>
+ <li>
+  <p>Cisco Finesse</p>
+ </li>
+ <li>
+  <p>Remote monitoring server running web console monitoring of ActiveMQ on HTTP/S.</p>
+ </li>
+ <li>
+  <p>Secondary EF Connector - only needed for a redundant deployment</p>
+ </li>
+ <li>
+  <p>NTP Server, for time synchronization</p>
+ </li>
+</ul>
+<p>
+ <br>
+</p>
+<p>Following ports should remain open on the Firewall. The local security policy and any antivirus should also allow open communication on the following ports.</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+       <col>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p><strong>Type</strong></p>
+        </td>
+        <td>
+         <p><strong>Source Host</strong></p>
+        </td>
+        <td>
+         <p><strong>Source Port</strong></p>
+        </td>
+        <td>
+         <p><strong>Destination Host</strong></p>
+        </td>
+        <td>
+         <p><strong>Destination Port</strong></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>TCP</p>
+        </td>
+        <td>
+         <p>&lt;Client Server&gt;</p>
+        </td>
+        <td>
+         <p>any</p>
+        </td>
+        <td>
+         <p>EF Connector</p>
+        </td>
+        <td>
+         <p>61616</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>TCP</p>
+        </td>
+        <td>
+         <p>EF Connector (B)</p>
+        </td>
+        <td>
+         <p>any</p>
+        </td>
+        <td>
+         <p>EF Connector</p>
+        </td>
+        <td>
+         <p>61616</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>HTTP</p>
+        </td>
+        <td colspan="2">
+         <p>For status monitoring from any machine</p>
+        </td>
+        <td>
+         <p>EF Connector</p>
+        </td>
+        <td>
+         <p>8161</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>XMPP</p>
+        </td>
+        <td>
+         <p>EF Connector</p>
+        </td>
+        <td>
+         <p>any</p>
+        </td>
+        <td>
+         <p>Cisco Finesse</p>
+        </td>
+        <td>
+         <p>5222, 5223, 7071, 7443</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>HTTP/S</p>
+        </td>
+        <td>
+         <p>EF Connector</p>
+        </td>
+        <td>
+         <p>any</p>
+        </td>
+        <td>
+         <p>Cisco Finesse</p>
+        </td>
+        <td>
+         <p>80, 8080, 443, 8443</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>NTP</p>
+        </td>
+        <td>
+         <p>EF Connector</p>
+        </td>
+        <td>
+         <p>any</p>
+        </td>
+        <td>
+         <p>NTP Server</p>
+        </td>
+        <td>
+         <p>123</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>DNS</p>
+        </td>
+        <td>
+         <p>EF Connector</p>
+        </td>
+        <td>
+         <p>any</p>
+        </td>
+        <td>
+         <p>DNS Server</p>
+        </td>
+        <td>
+         <p>53</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<ul>
+ <li>
+  <p>&lt;Client Server&gt; is a machine running client application of EF Connector. For server-based applications like Siebel, it’s Siebel Communication Server. For desktop-based applications, it’s the machine address of the agent desktop running the desktop application.</p>
+ </li>
+ <li>
+  <p>In a redundant deployment, both EF Connector instances communicate with each other on the same TCP OpenWIre port 61616. In the table above, it’s mentioned as EF Connector (B) ⇒ EF Connector.</p>
+ </li>
+ <li>
+  <p>These are defaults set in EF Connector, but you can always change the default configuration.</p>
+ </li>
+</ul>
+<p>If you need to file sharing and remote installation/configuration using RDP, you might need to open the following additional ports.</p>
+<p>
+ <br>
+</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+       <col>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p><strong>Type</strong></p>
+        </td>
+        <td>
+         <p><strong>Source Host</strong></p>
+        </td>
+        <td>
+         <p><strong>Source Port</strong></p>
+        </td>
+        <td>
+         <p><strong>Destination Host</strong></p>
+        </td>
+        <td>
+         <p><strong>Destination Port</strong></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>RDP</p>
+        </td>
+        <td colspan="2">
+         <p>For remote desktop connection</p>
+        </td>
+        <td>
+         <p>EF Connector</p>
+        </td>
+        <td>
+         <p>3389</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>TCP</p>
+        </td>
+        <td colspan="2">
+         <p>For file-sharing</p>
+        </td>
+        <td>
+         <p>EF Connector</p>
+        </td>
+        <td>
+         <p>139,445</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>UDP</p>
+        </td>
+        <td colspan="2">
+         <p>For file-sharing</p>
+        </td>
+        <td>
+         <p>EF Connector</p>
+        </td>
+        <td>
+         <p>137,138</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<h4 id="id-(3.4.2.02)DeploymentGuide-Access&amp;PrivilegesRequirements" style=""><span id="DeploymentGuide-Access&amp;amp;PrivilegesRequirements"></span>Access &amp; Privileges Requirements
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-Access&amp;amp;PrivilegesRequirements">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<ul>
+ <li>
+  <p>Administrative access (LocalSystem account or domain administrator) on the Connector Server is required to do the installation and configuration.</p>
+ </li>
+</ul>
+<h4 id="id-(3.4.2.02)DeploymentGuide-InstallSoftware" style=""><span id="DeploymentGuide-InstallSoftware"></span>Install Software
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-InstallSoftware">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<ol>
+ <li>
+  <p>Download EF Connector Installer from&nbsp;<a href="https://drive.google.com/file/d/10lsVArNxxWC9PW6EO6wQDBtB9Y3sckpd/view?usp=sharing" data-scope="external" rel="external noreferrer">Google</a>&nbsp;<a href="https://drive.google.com/file/d/10lsVArNxxWC9PW6EO6wQDBtB9Y3sckpd/view?usp=sharing" data-scope="external" rel="external noreferrer">Drive</a></p>
+ </li>
+ <li>
+  <p>Run the setup wizard&nbsp;<strong>GenericConnector3.4.1.02.exe</strong>&nbsp;to start the installation process</p>
+ </li>
+ <li>
+  <p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_2ebbd3a3766cb2e715f768fa3aa8a7440534d6d3ff3d208a331b085984c86915/image2021-11-11_17-17-6.png?cb=a27b400bab8415bda57b765f3e4e8e26" alt="image2021-11-11_17-17-6.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+ <li>
+  <p>Now, select a location to install the software. The default path is&nbsp;<strong>C:\Program Files\Generic Connector.</strong><strong>&nbsp;</strong>The specified path is mentioned as&nbsp;<strong>&lt;EF Connector Home&gt;</strong>&nbsp;in the rest of the document.
+   <br>
+   <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 248px;"> <img src="/__attachments/a_0b499e19c0e926cccb11f027686650e9c43112db09c7594d54222374f8b6f329/image2021-11-11_17-17-23.png?cb=6b8ac1e0d397333157ba6b4d853e2c36" alt="image2021-11-11_17-17-23.png" data-scope="internal"> </span> </image-lightbox> </span>
+   <br>
+   <br></p>
+ </li>
+ <li>
+  <p>Select the folder for a shortcut in Start Menu
+   <br>
+   <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 246px;"> <img src="/__attachments/a_e36243238a32f67331b95bf356226c89b46d8622a7ac4f4342afc23569a4b6c6/image2021-11-11_17-17-48.png?cb=a78890cff7f5e43f0520e18fa7f712a6" alt="image2021-11-11_17-17-48.png" data-scope="internal"> </span> </image-lightbox> </span>
+   <br>
+   <br></p>
+ </li>
+ <li>
+  <p>&nbsp;Review your selection and if all is okay, proceed with the installation.
+   <br>
+   <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 246px;"> <img src="/__attachments/a_35f563f05f41af7f1696f23bc956511bd605191ca7761e8ca37c0b82a40b2474/image2021-11-11_17-18-16.png?cb=8e90564b5c98c4da124272cdea325b01" alt="image2021-11-11_17-18-16.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+ <li>
+  <p>The installation wizard will copy all the files to the selected folder.
+   <br>
+   <br>
+   <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_7ef4f9e1ec7b8bdf173c9e4f88d2fc17d2f267e8f7a26bdb5324bfc51e74cef0/image2021-11-11_17-18-43.png?cb=2a16edc76581f3903801ab1ee1f66d11" alt="image2021-11-11_17-18-43.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+ <li>
+  <p>Press Finish to close this setup wizard.
+   <br></p>
+ </li>
+</ol>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 51px;"> <img src="/__attachments/a_48710622628f3b03ae6fd8504af4588720c31c012dd4243b0be5453fb00ea90e/image2021-11-11_17-18-58.png?cb=ff3ea7c268672142123e7ffb962444b5" alt="image2021-11-11_17-18-58.png" data-scope="internal"> </span> </image-lightbox> </span> &nbsp;Upon successful completion,&nbsp;<strong>EF Service Manager</strong>&nbsp;App is installed with a shortcut created on the Desktop.</p>
+<h2 id="id-(3.4.2.02)DeploymentGuide-UpgradeSoftware" style=""><span id="DeploymentGuide-UpgradeSoftware"></span>Upgrade Software
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-UpgradeSoftware">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>Upgrade GenericConnector3.4.1.02 to&nbsp;<strong>GCPatch 3.4.2.02</strong></p>
+<p>If you have successfully installed Generic Connector now or If you have already installed a previous version of Generic Connector and just want to upgrade, you need to obtain patch&nbsp;<strong>3.4.2.02</strong>&nbsp;from&nbsp;<a href="https://drive.google.com/file/d/1ndwKZ7nV-OIEljVPNiTaiQnUayX7-qkd/view?usp=drive_link" data-scope="external" rel="external noreferrer">Google Drive</a>&nbsp;and follow the following steps.</p>
+<ol>
+ <li>
+  <p>Download and extract&nbsp;<strong>GCPatch 3.4.2.02</strong><strong>.rar</strong></p>
+ </li>
+ <li>
+  <p>Double click on GCPatchService.exe. It opens a dialog to proceed.</p>
+ </li>
+ <li>
+  <p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 242px;"> <img src="/__attachments/a_7aa2bdeef2e2a89ab5540e07c3896c22760b1d0b713b480db365982784e51252/image2021-11-11_17-19-46.png?cb=f842ed85236855ce01962e95fe013862" alt="image2021-11-11_17-19-46.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+ <li>
+  <p>Click Next. It will open a dialog for folder selection. Select Generic Connector installation path&nbsp;<strong>&lt;EF Connector Home&gt;</strong>.</p>
+ </li>
+ <li>
+  <p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 248px;"> <img src="/__attachments/a_a7115cb32e62ea511bafc0b769bc975a87b798101006ac941938b9e95e1cdb23/image2021-11-11_17-20-2.png?cb=0fca4ca29f4962fbdae5647424d482cc" alt="image2021-11-11_17-20-2.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+ <li>
+  <p>Click OK. It will upgrade the existing GC with old configurations. It will ask you to review the configuration file. You need to ensure that all the newly introduced parameters are available in GC Config. Click Yes to open the installation folder. See&nbsp;<a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-Configuration" data-scope="internal">Generic Connector Configuration</a>.</p>
+ </li>
+ <li>
+  <p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 244px;"> <img src="/__attachments/a_90d0562afae67d5f23a2f528959b2829ab06dcbd179dd4710e3c74459f175baa/image2021-11-11_17-20-24.png?cb=66ce8a33ae5b03258e232311adf3c492" alt="image2021-11-11_17-20-24.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+ <li>
+  <p>You have up-to-date GC. Old GC will be available as a backup in the same folder. You can now start GC from EF Service Manager.</p>
+ </li>
+</ol>
+<p>Note</p>
+<p>After the patch upgrade, please make sure to add the property&nbsp; MAKE_AGENT_READY =False / True, in the GC&nbsp;<a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-Configuration" data-scope="internal">config&nbsp;</a>file&nbsp;</p>
+<p>
+ <br>
+</p>
+<h4 id="id-(3.4.2.02)DeploymentGuide-EFServiceManager" style=""><span id="DeploymentGuide-EFServiceManager"></span>EF Service Manager
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-EFServiceManager">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>EF Service Manager is a mini management console to:</p>
+<ol>
+ <li>
+  <p>Install / Uninstall Services</p>
+ </li>
+ <li>
+  <p>Start / Stop ActiveMQ</p>
+ </li>
+ <li>
+  <p>Start / Stop Generic Connector</p>
+ </li>
+ <li>
+  <p>Open ActiveMQ configuration file</p>
+ </li>
+ <li>
+  <p>Open Generic Connector configuration</p>
+ </li>
+ <li>
+  <p>Open ActiveMQ logs folder</p>
+ </li>
+ <li>
+  <p>Open Generic Connector logs folder</p>
+ </li>
+</ol>
+<p>Proceed with installing the application as a service and do any necessary configuration using EF Service Manager.</p>
+<h4 id="id-(3.4.2.02)DeploymentGuide-InstallWindowsServices" style=""><span id="DeploymentGuide-InstallWindowsServices"></span>Install Windows Services
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-InstallWindowsServices">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>Run EF Service Manager from the Desktop shortcut. The Service Manager shows the status of all of the Connector services. Click on “Install Service” to install both ActiveMQ and Generic Connector services. Once the services are installed, you will be able to configure and use these services.</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_d052472884fa550888a3b57f652e0f5d040b0566b8e7d2d8956cb79f72f6317a/image2021-11-11_17-21-29.png?cb=e6f1aae14816e64dbc4cf9ee19b588a5" alt="image2021-11-11_17-21-29.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>After clicking on Install Service, if the services are installed correctly, it will prompt a success message or display an error message in case of any issue.</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_1ad17eb77b9547cc9acb240773e4db382696c90d278b2121f74b673b66119b4c/image2021-11-11_17-22-2.png?cb=cbb296cf03f81ff0b7d672d561f80521" alt="image2021-11-11_17-22-2.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>The panel will look like the following after successful service creation.</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_44862d2c07314926effbf11e5b98a89096f9274ebb68c72584adbb42bc23d08d/image2021-11-11_17-22-13.png?cb=123f1da61970f45c5d59d7e14e25ce09" alt="image2021-11-11_17-22-13.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<h4 id="id-(3.4.2.02)DeploymentGuide-ManageServices" style=""><span id="DeploymentGuide-ManageServices"></span>Manage Services
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-ManageServices">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<ol>
+ <li>
+  <p>Run Service Manager from the desktop (if it is not running). You can locate Service Manager from the system tray</p>
+ </li>
+ <li>
+  <p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 125px;"> <img src="/__attachments/a_b6b03226afea1a65c47b9fe2e338ecbf1bc095a1a35af63fe3016146270cfb2c/image2021-11-11_17-22-38.png?cb=23503160aad7ec304553fd8fb9819da6" alt="image2021-11-11_17-22-38.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+ <li>
+  <p>Run both Services, one after the other.</p>
+ </li>
+ <li>
+  <p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_e0873f44c09dcad4f1a5188cdbce830abf61913cc42fc8674bdc9b8567cf85a2/image2021-11-11_17-22-50.png?cb=3f434779d5271a6372eb35b70ebf3ff5" alt="image2021-11-11_17-22-50.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+ <li>
+  <p>To validate if ActiveMQ is running, login to the web-console via&nbsp;<a href="/gc/3.4.2.02/deployment-guide-gc-3-4-2-02" data-scope="internal"><u>http://broker-[x]-ip:[web-console-port</u></a>] with the default credentials [admin/admin] or as per your configured credentials. Reference&nbsp;<a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#id-(3.4.1.02)DeploymentGuideGC-3.4.1.02-Trial-AgentReady-WebConsole" data-scope="internal">ActiveMQ Web Console Configuration</a></p>
+ </li>
+ <li>
+  <p>In the Queue section, you should find a Queue name&nbsp;<strong>Connector1</strong>&nbsp;created.</p>
+ </li>
+ <li>
+  <p>You can also verify ActiveMQ and GenericConnector from their log files by clicking on Logs button in both Sections.</p>
+ </li>
+ <li>
+  <p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_4902b7face1bc28c7e74760c3201a353c48c3d48437787cfa5d0811c6f28f69f/image2021-11-11_17-23-8.png?cb=16d734735182f700ad27d325ec174b5c" alt="image2021-11-11_17-23-8.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+</ol>
+<h4 id="id-(3.4.2.02)DeploymentGuide-GenericConnectorConfiguration" style=""><span id="DeploymentGuide-GenericConnectorConfiguration"></span>Generic Connector Configuration
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-GenericConnectorConfiguration">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>The generic Connector “Config” button in&nbsp;<strong>EF Service Manager</strong>&nbsp;will open the folder where Generic Connector is installed.</p>
+<ol>
+ <li>
+  <p>Open&nbsp;<strong>generic-connector.jar</strong>&nbsp;file using WinRAR or similar to modify the embedded configuration properties file&nbsp;<strong>Config/config.properties</strong>.'</p>
+ </li>
+ <li>
+  <p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_53f9c512ffc19e9ea6226927758445f030d261bc6e4fd12155e12e8ded7b5b38/image2021-11-11_17-25-42.png?cb=f93a5a88fbdd7a1c6ef30caf537d0c6c" alt="image2021-11-11_17-25-42.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+ <li>
+  <p>Open&nbsp;<strong>Config\config.properties</strong>&nbsp;with a text editor</p>
+ </li>
+ <li>
+  <p>Make the desired changes and update the file in the same jar file</p>
+ </li>
+</ol>
+<h4 id="id-(3.4.2.02)DeploymentGuide-ConnectorConfigurationParameters" style=""><span id="DeploymentGuide-ConnectorConfigurationParameters"></span>Connector Configuration Parameters
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-ConnectorConfigurationParameters">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>
+ <br>
+</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>Parameter</p>
+        </td>
+        <td>
+         <p>Default Value</p>
+        </td>
+        <td>
+         <p>Description</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ActiveMq_URL_1</p>
+        </td>
+        <td>
+         <p>Activemq-Broker-X-IP:[openwire-port]</p>
+        </td>
+        <td>
+         <p>Primary ActiveMQ URL with configured Openwire port</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ActiveMq_URL_2</p>
+        </td>
+        <td>
+         <p>Activemq-Broker-X-IP:[openwire-port]</p>
+        </td>
+        <td>
+         <p>Secondary ActiveMQ URL with configured Openwire port</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Finesse_1</p>
+        </td>
+        <td>
+         <p><a href="http://finesse-x-ip/finesse/api/" data-scope="external" rel="external noreferrer">http://Finesse-X-IP/finesse/api/</a></p>
+        </td>
+        <td>
+         <p>Primary Finesse URL for Site A</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Finesse_2</p>
+        </td>
+        <td>
+         <p>http(s)://Finesse-X-DN/finesse/api/</p>
+        </td>
+        <td>
+         <p>Primary Finesse URL for Site B</p>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>SERVER_ADDRESS_1</p>
+        </td>
+        <td>
+         <p>Finesse-X-IP</p>
+        </td>
+        <td>
+         <p>Primary finesse URL for heartbeat&nbsp;&nbsp; for Site A</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>SERVER_ADDRESS_2</p>
+        </td>
+        <td>
+         <p>Finess-X-IP</p>
+        </td>
+        <td>
+         <p>Secondary finesse URL for heartbeat&nbsp;&nbsp; for Site A</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ActiveMq_Timeout</p>
+        </td>
+        <td>
+         <p>10000</p>
+        </td>
+        <td>
+         <p>ActiveMQ connection timeout in milliseconds</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>AGENT_STATES_PUBLISHER_DURATION</p>
+        </td>
+        <td>
+         <p>5000</p>
+        </td>
+        <td>
+         <p>Time (ms) after which, states of all agents would be published on ‘AgentStates’ topic</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>FINESSE_HEARTBEAT_SLEEP</p>
+        </td>
+        <td>
+         <p>5</p>
+        </td>
+        <td>
+         <p>Interval in seconds&nbsp; to send heartbeat message to finesse</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>FINESSE_REQUEST_TIMEOUT</p>
+        </td>
+        <td>
+         <p>300</p>
+        </td>
+        <td>
+         <p>Finesse Request timeout (milliseconds) used to check Finesse Heartbeat</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>CLIENT_HEARTBEAT_SLEEP</p>
+        </td>
+        <td>
+         <p>30</p>
+        </td>
+        <td>
+         <p>in seconds</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>LOGLEVEL</p>
+        </td>
+        <td>
+         <p>TRACE</p>
+        </td>
+        <td>
+         <p>Log Level</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>GC_HEARTBEAT_TIMEOUT</p>
+        </td>
+        <td>
+         <p>10000</p>
+        </td>
+        <td>
+         <p>GC heartbeat timeout</p>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>AGENT_INACTIVITY_DURATION</p>
+        </td>
+        <td>
+         <p>30</p>
+        </td>
+        <td>
+         <p>In Seconds</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>AGENT_INACTIVITY_TIME_SWITCH</p>
+        </td>
+        <td>
+         <p>false</p>
+        </td>
+        <td>
+         <p>&nbsp;Agent inactivity switch</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>GC_HEARTBEAT_SLEEP</p>
+        </td>
+        <td>
+         <p>10000</p>
+        </td>
+        <td>
+         <p>GC heartbeat thread sleep time</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>DEFAULT_NOT_READY_REASON</p>
+        </td>
+        <td>
+         <p>1</p>
+        </td>
+        <td>
+         <p>default reason code for not ready</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>DEFAULT_LOGOUT_REASON</p>
+        </td>
+        <td>
+         <p>2</p>
+        </td>
+        <td>
+         <p>Default reason code for force logout</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>USE_ENCRYPTED_PASSWORDS</p>
+        </td>
+        <td>
+         <p>true</p>
+        </td>
+        <td>
+         <p>Use password encryption (3Des). (Must be same as in client.)</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>CHANGE_STATE_ON_WRAPUP</p>
+        </td>
+        <td>
+         <p>true</p>
+        </td>
+        <td>
+         <p>Caller’s state change automatically on wrap-up</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>MAKE_AGENT_READY</p>
+        </td>
+        <td>
+         <p>True</p>
+        </td>
+        <td>
+         <p>Add true if you want to make agent ready right after login</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<h4 id="id-(3.4.2.02)DeploymentGuide-SetupDefaultReasonCode(s)" style=""><span id="DeploymentGuide-SetupDefaultReasonCode(s)"></span>Setup Default Reason Code(s)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-SetupDefaultReasonCode(s)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>Create at least one reason-code for not-ready and one reason code for logout in Cisco Finesse and specify the default reason code in Generic Connector configuration file.</p>
+<p>For default not-ready reason,</p>
+<p>
+ <br>
+</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p>DEFAULT_NOT_READY_REASON</p>
+        </td>
+        <td>
+         <p>1</p>
+        </td>
+        <td>
+         <p>Default reason code to be passed by Generic Connector to Cisco Finesse</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>DEFAULT_LOGOUT_REASON</p>
+        </td>
+        <td>
+         <p>2</p>
+        </td>
+        <td>
+         <p>Default reason code to be passed by Generic Connector to Cisco Finesse</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<h2 id="id-(3.4.2.02)DeploymentGuide-DeploymentModes" style=""><span id="DeploymentGuide-DeploymentModes"></span>Deployment Modes
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-DeploymentModes">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="id-(3.4.2.02)DeploymentGuide-SimplexMode" style=""><span id="DeploymentGuide-SimplexMode"></span>Simplex Mode
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-SimplexMode">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>In simplex deployment, the application is installed on a single server with no failover support of EF Connector. However, the same EF Connector can still communicate with primary and secondary Finesse servers.</p>
+<p>Simplex mode is useful for lab tests and commercial deployments at a smaller scale. Figure 1.0 explains the simplex mode of Generic Connector.</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_194cca377d8af5f8bd2b736739c281bafbca7f5a75cddb073adcec70efc832f4/image2021-11-12_13-4-24.png?cb=87006c66f3471ebd2912d2a402065569" alt="image2021-11-12_13-4-24.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p><strong>Figure 1.0</strong></p>
+<h3 id="id-(3.4.2.02)DeploymentGuide-DuplexMode" style=""><span id="DeploymentGuide-DuplexMode"></span>Duplex Mode
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-DuplexMode">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>In Duplex mode, there are two types of supported configurations.</p>
+<p>
+ <br>
+</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p><strong>Active-Passive</strong></p>
+        </td>
+        <td>
+         <p>A primary/secondary configuration setup where one Connector works as a primary server while the other (secondary) is available as a stand-by server (from a Disaster Recovery site)</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p><strong>Active-Active</strong></p>
+        </td>
+        <td>
+         <p>In this mode, both Connector instances are active and serving clients and one instance serves as the backup / secondary for the other.</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<h4 id="id-(3.4.2.02)DeploymentGuide-Active-Passive(Primary/Secondary)Setup" style=""><span id="DeploymentGuide-Active-Passive(Primary/Secondary)Setup"></span>Active-Passive (Primary / Secondary) Setup
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-Active-Passive(Primary/Secondary)Setup">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>To configure the Connector in Active-Passive mode, set the value of attribute “GRC_CONSUMER_PRIORITY” in Connector configuration. For the Primary Connector, set the value of this attribute to “127” without quotes. For the Secondary Connector, set the value of this attribute to “100” without quotes.</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false"> <img src="/__attachments/a_b72f6913b660612ab4ab7c6f4a35fb3cc33c88fc3c7812d765f362ea61f7e978/image2021-11-12_13-5-36.png?cb=c70edb84356c57ce8846a89516549300" alt="image2021-11-12_13-5-36.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p><strong>Figure 1.1</strong></p>
+<p>The active-Passive mode has the following configurations.</p>
+<h4 id="id-(3.4.2.02)DeploymentGuide-ConfigurationsforSite-1" style=""><span id="DeploymentGuide-ConfigurationsforSite-1"></span>Configurations for Site-1
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-ConfigurationsforSite-1">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>Primary-AMQ: broker-1, Secondary-AMQ: broker-2</p>
+<p>Generic Connector Configuration should look like, For a detailed description of the GC please consult properties</p>
+<p>
+ <br>
+</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p><strong>Property</strong></p>
+        </td>
+        <td>
+         <p><strong>Value</strong></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ActiveMq_Timeout</p>
+        </td>
+        <td>
+         <p>10000</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>GRC_CONSUMER_PRIORITY</p>
+        </td>
+        <td>
+         <p>127</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>RANDOMIZE</p>
+        </td>
+        <td>
+         <p>false</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>PRIORITY_BACKUP</p>
+        </td>
+        <td>
+         <p>true</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ActiveMq_URL_1</p>
+        </td>
+        <td>
+         <p>primary-url-of-amq:port</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ActiveMq_URL_2</p>
+        </td>
+        <td>
+         <p>secondary-url-of-amq:port</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<h5 id="id-(3.4.2.02)DeploymentGuide-ConfigurationsforSite-2" style=""><span id="DeploymentGuide-ConfigurationsforSite-2"></span>Configurations for Site-2
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-ConfigurationsforSite-2">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<p>Primary-AMQ: broker-1, Secondary-AMQ: broker-2, For a detailed description of the GC please consult properties.</p>
+<p>
+ <br>
+</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p><strong>Property</strong></p>
+        </td>
+        <td>
+         <p><strong>Value</strong></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ActiveMq_Timeout</p>
+        </td>
+        <td>
+         <p>10000</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>GRC_CONSUMER_PRIORITY</p>
+        </td>
+        <td>
+         <p>100</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>RANDOMIZE</p>
+        </td>
+        <td>
+         <p>false</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>PRIORITY_BACKUP</p>
+         <p>
+          <br>
+         </p>
+        </td>
+        <td>
+         <p>true</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ActiveMq_URL_1</p>
+        </td>
+        <td>
+         <p>primary-url-of-amq:port</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ActiveMq_URL_2</p>
+        </td>
+        <td>
+         <p>secondary-url-of-amq:port</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<h3 id="id-(3.4.2.02)DeploymentGuide-Active-ActiveSetup" style=""><span id="DeploymentGuide-Active-ActiveSetup"></span><strong>&nbsp;</strong>Active-Active Setup
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-Active-ActiveSetup">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>For an Active-Active deployment, the Failover URL is set to use the local AMQ as primary and remote AMQ as secondary.</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false"> <img src="/__attachments/a_6f74253b943a5df7436e35cf2c7f8b5b21746677c31211562c20aa77ee5bbee2/image2021-11-12_13-7-44.png?cb=dec8968da7ebf18e456346d05bf47cc8" alt="image2021-11-12_13-7-44.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>
+ <br>
+</p>
+<p><strong>Figure 1.2</strong></p>
+<p>For GC-1, the configuration would look like this, For a detailed description of the GC please consult properties</p>
+<p>
+ <br>
+</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p><strong>Property</strong></p>
+        </td>
+        <td>
+         <p><strong>Value</strong></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ActiveMq_URL_1</p>
+        </td>
+        <td>
+         <p>[AMQ-1]:61616</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ActiveMq_URL_2</p>
+        </td>
+        <td>
+         <p>[AMQ-2]:61616</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>GRC_CONSUMER_PRIORITY</p>
+        </td>
+        <td>
+         <p>127</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>PRIORITY_BACKUP</p>
+        </td>
+        <td>
+         <p>true</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Finesse_1</p>
+        </td>
+        <td>
+         <p><a href="http://finesse-1/finesse/api/" data-scope="external" rel="external noreferrer">http://Finesse-1/finesse/api/</a></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>SERVER_ADDRESS_1</p>
+        </td>
+        <td>
+         <p>Finesse-1</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Finesse_2</p>
+        </td>
+        <td>
+         <p><a href="http://finesse-2/finesse/api/" data-scope="external" rel="external noreferrer">http://Finesse-2/finesse/api/</a></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>SERVER_ADDRESS_2</p>
+        </td>
+        <td>
+         <p>Finesse-2</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p>For GC-2, the configuration would look like, For detailed description of the GC please consult properties</p>
+<p>
+ <br>
+</p>
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col>
+       <col>
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <p><strong>Property</strong></p>
+        </td>
+        <td>
+         <p><strong>Value</strong></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ActiveMq_URL_1</p>
+        </td>
+        <td>
+         <p>[AMQ-2]:61616</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ActiveMq_URL_2</p>
+        </td>
+        <td>
+         <p>[AMQ-1]:61616</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>GRC_CONSUMER_PRIORITY</p>
+        </td>
+        <td>
+         <p>100</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>PRIORITY_BACKUP</p>
+        </td>
+        <td>
+         <p>true</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Finesse_1</p>
+        </td>
+        <td>
+         <p><a href="http://finesse-2/finesse/api/" data-scope="external" rel="external noreferrer">http://Finesse-2/finesse/api/</a></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>SERVER_ADDRESS_1</p>
+        </td>
+        <td>
+         <p>Finesse-2</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Finesse_2</p>
+        </td>
+        <td>
+         <p><a href="http://finesse-1/finesse/api/" data-scope="external" rel="external noreferrer">http://Finesse-1/finesse/api/</a></p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>SERVER_ADDRESS_2</p>
+        </td>
+        <td>
+         <p>Finesse-1</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>Where [AMQ-1] should be replaced with the IP / machine-name of ActiveMQ-1 and [AMQ-2] should be replaced with the IP / machine-name of ActiveMQ-2. Finesse-1 is the IP/name of Finesse-1 server and Finesse-2 is IP/name of the Finesse-2 server.</p>
+<p>Both Connectors will have its local AMQ as primary brokers and both Connector instances will be serving agents requests in parallel. All client requests received by Connector-1 are handled by Connector-1 and all requests received by Connector-2 will be handled by Connector-2. In case of failure of any component at any Connector instance, the other Connector instance will take over and handle the request.&nbsp;</p>
+<p>We have achieved it using ActiveMQ configurable properties specifically&nbsp;<a href="http://activemq.apache.org/consumer-priority.html" data-scope="external" rel="external noreferrer">Consumer priority</a>,</p>
+<p><a href="http://activemq.apache.org/failover-transport-reference.html" data-scope="external" rel="external noreferrer">Priority Backup</a>, and building a Connector Sync mechanism in Generic Connector.</p>
+<h2 id="id-(3.4.2.02)DeploymentGuide-ActiveMQConfiguration" style=""><span id="DeploymentGuide-ActiveMQConfiguration"></span>ActiveMQ Configuration
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-ActiveMQConfiguration">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>ActiveMQ “Config” button opens the ActiveMQ configuration file&nbsp;<strong>%ACTIVEMQ%/conf/activemq.xml</strong>&nbsp;in your default text editor (e.g. notepad).</p>
+<h4 id="id-(3.4.2.02)DeploymentGuide-ConfiguringNetworkofBrokers(RedundantDeploymentOnly)" style=""><span id="DeploymentGuide-ConfiguringNetworkofBrokers(RedundantDeploymentOnly)"></span>Configuring Network of Brokers (Redundant Deployment Only)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-ConfiguringNetworkofBrokers(RedundantDeploymentOnly)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>Settings for a network of brokers are mandatory for redundant deployment only. These configurations should however be done on one side only.</p>
+<p>ActiveMQ brokers should be configured to run as a network of brokers to communicate with each other both for Active-Active and Active-Passive deployment models.</p>
+<p>In activemq.xml, the “Network of Broker” configuration (&lt;networkConnectors&gt;...&lt;/networkConnectors&gt;) is commented. Uncomment this tag and specify URI of another broker to connect to. There are 2 instances of &lt;networkConnector&gt; (i) for Queues, (ii) for topics, where you need to set the value of uri parameter specifying other broker’s (site-B) address.</p>
+<p><strong>Note</strong>:&nbsp;<em>Make sure that the configurations are active only one side. On the other side, it should remain commented out.</em></p>
+<p>This commented tag looks like following in the activemq.xml file:</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false"> <img src="/__attachments/a_3a8348e2ee57a530073cd8b0a15a5181fc88a901c0597566a2ce300a8a694977/image2021-11-12_13-9-5.png?cb=d6d0f543243c37d597cb1fb003439c09" alt="image2021-11-12_13-9-5.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>
+ <br>
+</p>
+<p>The URI on site-A should point to site-B URI “static:(<a href="/gc/3.4.2.02/deployment-guide-gc-3-4-2-02" data-scope="internal">tcp://SITE-B:PORT</a>)” to configure it in network bridge mode.</p>
+<p>For more information about configuring a network of brokers, see this&nbsp;<a href="http://activemq.apache.org/networks-of-brokers.html" data-scope="external" rel="external noreferrer">article</a>.</p>
+<p>
+ <br>
+</p>
+<h4 id="id-(3.4.2.02)DeploymentGuide-ActiveMQWebConsoleSetup" style=""><span id="DeploymentGuide-ActiveMQWebConsoleSetup"></span>ActiveMQ Web Console Setup
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-ActiveMQWebConsoleSetup">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>
+ <br>
+</p>
+<p>ActiveMQ web console runs on HTTPS port 8162 and is enabled by default. You can modify web console configurations in&nbsp;<strong>&lt;EF Connector Home&gt;\conf\jetty.xml</strong>.</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 140px;"> <img src="/__attachments/a_92a4dc909618fcfc2775c6e3e5cc75192da9754ac4a2d246f5bfad68c033fabf/image2021-11-12_13-9-51.png?cb=4d704fc6fc484fff84dbc37380664624" alt="image2021-11-12_13-9-51.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>See this&nbsp;<a href="http://activemq.apache.org/web-console.html" data-scope="external" rel="external noreferrer">article</a>&nbsp;for more information about web console configurations. As shown&nbsp;<a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#_6aqk1zkla1ut" data-scope="internal">here</a>&nbsp;we can create our own Keystore and certificates for the SSL configuration of the ActiveMQ console.</p>
+<h4 id="id-(3.4.2.02)DeploymentGuide-WebConsolePasswordsConfiguration" style=""><span id="DeploymentGuide-WebConsolePasswordsConfiguration"></span>Web Console Passwords Configuration
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-WebConsolePasswordsConfiguration">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>To ensure security, default passwords for the ActiveMQ web console are encrypted. For user “admin” the default password is changed to “@ctiveMQSecured1!”.</p>
+<p>To generate your own secure password.</p>
+<ul>
+ <li>
+  <p>Open command prompt</p>
+ </li>
+ <li>
+  <p>Navigate to &lt;EF Connector Home&gt; through command prompt</p>
+ </li>
+ <li>
+  <p>Execute the following command</p>
+ </li>
+</ul>
+<p>java -cp jetty-util-9.3.12.v20160915.jar org.eclipse.jetty.util.security.Password [&lt;user&gt;] &lt;password&gt;</p>
+<ul>
+ <li>
+  <p>It will generate the encrypted passwords with three different algorithms i.e. OBF, MD5,CRYPT</p>
+ </li>
+ <li>
+  <p>Copy the encrypted password along with its algorithm name e.g. CRYPT:adi0HK/rgc8DA and paste it to the &lt;EF Connector Home&gt;\conf\jetty-realm.properties in the sequence: username: password [,rolename]</p>
+ </li>
+ <li>
+  <p>Save jetty-realm.properties</p>
+ </li>
+</ul>
+<p>See this&nbsp;<a href="https://wiki.eclipse.org/Jetty/Howto/Secure_Passwords" data-scope="external" rel="external noreferrer">article</a>&nbsp;for more information about generating secure passwords for the web consoles.</p>
+<h4 id="id-(3.4.2.02)DeploymentGuide-SettingupActiveMQwithJettyandActiveDirectory" style=""><span id="DeploymentGuide-SettingupActiveMQwithJettyandActiveDirectory"></span>Setting up ActiveMQ with Jetty and Active Directory
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-SettingupActiveMQwithJettyandActiveDirectory">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p>ActiveMQ administration console can be integrated with Windows Active Directory. The sample Active Directory configurations are outlined in the ldap.config file which is placed here &lt;EF Connector Home&gt;\conf\&gt;</p>
+<h5 id="id-(3.4.2.02)DeploymentGuide-CreateObjectofTypeGroupOfUniqueNames" style=""><span id="DeploymentGuide-CreateObjectofTypeGroupOfUniqueNames"></span>Create Object of Type GroupOfUniqueNames
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-CreateObjectofTypeGroupOfUniqueNames">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<p>In Active Directory,</p>
+<ol>
+ <li>
+  <p>Create a new Object in Active Directory with class of type ‘GroupOfUniqueNames’&nbsp; in any group and give it any name. This name should match with the roles attribute of SecurityConstraint in the&nbsp;<strong>&lt;EF Connector Home&gt;\conf\jetty.xml</strong>, which is explained&nbsp;<a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#_1cb2c0ezhe2t" data-scope="internal">here</a>. For illustration purposes, we have created an empty group with type ‘Container’ called AdminTestGroup. In this container we have created an object of type ‘GroupOfUniqueNames’ called AdminRoles.</p>
+ </li>
+ <li>
+  <p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false"> <img src="/__attachments/a_ad1284649f8b13d50fe16e4bc5525b430b223b037995bc91c7085de0f5d8ee28/image2021-11-12_13-10-50.png?cb=41195f49863a21514251879d6b204ceb" alt="image2021-11-12_13-10-50.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+ <li>
+  <p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false"> <img src="/__attachments/a_dc6d29e258780a446a9686758ce25d9506ba4a35467712ef516032f321bc23ce/image2021-11-12_13-11-22.png?cb=5da7bff5dc255275523039a01ed2b5e3" alt="image2021-11-12_13-11-22.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+ <li>
+  <p>&nbsp;In the next step, add the user you want to give access to as a unique member of AdminRoles. Here we have added the distinguished name of the user called djtest.</p>
+ </li>
+ <li>
+  <p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 250px;"> <img src="/__attachments/a_314b4166ac85baa139e441bedeaba2e9328e8dc97adb840dfd8f5643268c82ae/image2021-11-12_13-11-49.png?cb=343715068be9c9a879cd8b97d60ef1ed" alt="image2021-11-12_13-11-49.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+</ol>
+<p>
+ <br>
+ You can find a user’s distinguished name from User’s Properties &gt; Attribute Editor &gt;&nbsp;&nbsp; distinguishedName.
+ <br>
+ <br>
+</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false"> <img src="/__attachments/a_07ca1f63fd5159da312ba2dfc591ba0de91fe5d1622352639892e9058e58c0ad/image2021-11-12_13-12-9.png?cb=b0b4f6aefc7a131b5e394d07ab21cb92" alt="image2021-11-12_13-12-9.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<ol>
+ <li>
+  <p>After adding the members to the group you should be able to see them in the group</p>
+ </li>
+ <li>
+  <p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false"> <img src="/__attachments/a_66226450cda9eb9d21749d794d87a7ae9c0957f14a137b34c7d3563d9aeedd3e/image2021-11-12_13-12-27.png?cb=a59f05631374aec385efebe5a87dd86f" alt="image2021-11-12_13-12-27.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+ </li>
+</ol>
+<p>
+ <br>
+</p>
+<h5 id="id-(3.4.2.02)DeploymentGuide-Jetty/ActiveMQConfiguration" style=""><span id="DeploymentGuide-Jetty/ActiveMQConfiguration"></span>Jetty/ActiveMQ Configuration
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-Jetty/ActiveMQConfiguration">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<p>In&nbsp;<strong>&lt;EF Connector Home&gt;\conf\jetty.xml</strong>,</p>
+<p><em>&nbsp;</em></p>
+<p>Modify the security constraint bean in the jetty.xml file and change the value of the roles to the name that you provided to the group you created above with the type ‘GroupOfUniqueNames’ in our case this is AdminRoles.</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 113px;"> <img src="/__attachments/a_880c9d277aedf7acbb89cc834b7238aeac1cb64fcef3f9f100519c9df93316e5/image2021-11-12_13-12-58.png?cb=c330b58fb76c42ab5677e47186179a2f" alt="image2021-11-12_13-12-58.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>Modify the security handler bean in jetty.xml and change the ref of property name ‘login service to ‘ldapLoginService’ as shown below</p>
+<p><em>&nbsp;</em> <span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 43px;"> <img src="/__attachments/a_27dc7b8aaf7252d9c8ec79dcb1d6e01a01ac23476afcef97338c4277ffe3c099/image2021-11-12_13-13-11.png?cb=3ce83eaeaa35a3b6c9398b7cec1a7e97" alt="image2021-11-12_13-13-11.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>Also, uncomment the following property ‘identityService’ in securityHandler bean</p>
+<p>
+ <br>
+</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 55px;"> <img src="/__attachments/a_103ac240e62648648f5bc1b576087b76ef21801229795c9c90b200356fd477ee/image2021-11-12_13-13-24.png?cb=d42b138ae0d18a591982463e70c98fef" alt="image2021-11-12_13-13-24.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>9) You will find the ldap.config file on this path&nbsp;&nbsp;<strong>&lt;EF Connector Home&gt;\conf\ldap.config.</strong></p>
+<p>You will have to update this file according to your Active Directory settings.</p>
+<p>Note: Please do not change this string “amqLdapLoginModule“</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false"> <img src="/__attachments/a_1e1c97fae0d1bd70de9018c697459ea296abb3f9d1094be59d2c69be57654c99/image2021-11-12_13-13-41.png?cb=5bdf644427d5acb224e35ddfc4de1f3a" alt="image2021-11-12_13-13-41.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<h5 id="id-(3.4.2.02)DeploymentGuide-DescriptionofconfigurationattributesforActiveDirectory" style=""><span id="DeploymentGuide-DescriptionofconfigurationattributesforActiveDirectory"></span>Description of configuration attributes for&nbsp; Active Directory
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-DescriptionofconfigurationattributesforActiveDirectory">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h5>
+<p>
+ <br>
+</p>
+<p><strong>Hostname :&nbsp;</strong><strong>&nbsp;</strong>The IP address of the Active Directory server. In the illustration above, we used 192.168.1.132</p>
+<p><strong>Port :</strong><strong>&nbsp;</strong>The port on which the Active Directory server is running</p>
+<p><strong>bindDn</strong><strong>&nbsp;</strong>: The distinguishedName of a User which is used for initial binding with the Active Directory</p>
+<p><strong>bindPassword :&nbsp;</strong><strong>&nbsp;</strong>The password of the User whose distinguishedName we gave in the bindDn</p>
+<p><strong>userIdAttribute :</strong><strong>&nbsp;</strong>The value of this attribute is the username with which we will login to the ActiveMQ web console.</p>
+<p><strong>userPasswordAttribute</strong><strong>&nbsp;</strong>: The format in which the password is saved in the Active Directory.</p>
+<p><strong>userObjectClass :</strong><strong>&nbsp;</strong>The class of the object which can login to the ActiveMQ console. For instance we have have created a user of class ‘User’</p>
+<p><strong>roleBaseDn :</strong><strong>&nbsp;</strong>This gives the distinguishedName of the group where all the users who can access the ActiveMQ console are added to.</p>
+<p><strong>roleObjectClass :</strong><strong>&nbsp;</strong>The class of the group which contains all the users that we want to give access to.</p>
+<p><strong>roleMemberAttribute :</strong><strong>&nbsp;</strong>This is the type of the members that are added into the group, for instance we have created a group which has the class groupOfUniqueNames and contains members of type ‘uniqueMember’.</p>
+<p><strong>roleNameAttribute :</strong><strong>&nbsp;</strong>Specifies the attribute type of the role entry that contains the name of the role</p>
+<p>
+ <br>
+</p>
+<h4 id="id-(3.4.2.02)DeploymentGuide-SettingupSSLtoaccessActiveMQconsole" style=""><span id="DeploymentGuide-SettingupSSLtoaccessActiveMQconsole"></span>Setting up&nbsp; SSL to access ActiveMQ console
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/gc/3.4.2.02/deployment-guide-gc-3-4-2-02#id-(3.4.2.02)DeploymentGuide-SettingupSSLtoaccessActiveMQconsole">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h4>
+<p><strong>Caution</strong><strong>&nbsp;</strong>:<em>&nbsp;</em><em>Run all of the commands in administrator mode on the command line.</em></p>
+<p>Replace the &lt;KEY_STORE_NAME&gt; with the name of your choice. Also replace the &lt;ALIAS&gt; with the alias of your choice. Make sure that the same names are used when running the commands.</p>
+<p>
+ <br>
+</p>
+<p>1) Using the keytool provided in the java jdk to run this command</p>
+<p>
+ <br>
+</p>
+<p>keytool -keystore &lt;KEY_STORE_NAME&gt;.ks -alias &lt;ALIAS&gt;-keyalg RSA -keysize 2048 -sigalg SHA256withRSA -genkey</p>
+<p>
+ <br>
+</p>
+<p>This will generate the keystore.</p>
+<p>
+ <br>
+</p>
+<p>2)&nbsp; Now to generate the certificate request file run this command</p>
+<p>
+ <br>
+</p>
+<p>keytool -certreq -alias&lt; ALIAS&gt; -keystore &lt;KEY_STORE_NAME&gt;.ks -file &lt;CSR_FILE_NAME&gt;.csr</p>
+<p>
+ <br>
+</p>
+<p>This will generate the&nbsp; certificate request file</p>
+<p>
+ <br>
+</p>
+<p>3)&nbsp; Now use this certificate request file to get the issuing authority to issue you the certificate</p>
+<p>
+ <br>
+</p>
+<p>4)&nbsp; You should get two certificates which look like this</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 47px;"> <img src="/__attachments/a_87f719782116dc7e558a1ab1845c41536b6ee8a1a9dcf362bd503ca582de4b4c/image2021-11-12_13-13-58.png?cb=8d65f006ed43920e7461f67a6c5049a7" alt="image2021-11-12_13-13-58.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>5) Now import these certificates using these commands</p>
+<p>
+ <br>
+</p>
+<p>keytool -import -alias ALIAS -file CERTIFICATE.cer -keystore KEY_STORE_NAME.ks</p>
+<p>keytool -import -alias ALIAS -file CERTIFICATE.p7b -keystore KEY_STORE_NAME.ks -trustcacerts</p>
+<p>
+ <br>
+</p>
+<p>6) Place the certificate files and the keystore in the&nbsp;&nbsp;<strong>&lt;EF Connector Home&gt;\conf\</strong></p>
+<p>
+ <br>
+</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 105px;"> <img src="/__attachments/a_a733bb823d24642d252054b0b8b70569e377b36b8c0f21fc4688f45ecacbda18/image2021-11-12_13-14-17.png?cb=b1dcb26273e028f87044b1e0655fa36c" alt="image2021-11-12_13-14-17.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+<p>7) Open&nbsp;&nbsp;<strong>&lt;EF Connector Home&gt;\conf\jetty.xml</strong>&nbsp;. In the property, name keystorePath change the value to be the name of your Keystore file. Also, change the property name Keystore passwords value to be the password of the Keystore. As shown&nbsp;<a href="/gc/3.4.1.02-trial-agentready/deployment-guide-gc-3-4-1-02-trial-agentready#_4qykxv97x1zm" data-scope="internal">here</a>&nbsp;we can encrypt the password.</p>
+<p><strong>Note:</strong><strong>&nbsp;</strong>Only the OBF algorithm passwords will work here. So the value of Keystore password property will look like this OBF:1v2j1uum1xtv1zej1zer1xtn1uvk1v1v</p>
+<p><span class="theme-inline-image"> <image-lightbox> <span class="inline-image" data-component="inline-image" data-use-text-height="false" style="--height: 241px;"> <img src="/__attachments/a_16cfef9125a890622b2e0d51213365722c13a10250a3717cabd36bb1d0cbc0ce/image2021-11-12_13-14-38.png?cb=f66968a520033fc47676acfdc375d60c" alt="image2021-11-12_13-14-38.png" data-scope="internal"> </span> </image-lightbox> </span></p>
+<p>
+ <br>
+</p>
+<p>
+ <br>
+</p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="f5c35ba1e169b291-25" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="f5c35ba1e169b291-25">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/gc/3.4.2.02/business-features">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Business Features</div>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

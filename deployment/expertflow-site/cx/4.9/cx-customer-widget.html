@@ -1,0 +1,4278 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_f1ac3446722ffdf3d82d9e6c06d464d4edea6f0f6a575c0c6b9cfecdbd270a99" data-confluence-content-id="1042120903"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/cx/4.9/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="CX">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>CX Customer Widget | Expertflow CX</title>
+		<meta property="og:title" content="CX Customer Widget | Expertflow CX">
+		<meta property="twitter:title" content="CX Customer Widget | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/cx/4.9/cx-customer-widget">
+		<meta property="og:url" content="https://docs.expertflow.com/cx/4.9/cx-customer-widget">
+
+		<meta name="description" content="CX Customer Widget is developed by Expertflow as a sample implementation of the web channel. For deployment/hosting of the customer widget, follow this Deployment Guide. For access to the agent panel please refer to the Agent Capabilities.">
+		<meta property="og:description" content="CX Customer Widget is developed by Expertflow as a sample implementation of the web channel. For deployment/hosting of the customer widget, follow this Deployment Guide. For access to the agent panel please refer to the Agent Capabilities.">
+		<meta property="twitter:description" content="CX Customer Widget is developed by Expertflow as a sample implementation of the web channel. For deployment/hosting of the customer widget, follow this Deployment Guide. For access to the agent panel please refer to the Agent Capabilities.">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__attachments/a_f8b9936beb907088fd2d74eaaff0d38dc12de6eac2d23c24458063787865b2f2/image-20240215-044328.png?cb=46348ee31be6e0e94e99bd924b1151c1">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__attachments/a_f8b9936beb907088fd2d74eaaff0d38dc12de6eac2d23c24458063787865b2f2/image-20240215-044328.png?cb=46348ee31be6e0e94e99bd924b1151c1">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2025-04-23T14:33:00.964Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": true
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="6c0c8cd74c181879-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="6c0c8cd74c181879-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="6c0c8cd74c181879-19">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="6c0c8cd74c181879-19" name="version" onchange="self.location.assign(this.value)" >
+				<option id="6c0c8cd74c181879-3"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="6c0c8cd74c181879-4"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="6c0c8cd74c181879-5"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="6c0c8cd74c181879-6"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="6c0c8cd74c181879-7"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="6c0c8cd74c181879-8"  value="/cx/4.10"  >
+					4.10
+				</option>
+				<option id="6c0c8cd74c181879-9"  value="/cx/4.9/cx-customer-widget"  selected="">
+					4.9
+				</option>
+				<option id="6c0c8cd74c181879-10"  value="/cx/4.8/cx-customer-widget"  >
+					4.8
+				</option>
+				<option id="6c0c8cd74c181879-11"  value="/cx/4.7/cx-customer-widget"  >
+					4.7
+				</option>
+				<option id="6c0c8cd74c181879-12"  value="/cx/4.6/web-channel"  >
+					4.6
+				</option>
+				<option id="6c0c8cd74c181879-13"  value="/cx/4.5.3/web-channel"  >
+					4.5.3
+				</option>
+				<option id="6c0c8cd74c181879-14"  value="/cx/4.5.2/web-channel"  >
+					4.5.2
+				</option>
+				<option id="6c0c8cd74c181879-15"  value="/cx/4.5.1/web-channel"  >
+					4.5.1
+				</option>
+				<option id="6c0c8cd74c181879-16"  value="/cx/4.5"  >
+					4.5
+				</option>
+				<option id="6c0c8cd74c181879-17"  value="/cx/4.4"  >
+					4.4
+				</option>
+				<option id="6c0c8cd74c181879-18"  value="/cx/4.3"  >
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('6c0c8cd74c181879-19');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-6c0c8cd74c181879-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-6c0c8cd74c181879-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-6c0c8cd74c181879-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="6c0c8cd74c181879-20" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="6c0c8cd74c181879-20">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-6c0c8cd74c181879-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-6c0c8cd74c181879-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="6c0c8cd74c181879-37">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="6c0c8cd74c181879-37" name="version" onchange="self.location.assign(this.value)" >
+				<option id="6c0c8cd74c181879-21"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="6c0c8cd74c181879-22"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="6c0c8cd74c181879-23"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="6c0c8cd74c181879-24"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="6c0c8cd74c181879-25"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="6c0c8cd74c181879-26"  value="/cx/4.10"  >
+					4.10
+				</option>
+				<option id="6c0c8cd74c181879-27"  value="/cx/4.9/cx-customer-widget"  selected="">
+					4.9
+				</option>
+				<option id="6c0c8cd74c181879-28"  value="/cx/4.8/cx-customer-widget"  >
+					4.8
+				</option>
+				<option id="6c0c8cd74c181879-29"  value="/cx/4.7/cx-customer-widget"  >
+					4.7
+				</option>
+				<option id="6c0c8cd74c181879-30"  value="/cx/4.6/web-channel"  >
+					4.6
+				</option>
+				<option id="6c0c8cd74c181879-31"  value="/cx/4.5.3/web-channel"  >
+					4.5.3
+				</option>
+				<option id="6c0c8cd74c181879-32"  value="/cx/4.5.2/web-channel"  >
+					4.5.2
+				</option>
+				<option id="6c0c8cd74c181879-33"  value="/cx/4.5.1/web-channel"  >
+					4.5.1
+				</option>
+				<option id="6c0c8cd74c181879-34"  value="/cx/4.5"  >
+					4.5
+				</option>
+				<option id="6c0c8cd74c181879-35"  value="/cx/4.4"  >
+					4.4
+				</option>
+				<option id="6c0c8cd74c181879-36"  value="/cx/4.3"  >
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('6c0c8cd74c181879-37');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="6c0c8cd74c181879-38" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="6c0c8cd74c181879-39" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="6c0c8cd74c181879-40" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="6c0c8cd74c181879-41" href="/cx/4.9/cx-release-history" >CX Release History</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-42"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-42" href="/cx/4.9/cx-release-notes" >CX Release Notes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="6c0c8cd74c181879-44" href="/cx/4.9/expertflow-cx-data-sheet" >CX Data Sheet</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="6c0c8cd74c181879-45" href="/cx/4.9/hc-3-x-vs-expertflow-cx-features-comparison" >HC 3.x vs Expertflow CX - Features Comparison</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-46"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-46" href="/cx/4.9/conversation-studio" >Conversation Studio</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-48"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-48" href="/cx/4.9/customer-identities" >Customer</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-50"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-50" href="/cx/4.9/conversation-control" >Conversation Objects</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="6c0c8cd74c181879-53"						aria-labelledby="6c0c8cd74c181879-52"
+					></button>
+				<a id="6c0c8cd74c181879-52" href="/cx/4.9/customer-channels" >Channels</a>
+			</div>
+
+<ul  id="6c0c8cd74c181879-53" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="6c0c8cd74c181879-55"						aria-labelledby="6c0c8cd74c181879-54"
+					></button>
+				<a id="6c0c8cd74c181879-54" href="/cx/4.9/digital-channels" >Digital Channels</a>
+			</div>
+
+<ul  id="6c0c8cd74c181879-55" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="6c0c8cd74c181879-57"						aria-labelledby="6c0c8cd74c181879-56"
+					></button>
+				<a id="6c0c8cd74c181879-56" href="/cx/4.9/webrtc" >WebConnect CX</a>
+			</div>
+
+<ul  id="6c0c8cd74c181879-57" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="6c0c8cd74c181879-59"						aria-labelledby="6c0c8cd74c181879-58"
+					></button>
+				<a id="6c0c8cd74c181879-58" href="/cx/4.9/cx-customer-widget" aria-current="page">CX Customer Widget</a>
+			</div>
+
+<ul  id="6c0c8cd74c181879-59" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="6c0c8cd74c181879-60" href="/cx/4.9/customer-widget-admin-guide" >Customer Widget Admin Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="6c0c8cd74c181879-61" href="/cx/4.9/cx-customer-widget-deployment-guide" >CX Customer Widget Deployment Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="6c0c8cd74c181879-62" href="/cx/4.9/cx-customer-widget-embedding-guide" >CX Customer Widget Embedding Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="6c0c8cd74c181879-63" href="/cx/4.9/cx-customer-widget-configurations" >CX Customer Widget Configurations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="6c0c8cd74c181879-64" href="/cx/4.9/personalized-agent-information-in-customer-widget" >Personalized Agent Information in Customer widget</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="6c0c8cd74c181879-65" href="/cx/4.9/webrtc-to-sip" >WebRTC to SIP</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="6c0c8cd74c181879-66" href="/cx/4.9/webrtc-deployment-guide" >WebRTC Deployment Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="6c0c8cd74c181879-67" href="/cx/4.9/translation-support-at-customer-widget" >Translation support at Customer Widget</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-68"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-68" href="/cx/4.9/whatsapp" >WhatsApp</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-70"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-70" href="/cx/4.9/facebook-direct-message" >Facebook Direct Message</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-72"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-72" href="/cx/4.9/instagram-social-media" >Instagram Social Media</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-74"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-74" href="/cx/4.9/sms-mms-via-twillio" >SMS/MMS via Twillio</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-76"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-76" href="/cx/4.9/viber" >Viber</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-78"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-78" href="/cx/4.9/telegram-connector-configuration-guide" >Telegram</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-80"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-80" href="/cx/4.9/twitter" >Twitter – Feature Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-82"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-82" href="/cx/4.9/twilio-connector-configuration-vcx-4-3" >Twilio Configuration</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-84"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-84" href="/cx/4.9/linkedin-social-media" >LinkedIn Social Media</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="6c0c8cd74c181879-86" href="/cx/4.9/youtube-connector-feature-guide" >YouTube-Feature Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="6c0c8cd74c181879-87" href="/cx/4.9/youtube-connector-limitations-key-highlights" >YouTube – Limitations &amp; Key Highlights</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-88"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-88" href="/cx/4.9/youtube-integration-configuration-guide-developer-" >YouTube Integration &amp; Configuration Guide (Developer Access)</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-90"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-90" href="/cx/4.9/email" >Email</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-92"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-92" href="/cx/4.9/cx-voice" >Voice and Video</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-94"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-94" href="/cx/4.9/channel-connector-developer-guide" >Channel Connector Developer Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="6c0c8cd74c181879-96" href="/cx/4.9/channel-related-terms" >Channel related terms</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-97"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-97" href="/cx/4.9/nlu-digital-bots" >NLU / Digital Bots</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-99"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-99" href="/cx/4.9/cx-events-and-activity-types" >CX-Activities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-101"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-101" href="/cx/4.9/solution-architecture" >Solution Architecture</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-103"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-103" href="/cx/4.9/expertflow-etl-data-platform" >Expertflow ETL - Data Platform</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-105"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-105" href="/cx/4.9/agent-capabilities" >Agent Capabilities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-107"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-107" href="/cx/4.9/supervisor-controls" >Supervisor Controls</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-109"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-109" href="/cx/4.9/deployment-guides" >Deployment Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-111"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-111" href="/cx/4.9/developer-guides" >Developer Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-113"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-113" href="/cx/4.9/unified-admin-guide" >Unified Admin Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-115"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-115" href="/cx/4.9/integrations" >Integrations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-117"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-117" href="/cx/4.9/security" >Security</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-119"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-119" href="/cx/4.9/voice-recording-solution" >Voice Recording Solution</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="6c0c8cd74c181879-121" href="/cx/4.9/compatibility-guides" >Compatibility Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="6c0c8cd74c181879-122" href="/cx/4.9/list-of-open-source-software" >List of Open-source Software</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-123"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-123" href="/cx/4.9/business-calendars" >Business Calendars</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-125"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-125" href="/cx/4.9/outbound-campaigns" >Outbound Campaigns</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-127"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-127" href="/cx/4.9/cx-surveys" >CX Surveys</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-129"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-129" href="/cx/4.9/reports" >Reports</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-131"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-131" href="/cx/4.9/superset-deployment-for-reporting" >Superset Deployment for Reporting</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="6c0c8cd74c181879-133" href="/cx/4.9/reporting-database-schema-vcx-4-3" >Reporting Database Schema</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="6c0c8cd74c181879-134" href="/cx/4.9/cx-historical-reports-supporting-tables" >CX Historical Reports- Supporting Tables</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="6c0c8cd74c181879-135"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="6c0c8cd74c181879-135" href="/cx/4.9/key-reporting-concepts" >Key Reporting Concepts</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="6c0c8cd74c181879-137" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="6c0c8cd74c181879-137">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.9">
+										Expertflow CX
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.9/customer-channels">
+										Channels
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.9/digital-channels">
+										Digital Channels
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.9/webrtc">
+										WebConnect CX
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="6c0c8cd74c181879-138">
+			<h2 class="toc-heading" id="6c0c8cd74c181879-138">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>CX Customer Widget</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+	
+
+	
+
+	
+	
+
+
+		
+	
+
+	
+		
+	
+	
+	
+
+	
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+		
+		
+	
+	
+	
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<p>CX Customer Widget is developed by Expertflow as a sample implementation of the web channel. For deployment/hosting of the customer widget, follow this <a href="https://gitlab.expertflow.com/efpublic/customer-widget/-/tree/develop" data-scope="external" rel="external noreferrer">Deployment Guide</a>. For access to the agent panel please refer to the <a href="/cx/4.9/agent-capabilities" data-scope="internal">Agent Capabilities</a>.</p> 
+<div class="theme-table" style="--width: 1210px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 889px">
+       <col style="width: 321px">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p><strong>Features</strong></p>
+        </th>
+        <th>
+         <p style="--text-align: center"><strong>Visuals</strong></p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <h3 id="Welcome-Form"><span id="CXCustomerWidget-WelcomeForm"></span>Welcome Form
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#Welcome-Form">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h3>
+         <p>As a user, one can see an option to start a chat by clicking “<strong>Connect with us</strong>”. This redirects the user to the Pre-chat form to start a chat.</p>
+        </td>
+        <td>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <div class="block-image" style="--width: 250px" data-component="image" data-align="align-center">
+            <img src="/__attachments/a_f8b9936beb907088fd2d74eaaff0d38dc12de6eac2d23c24458063787865b2f2/image-20240215-044328.png?cb=46348ee31be6e0e94e99bd924b1151c1" alt="image-20240215-044328.png" data-scope="internal" width="310" height="206">
+           </div>
+          </image-lightbox>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <h3 id="Pre-Conversation-Form-from-Unified-Admin-(Optional)"><span id="CXCustomerWidget-Pre-ConversationFormfromUnifiedAdmin(Optional)"></span>Pre-Conversation Form from Unified Admin (Optional)
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#Pre-Conversation-Form-from-Unified-Admin-(Optional)">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h3>
+         <p>As an Administrator, one can create a dynamic pre-chat form in Unified Admin's Form Component to be used in the customer widget.</p>
+         <p>Make sure the pre-chat form must contain a compulsory <strong>'Phone'</strong> field.</p>
+         <ul>
+          <li>
+           <p>Phone → phone</p>
+           <ul>
+            <li>
+             <p>For Customer identification in Expertflow CX Customers. this field is compulsory and in case of this missing field, the customer can’t initiate a chat. One can customize it as per requirement by following the steps mentioned in the Customer Widget Admin Guide.</p>
+            </li>
+           </ul>
+          </li>
+         </ul>
+        </td>
+        <td>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <div class="block-image" style="--width: 193px" data-component="image" data-align="align-center">
+            <img src="/__attachments/a_34a21f15ae647b79986eeaf25fae732669d06841d45064fb7ce36e9b930b9f57/image-20250106-121238.png?cb=a6ee7d445f689a77017bf3dee2d9c4b5" alt="image-20250106-121238.png" data-scope="internal" width="337" height="560">
+           </div>
+          </image-lightbox>
+         </div>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <h3 id="Plain-Text-Message"><span id="CXCustomerWidget-PlainTextMessage"></span>Plain Text Message
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#Plain-Text-Message">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h3>
+         <p>The customer can send/receive plain text messages. The maximum character limit is <strong>4096</strong> characters.</p>
+        </td>
+        <td>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <div class="block-image" style="--width: 250px" data-component="image" data-align="align-center">
+            <img src="/__attachments/a_f23f46e99805d2b08b6792e2c4b7f9e7a729889f86aba3810dbea0673ee76461/image-20240215-044957.png?cb=e6af827cabf46867ea9719d0edee563a" alt="image-20240215-044957.png" data-scope="internal" width="288" height="460">
+           </div>
+          </image-lightbox>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <h3 id="Adaptive-Message-Composer-Bar"><span id="CXCustomerWidget-AdaptiveMessageComposerBar"></span>Adaptive Message Composer Bar
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#Adaptive-Message-Composer-Bar">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h3>
+         <ul>
+          <li>
+           <p>The default height of the message composer bar in the customer gadget is decreased to one-line text.</p>
+          </li>
+          <li>
+           <p>The height of the message composer bar will increase automatically with multi-line text.</p>
+          </li>
+          <li>
+           <p>The maximum character limit is 4096 characters. composer border turns red if the max limit is reached.</p>
+          </li>
+         </ul>
+        </td>
+        <td>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <div class="block-image" style="--width: 268px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+            <img src="/__attachments/a_4b1346d6ad5496cdab9931a529342b433adedd7643d9a4f2e3c62d0e2a142cb3/image-20240308-071406.png?cb=c5ad41f5aca6cce08ef8eb15b85b8302" alt="image-20240308-071406.png" data-scope="internal" width="268" height="452">
+           </div>
+          </image-lightbox>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <h3 id="Button-Messages"><span id="CXCustomerWidget-ButtonMessages"></span>Button Messages
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#Button-Messages">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h3>
+         <p>This is an array of text buttons passed from the Conversation Controller (BOT) to Web-chat. The business can customize the text of <a href="/cx/4.9/cim-button-message" data-scope="internal">the Button Message</a> as per their own choice.</p>
+        </td>
+        <td>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <div class="block-image" style="--width: 250px" data-component="image" data-align="align-center">
+            <img src="/__attachments/a_9aa2fe51bfc68c6184afee5ea38463a4094a30414bfc9c2fc744b0aac6527228/image-20240220-042203.png?cb=148ad6cf1ef3a4cc42052f9871dbe040" alt="image-20240220-042203.png" data-scope="internal" width="283" height="452">
+           </div>
+          </image-lightbox>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <h3 id="Multi-Media-Type-Messages"><span id="CXCustomerWidget-Multi-MediaTypeMessages"></span>Multi-Media Type Messages
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#Multi-Media-Type-Messages">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h3>
+         <p>The customer can send/receive files by clicking on the file upload icon in the message composer box.</p>
+         <ul>
+          <li>
+           <p><strong>Image</strong></p>
+           <ul>
+            <li>
+             <p>The customer can send/receive images of the following types:</p>
+             <ul>
+              <li>
+               <p>png</p>
+              </li>
+              <li>
+               <p>jpg</p>
+              </li>
+              <li>
+               <p>jpeg</p>
+              </li>
+              <li>
+               <p>peg</p>
+              </li>
+             </ul>
+            </li>
+           </ul>
+          </li>
+          <li>
+           <p><strong>Document</strong></p>
+           <ul>
+            <li>
+             <p>Enables the customer to send/receive documents of the following types:</p>
+             <ul>
+              <li>
+               <p>txt</p>
+              </li>
+              <li>
+               <p>pdf</p>
+              </li>
+              <li>
+               <p>ppt</p>
+              </li>
+              <li>
+               <p>ppt</p>
+              </li>
+              <li>
+               <p>pptx</p>
+              </li>
+              <li>
+               <p>doc</p>
+              </li>
+              <li>
+               <p>docx</p>
+              </li>
+              <li>
+               <p>rtf</p>
+              </li>
+              <li>
+               <p>xls</p>
+              </li>
+              <li>
+               <p>xlsx</p>
+              </li>
+             </ul>
+            </li>
+           </ul>
+          </li>
+          <li>
+           <p><strong>Audio&nbsp;</strong></p>
+           <ul>
+            <li>
+             <p>Enables the customer to upload and send audio messages of Audio (mp3) file type.</p>
+            </li>
+           </ul>
+          </li>
+          <li>
+           <p><strong>Video&nbsp;</strong></p>
+           <ul>
+            <li>
+             <p>Enables the customer to upload and send video files. The video file type (mp4) is supported as of now.</p>
+            </li>
+           </ul>
+          </li>
+         </ul>
+         <div data-component="panel" role="note" data-appearance="note">
+          <div class="panel-content">
+           <p>To send/receive files, <a href="/cx/4.9/customer-widget-admin-guide" data-scope="internal">enable file transfer</a> from the unified admin.</p>
+          </div>
+         </div>
+        </td>
+        <td>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <div class="block-image" style="--width: 265px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+            <img src="/__attachments/a_f5d79d72add22e8c6089e34a2ccb6a76959879f7aef5b12fd10d207cb1aeb39c/image-20240308-070438.png?cb=1dd26b7d6a7ae31da9d0fac2e4daf638" alt="image-20240308-070438.png" data-scope="internal" width="265" height="443">
+           </div>
+          </image-lightbox>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <h3 id="File-Size-Limit"><span id="CXCustomerWidget-FileSizeLimit"></span>File Size Limit
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#File-Size-Limit">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h3>
+         <p>Supporting the file types with a maximum file size of 5 MB.</p>
+        </td>
+        <td>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <div class="block-image" style="--width: 250px" data-component="image" data-align="align-center">
+            <img src="/__attachments/a_a820847a785eba693f59a73ee8b3d91d1c3a58c342af79dab2b400cd86cc9ffd/image-20240220-042612.png?cb=7f16276fab8a27934906fc5d91875711" alt="image-20240220-042612.png" data-scope="internal" width="475" height="69">
+           </div>
+          </image-lightbox>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <h3 id="Shareable-Links"><span id="CXCustomerWidget-ShareableLinks"></span>Shareable Links
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#Shareable-Links">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h3>
+         <p>The Web Widget supports dynamic links which can be enabled from unified-admin → web widget settings.</p>
+         <p>Businesses can use this feature to send and receive links between customers and agents.&nbsp;</p>
+        </td>
+        <td>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <div class="block-image" style="--width: 268px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+            <img src="/__attachments/a_226503d23910872f83a2313305b9fe3149fca7a9b15b03b9fa40b127d8907957/image-20240308-090713.png?cb=035eb50949bbec8a2e46821e878e23cb" alt="image-20240308-090713.png" data-scope="internal" width="268" height="447">
+           </div>
+          </image-lightbox>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <h3 id="View-Delivery-Notification"><span id="CXCustomerWidget-ViewDeliveryNotification"></span>View Delivery Notification
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#View-Delivery-Notification">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h3>
+         <p>A delivery notification lets the customers know that their messages have been sent and read by the agent.&nbsp;The customers can see the double ticks as Delivery Notification as soon as the message is delivered and read. The ticks let the customer understand the following:</p>
+         <ul>
+          <li>
+           <p><span class="theme-inline-image"> <image-lightbox invisible> <span class="inline-image" data-component="inline-image"> <img src="/__attachments/a_e1f856941b5673636dae763a794cdb6e6349d2a9fe1b0d0e2a68fcea91c4487a/image-20250123-185034.png?cb=4fdc8670908d02a57ed8c00d10e3998b" alt="image-20250123-185034.png" data-scope="internal" width="800" height="800"> </span> </image-lightbox> </span> → Message delivered.</p>
+          </li>
+          <li>
+           <p><span class="theme-inline-image"> <image-lightbox invisible> <span class="inline-image" data-component="inline-image"> <img src="/__attachments/a_fa8aeba1b70142d5c98a763cc812fb267df71d96f9c4604e86b61b2e903f44f4/image-20250123-184800.png?cb=208db53f70bb493f0271a708302854fe" alt="image-20250123-184800.png" data-scope="internal" width="401" height="329"> </span> </image-lightbox> </span> → Message seen/read.</p>
+          </li>
+         </ul>
+         <p>In case the customer sends a message but it is not delivered due to any reason such as instability of the internet, the message will be shown as blurred.</p>
+        </td>
+        <td>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <div class="block-image" style="--width: 280px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+            <img src="/__attachments/a_b175ff925c807ae090e64dc57e117c8b4a55914d9fddb6993101a44ef59f4926/image-20240220-042932.png?cb=7f3d7ac3547745e57fe59673e20af155" alt="image-20240220-042932.png" data-scope="internal" width="273" height="451">
+           </div>
+          </image-lightbox>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <h3 id="Session-Timer"><span id="CXCustomerWidget-SessionTimer"></span>Session Timer
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#Session-Timer">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h3>
+         <p>A timer of 120 seconds starts when the customer requests for agent’s assistance.</p>
+         <p>The chat session automatically ends if no response from the agent is received.</p>
+        </td>
+        <td>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <div class="block-image" style="--width: 280px" data-component="image" data-align="wrap-start" data-border-size="2" data-border-color="subtle-gray">
+            <img src="/__attachments/a_89d0036bea37a0ea96f5f6a59c391e5b962541b244763b7375f625a8ca090f6b/image-20240228-091650.png?cb=74bc408cbd763f61ff617130284ae1a6" alt="image-20240228-091650.png" data-scope="internal" width="264" height="268">
+           </div>
+          </image-lightbox>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <h3 id="View-System-Notifications"><span id="CXCustomerWidget-ViewSystemNotifications"></span>View System Notifications
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#View-System-Notifications">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h3>
+         <p>The prompt notifications during the conversation such as</p>
+         <ul>
+          <li>
+           <p>Agent 1 has joined the conversation.</p>
+          </li>
+          <li>
+           <p>No agents are available at the moment.</p>
+          </li>
+         </ul>
+        </td>
+        <td>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <div class="block-image" style="--width: 280px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+            <img src="/__attachments/a_b1feca0bf2e288ab7ac25d78f6d904c5eb508808f733749c1d34c909bd6aa594/image-20240228-042943.png?cb=2e59d1ef5c4c858cb14c0c128597e9ea" alt="image-20240228-042943.png" data-scope="internal" width="277" height="187">
+           </div>
+          </image-lightbox>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <h3 id="Webhook-Notification-on-Google-Workspace"><span id="CXCustomerWidget-WebhookNotificationonGoogleWorkspace"></span>Webhook Notification on Google Workspace
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#Webhook-Notification-on-Google-Workspace">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h3>
+         <p>A Webhook notification on Google Workspace provides agents the flexibility to get notified in their Google spaces/groups of recently initiated web chat sessions.</p>
+        </td>
+        <td>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <div class="block-image" style="--width: 280px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+            <img src="/__attachments/a_24d81bdb334fa76e596621431e40968297138636d49438e6a6e9459b46b5cea1/image2023-9-12_17-29-31.png%3Fversion=1&amp;modificationDate=1699959007439&amp;cacheVersion=1&amp;api=v2&amp;height=250?cb=022439414cf3fe7a99aadc4d50031606" alt="image2023-9-12_17-29-31.png?version=1&amp;modificationDate=1699959007439&amp;cacheVersion=1&amp;api=v2&amp;height=250" data-scope="internal" width="1056" height="336">
+           </div>
+          </image-lightbox>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <div data-component="panel" role="note" data-appearance="info">
+          <div class="panel-content">
+           <h3 id="Browser-and-Sound-Notifications"><span id="CXCustomerWidget-BrowserandSoundNotifications"></span><strong>Browser and Sound Notifications</strong>
+            <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+             <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#Browser-and-Sound-Notifications">
+              <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+               <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+              </svg>
+             </copy-clipboard>
+            </i18n-message></h3>
+           <p>This feature enables the customer to receive browser and sound notifications along with a beep for each incoming chat message. The customer will receive notifications if:</p>
+           <ul>
+            <li>
+             <p><strong>Inactive</strong> browser tab of the web widget.</p>
+            </li>
+            <li>
+             <p><strong>Inactive</strong> in the window of the web widget.</p>
+            </li>
+            <li>
+             <p>The browser window is <strong>minimized</strong>.</p>
+            </li>
+           </ul>
+           <p>The customer will <strong>not</strong> receive notifications when</p>
+           <ul>
+            <li>
+             <p><strong>Blocked/Declined</strong> notifications from the website where the web widget is deployed.</p>
+            </li>
+            <li>
+             <p><strong>Active</strong> in the browser tab where the web widget is running.</p>
+            </li>
+           </ul>
+          </div>
+         </div>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <h3 id="Typing-Indicator"><span id="CXCustomerWidget-TypingIndicator"></span>Typing Indicator
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#Typing-Indicator">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h3>
+         <p>A typing indicator lets the customer know that someone is typing on the agent’s side during the active conversation. The Web chat supports a typing indicator in grey color when someone is typing the message. <em>&nbsp; &nbsp; &nbsp;</em> &nbsp; &nbsp;</p>
+        </td>
+        <td>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <div class="block-image" style="--width: 260px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+            <img src="/__attachments/a_5506c795ebb3059135beba01a58d937dcacf8ff8b72e1a2160b5eb2d7e611338/image2023-9-12_16-51-52.png%3Fversion=1&amp;modificationDate=1699959008865&amp;cacheVersion=1&amp;api=v2&amp;height=231?cb=8c88c36499f31c670e47ee8178eee8a6" alt="image2023-9-12_16-51-52.png?version=1&amp;modificationDate=1699959008865&amp;cacheVersion=1&amp;api=v2&amp;height=231" data-scope="internal" width="341" height="231">
+           </div>
+          </image-lightbox>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <h3 id="Font-Resize"><span id="CXCustomerWidget-FontResize"></span>Font Resize
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#Font-Resize">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h3>
+         <p>The Web Widget supports three font size options <strong>large, medium, and small</strong>. Businesses can use any one of their choice by clicking on the drop-down box at the top of the Web Widget as shown. This feature is enabled by default. The font sizes are <strong>16px, 14px, and 12px</strong><span style="--color: var(--green, #36b37e);"><em><strong> </strong></em></span>respectively<span style="--color: var(--green, #36b37e);"><em>.</em></span></p>
+         <p>To fix the font size, <a href="/cx/4.9/customer-widget-admin-guide" data-scope="internal">De-activate Font Resize</a> from the unified admin.</p>
+        </td>
+        <td>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <div class="block-image" style="--width: 280px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+            <img src="/__attachments/a_ff5f8601f1648b18eca555dcb0c6be6e6aeb04aac5a8f780ab1fe2544d73f663/image-20240308-090049.png?cb=d8164a65dcb52ae21f9e271a8944a1c1" alt="image-20240308-090049.png" data-scope="internal" width="276" height="448">
+           </div>
+          </image-lightbox>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <h3 id="Send-Message-Right-to-Left-&amp;-Left-to-Right"><span id="CXCustomerWidget-SendMessageRight-to-Left&amp;amp;Left-to-Right"></span>Send Message Right-to-Left &amp; Left-to-Right
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#Send-Message-Right-to-Left-&amp;amp;-Left-to-Right">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h3>
+         <p>Based on the <a href="/cx/4.9/customer-widget-admin-guide" data-scope="internal">browser language settings,</a> of the customer widget. the direction of the message composer bar will be converted into RTL and the customer can send/receive the messages starting from the right and proceed to the left and started from the left and proceed to the right. If it is an RTL (Right-to-left language) such as <em>Arabic, Hebrew, Sorani, Azeri, Aramaic, Persian, Urdu, Kashmiri, Pashto, Sindhi, or Punjabi</em> the message composer and alignment will be Right-to-Left as shown. In the case of Right to Left language, the conversation transcript will also be Right to Left.</p>
+         <p>In the case of LTR (Left to right) language English for example, the message composer and alignment will be Left-to-Right.</p>
+         <div data-component="panel" role="note" data-appearance="warning">
+          <div class="panel-content">
+           <p><strong>Note:</strong> Only <strong>Arabic</strong> is the supported RTL language for now. To send the message from Right to Left, choose the language from <a href="/cx/4.9/customer-widget-admin-guide" data-scope="internal">Default Language</a></p>
+          </div>
+         </div>
+        </td>
+        <td>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <div class="block-image" style="--width: 280px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+            <img src="/__attachments/a_dc910be5090ba97ec4304a81e1ddeaffdfba340a8d9643cf2f8dce24270138b1/image-20240308-093210.png?cb=deb8440f4cba8c44043ea34e28c31fb3" alt="image-20240308-093210.png" data-scope="internal" width="272" height="449">
+           </div>
+          </image-lightbox>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <h3 id="End-Screen"><span id="CXCustomerWidget-EndScreen"></span>End Screen
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#End-Screen">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h3>
+         <p>When the customer finishes the chat and the session times out, a<span style="--color: var(--green, #36b37e);"><strong> </strong></span><strong>Thank You</strong> message is displayed with a link to download the transcript.</p>
+        </td>
+        <td>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <div class="block-image" style="--width: 280px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+            <img src="/__attachments/a_424c0bd181b184e07c47862888d57b373e22a7c7321556e1ba2fbd9684bbdc7f/image-20240308-090424.png?cb=2d8954c2442491cb059594018c7f8fd7" alt="image-20240308-090424.png" data-scope="internal" width="273" height="452">
+           </div>
+          </image-lightbox>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <h3 id="Download-Chat-Transcript"><span id="CXCustomerWidget-DownloadChatTranscript"></span>Download Chat Transcript
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#Download-Chat-Transcript">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h3>
+         <p>This feature enables the business to download the full chat transcript at the end of the web chat.&nbsp; Clicking on the <strong>Download Transcript </strong>button at the bottom of the widget before Dismiss allows you to view a printable HTML page containing the complete chat record. If the business wants\ to get print of this, click <strong>Print&nbsp;</strong>or&nbsp;<strong>Cancel</strong> otherwise.</p>
+        </td>
+        <td>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <div class="block-image" style="--width: 276px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+            <img src="/__attachments/a_b08293ccf8c030f4c8fa0ae9dee3914d55f2425a1bee1a7d5678689e534ebc02/image-20240308-094117.png?cb=2f5e93a30bfbb8494120e3528054b3e6" alt="image-20240308-094117.png" data-scope="internal" width="784" height="447">
+           </div>
+          </image-lightbox>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <h3 id="Audio-Call"><span id="CXCustomerWidget-AudioCall"></span>Audio Call&nbsp;
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#Audio-Call">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h3>
+         <p>A customer can initiate an audio call at any time during an active conversation by clicking on the phone icon visible on the menu bar.</p>
+         <h4 id="Call-Operational-Actions"><span id="CXCustomerWidget-CallOperationalActions"></span>Call Operational Actions
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#Call-Operational-Actions">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h4>
+         <p>During an active call, the customer can perform additional actions from the toolbar:</p>
+         <ul>
+          <li>
+           <p>Mute/Unmute</p>
+          </li>
+          <li>
+           <p>End Call</p>
+          </li>
+          <li>
+           <p>Switch between chat and call.</p>
+          </li>
+         </ul>
+         <p>
+          <br>
+         </p>
+         <p><strong>Note:</strong> As an administrator, the administrator can enable/disable this feature from unified admin → <a href="/cx/4.9/customer-widget-admin-guide" data-scope="internal">web widget settings.</a></p>
+        </td>
+        <td>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <div class="block-image" style="--width: 280px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+            <img src="/__attachments/a_47f96210a61c3bce0066ce0a3105494e1193baf3fdbe16c58449cc4dd245f514/image2023-9-12_16-58-16.png%3Fversion=1&amp;modificationDate=1699959008596&amp;cacheVersion=1&amp;api=v2&amp;height=250?cb=9aa73e6976ea1d0d15726b92f8f02907" alt="image2023-9-12_16-58-16.png?version=1&amp;modificationDate=1699959008596&amp;cacheVersion=1&amp;api=v2&amp;height=250" data-scope="internal" width="342" height="571">
+           </div>
+          </image-lightbox>
+         </div> 
+         <div class="theme-block-image">
+          <image-lightbox>
+           <div class="block-image" style="--width: 282px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+            <img src="/__attachments/a_1c04adfcd197054926ee35bdab98a5b2672ee2ca8a2044b78add0d8834e8c4eb/image2023-9-12_17-0-23.png%3Fversion=1&amp;modificationDate=1699959007795&amp;cacheVersion=1&amp;api=v2&amp;height=62?cb=64339d957bfff91c8a9e047dba55da12" alt="image2023-9-12_17-0-23.png?version=1&amp;modificationDate=1699959007795&amp;cacheVersion=1&amp;api=v2&amp;height=62" data-scope="internal" width="291" height="62">
+           </div>
+          </image-lightbox>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <h3 id="Video-Call"><span id="CXCustomerWidget-VideoCall"></span>Video Call
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#Video-Call">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h3>
+         <p>A customer can initiate a video call at any time during an active conversation by clicking on the video icon visible on the menu bar. During an active video call the following actions can be performed,</p>
+         <ul>
+          <li>
+           <p>Turn the camera on/off</p>
+          </li>
+          <li>
+           <p>Mute/ Unmute</p>
+          </li>
+          <li>
+           <p>Hold</p>
+          </li>
+          <li>
+           <p>End Call</p>
+          </li>
+         </ul>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <h3 id="Screen-Sharing-Call"><span id="CXCustomerWidget-Screen-SharingCall"></span>Screen-Sharing Call
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#Screen-Sharing-Call">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h3>
+         <p>A customer can initiate a screen-sharing call at any time during an active conversation by clicking on the screen-sharing icon visible on the menu bar. During an active screen-sharing call the following actions can be performed,</p>
+         <ul>
+          <li>
+           <p>Share complete or specific screen</p>
+          </li>
+          <li>
+           <p>Turn the camera on/off</p>
+          </li>
+          <li>
+           <p>Mute/ Unmute</p>
+          </li>
+          <li>
+           <p>Hold</p>
+          </li>
+          <li>
+           <p>End Call</p>
+          </li>
+         </ul>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <h3 id="WebConnect-Video-Call-via-Secure-Link-(Initiated-from-Agent-Desk)"><span id="CXCustomerWidget-WebConnectVideoCallviaSecureLink(InitiatedfromAgentDesk)"></span>WebConnect Video Call via Secure Link (Initiated from Agent Desk)
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#WebConnect-Video-Call-via-Secure-Link-(Initiated-from-Agent-Desk)">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h3>
+         <p>During an active conversation, the agent can generate a secure video link to be shared with the customer to initiate a video call.</p>
+         <p>The customer is asked to provide a unique authentication code shared with the link, ensuring privacy and security.</p>
+         <h4 id="WebRTC-Token-Validations"><span id="CXCustomerWidget-WebRTCTokenValidations"></span>WebRTC Token Validations
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#WebRTC-Token-Validations">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h4>
+         <p>Video calls are only initiated when the WebRTC token is validated.</p>
+         <ul>
+          <li>
+           <p><strong>Expiry</strong>: The token generated with the secure link is valid only for 30 seconds. The customer cannot connect to the call using the previously generated session code</p>
+          </li>
+          <li>
+           <p><strong>Incorrect</strong>: The code consists of six digits and no special character is facilitated. All the sessions are generated based on One-Time-Passcode.</p>
+          </li>
+         </ul>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <div class="block-image" style="--width: 471px" data-component="image" data-align="align-start">
+            <img src="/__attachments/a_d1618787956a3584ec9daad63b884897f00740bddc99d9454cb34752567147c1/image-20240530-103333.png?cb=55f0b146199ec2f3b0201c128eee13d2" alt="image-20240530-103333.png" data-scope="internal" width="462" height="295">
+           </div>
+          </image-lightbox>
+         </div>
+         <p>
+          <br>
+         </p>
+        </td>
+        <td>
+         <p>
+          <br>
+         </p>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <div class="block-image" style="--width: 278px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+            <img src="/__attachments/a_e06b0b203ae007e2d0fdba6b8e73a3a026b2aef39b76fae088647600738079e9/chat-20240523-135905.png?cb=67f08798ba2b38f24c839af9cafa0909" alt="chat-20240523-135905.png" data-scope="internal" width="296" height="76">
+           </div>
+          </image-lightbox>
+         </div>
+         <p>
+          <br>
+         </p>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <div class="block-image" style="--width: 280px" data-component="image" data-align="align-center" data-border-size="2" data-border-color="subtle-gray">
+            <img src="/__attachments/a_d5fb2354e02db2e45e6ab3e5668d6b4cdc0041f0fcdee55a4005ed738602eea7/chat%20call-20240523-140123.png?cb=3ff0feced838bf614ef9f3a07c850f1b" alt="chat call-20240523-140123.png" data-scope="internal" width="223" height="364">
+           </div>
+          </image-lightbox>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <h3 id="Customizable-text-for-greeting,-end-chat-messages"><span id="CXCustomerWidget-Customizabletextforgreeting,endchatmessages"></span>Customizable text for greeting, end chat messages
+          <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+           <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#Customizable-text-for-greeting,-end-chat-messages">
+            <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+             <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+            </svg>
+           </copy-clipboard>
+          </i18n-message></h3>
+         <p>Customize the text on the Customer Widget for all static UI elements including labels, buttons, greeting messages, error messages, and notifications. These texts can now easily be modified to align with business requirements, providing greater flexibility and customization without requiring code changes.</p>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <div class="block-image" style="--width: 452px" data-component="image" data-align="align-center">
+            <img src="/__attachments/a_cfdb1f8367d707c164e34da336d5eadab540d7320df6098c1beacf4fceeb6249/image-20250312-112850.png?cb=7655caa13bbe01e9da93c4e6b98e3271" alt="image-20250312-112850.png" data-scope="internal" width="652" height="506">
+           </div>
+          </image-lightbox>
+         </div>
+         <p>
+          <br>
+         </p>
+        </td>
+        <td>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <div class="block-image" style="--width: 233px" data-component="image" data-align="align-center">
+            <img src="/__attachments/a_98e2992b03ba000db7f37bebe897eca79dff25625d4ff40198d841b32974384b/image-20250312-113227.png?cb=33d3f2ac572756d9bb35760126dbfdcd" alt="image-20250312-113227.png" data-scope="internal" width="233" height="439">
+           </div>
+          </image-lightbox>
+         </div>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h2 id="Browser-Compatibility"><span id="CXCustomerWidget-BrowserCompatibility"></span><strong>Browser Compatibility</strong>
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/cx-customer-widget#Browser-Compatibility">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>The browser is now compatible with Chrome, Edge, Firefox, and Safari.&nbsp;</p>
+<div class="theme-table" style="--width: 760px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 184px">
+       <col style="width: 177px">
+       <col style="width: 211px">
+       <col style="width: 175px">
+      </colgroup>
+      <tbody>
+       <tr>
+        <td>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <figure data-component="figure">
+            <div class="block-image" style="--width: 144px" data-component="image" data-align="align-center">
+             <img src="/__attachments/a_5ebf7b9b9ed92878d338475ce61a87158bd9c59e12107562752bf35f54a95322/image-20240228-094725.png?cb=95b76e6a387a7abfb3eeb631b36a9ff3" alt="image-20240228-094725.png" data-scope="internal" width="112" height="112">
+            </div>
+            <figcaption>
+             <strong>Google Chrome</strong>
+             <br>
+             V 111.0.5563.14&nbsp;
+            </figcaption>
+           </figure>
+          </image-lightbox>
+         </div>
+        </td>
+        <td>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <figure data-component="figure">
+            <div class="block-image" style="--width: 144px" data-component="image" data-align="align-center">
+             <img src="/__attachments/a_debe1ee84b9d77ade134f6c8c30819844067ae761cbbaac2fbc060a6abcfa251/image-20240228-095005.png?cb=6dd7be10a2cfadd228c822ef587813a9" alt="image-20240228-095005.png" data-scope="internal" width="512" height="512">
+            </div>
+            <figcaption>
+             <strong>Mozilla Firefox</strong>
+             <br>
+             V 120.0.1
+            </figcaption>
+           </figure>
+          </image-lightbox>
+         </div>
+         <p>
+          <br>
+         </p>
+        </td>
+        <td>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <figure data-component="figure">
+            <div class="block-image" style="--width: 144px" data-component="image" data-align="align-center">
+             <img src="/__attachments/a_10efb27997ce2da2b0bbfa3abce14a0bb0da83d6519998a19da39957e96d7194/image-20240228-095148.png?cb=01bd634708baf9a7ba5e67da41d3a469" alt="image-20240228-095148.png" data-scope="internal" width="480" height="480">
+            </div>
+            <figcaption>
+             <strong>Microsoft Edge</strong>
+             <br>
+             V 119.0.2151.97
+            </figcaption>
+           </figure>
+          </image-lightbox>
+         </div>
+         <p>
+          <br>
+         </p>
+        </td>
+        <td>
+         <div class="theme-block-image">
+          <image-lightbox>
+           <figure data-component="figure">
+            <div class="block-image" style="--width: 144px" data-component="image" data-align="align-center">
+             <img src="/__attachments/a_0e2c696d2d29a01cdba47d0a513fafd406743e17702d5d4fe21ebe0421360543/image-20240228-095334.png?cb=bc0f9843d5e279949435af0837073a92" alt="image-20240228-095334.png" data-scope="internal" width="2057" height="2048">
+            </div>
+            <figcaption>
+             <strong>Safari</strong>
+             <br>
+             V 17.1
+            </figcaption>
+           </figure>
+          </image-lightbox>
+         </div>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="6c0c8cd74c181879-139" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="6c0c8cd74c181879-139">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/cx/4.9/webrtc">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">WebConnect CX</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/cx/4.9/customer-widget-admin-guide">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Customer Widget Admin Guide</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

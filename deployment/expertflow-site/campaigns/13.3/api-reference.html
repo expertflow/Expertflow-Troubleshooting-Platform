@@ -1,0 +1,7700 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_d81e83dc34ee5ab37b7c91845d546b4fe3d8b525d92cde3166ce6b1c1e6d2b58" data-confluence-content-id="36176024"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/campaigns/13.3/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="ECM">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>API Reference | Expertflow CX</title>
+		<meta property="og:title" content="API Reference | Expertflow CX">
+		<meta property="twitter:title" content="API Reference | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/campaigns/13.3/api-reference">
+		<meta property="og:url" content="https://docs.expertflow.com/campaigns/13.3/api-reference">
+
+		<meta name="description" content="The ECM REST APIs allow configuring resources such as campaigns, strategies, campaign contacts, and preference settings . It currently supports the following f…">
+		<meta property="og:description" content="The ECM REST APIs allow configuring resources such as campaigns, strategies, campaign contacts, and preference settings . It currently supports the following f…">
+		<meta property="twitter:description" content="The ECM REST APIs allow configuring resources such as campaigns, strategies, campaign contacts, and preference settings . It currently supports the following f…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2023-12-13T13:41:48.304Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": false
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": true
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.js"></script>
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="3053adefc7677201-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="3053adefc7677201-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-3053adefc7677201-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-3053adefc7677201-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-3053adefc7677201-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="3053adefc7677201-3" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="3053adefc7677201-3">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-3053adefc7677201-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-3053adefc7677201-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3053adefc7677201-4" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3053adefc7677201-5" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3053adefc7677201-6" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3053adefc7677201-7" href="/campaigns/13.3/release-notes" >Release Notes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3053adefc7677201-8" href="/campaigns/13.3/compatibility-guide" >Compatibility Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="3053adefc7677201-9"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="3053adefc7677201-9" href="/campaigns/13.3/solution-components-and-architecture" >Solution Components and Architecture</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3053adefc7677201-11" href="/campaigns/13.3/integration-with-cisco" >Integration with Cisco</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="3053adefc7677201-12"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="3053adefc7677201-12" href="/campaigns/13.3/deployment-models" >Deployment Models</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="3053adefc7677201-14"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="3053adefc7677201-14" href="/campaigns/13.3/solution-security" >Solution Security</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3053adefc7677201-16" href="/campaigns/13.3/user-guide" >User Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3053adefc7677201-17" href="/campaigns/13.3/solution-prerequisites" >Solution Prerequisites</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3053adefc7677201-18" href="/campaigns/13.3/deployment-guide" >Deployment Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3053adefc7677201-19" href="/campaigns/13.3/sitemap-xml" >sitemap.xml</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3053adefc7677201-20" href="/campaigns/13.3/ecm-lab-details" >ECM lab details</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3053adefc7677201-21" href="/campaigns/13.3/ecm-training-and-demo-videos" >ECM Training and Demo Videos</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3053adefc7677201-22" href="/campaigns/13.3/troubleshooting-articles" >Troubleshooting articles</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3053adefc7677201-23" href="/campaigns/13.3/api-reference" aria-current="page">API Reference</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="3053adefc7677201-24" href="/campaigns/13.3/universal-chat-plugin-for-mautic" >Universal Chat Plugin for Mautic</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="3053adefc7677201-25" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="3053adefc7677201-25">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/campaigns/13.3">
+										Campaigns
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="3053adefc7677201-26">
+			<h2 class="toc-heading" id="3053adefc7677201-26">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>API Reference</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+
+	
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+	
+
+
+	
+	
+	
+	
+	
+	
+		
+		
+	
+	
+	
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<p>The ECM REST APIs allow configuring resources such as campaigns, strategies, campaign contacts, and preference settings . It currently supports the following functions:</p>
+<ul>
+ <li>
+  <p>Manage Campaigns</p>
+ </li>
+ <li>
+  <p>Upload Contacts to campaigns</p>
+ </li>
+ <li>
+  <p>Insert DNC callers</p>
+ </li>
+ <li>
+  <p>Manage campaign strategies&nbsp;</p>
+ </li>
+ <li>
+  <p>Define preference configurations</p>
+ </li>
+</ul>
+<p>
+ <br>
+</p>
+<p><strong>On this page:</strong></p>
+<p></p>
+<div class="toc-macro rbtoc1780474339954">
+ <ul class="toc-indentation">
+  <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-Login">Login</a></li>
+  <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-Campaign">Campaign</a>
+   <ul class="toc-indentation">
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-GetCiscoCampaigns">Get Cisco Campaigns</a></li>
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-Createcampaign">Create campaign</a></li>
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-CreateCampaignbySkillGroup">Create Campaign by Skill Group</a></li>
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-UpdateCampaign">Update Campaign</a></li>
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-GetCampaignsList">Get Campaigns List</a></li>
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-Deletecampaign">Delete campaign</a></li>
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-CampaignStatus(Pause/Resume)">Campaign Status (Pause/Resume)</a></li>
+   </ul></li>
+  <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-DNC(DoNotCall)">DNC (Do Not Call)</a>
+   <ul class="toc-indentation">
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-GetDNCContacts">Get DNC Contacts</a></li>
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-UploadSingleContacttoDNC">Upload Single Contact to DNC</a></li>
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-UpdateSingleContactinDNC">Update Single Contact in DNC</a></li>
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-DeleteContactfromDNC">Delete Contact from DNC</a></li>
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-BulkUploadContactstoDNC">Bulk Upload Contacts to DNC</a></li>
+   </ul></li>
+  <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-UploadContactstoCampaign">Upload Contacts to Campaign</a>
+   <ul class="toc-indentation">
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-UploadSinglecontact">Upload Single contact</a></li>
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-Bulkuploadcontactstoacampaign">Bulk upload contacts to a campaign</a></li>
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-Getcampaigncontacts">Get campaign contacts</a></li>
+   </ul></li>
+  <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-CallStrategies">Call Strategies</a>
+   <ul class="toc-indentation">
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-GetStrategies">Get Strategies</a></li>
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-Createstrategy">Create strategy</a></li>
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-UpdateName">Update Name</a></li>
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-DeleteStrategy">Delete Strategy</a></li>
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-GetStrategyAttempts">Get Strategy Attempts</a></li>
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-CreateStrategyAttempt">Create Strategy Attempt</a></li>
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-UpdateStrategyAttempt">Update Strategy Attempt</a></li>
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-DeleteStrategyAttempt">Delete Strategy Attempt</a></li>
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-UpdateAttemptOrder">Update Attempt Order</a></li>
+   </ul></li>
+  <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-PreferenceSettings">Preference Settings</a>
+   <ul class="toc-indentation">
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-GetPreferenceSettings">Get Preference Settings</a></li>
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-SavePreferenceSettings">Save Preference Settings</a></li>
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-UpdatePreferenceSettings">Update Preference Settings</a></li>
+    <li><a href="/campaigns/13.3/api-reference#id-(13.3)APIReference-DeletePreferenceSettings">Delete Preference Settings</a></li>
+   </ul></li>
+ </ul>
+</div>
+<p></p>
+<h2 id="id-(13.3)APIReference-Login" style=""><span id="APIReference-Login"></span>Login
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-Login">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>This API is used to get an access token that will be used as a bearer token in the rest of the APIs for authentication/authorization. This API also returns license and user details</p>
+<div class="theme-table" style="--width: 74.2181%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 12.5451%">
+       <col style="width: 87.4822%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/api/login</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>GET</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Body</p>
+        </th>
+        <td>
+         <ul>
+          <li>
+           <p>username (required): The username to login to ECM</p>
+          </li>
+          <li>
+           <p>password (required):&nbsp;The password to login to ECM</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+  "username":"admin",
+  "password":"admin"
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>400: Invalid request body</p>
+         <p>401: Unauthorized</p>
+         <p>404: Not found</p>
+         <p>405: HTTP method not allowed</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+  "license":"valid",
+  "licStatus":"trial",
+   "licensedTo":"KPMG",
+   "creationDate":"2019-09-16T19:00:00Z",
+   "expiryDate":"2022-10-16T19:00:00Z",
+   "supportExpiryDate":null,
+   "numberOfAgents":5,
+   "valid":true,
+   "userDetails":{
+     "id":1,
+     "username":"admin",
+     "userId":null,
+     "email":null,
+     "fullName":"Administrator",
+     "type":"DB",
+     "isActive":true,
+     "profileExists":false,
+     "lastLogin":"Fri Jun 11 13:40:55 PKT 2021",
+     "lastUpdated":"1623400855424",
+     "dateCreated":"1615193443313",
+     "createdBy":null,
+     "updatedBy":null,
+     "profilePicture":null,
+     "roles":[{
+       "id":1,
+       "name":"Administrator",
+       "description":"Administrator Role",
+       "permissions":null}]},
+     "token_type":"Bearer",
+     "token":"JWT-TOKEN",
+     "expires_in":36000,
+     "refresh_token":"JWT-REFRESH-TOKEN"
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h2 id="id-(13.3)APIReference-Campaign" style=""><span id="APIReference-Campaign"></span>Campaign
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-Campaign">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="id-(13.3)APIReference-GetCiscoCampaigns" style=""><span id="APIReference-GetCiscoCampaigns"></span>Get Cisco Campaigns
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-GetCiscoCampaigns">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>This API fetches the Cisco campaigns from UCCE/UCCX.&nbsp; A campaign from this list can be choosen to associated with ECM campaign in campaign create API</p>
+<div class="theme-table" style="--width: 72.8656%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 18.704%">
+       <col style="width: 81.3238%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/campaign/fetchCiscoCampaigns</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorization</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token retrieved from login API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>GET</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Parameters</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>-</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>401: Not Authorized</p>
+         <p>404: Not found</p>
+         <p>406: Not Acceptable</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <p><strong>In case of CCE:</strong>&nbsp;</p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>[
+ {
+  "ciscoCampaignId": "5001",
+  "ciscoCampaignName": "IVR_based",
+  "ciscoTableName": "DL_5002_5002",
+  "ciscoFileName": "test.txt",
+  "ciscoFilePath": "//Sprawler/import/",
+  "campaignType": "0"
+ }
+]
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p><strong>In case of CCX response:</strong></p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>[
+ {
+  "ciscoCampaignId": "5001",
+  "ciscoCampaignName": "IVR_based"
+  "campaignType": "0"
+ }
+]
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h3 id="id-(13.3)APIReference-Createcampaign" style=""><span id="APIReference-Createcampaign"></span>Create campaign
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-Createcampaign">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table" style="--width: 73.4573%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 13.3677%">
+       <col style="width: 86.66%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/campaign/createCampaign</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorization&nbsp;</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>POST</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Body</p>
+        </th>
+        <td>
+         <ul>
+          <li>
+           <p>startTime (required): This is the start time of the campaign</p>
+          </li>
+         </ul>
+         <ul>
+          <li>
+           <p>endTime (required):&nbsp;This is the end time of the campaign</p>
+          </li>
+          <li>
+           <p>name (required): This is the name of the campaign.</p>
+          </li>
+          <li>
+           <p>description (optional): This is the optional description of the campaign&nbsp;</p>
+          </li>
+          <li>
+           <p>strategyId (required): This is the ID of the strategy attached to the campaign.</p>
+          </li>
+          <li>
+           <p>type (required):&nbsp;<span style="--color: #000">This is the type of ECM campaign. This can be one of the following: i) IVR ii) Agent iii) None&nbsp; where 0 = IVR, 1 = Agent and -1 = NONE</span></p>
+          </li>
+          <li>
+           <p>crmCampaignId (optional): This is the ID of the CRM campaign attached to this campaign.</p>
+          </li>
+          <li>
+           <p>ciscoCampaignId (required): This is the ID of the Cisco campaign attached to this campaign</p>
+          </li>
+          <li>
+           <p>weekDays (required):&nbsp;<span style="--color: #000">Select on which days of the week the campaign should run. The expected values are between 0-6 where 0 = Sunday and 6 = Saturday.</span></p>
+          </li>
+          <li>
+           <p>enabled (required):&nbsp;<span style="--color: #000">This is the status of the campaign. The expected value is either&nbsp;</span><span style="--color: #000"><code>true</code></span><span style="--color: #000"> OR </span><span style="--color: #000"><code>false</code></span><span style="--color: #000">&nbsp;</span></p>
+          </li>
+          <li>
+           <p>description (optional): This is an optional description of the campaign.</p>
+          </li>
+          <li>
+           <p>SMS template (optional): This is the template SMS that is attached to this campaign. This SMS is used for any SMS attempts in the strategy.</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+ "startTime": "22:10",
+ "endTime": "22:23",
+ "name":   "sample_campaign",
+ "description": "details",
+ "strategyId": "22",
+ "status": "1",
+ "type": "0",
+ "crmCampaignId": "crm_campaign_1",
+ "ciscoCampaignId": "5001",
+ "weekDays": "0,1,2",
+ "enabled": true,
+ "description": "details",
+ "smsTemplate": "sms-template"
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>201: Success</p>
+         <p>401: Not Authorized</p>
+         <p>404: Not found</p>
+         <p>406: Not Acceptable</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Example Response</p>
+        </th>
+        <td colspan="1">
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{"id": "2",
+ "crmCampaignId": "crm_campaign_1",
+ "ciscoCampaignId": "5001",
+ "ciscoCampaignName": "IVR_based",
+ "smsTemplate": "sms template",
+ "description": "details",
+ "enabled": true,
+ "endTime": "22:23",
+ "strategyId": "22",
+ "name": "sample_campaign",
+ "startTIme": "22:10",
+ "status": "1",
+ "type": "0",
+ "lastUpdated": "2018-11-14T11:01:42Z",
+ "dateCreated": "2018-11-14T11:01:42Z",
+ "weekdays": "0,1,2"
+}
+
+
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h3 id="id-(13.3)APIReference-CreateCampaignbySkillGroup" style=""><span id="APIReference-CreateCampaignbySkillGroup"></span>Create Campaign by Skill Group
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-CreateCampaignbySkillGroup">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>This API is used for creating a campaign in ECM using a UCCE skill group. The skill group name passed is JSON is used to associated UCCE campaign with ECM campaign</p>
+<div class="theme-table" style="--width: 73.5418%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 18.5318%">
+       <col style="width: 81.4957%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/campaign/createCampaignBySkilllGroup</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorization</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>POST</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Body</p>
+        </th>
+        <td>
+         <ul>
+          <li>
+           <p>crmCampaignId <span style="--color: #000">(optional)</span><span style="--color: #f00">: </span><span style="--color: #000">ID of the CRM campaign which needs to be associated with this ECM campaign</span></p>
+          </li>
+          <li>
+           <p><span style="--color: #000">name (required): This is the name of the ECM campaign</span></p>
+          </li>
+          <li>
+           <p><span style="--color: #000">description (optional): This is the description of the ECM campaign</span></p>
+          </li>
+          <li>
+           <p><span style="--color: #000">dialerType (optional): This is the dialing mode of the Cisco campaign which is supposed to be mapped with this ECM campaign.&nbsp;</span></p>
+          </li>
+          <li>
+           <p><span style="--color: #000">skillGroup (required): This is the CCE Skill Group attached to the associated Cisco campaign.&nbsp;</span></p>
+          </li>
+          <li>
+           <p><span style="--color: #000">enabled (required): This is the status of the campaign. The expected value is either&nbsp;</span><span style="--color: #000"><code>true</code></span><span style="--color: #000"> OR </span><span style="--color: #000"><code>false</code></span><span style="--color: #000">&nbsp;</span></p>
+          </li>
+          <li>
+           <p><span style="--color: #000">endTime (required): This is the end time of the campaign execution. Once this time reaches, the campaign stops automatically.&nbsp;</span></p>
+          </li>
+          <li>
+           <p><span style="--color: #000">startTime (required): This is the start time of the campaign.&nbsp;</span></p>
+          </li>
+          <li>
+           <p><span style="--color: #000">strategyId (required): This is the ID of the strategy attached to this campaign.</span></p>
+          </li>
+          <li>
+           <p><span style="--color: #000">type (required): This is the type of the ECM campaign. This can be one of the following: i) IVR ii) Agent iii) None&nbsp; where 0 = IVR, 1 = Agent and -1 = NONE</span></p>
+          </li>
+          <li>
+           <p><span style="--color: #000">weekDays (required): Select on which days of the week the campaign should run. The expected values are between 0-6 where 0 = Sunday and 6 = Saturday.&nbsp;</span></p>
+          </li>
+          <li>
+           <p><span style="--color: #000">SMS template (optional): This is the template SMS that is attached to this campaign. This SMS is used for any SMS attempts in the strategy.</span></p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+    "crmCampaignId":"1122",
+    "name": "Agent_Camp",
+    "description": null,
+    "dialerType":"PREDICTIVE",
+    "skillGroup": "skillGroupName",
+    "enabled": true,
+    "endTime": "23:30",
+    "startTime": "00:00",
+    "strategyId": 2,
+    "type": 0,
+    "weekDays": "0,1,2,3,6",
+}
+
+
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>401: Not Authorized</p>
+         <p>404: Not found</p>
+         <p>406: Not Acceptable</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{"id": "2",
+ "crmCampaignId": "1122",
+ "ciscoCampaignId": "5001",
+ "ciscoCampaignName": "IVR_based",
+ "dialerType":"PREDICTIVE",
+ "skillGroup": "skillGroupName",
+ "smsTemplate": "sms template",
+ "description": null,
+ "enabled": true,
+ "endTime": "23:30",
+ "strategyId": "2",
+ "name": "Agent_Camp",
+ "startTime": "00:00",
+ "status": "1",
+ "type": "0",
+ "lastUpdated": "2018-11-14T11:01:42Z",
+ "dateCreated": "2018-11-14T11:01:42Z",
+ "weekdays": "0,1,2,3,6"
+}
+
+
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h3 id="id-(13.3)APIReference-UpdateCampaign" style=""><span id="APIReference-UpdateCampaign"></span>Update Campaign
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-UpdateCampaign">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table" style="--width: 73.2883%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 18.596%">
+       <col style="width: 81.4316%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/campaign/update</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorization</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>PUT</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Body</p>
+        </th>
+        <td>
+         <ul>
+          <li>
+           <p><strong>id</strong>: ECM campaign ID OR</p>
+          </li>
+          <li>
+           <p><strong>crmCampaignId</strong>: CRM campaign ID associated with the ECM campaign</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+ "id":1
+ "name":"updated name"
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>401: Not Authorized</p>
+         <p>404: Not Found</p>
+         <p>406: Not Acceptable</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <div class="unknown-content">
+          <p>Complete Campaign object with the updated values (Ref: Response of create campaign)</p>
+         </div>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h3 id="id-(13.3)APIReference-GetCampaignsList" style=""><span id="APIReference-GetCampaignsList"></span>Get Campaigns List&nbsp;
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-GetCampaignsList">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>This will return the complete list of campaigns&nbsp;</p>
+<div class="theme-table" style="--width: 73.88%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 18.4469%">
+       <col style="width: 81.5805%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/campaign</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorization</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>GET</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Body</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>401: Not Authorized</p>
+         <p>404: Not found</p>
+         <p>406: Not Acceptable</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>[
+{
+ "id": "2",
+ "crmCampaignId": "crm_campaign_1",
+ "ciscoCampaignId": "5001",
+ "ciscoCampaignName": "IVR_based",
+ "smsTemplate": "sms template",
+ "description": "details",
+ "enabled": true,
+ "endTime": "22:23",
+ "strategyId": "22",
+ "name": "sample_campaign",
+ "startTIme": "22:10",
+ "status": "1",
+ "type": "0",
+ "lastUpdated": "2018-11-14T11:01:42Z",
+ "dateCreated": "2018-11-14T11:01:42Z",
+ "weekdays": "0,1,2"
+},
+...
+]
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h3 id="id-(13.3)APIReference-Deletecampaign" style=""><span id="APIReference-Deletecampaign"></span>Delete campaign
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-Deletecampaign">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table" style="--width: 74.3872%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 18.321%">
+       <col style="width: 81.7062%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/campaign/delete?<span style="--color: #292b2c">id=1</span></p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorization</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>DELETE</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Parameters</p>
+        </th>
+        <td>
+         <ul>
+          <li>
+           <p><strong>id</strong>: ECM campaign ID OR</p>
+          </li>
+          <li>
+           <p><strong>crmCampaignId</strong>: CRM campaign ID associated with the ECM campaign</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>401: Not Authorized</p>
+         <p>404: Not found</p>
+         <p>406: Not Acceptable</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <div class="unknown-content">
+          <p>
+           <br>
+          </p>
+         </div>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h3 id="id-(13.3)APIReference-CampaignStatus(Pause/Resume)" style=""><span id="APIReference-CampaignStatus(Pause/Resume)"></span>Campaign Status (Pause/Resume)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-CampaignStatus(Pause/Resume)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table" style="--width: 74.3872%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 12.5166%">
+       <col style="width: 87.5107%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/campaign/campaignUpdateStatus</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorization</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>POST</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Body</p>
+        </th>
+        <td>
+         <ul>
+          <li>
+           <p><strong>campaignId</strong>: ECM campaign ID OR&nbsp;<strong>crmCampaignId</strong>: CRM campaign ID associated with the ECM campaign</p>
+          </li>
+          <li>
+           <p><strong>status</strong>: True/False</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>404: Not found</p>
+         <p>406: Not Acceptable</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <div class="unknown-content">
+          <p>Campaign with id successfully paused/resumed</p>
+         </div>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h2 id="id-(13.3)APIReference-DNC(DoNotCall)" style=""><span id="APIReference-DNC(DoNotCall)"></span>DNC (Do Not Call)
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-DNC(DoNotCall)">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>This resource is used to update the DNC list in ECM so that the system does not dial contacts that are present in the DNC list.&nbsp;</p>
+<h3 id="id-(13.3)APIReference-GetDNCContacts" style=""><span id="APIReference-GetDNCContacts"></span>Get DNC Contacts
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-GetDNCContacts">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table" style="--width: 74.6407%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 12.7067%">
+       <col style="width: 87.3205%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/contact</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorization</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>GET</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Parameters</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>404: Not found</p>
+         <p>406: Not Acceptable</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>[
+  {
+    "id": 1,
+    "name": "David",
+    "updateById": 1,
+    "primaryNumber": "03062558180",
+    "dataCreated": "2019-07-31T12:02:09Z",
+    "lastUpdated": "2019-07-31T12:02:09Z"
+  },
+...
+]
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h3 id="id-(13.3)APIReference-UploadSingleContacttoDNC" style=""><span id="APIReference-UploadSingleContacttoDNC"></span>Upload Single Contact to DNC
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-UploadSingleContacttoDNC">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table" style="--width: 74.3026%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 17.6585%">
+       <col style="width: 82.3688%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/contact/save</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorization</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>POST</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Body</p>
+        </th>
+        <td>
+         <ul>
+          <li>
+           <p>name (required): This is the name of the contact</p>
+          </li>
+          <li>
+           <p>primaryNumber (required): This is the phone number of the contact&nbsp;</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+  "name": "David",
+  "primaryNumber": "03062558180"
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>404: Not found</p>
+         <p>406: Not Acceptable</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>  {
+    "id": 1,
+    "name": "David",
+    "updateById": 1,
+    "primaryNumber": "03062558180",
+    "dataCreated": "2019-07-31T12:02:09Z",
+    "lastUpdated": "2019-07-31T12:02:09Z"
+  }
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h3 id="id-(13.3)APIReference-UpdateSingleContactinDNC" style=""><span id="APIReference-UpdateSingleContactinDNC"></span>Update Single Contact in DNC
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-UpdateSingleContactinDNC">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table" style="--width: 74.3026%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 17.6585%">
+       <col style="width: 82.3688%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/contact/update</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorization</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>POST</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Body</p>
+        </th>
+        <td>
+         <ul>
+          <li>
+           <p>name (required): This is the name of the contact</p>
+          </li>
+          <li>
+           <p>primaryNumber (required): This is the phone number of the contact&nbsp;</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>  {
+    "id": 1,
+    "name": "David",
+    "updateById": 1,
+    "primaryNumber": "03062558180",
+    "dataCreated": "2019-07-31T12:02:09Z",
+    "lastUpdated": "2019-07-31T12:02:09Z"
+  }
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>404: Not found</p>
+         <p>406: Not Acceptable</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>  {
+    "id": 1,
+    "name": "David",
+    "updateById": 1,
+    "primaryNumber": "03062558180",
+    "dataCreated": "2019-07-31T12:02:09Z",
+    "lastUpdated": "2019-07-31T12:02:09Z"
+  }
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h3 id="id-(13.3)APIReference-DeleteContactfromDNC" style=""><span id="APIReference-DeleteContactfromDNC"></span>Delete Contact from DNC
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-DeleteContactfromDNC">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table" style="--width: 74.3872%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 17.4109%">
+       <col style="width: 82.6164%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/contact/delete?id=1</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorization</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>DELETE</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Parameters</p>
+        </th>
+        <td>
+         <p><strong>id</strong>: This is the id of the DNC contact in the DNC list</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>204: Success - No Content</p>
+         <p>404: Not found</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <p>204: Not content</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h3 id="id-(13.3)APIReference-BulkUploadContactstoDNC" style=""><span id="APIReference-BulkUploadContactstoDNC"></span>Bulk Upload Contacts to DNC
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-BulkUploadContactstoDNC">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table" style="--width: 74.2181%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 16.4232%">
+       <col style="width: 83.6041%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/contact/uploadCsv</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorization</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>POST</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Body</p>
+        </th>
+        <td>
+         <p><strong>File</strong>: A CSV file as an attachment, multipart file</p>
+         <p>The File format should be the following:</p>
+         <p>contact-number,optional-name</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>404: Not found</p>
+         <p>406: Not Acceptable</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <p>message: File is uploading.</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h2 id="id-(13.3)APIReference-UploadContactstoCampaign" style=""><span id="APIReference-UploadContactstoCampaign"></span>Upload Contacts to Campaign
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-UploadContactstoCampaign">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<p>This API is used to push contacts to an ECM campaign for making calls or sending messages.</p>
+<h3 id="id-(13.3)APIReference-UploadSinglecontact" style=""><span id="APIReference-UploadSinglecontact"></span>Upload Single contact
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-UploadSinglecontact">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table" style="--width: 74.2181%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 12.5451%">
+       <col style="width: 87.4822%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/callback/insertCallback</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>
+          <br>
+         </p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>POST</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+  "crmCampaignId": 1232Dce,
+  "campaignId": 1,
+  "phone1": "string",
+  "phone2": "string",
+  "phone3": "string",
+  "phone4": "string",
+  "phone5": "string",
+  "duplicateCallbacks": "allow",
+  "dialTime": "2019-11-12 15:10:20",
+  "businessParam1": "string",
+  "businessParam2": "string",
+  "businessParam3": "string",
+  "businessParam4": "string",
+  "businessParam5": "string",
+  "businessParam6": "string",
+  "businessParam7": "string",
+  "businessParam8": "string",
+  "businessParam9": "string",
+  "businessParam10": "string",
+  "businessParam11": "string",
+  "businessParam12": "string"
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Body</p>
+        </th>
+        <td>
+         <ul>
+          <li>
+           <p>crmCampaignID: This is the campaign ID of the CRM campaign that is linked to this ECM campaign.</p>
+          </li>
+          <li>
+           <p>campaignID: This is the campaign ID of the ECM campaign. Either one of the two campaign IDs (CRM Campaign ID or ECM Campaign ID) must be defined in the API call otherwise the operation would fail.</p>
+          </li>
+          <li>
+           <p>Phone1 - Phone 5: Phone 1 is mandatory. Other phone numbers are optional. The phone numbers must have&nbsp;a minimum of 4 and a maximum of 15 characters (inclusive of + sign in the number prefix).</p>
+          </li>
+          <li>
+           <p>duplicateCallbacks: The expected values are i)&nbsp;<strong>allow</strong> or ii)&nbsp;<strong>discard.</strong>&nbsp;This allows defining if a duplicate call should be made to a duplicate contact, that already exists in the dialing list with "Pending" status. If the value is equal to&nbsp;<strong>discard</strong>, the contact won't be uploaded again and no duplicate call would be made. If this is equal to&nbsp;<strong>allow, </strong>duplicate contacts will be uploaded for the same customer, hence allowing duplicate callbacks to be dialed.</p>
+          </li>
+          <li>
+           <p>dialTime: This is the date and time that the user wants to send the contact to the dialer for dialing. If null, the contact will be sent to the dialer according to the campaign settings.</p>
+          </li>
+          <li>
+           <p>Business Parameters (business param1-business param12):&nbsp;<span style="--color: var(--bold-gray, #172b4d);">These parameters can contain any custom value for a particular customer contact such as Account Type, Customer Email. The length of the data in these parameters can be defined as per the integration specifications locked with ExpertFlow.</span><span style="--color: var(--bold-gray, #172b4d);">&nbsp;</span>The system allows storing a maximum of 255 characters in&nbsp;each of these parameters.</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>404: Not found</p>
+         <p>406: Not Acceptable</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <div class="unknown-content">
+          <p>statusString: callback data saved</p>
+         </div>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h3 id="id-(13.3)APIReference-Bulkuploadcontactstoacampaign" style=""><span id="APIReference-Bulkuploadcontactstoacampaign"></span>Bulk upload contacts to a campaign
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-Bulkuploadcontactstoacampaign">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table" style="--width: 74.5562%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 12.4882%">
+       <col style="width: 87.539%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/callback/uploadBulkCaller</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>
+          <br>
+         </p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>GET</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Body</p>
+        </th>
+        <td>
+         <ul>
+          <li>
+           <p>campaignId: This is the ECM campaign Id. Define this or CRM Campaign ID in the request body.</p>
+          </li>
+          <li>
+           <p>crmCampaignId: This is the CRM campaign Id associated with the ECM campaign</p>
+          </li>
+          <li>
+           <p>File: This is the comma-separated file carrying campaign contacts.&nbsp;The file format should be the following:</p>
+          </li>
+         </ul>
+         <p>&nbsp; &nbsp; &nbsp; phone1,phone2,phone3,phone4,phone5,businessParam1,businessParam2..... businessParam12, dialTime</p>
+         <p>&nbsp;If an attribute is not required then it should be left empty and then a comma. For example, the user wants to upload contacts with phone1 and businessParam1.</p>
+         <p>The file entries will look like below,</p>
+         <p>0300948984,,,,,businessParam1</p>
+         <ul>
+          <li>
+           <p>Phone1 - Phone 5: Adding Phone1 is mandatory. You may also optionally provide other phone numbers in phone2, phone3, phone4, phone5 fields.&nbsp;The phone numbers must have&nbsp;a minimum of 4 and a maximum of 15 characters (inclusive of + sign in the number prefix).</p>
+          </li>
+          <li>
+           <p>Business Parameters (business param1-business param12):&nbsp;<span style="--color: var(--bold-gray, #172b4d);">These parameters can contain any custom value for a particular customer contact such as Account Type, Customer Email. The length of the data in these parameters can be defined as per the integration specifications locked with ExpertFlow.</span><span style="--color: var(--bold-gray, #172b4d);">&nbsp;</span>The system allows storing a maximum of 255 characters in each of these parameters.</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>-</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>404: Not found</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <div class="unknown-content">
+          <p>File is uploaded</p>
+         </div>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h3 id="id-(13.3)APIReference-Getcampaigncontacts" style=""><span id="APIReference-Getcampaigncontacts"></span>Get campaign contacts
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-Getcampaigncontacts">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<p>This API is used to get the status of the campaign contacts in the ECM database.</p>
+<div class="theme-table" style="--width: 74.9789%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 12.4177%">
+       <col style="width: 87.6093%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/callback/getList</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorization</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>GET</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Body</p>
+        </th>
+        <td>
+         <ul>
+          <li>
+           <p>max:&nbsp;This attribute defines the maximum contacts that should be returned in the API response. You can specify how many results should be returned by the API. This parameter only accepts integer values.</p>
+          </li>
+          <li>
+           <p>page:&nbsp;This attribute used to define the current page number on which contacts will be displayed. You can specify the page index to get contacts on the returned page only. This parameter only accepts integer values.</p>
+          </li>
+          <li>
+           <p>requestStatus:&nbsp;This attribute is used to specify the request state for the searched contact numbers. If defined, the API returns contacts with the specified request status. This parameter only accepts integer values. There is a total of 10 request states as the following:</p>
+          </li>
+         </ul>
+         <div data-component="table" data-align="unset" data-number-column="false">
+          <table>
+           <tbody>
+            <tr>
+             <th>
+              <p>Request State</p>
+             </th>
+             <th>
+              <p>Description</p>
+             </th>
+            </tr>
+            <tr>
+             <td>
+              <p>1</p>
+             </td>
+             <td>
+              <p>SentToDailer&nbsp;</p>
+             </td>
+            </tr>
+            <tr>
+             <td>
+              <p>2</p>
+             </td>
+             <td>
+              <p>Connected</p>
+             </td>
+            </tr>
+            <tr>
+             <td colspan="1">
+              <p>3</p>
+             </td>
+             <td colspan="1">
+              <p>Not Connected</p>
+             </td>
+            </tr>
+            <tr>
+             <td colspan="1">
+              <p>4</p>
+             </td>
+             <td colspan="1">
+              <p>RetriesCompleted</p>
+             </td>
+            </tr>
+            <tr>
+             <td colspan="1">
+              <p>5</p>
+             </td>
+             <td colspan="1">
+              <p>SMSSentAndClosed</p>
+             </td>
+            </tr>
+            <tr>
+             <td colspan="1">
+              <p>6</p>
+             </td>
+             <td colspan="1">
+              <p>SMS Sent</p>
+             </td>
+            </tr>
+            <tr>
+             <td colspan="1">
+              <p>7</p>
+             </td>
+             <td colspan="1">
+              <p>DNCListed</p>
+             </td>
+            </tr>
+            <tr>
+             <td colspan="1">
+              <p>8</p>
+             </td>
+             <td colspan="1">
+              <p>Dangling</p>
+             </td>
+            </tr>
+            <tr>
+             <td colspan="1">
+              <p>9</p>
+             </td>
+             <td colspan="1">
+              <p>SMSResponded</p>
+             </td>
+            </tr>
+            <tr>
+             <td colspan="1">
+              <p>-1</p>
+             </td>
+             <td colspan="1">
+              <p>All</p>
+             </td>
+            </tr>
+           </tbody>
+          </table>
+         </div>
+         <p data-indentation-level="1">
+          <br>
+         </p>
+         <ul>
+          <li>
+           <p>campaignId&nbsp;(integer):&nbsp;This attribute defines the campaign ID whose contacts are being retrieved.&nbsp;This parameter only accepts integer values.</p>
+          </li>
+          <li>
+           <p>numberToCall: This is the number that is going to be attempted by the system.</p>
+          </li>
+          <li>
+           <p>phone1 to phone5:&nbsp;Any of the five phones of the customer.</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>-</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>404: Not found</p>
+         <p>406: Not Acceptable</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+&nbsp; "callbackData": [
+&nbsp; &nbsp;{
+&nbsp; &nbsp; "id": 2,
+&nbsp; &nbsp; "attemptId": 3,
+&nbsp; &nbsp; "attemptNumber": 3,
+&nbsp; &nbsp; "dialTime": "2019-11-12 15:10:20",
+&nbsp; &nbsp; "businessParam1": "string",
+&nbsp; &nbsp; "businessParam2": "string",
+&nbsp; &nbsp; "businessParam3": "string",
+&nbsp; &nbsp; "businessParam4": "string",
+&nbsp; &nbsp; "businessParam5": "string",
+&nbsp; &nbsp; "businessParam6": "string",
+&nbsp; &nbsp; "businessParam7": "string",
+&nbsp; &nbsp; "businessParam8": "string",
+&nbsp; &nbsp; "businessParam9": "string",
+&nbsp; &nbsp; "businessParam10": "string",
+&nbsp; &nbsp; "businessParam11": "string",
+&nbsp; &nbsp; "businessParam12": "string",
+&nbsp; &nbsp; "campaignId": 0,
+&nbsp; &nbsp; "phone1": "string",
+&nbsp; &nbsp; "phone2": "string",
+&nbsp; &nbsp; "phone3": "string",
+&nbsp; &nbsp; "phone4": "string",
+&nbsp; &nbsp; "phone5": "string",
+&nbsp; &nbsp; "callResult": 0,
+&nbsp; &nbsp; "channel": 0,
+&nbsp; &nbsp; "ciscoCampaignId": 123412,
+&nbsp; &nbsp; "lastStatusUpdateTime": null,
+&nbsp; &nbsp; "numberToCall": 1393,
+&nbsp; &nbsp; "requestState": 1,
+&nbsp; &nbsp; "requestTime": "2019-07-31T12:53:34Z",
+&nbsp; &nbsp; "responseTimeout": null
+&nbsp; }
+&nbsp; ],
+"total": 1
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h2 id="id-(13.3)APIReference-CallStrategies" style=""><span id="APIReference-CallStrategies"></span>Call Strategies
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-CallStrategies">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="id-(13.3)APIReference-GetStrategies" style=""><span id="APIReference-GetStrategies"></span>Get Strategies
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-GetStrategies">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table" style="--width: 73.88%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 12.6026%">
+       <col style="width: 87.4248%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/callStrategy</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorization</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>GET</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>-</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Parameters</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>404: Not found</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>[
+{
+&nbsp; &nbsp;"id": 1,
+&nbsp; &nbsp;"name": "default",
+&nbsp; &nbsp;"maxAttempts": 3,
+&nbsp; &nbsp;"callAttempts": [
+&nbsp; &nbsp; {
+&nbsp; &nbsp; "id": 2,
+&nbsp; &nbsp; "name": "Default",
+&nbsp; &nbsp; "phone": "1",
+&nbsp; &nbsp; "channel": 0,
+&nbsp; &nbsp; "attemptNumber": 1,
+&nbsp; &nbsp; "retryMap": [
+&nbsp; &nbsp; &nbsp;{
+&nbsp; &nbsp; &nbsp; &nbsp;"attempt_number": 2,
+&nbsp; &nbsp; &nbsp; &nbsp;"delay": 10,
+&nbsp; &nbsp; &nbsp; &nbsp;"expiry": 10,
+&nbsp; &nbsp; &nbsp; "call_result": 2
+&nbsp; &nbsp; }
+&nbsp; &nbsp;]
+&nbsp;}
+]
+}
+]
+
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h3 id="id-(13.3)APIReference-Createstrategy" style=""><span id="APIReference-Createstrategy"></span>Create strategy
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-Createstrategy">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table" style="--width: 74.6407%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 12.474%">
+       <col style="width: 87.5531%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/callStrategy/save</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorization</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>POST</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+  "name":"TestStrategy"
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Parameters</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>404: Not found</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+  "id":1,
+  "name":"TestStrategy"
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h3 id="id-(13.3)APIReference-UpdateName" style=""><span id="APIReference-UpdateName"></span>Update Name
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-UpdateName">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table" style="--width: 74.6407%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 12.474%">
+       <col style="width: 87.5531%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/callStrategy/updateName</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorization</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>POST</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+  "csId": Integer value
+  "name": String value
+}
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Parameters</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>404: Not found</p>
+         <p>406: Not Acceptable</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <p>200 - Success</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h3 id="id-(13.3)APIReference-DeleteStrategy" style=""><span id="APIReference-DeleteStrategy"></span>Delete Strategy
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-DeleteStrategy">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 12.474%">
+       <col style="width: 87.5531%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/callStrategy/delete?id=1</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorization</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>POST</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Parameters</p>
+        </th>
+        <td>
+         <ul>
+          <li>
+           <p><strong>ID : </strong>Integer (Strategy ID to be deleted)</p>
+          </li>
+         </ul>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>404: Not found</p>
+         <p>406: Not Acceptable</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <p>200 - Success</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h3 id="id-(13.3)APIReference-GetStrategyAttempts" style=""><span id="APIReference-GetStrategyAttempts"></span>Get Strategy Attempts
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-GetStrategyAttempts">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table" style="--width: 74.5562%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 12.4882%">
+       <col style="width: 87.539%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/callStrategyAttempt/save</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorizaitoion</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>POST</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Body</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>404: Not found</p>
+         <p>406: Not Acceptable</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>[
+  {
+&nbsp; &nbsp; "id": 1,
+	"csId": 2,
+&nbsp; &nbsp; "name": "Default",
+&nbsp; &nbsp; "phone": "1",
+&nbsp; &nbsp; "channel": 0,
+&nbsp; &nbsp; "attemptNumber": 1,
+&nbsp; &nbsp; "retryMap": [
+&nbsp; &nbsp; &nbsp; &nbsp;{
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "attempt_number": 2,
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "delay": 10,
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "call_result": 2
+&nbsp; &nbsp; &nbsp; },
+      ...
+&nbsp; &nbsp; &nbsp;]
+   },
+   ...
+]
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h3 id="id-(13.3)APIReference-CreateStrategyAttempt" style=""><span id="APIReference-CreateStrategyAttempt"></span>Create Strategy Attempt
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-CreateStrategyAttempt">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table" style="--width: 74.5562%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 12.4882%">
+       <col style="width: 87.539%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/callStrategyAttempt/save</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorizaitoion</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>POST</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Body</p>
+        </th>
+        <td>
+         <ul>
+          <li>
+           <p>csId: This is the strategy ID of which this attempt is a part.</p>
+          </li>
+          <li>
+           <p>name = this is the name of the attempt</p>
+          </li>
+          <li>
+           <p>phone: This defines on which phone 01-phone 05 this attempt should be made. The expected values are: i) 1= Phone 01, ii) 2 =&nbsp;Phone 02, iii) 3 = Phone 03, iv) 4 = Phone 04, v) 5 = Phone 05&nbsp;</p>
+          </li>
+          <li>
+           <p>channel: This is the channel through which the attempt has to be made. The expected values are: i) 0 = Voice, ii) 1 = SMS</p>
+          </li>
+          <li>
+           <p>attempt number: This is the order of the attempt among the other attempts in the Strategy.</p>
+          </li>
+          <li>
+           <p>retry map: In case of a voice call attempt, the retry map is used to define what to do if the result of a voice call attempt is one of the following:&nbsp;</p>
+           <div data-component="table" data-align="unset" data-number-column="false">
+            <table>
+             <tbody>
+              <tr>
+               <th>
+                <p>Call Result&nbsp;</p>
+               </th>
+               <th>
+                <p>Description</p>
+               </th>
+              </tr>
+              <tr>
+               <td>
+                <p>1</p>
+               </td>
+               <td>
+                <p>Busy</p>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                <p>2</p>
+               </td>
+               <td>
+                <p>No Answer</p>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                <p>3</p>
+               </td>
+               <td>
+                <p>Customer Abandoned</p>
+               </td>
+              </tr>
+              <tr>
+               <td colspan="1">
+                <p>4</p>
+               </td>
+               <td colspan="1">
+                <p>Dialer Abandoned</p>
+               </td>
+              </tr>
+              <tr>
+               <td colspan="1">
+                <p>5</p>
+               </td>
+               <td colspan="1">
+                <p>Others-Not Connected: This includes all call results that were not connected due to any reason other than the above.</p>
+               </td>
+              </tr>
+             </tbody>
+            </table>
+           </div>
+           <p>
+            <br>
+           </p>
+          </li>
+         </ul>
+         <p>If the call result is one of the above, it allows to define which attempt should be made and after how much time.</p>
+         <p>Example:
+          <br>
+          [
+          <br>
+          &nbsp;{
+          <br>
+          &nbsp; &nbsp;"call_result":"1",
+          <br>
+          &nbsp; &nbsp;"attempt_number":"2",
+          <br>
+          &nbsp; &nbsp;"delay":"30"
+          <br>
+          &nbsp;},
+          <br>
+          ]</p>
+         <p>
+          <br>
+         </p>
+         <p>This means if call_result = BUSY then go for attempt 2 and execute it after 30 minutes.</p>
+         <p>In the case of an SMS attempt, it allows defining what to do if there's no reply from the customer; i.e. whether the system should make another attempt or close the contact.</p>
+         <p>Example:
+          <br>
+          [
+          <br>
+          &nbsp;{
+          <br>
+          &nbsp; &nbsp;"sms_response_timeout":"30",
+          <br>
+          &nbsp; &nbsp;"attempt_number":"2",
+          <br>
+          &nbsp; &nbsp;"expiry":"30"
+          <br>
+          &nbsp;}
+          <br>
+          ]
+          <br>
+          If the customer does not respond within 30 minutes, go for attempt 2.</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+&nbsp; &nbsp; "csId": 2,
+&nbsp; &nbsp; "name": "Default",
+&nbsp; &nbsp; "phone": "1",
+&nbsp; &nbsp; "channel": 0,
+&nbsp; &nbsp; "attemptNumber": 1,
+&nbsp; &nbsp; "retryMap": [
+&nbsp; &nbsp; &nbsp; &nbsp;{
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "attempt_number": 2,
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "delay": 10,
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "call_result": 2
+&nbsp; &nbsp; &nbsp; }
+&nbsp; &nbsp; &nbsp;]
+}
+
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>404: Not found</p>
+         <p>406: Not Acceptable</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+&nbsp; &nbsp; "id": 1,
+	"csId": 2,
+&nbsp; &nbsp; "name": "Default",
+&nbsp; &nbsp; "phone": "1",
+&nbsp; &nbsp; "channel": 0,
+&nbsp; &nbsp; "attemptNumber": 1,
+&nbsp; &nbsp; "retryMap": [
+&nbsp; &nbsp; &nbsp; &nbsp;{
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "attempt_number": 2,
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "delay": 10,
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "call_result": 2
+&nbsp; &nbsp; &nbsp; }
+&nbsp; &nbsp; &nbsp;]
+}
+
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h3 id="id-(13.3)APIReference-UpdateStrategyAttempt" style=""><span id="APIReference-UpdateStrategyAttempt"></span>Update Strategy Attempt
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-UpdateStrategyAttempt">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table" style="--width: 74.5562%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 12.4882%">
+       <col style="width: 87.539%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/callStrategyAttempt/update</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorizaitoion</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>POST</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Body</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+&nbsp; &nbsp; "csId": 2,
+&nbsp; &nbsp; "name": "Default",
+&nbsp; &nbsp; "phone": "1",
+&nbsp; &nbsp; "channel": 0,
+    "csAttempt": 1
+&nbsp; &nbsp; "attemptNumber": 1,
+&nbsp; &nbsp; "retryMap": [
+&nbsp; &nbsp; &nbsp; &nbsp;{
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "attempt_number": 2,
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "delay": 10,
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "call_result": 2
+&nbsp; &nbsp; &nbsp; }
+&nbsp; &nbsp; &nbsp;]
+}
+
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>404: Not found</p>
+         <p>406: Not Acceptable</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+&nbsp; &nbsp; "id": 1,
+	"csId": 2,
+&nbsp; &nbsp; "name": "Default",
+&nbsp; &nbsp; "phone": "1",
+&nbsp; &nbsp; "channel": 0,
+    "csAttempt": 1
+&nbsp; &nbsp; "attemptNumber": 1,
+&nbsp; &nbsp; "retryMap": [
+&nbsp; &nbsp; &nbsp; &nbsp;{
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "attempt_number": 2,
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "delay": 10,
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "call_result": 2
+&nbsp; &nbsp; &nbsp; }
+&nbsp; &nbsp; &nbsp;]
+}
+
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<h3 id="id-(13.3)APIReference-DeleteStrategyAttempt" style=""><span id="APIReference-DeleteStrategyAttempt"></span>Delete Strategy Attempt
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-DeleteStrategyAttempt">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table" style="--width: 74.5562%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 12.4882%">
+       <col style="width: 87.539%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/callStrategyAttempt/delete?id=1</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorizaitoion</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>POST</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Body</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>404: Not found</p>
+         <p>406: Not Acceptable</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h3 id="id-(13.3)APIReference-UpdateAttemptOrder" style=""><span id="APIReference-UpdateAttemptOrder"></span>Update Attempt Order
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-UpdateAttemptOrder">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table" style="--width: 74.5562%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 12.4882%">
+       <col style="width: 87.539%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/callStrategyAttempt/updateOrder</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorizaitoion</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>POST</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Body</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+   "idIndexJson": {
+          "data": {
+					[{
+					"atId": 12, (ID of Attempt)
+					"index": 1	(Position of attempt in list)			
+					}]
+		}
+	}
+}
+
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>404: Not found</p>
+         <p>406: Not Acceptable</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <p>200 - Success</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<h2 id="id-(13.3)APIReference-PreferenceSettings" style=""><span id="APIReference-PreferenceSettings"></span>Preference Settings
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-PreferenceSettings">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<h3 id="id-(13.3)APIReference-GetPreferenceSettings" style=""><span id="APIReference-GetPreferenceSettings"></span>Get Preference Settings
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-GetPreferenceSettings">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table" style="--width: 74.5562%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 12.4882%">
+       <col style="width: 87.539%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/preferenceSettings</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorizaitoion</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>POST</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Body</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>404: Not found</p>
+         <p>406: Not Acceptable</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+&nbsp; &nbsp; "id": 1,
+	"campaignBatchSize": 22, 
+    (This field describes the size of contacts. how many contacts will be used/added    during each cycle of feed. If no size is provided by default it will assign value 10)
+
+&nbsp; &nbsp; "ivrBatchSize": 33, (Same as above)
+
+	"filePath": "path/to/file",
+	(This field describes the path from where file will be fetched to get contacts 	   and it is used in sync process. In sync process contacts uploaded to cisco to start campaign.)
+
+&nbsp; &nbsp; "fileArchivePath": "path/to/file",
+	(This field describes the path where to extract file and place contacts)
+
+    "username": "admin", (For DB connectivity)
+&nbsp; &nbsp; "password": "admin", (For DB connectivity)
+&nbsp; &nbsp; "Domain" : "DbDomain"
+}
+
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<h3 id="id-(13.3)APIReference-SavePreferenceSettings" style=""><span id="APIReference-SavePreferenceSettings"></span>Save Preference Settings
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-SavePreferenceSettings">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table" style="--width: 74.5562%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 12.4882%">
+       <col style="width: 87.539%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/preferenceSettings/save</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorizaitoion</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>POST</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Body</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+&nbsp; &nbsp; "campaignBatchSize": 22,
+&nbsp; &nbsp; "ivrBatchSize": 33,
+&nbsp; &nbsp; "filePath": "path/to/file",
+&nbsp; &nbsp; "fileArchivePath": "path/to/archive/folder",
+    "username": "admin", (For DB connectivity)
+&nbsp; &nbsp; "password": "admin", (For DB connectivity)
+&nbsp; &nbsp; "Domain" : "DbDomain"
+}
+
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>404: Not found</p>
+         <p>406: Not Acceptable</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+&nbsp; &nbsp; "id": 1,
+	"campaignBatchSize": 22, 
+    (This field describes the size of contacts. how many contacts will be used/added    during each cycle of feed. If no size is provided by default it will assign value 10)
+
+&nbsp; &nbsp; "ivrBatchSize": 33, (Same as above)
+
+	"filePath": "path/to/file",
+	(This field describes the path from where file will be fetched to get contacts 	   and it is used in sync process. In sync process contacts uploaded to cisco to start campaign.)
+
+&nbsp; &nbsp; "fileArchivePath": "path/to/file",
+	(This field describes the path where to extract file and place contacts)
+
+    "username": "admin", (For DB connectivity)
+&nbsp; &nbsp; "password": "admin", (For DB connectivity)
+&nbsp; &nbsp; "Domain" : "DbDomain"
+}
+
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<h3 id="id-(13.3)APIReference-UpdatePreferenceSettings" style=""><span id="APIReference-UpdatePreferenceSettings"></span>Update Preference Settings
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-UpdatePreferenceSettings">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table" style="--width: 74.5562%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 12.4882%">
+       <col style="width: 87.539%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/preferenceSettings/update</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorizaitoion</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>POST</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Body</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+    "id": 1
+&nbsp; &nbsp; "campaignBatchSize": 22,
+&nbsp; &nbsp; "ivrBatchSize": 33,
+&nbsp; &nbsp; "filePath": "path/to/file",
+&nbsp; &nbsp; "fileArchivePath": "path/to/archive/folder",
+    "username": "admin", (For DB connectivity)
+&nbsp; &nbsp; "password": "admin", (For DB connectivity)
+&nbsp; &nbsp; "Domain" : "DbDomain"
+}
+
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>404: Not found</p>
+         <p>406: Not Acceptable</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+         <code-snippet class="theme-code-snippet">
+          <scroll-shadow>
+           <div data-component="code">
+            <pre><code>{
+&nbsp; &nbsp; "id": 1,
+	"campaignBatchSize": 22, 
+    (This field describes the size of contacts. how many contacts will be used/added    during each cycle of feed. If no size is provided by default it will assign value 10)
+
+&nbsp; &nbsp; "ivrBatchSize": 33, (Same as above)
+
+	"filePath": "path/to/file",
+	(This field describes the path from where file will be fetched to get contacts 	   and it is used in sync process. In sync process contacts uploaded to cisco to start campaign.)
+
+&nbsp; &nbsp; "fileArchivePath": "path/to/file",
+	(This field describes the path where to extract file and place contacts)
+
+    "username": "admin", (For DB connectivity)
+&nbsp; &nbsp; "password": "admin", (For DB connectivity)
+&nbsp; &nbsp; "Domain" : "DbDomain"
+}
+
+</code></pre>
+           </div>
+          </scroll-shadow>
+          <copy-clipboard class="theme-code-snippet-copy">
+           <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+            <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+           </svg>
+          </copy-clipboard>
+         </code-snippet>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div> 
+<h3 id="id-(13.3)APIReference-DeletePreferenceSettings" style=""><span id="APIReference-DeletePreferenceSettings"></span>Delete Preference Settings
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/campaigns/13.3/api-reference#id-(13.3)APIReference-DeletePreferenceSettings">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3> 
+<div class="theme-table" style="--width: 74.5562%;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <colgroup>
+       <col style="width: 12.4882%">
+       <col style="width: 87.539%">
+      </colgroup>
+      <tbody>
+       <tr>
+        <th>
+         <p>Protocol</p>
+        </th>
+        <td>
+         <p>HTTP or HTTPS</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>URL</p>
+        </th>
+        <td>
+         <p>https://&lt;UMM-FQDN&gt;/umm/ecm/preferenceSettings/delete?id=1</p>
+        </td>
+       </tr>
+       <tr>
+        <th colspan="1">
+         <p>Authorizaitoion</p>
+        </th>
+        <td colspan="1">
+         <p>Bearer token-from-login-API</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Content-Type</p>
+        </th>
+        <td>
+         <p>Application/JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Method</p>
+        </th>
+        <td>
+         <p>POST</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Input/Output Format</p>
+        </th>
+        <td>
+         <p>JSON</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Request Body</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Request</p>
+        </th>
+        <td>
+         <p>
+          <br>
+         </p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>HTTP Response</p>
+        </th>
+        <td>
+         <p>200: Success</p>
+         <p>404: Not found</p>
+         <p>406: Not Acceptable</p>
+         <p>500: Internal Server Error</p>
+         <p>503: Service Unavailable</p>
+        </td>
+       </tr>
+       <tr>
+        <th>
+         <p>Example Response</p>
+        </th>
+        <td>
+         <p>200 : Success</p>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="3053adefc7677201-27" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="3053adefc7677201-27">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/campaigns/13.3/troubleshooting-articles">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Troubleshooting articles</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/campaigns/13.3/universal-chat-plugin-for-mautic">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Universal Chat Plugin for Mautic</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>

@@ -1,0 +1,5173 @@
+
+																																																																																														
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<!DOCTYPE html>
+<html
+	lang="en"
+	data-page-template="article"
+	
+ data-page-id="ci_fd1d9956a02c331f8eba5b55c3b4a35af5d918a2a326e0939c97b1fbb07aab33" data-confluence-content-id="1067122750"
+		data-color-scheme="light"
+>
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="color-scheme" content="light">
+
+						<link id="pageTreeSource" rel="preload" href="/cx/4.9/__pagetree.json" as="fetch" type="application/json" crossorigin="anonymous">
+
+		<meta name="site-path" content="/">
+
+					<link rel="x-site-path" href="/">
+	<link rel="x-root-path" href="/">
+
+	<meta name="site-default-language" content="en">
+		<meta name="site-languages" content="en">
+		<meta name="confluence-content-type" content="page">
+		<meta name="confluence-base-url" content="https://expertflow-docs.atlassian.net/wiki">
+		<meta name="confluence-space-key" content="CX">
+
+
+
+
+	<link rel="icon" href="/__site/93226400-d576-4a75-8030-f1289a1ec63e/favicon.ico" type="image/svg+xml">
+
+
+
+
+
+
+
+
+
+
+
+		<title>APISIX Routes | Expertflow CX</title>
+		<meta property="og:title" content="APISIX Routes | Expertflow CX">
+		<meta property="twitter:title" content="APISIX Routes | Expertflow CX">
+
+		<link rel="canonical" href="https://docs.expertflow.com/cx/4.9/apisix-routes">
+		<meta property="og:url" content="https://docs.expertflow.com/cx/4.9/apisix-routes">
+
+		<meta name="description" content="To add the APISIX Route Edit the custom-values.yaml for each chart mentioned below and add the APISIX configuration to the global section of the custom-values.…">
+		<meta property="og:description" content="To add the APISIX Route Edit the custom-values.yaml for each chart mentioned below and add the APISIX configuration to the global section of the custom-values.…">
+		<meta property="twitter:description" content="To add the APISIX Route Edit the custom-values.yaml for each chart mentioned below and add the APISIX configuration to the global section of the custom-values.…">
+
+		<meta property="og:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+		<meta property="twitter:image" content="https://docs.expertflow.com/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg">
+
+	<meta property="og:type" content="website">
+	<meta property="twitter:card" content="summary_large_image">
+
+		<meta name="page-last-modified" content="2025-05-13T11:41:48.719Z">
+
+		<script>
+		(function () {
+			const defaultLanguageMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-default-language"]')?.content);
+			const availableLanguagesMeta = /** @type {string|undefined} */(document.querySelector('meta[name="site-languages"]')?.content);
+			const fallbackLanguage = defaultLanguageMeta ?? 'en';
+			const supportedLanguagesFromMeta = availableLanguagesMeta?.split(',') ?? [];
+			const supportedLanguages = [...new Set([fallbackLanguage, ...supportedLanguagesFromMeta])].filter(Boolean);
+			const detectedLanguage = new URLSearchParams(self.location.search).get('l') || document.documentElement.lang;
+			const resolvedLanguage = supportedLanguages.includes(detectedLanguage) ? detectedLanguage : fallbackLanguage;
+			document.documentElement.lang = resolvedLanguage;
+			const sheet = new CSSStyleSheet();
+			document.adoptedStyleSheets.push(sheet);
+			// Hide any element with a `data-lang` attribute that does NOT match the detected language
+			sheet.replaceSync('[data-lang]:not([data-lang="' + resolvedLanguage + '"]) { display: none; }');
+		})();
+	</script>
+
+		<script>
+		(function() {
+			/** @typedef {'light'|'dark'} ColorScheme */
+			/** @type {ColorScheme[]} */
+			const availableColorSchemes = document.documentElement.querySelector('meta[name="color-scheme"]').content.split(' ').filter(Boolean);
+			/** @type {ColorScheme|'system'} */
+			const userPreference = localStorage?.getItem('color-scheme-preference') ?? 'system';
+			// Clean-up user preference in case there's nothing to choose from
+			// Fall back to the HTML document's default color theme
+			if (availableColorSchemes.length <= 1 || ![...availableColorSchemes, 'system'].includes(userPreference)) {
+				localStorage?.removeItem('color-scheme-preference');
+				return;
+			}
+			// Override default HTML document with client-side user preference
+			if (userPreference === 'system') {
+				updateThemeAttribute(self.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+			} else {
+				updateThemeAttribute(userPreference)
+			}
+			/** @param {ColorScheme} colorScheme */
+			function updateThemeAttribute(colorScheme) {
+				document.documentElement.setAttribute('data-color-scheme', colorScheme);
+			}
+		})();
+	</script>
+
+		<script>
+		
+		function sortContentSources(a, b) {
+			let result = a.precedence - b.precedence;
+
+			if (result === 0) {
+				result = a.value.localeCompare(b.value);
+			}
+
+			return result;
+		}
+
+		
+		function applyContentSourceOrderToElements({ parent, children }) {
+			const contentSourceElements = [...children];
+
+			contentSourceElements
+				.sort((a, b) => (
+					sortContentSources(
+						{ value: a.dataset.orderValue, precedence: a.dataset.orderPrecedence },
+						{ value: b.dataset.orderValue, precedence: b.dataset.orderPrecedence }
+					)
+				))
+				.forEach((element) => {
+					delete element.dataset.orderValue;
+					delete element.dataset.orderPrecedence;
+				});
+
+			parent.replaceChildren(...contentSourceElements);
+		}
+	</script>
+
+<script>
+	(() => {
+		if (isInAppHelpEnabled()) {
+			document.documentElement.dataset.inAppHelp = 'true';
+
+			if (isTitleHidden()) {
+				document.documentElement.dataset.hideTitle = 'true';
+			}
+		}
+
+		function isInAppHelpEnabled() {
+			return new URLSearchParams(location.search).get('inAppHelp') === 'true';
+		}
+
+		function isTitleHidden() {
+			return new URLSearchParams(location.search).get('title') === 'false';
+		}
+	})();
+</script>
+
+<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.css"/>
+<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/in-app-help.js"></script>
+
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/styles.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/fonts.css">
+	<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-styles-bundle.css">
+
+
+	<style>
+		@layer overrides {
+			:root {
+				--theme-headline-font: "Roboto";
+				--theme-text-font: "Roboto";
+				--theme-headline-scale: calc(100 / 100);
+				--theme-text-scale: calc(100 / 100);
+			}
+		}
+	</style>
+
+	<style>
+		@layer overrides {
+			:root, :host {
+					--theme-header-logo-size: 40px;
+					--theme-footer-logo-size: 40px;
+			}
+
+			:root[data-color-scheme='light'],
+			:host([data-color-scheme='light']) {
+					--theme-header-text-color: #1A50A3;
+					--theme-header-background-color: #ffffff;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #1A50A3;
+			}
+
+			:root[data-color-scheme='dark'],
+			:host([data-color-scheme='dark']) {
+					--theme-header-text-color: #FFFFFF;
+					--theme-header-background-color: #0a0b0c;
+					--theme-footer-text-color: #FFFFFF;
+					--theme-footer-background-color: #0a0b0c;
+			}
+		}
+	</style>
+
+	 
+
+
+
+
+
+<script data-site-data="content-sources" type="application/json">
+{
+	"collection": {
+		"members": [
+
+
+	{
+	"name": "Expertflow CX",
+	"id": "0355837e-2149-487a-9bbd-f670f5d84a74",
+	"key": "CX",
+	"path": "/cx/5.4.0",
+		"prefix": "/cx/5.4.0",
+		"current": true,
+	"versions": {
+		"available": [
+				{
+					"name": "5.4.0",
+					"current": false
+
+				},
+				{
+					"name": "5.3.0",
+					"current": false
+
+				},
+				{
+					"name": "5.2.0",
+					"current": false
+
+				},
+				{
+					"name": "5.1.0",
+					"current": false
+
+				},
+				{
+					"name": "5.0",
+					"current": false
+
+				},
+				{
+					"name": "4.10",
+					"current": false
+
+				},
+				{
+					"name": "4.9",
+					"current": true
+
+				},
+				{
+					"name": "4.8",
+					"current": false
+
+				},
+				{
+					"name": "4.7",
+					"current": false
+
+				},
+				{
+					"name": "4.6",
+					"current": false
+
+				},
+				{
+					"name": "4.5.3",
+					"current": false
+
+				},
+				{
+					"name": "4.5.2",
+					"current": false
+
+				},
+				{
+					"name": "4.5.1",
+					"current": false
+
+				},
+				{
+					"name": "4.5",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "4.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CX Knowledgebase",
+	"id": "77b8a69b-e6d1-46a5-af73-3bb20c8d1f34",
+	"key": "SBT",
+	"path": "/cx-knowledgebase/latest",
+		"prefix": "/cx-knowledgebase/latest",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "Working version",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Voice Recording",
+	"id": "bacd202f-1e95-4b99-b61e-1d28aa8dd5da",
+	"key": "VRS",
+	"path": "/vr/14.8.0",
+		"prefix": "/vr/14.8.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "14.8.0",
+					"current": false
+
+				},
+				{
+					"name": "14.7",
+					"current": false
+
+				},
+				{
+					"name": "14.6",
+					"current": false
+
+				},
+				{
+					"name": "14.5",
+					"current": false
+
+				},
+				{
+					"name": "14.4",
+					"current": false
+
+				},
+				{
+					"name": "14.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Workforce Management Solution",
+	"id": "0690e59e-f8b4-4a1e-9660-c67f6505d727",
+	"key": "WM",
+	"path": "/wfms/1.0",
+		"prefix": "/wfms/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "ServiceNow EFCX Connector",
+	"id": "077c011a-ceb6-4256-8780-1b1e6bd84a6d",
+	"key": "SCFE",
+	"path": "/sn-efcx-c/1.0",
+		"prefix": "/sn-efcx-c/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco ServiceNow Connector",
+	"id": "bcdd07fd-c8d1-428d-a573-af5a619e4504",
+	"key": "CSC",
+	"path": "/c-sn-c/3.1",
+		"prefix": "/c-sn-c/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Cisco SAP CIC",
+	"id": "9b61bd6d-0dfc-45dd-bd81-eefc620d49f1",
+	"key": "SAP",
+	"path": "/sap-cic/2.2.2",
+		"prefix": "/sap-cic/2.2.2",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.2.2",
+					"current": false
+
+				},
+				{
+					"name": "2.2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics CTI Connector for EFCX",
+	"id": "65e867f7-0c81-48ea-96a4-bbcac7598706",
+	"key": "MDWCCFE",
+	"path": "/ms-d-cti-c-efcx/1.0",
+		"prefix": "/ms-d-cti-c-efcx/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Connector for Genesys",
+	"id": "6a6d768f-f031-479b-925d-06c41b33935b",
+	"key": "MDXGC",
+	"path": "/msd-genesys/1.0.0",
+		"prefix": "/msd-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics USD CTI Connector",
+	"id": "312867cb-4adc-4691-b38d-a4ef0633078d",
+	"key": "MDUCC",
+	"path": "/msd-usd-cc/4.3",
+		"prefix": "/msd-usd-cc/4.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.3",
+					"current": false
+
+				},
+				{
+					"name": "3.9.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Microsoft Dynamics Web-based CTI Connector for Cisco",
+	"id": "a4532ebc-3142-42b4-ab2c-953a8a6f4961",
+	"key": "MDWEB",
+	"path": "/dynamics-web/3.1",
+		"prefix": "/dynamics-web/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "MS Dynamics Connector for Cisco CUCM",
+	"id": "560de059-3a26-41de-9615-2bae6aa26571",
+	"key": "MCCC",
+	"path": "/msd-cucm/1.0.0",
+		"prefix": "/msd-cucm/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot EFCX Connector",
+	"id": "7bfe4ac1-1f9d-4826-a85b-fbd0dd1fe4f2",
+	"key": "HEC",
+	"path": "/hs-efcx-c/1.0.0",
+		"prefix": "/hs-efcx-c/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "HubSpot Connector for Webex",
+	"id": "f4844108-3d78-4568-8f64-eade49372e69",
+	"key": "HCFW",
+	"path": "/hubspot-webex/1.0.0",
+		"prefix": "/hubspot-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Generic Connector",
+	"id": "28e37175-eeb3-43fb-9ac0-9a57bc1a68c0",
+	"key": "GC",
+	"path": "/gc/4.4.12",
+		"prefix": "/gc/4.4.12",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.4.12",
+					"current": false
+
+				},
+				{
+					"name": "4.4",
+					"current": false
+
+				},
+				{
+					"name": "3.5.1.05",
+					"current": false
+
+				},
+				{
+					"name": "3.4.2.02",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.03",
+					"current": false
+
+				},
+				{
+					"name": "3.4.1.02-Trial-AgentReady",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "JavaScript Cisco CTI Connector -",
+	"id": "5b711fe7-feee-4abf-b10a-cb0a23354051",
+	"key": "JCCC",
+	"path": "/javascript-cti/3.1",
+		"prefix": "/javascript-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				},
+				{
+					"name": "3.0.6",
+					"current": false
+
+				},
+				{
+					"name": "3.0.5",
+					"current": false
+
+				},
+				{
+					"name": "3.0.4",
+					"current": false
+
+				},
+				{
+					"name": "3.0.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for EFCX",
+	"id": "fc82c8b9-85c2-4e3e-a2c5-7f3238200ca9",
+	"key": "OCFE",
+	"path": "/odoo-efcx/1.0.0",
+		"prefix": "/odoo-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Odoo Connector for Webex Contact Center",
+	"id": "0ffe0ed8-99d1-434a-8967-bba18b49608b",
+	"key": "OCCFWCC",
+	"path": "/odoo-webex/1.0.0",
+		"prefix": "/odoo-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for EFCX",
+	"id": "3715fbd4-7404-4d37-9413-ab1a2e7a7071",
+	"key": "SCFE2",
+	"path": "/sap-efcx/1.0.0",
+		"prefix": "/sap-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP CRM Connector for Genesys Contact Center",
+	"id": "1bb18917-418a-46b2-bc39-8a31ede78fa9",
+	"key": "SCCFGCC",
+	"path": "/sap-genesys-cc/1.0.0",
+		"prefix": "/sap-genesys-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Connector for Webex Contact Center",
+	"id": "d5527e57-c439-424b-8e5a-f1ef20ab0b01",
+	"key": "SCFWCC",
+	"path": "/sap-webex-cc/1.0.0",
+		"prefix": "/sap-webex-cc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Hybris Cloud",
+	"id": "c0510604-987c-4927-b094-ecba48379a56",
+	"key": "SHC",
+	"path": "/sh/1.0.0",
+		"prefix": "/sh/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SAP Sales and Service Cloud",
+	"id": "8db4d493-10fe-46e1-b235-345e1006d59a",
+	"key": "SSASCCV2",
+	"path": "/ssasc/1.0.0",
+		"prefix": "/ssasc/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce EFCX Connector",
+	"id": "0e7becd0-c614-4dc8-8b8d-348e7d20bd2b",
+	"key": "SCFE1",
+	"path": "/sfcxc/1.2.0",
+		"prefix": "/sfcxc/1.2.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.2.0",
+					"current": false
+
+				},
+				{
+					"name": "1.1",
+					"current": false
+
+				},
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Embedded CTI Connector",
+	"id": "3184f0af-e129-4f6e-a73a-f835cc5795d9",
+	"key": "SC",
+	"path": "/salesforce-cti/3.1",
+		"prefix": "/salesforce-cti/3.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Salesforce Connector for Cisco CUCM",
+	"id": "28c20511-fed1-410f-b2ae-0fe1225e6711",
+	"key": "SCUCM",
+	"path": "/sf-cucm/1.1.0",
+		"prefix": "/sf-cucm/1.1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.1.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Siebel CRM CTI Connector for Cisco Contact Center",
+	"id": "b2600bb9-7891-492a-9243-a5d71bd74340",
+	"key": "SCC",
+	"path": "/siebel/3.4.2.5",
+		"prefix": "/siebel/3.4.2.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.4.2.5",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Cisco",
+	"id": "3ceca266-cd10-4b9a-afae-1cadc5d5cb36",
+	"key": "SCCFC",
+	"path": "/suite-cisco/1.0.0",
+		"prefix": "/suite-cisco/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "SuiteCRM Connector for EFCX",
+	"id": "0ebd0950-89bf-4de3-9375-8ebac785e856",
+	"key": "SCCFE",
+	"path": "/suitecrm-efcx/1.0.0",
+		"prefix": "/suitecrm-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Suite CRM Connector for Webex",
+	"id": "4ccb1a05-b5d7-4d7d-9b13-2b8822b1aa9c",
+	"key": "SCCFW",
+	"path": "/suite-webex/1.0.0",
+		"prefix": "/suite-webex/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Service Cloud CX CTI Connector",
+	"id": "f0161def-f033-40b8-9d33-61fa95071135",
+	"key": "OCX",
+	"path": "/service-cloud/1.0.",
+		"prefix": "/service-cloud/1.0.",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zendesk CRM Connector for EFCX",
+	"id": "4edb9bbc-df0e-4953-a9cd-d4c8b9b00f17",
+	"key": "ZCCFE",
+	"path": "/zendesk-efcx/1.0.0",
+		"prefix": "/zendesk-efcx/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for EFCX",
+	"id": "306ece1d-7b73-471f-b756-5ec6c1b78a6c",
+	"key": "ZCFE",
+	"path": "/zoho-c-efcx/2.0.0",
+		"prefix": "/zoho-c-efcx/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector For Genesys ",
+	"id": "5e79ee9d-ad0b-4966-9db8-378cbab1a4ab",
+	"key": "ZCCFGCC",
+	"path": "/zoho-genesys/1.0.0",
+		"prefix": "/zoho-genesys/1.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Zoho Connector for Webex",
+	"id": "a69afa29-6b9c-4a2b-8543-b5ca1af470d2",
+	"key": "ZCFW",
+	"path": "/z-c-w/2.0.0",
+		"prefix": "/z-c-w/2.0.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.0.0",
+					"current": false
+
+				},
+				{
+					"name": "1.0.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Parking Finesse Gadget",
+	"id": "9a5ae189-31ea-4c02-89df-7d1e3b78106d",
+	"key": "CPFG",
+	"path": "/cpfg/2.1",
+		"prefix": "/cpfg/2.1",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.1",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Transfer Finesse Gadget",
+	"id": "43b4ae6e-e18c-4b91-a864-3d94d17d4f3b",
+	"key": "CTFG",
+	"path": "/ctrfg/1.0",
+		"prefix": "/ctrfg/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Call Wrap-up Finesse Gadget",
+	"id": "aedba096-e622-479f-8879-b07bd2287399",
+	"key": "CWFG",
+	"path": "/cwrfg/4.0",
+		"prefix": "/cwrfg/4.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "4.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Android/ iOS Finesse app for mobile agents",
+	"id": "0d24c67b-b27e-4e08-ae1e-4e6a41e3c0c0",
+	"key": "JCA",
+	"path": "/android-ios/3.0",
+		"prefix": "/android-ios/3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Whisper Finesse Gadget",
+	"id": "c7c83565-d886-4e77-8432-89c5817ddd39",
+	"key": "SWFG",
+	"path": "/super-whisper-gadget/2.3.0",
+		"prefix": "/super-whisper-gadget/2.3.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "2.3.0",
+					"current": false
+
+				},
+				{
+					"name": "2.1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Internal Chat Finesse Gadget",
+	"id": "e598af1b-25eb-4ecf-8d8c-76ae5cac9e59",
+	"key": "ICFG",
+	"path": "/inter-chat/1.0",
+		"prefix": "/inter-chat/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "CUCM Connector",
+	"id": "4c0af9e0-0fbc-46b9-8f25-b5c3f8433c31",
+	"key": "CC",
+	"path": "/cucm/1.0",
+		"prefix": "/cucm/1.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "1.0",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Supervisor Tools",
+	"id": "55cf0494-fa87-4eac-8293-4fa548ded097",
+	"key": "STS",
+	"path": "/st/13.5",
+		"prefix": "/st/13.5",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.5",
+					"current": false
+
+				},
+				{
+					"name": "13.4",
+					"current": false
+
+				},
+				{
+					"name": "13.3",
+					"current": false
+
+				},
+				{
+					"name": "13.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Campaigns",
+	"id": "ac338533-a2ac-4553-bd4c-4323fcb16786",
+	"key": "ECM",
+	"path": "/campaigns/13.3",
+		"prefix": "/campaigns/13.3",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.3",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Post Collaboration Surveys",
+	"id": "9b785211-2f47-42aa-baff-bddce630ca06",
+	"key": "PCS",
+	"path": "/pcs/13.0",
+		"prefix": "/pcs/13.0",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.0",
+					"current": false
+
+				},
+				{
+					"name": "12.3.2",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Hybrid Chat",
+	"id": "1859ea38-201f-49a8-ad75-867ea584e2b6",
+	"key": "CHAT",
+	"path": "/chat/3.15",
+		"prefix": "/chat/3.15",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "3.15",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+,
+
+
+	{
+	"name": "Dashboards and Wallboards",
+	"id": "6d4aba52-a860-430c-bca6-65b893a4c5c9",
+	"key": "DAW",
+	"path": "/dwb/13.9",
+		"prefix": "/dwb/13.9",
+		"current": false,
+	"versions": {
+		"available": [
+				{
+					"name": "13.9",
+					"current": false
+
+				},
+				{
+					"name": "13.7",
+					"current": false
+
+				}
+		]
+	},
+	"variants": {
+		"available": [
+		]
+	},
+	"languages": {
+		"available": [
+		]
+	}
+}
+
+		]
+	}
+}
+</script>
+
+
+<script data-theme-placeholder="site" type="application/json">
+	{
+		"id": "8b6a5bb7-9074-4106-a415-90c2897d20ba",
+		"path": "/",
+		"url": "/",
+		"domain": "docs.expertflow.com",
+		"aiSearchEnabled": false,
+		"visibleToSearchEngines": true
+	}
+</script>
+ 
+<script data-config="cookieconsent" type="application/json">
+{
+	"enabled": false,
+	"mode": "opt-in",
+	"heading": "",
+	"description": "",
+	"links": [
+	]
+}
+</script>
+
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/main.js"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/page-tree.js" fetchpriority="high"></script>
+	<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/search-bundle.js"></script>
+
+							<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/article.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/ai-actions.js"></script>
+
+		<link rel="stylesheet" href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.css">
+		<script type="module" src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/code-snippet.js"></script>
+
+
+
+
+
+<template data-custom-overrides data-type="code-asset">
+	<link rel="stylesheet" href="/__site/e288d595-4ece-4eb3-9941-bc5203d82ae4/code_custom_css_override_asset.css">
+</template>
+
+<template data-custom-overrides data-type="code-asset">
+		<script src="/__site/f6e1d972-b1fa-4292-99fe-4b0c09101bd9/code_custom_js_override_asset.js"></script>
+</template>
+
+<script>
+	(() => {
+		if (new URLSearchParams(location.search).has('disable-custom-overrides')) {
+			return;
+		}
+
+		document.querySelectorAll('[data-custom-overrides]').forEach(template => {
+			const type = template.getAttribute('data-type');
+
+			if (type === 'code-asset') {
+				const assetElement = template.content.cloneNode(true).firstElementChild;
+				const appendAsset = () => document.head.appendChild(assetElement);
+
+				if (assetElement.tagName === 'SCRIPT') {
+															if (document.readyState === 'complete') {
+						appendAsset();
+					} else {
+												document.addEventListener('DOMContentLoaded', appendAsset, { once: true });
+					}
+				} else {
+					appendAsset();
+				}
+			}
+		});
+	})();
+</script>
+
+
+			
+		<script data-config="integration:ga" type="application/json">
+			{
+				"enabled": true,
+				"tagId": "G-R0BEGYJR69"
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="analytics"
+			data-service="ga"
+			data-src="https://www.googletagmanager.com/gtag/js?id=G-R0BEGYJR69"
+			async
+		></script>
+
+
+
+
+		<script data-config="integration:gtm" type="application/json">
+			{
+				"enabled": true
+			}
+		</script>
+		<script
+			type="text/plain"
+			data-category="marketing"
+			data-service="gtm"
+			data-src="https://www.googletagmanager.com/gtm.js?id=GTM-59R3VS2"
+			async
+		></script>
+
+
+
+
+
+
+
+
+			</head>
+<body>
+	<a href="#content" class="skip-link">
+		<i18n-message i18nkey="navigation.skip.to.main.label">Skip to main content</i18n-message>
+	</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="e61d1cdb915aa683-2" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="e61d1cdb915aa683-2">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+	<div class="header-content">
+			<div class="header-links">
+				<ul>
+						<li><a href="https://www.expertflow.com/">Expertflow Website</a></li>
+						<li><a href="https://api.expertflow.com/">Public APIs</a></li>
+						<li><a href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces">Login</a></li>
+				</ul>
+			</div>
+
+		<div class="header-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="e61d1cdb915aa683-19">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="e61d1cdb915aa683-19" name="version" onchange="self.location.assign(this.value)" >
+				<option id="e61d1cdb915aa683-3"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="e61d1cdb915aa683-4"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="e61d1cdb915aa683-5"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="e61d1cdb915aa683-6"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="e61d1cdb915aa683-7"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="e61d1cdb915aa683-8"  value="/cx/4.10"  >
+					4.10
+				</option>
+				<option id="e61d1cdb915aa683-9"  value="/cx/4.9/apisix-routes"  selected="">
+					4.9
+				</option>
+				<option id="e61d1cdb915aa683-10"  value="/cx/4.8"  >
+					4.8
+				</option>
+				<option id="e61d1cdb915aa683-11"  value="/cx/4.7"  >
+					4.7
+				</option>
+				<option id="e61d1cdb915aa683-12"  value="/cx/4.6"  >
+					4.6
+				</option>
+				<option id="e61d1cdb915aa683-13"  value="/cx/4.5.3"  >
+					4.5.3
+				</option>
+				<option id="e61d1cdb915aa683-14"  value="/cx/4.5.2"  >
+					4.5.2
+				</option>
+				<option id="e61d1cdb915aa683-15"  value="/cx/4.5.1"  >
+					4.5.1
+				</option>
+				<option id="e61d1cdb915aa683-16"  value="/cx/4.5"  >
+					4.5
+				</option>
+				<option id="e61d1cdb915aa683-17"  value="/cx/4.4"  >
+					4.4
+				</option>
+				<option id="e61d1cdb915aa683-18"  value="/cx/4.3"  >
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('e61d1cdb915aa683-19');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+			<div class="header-search">
+				<search-bar quicksearch></search-bar>
+			</div>
+
+
+				<button type="button" aria-controls="drawer-e61d1cdb915aa683-1" aria-haspopup="dialog" aria-expanded="false" class="header-nav-toggle" onclick="self['drawer-e61d1cdb915aa683-1'].showModal()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+			<i18n-message class="sr-only" i18nkey="navigation.main.label">Main navigation</i18n-message>
+		</button>
+	</div>
+
+	
+
+<dialog id="drawer-e61d1cdb915aa683-1" class="drawer">
+	<header data-component="header" class="header">
+
+	<div class="header-site-branding">
+		<i18n-message id="e61d1cdb915aa683-20" class="sr-only" i18nkey="header.home.label"></i18n-message>
+
+		<a href="/" aria-labelledby="e61d1cdb915aa683-20">
+
+
+
+
+		<img class="header-logo header-logo--dark" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		<img class="header-logo header-logo--light" src="/__site/939ddd3c-c511-4e3c-938e-00e3a0f5fccc/ef-logo-3-12.svg" alt="">
+
+		</a>
+
+	</div>
+
+		<div class="header-content">
+			<button type="button" aria-controls="drawer-e61d1cdb915aa683-1" aria-haspopup="dialog" aria-expanded="true" autofocus class="drawer-toggle" onclick="self['drawer-e61d1cdb915aa683-1'].close()">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-close ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#close"></use>
+	</svg>
+				<i18n-message class="sr-only" i18nkey="navigation.close.label">Close navigation</i18n-message>
+			</button>
+		</div>
+	</header>
+
+	<div class="drawer-section drawer-search">
+		<search-bar quicksearch></search-bar>
+	</div>
+
+		<div class="drawer-section drawer-pickers">
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+					
+
+
+
+
+	<auto-width-select class="picker ">
+
+
+		<label class="sr-only" for="e61d1cdb915aa683-37">
+			<i18n-message i18nkey="version.picker.label"></i18n-message>
+		</label>
+
+		<select id="e61d1cdb915aa683-37" name="version" onchange="self.location.assign(this.value)" >
+				<option id="e61d1cdb915aa683-21"  value="/cx/5.4.0"  >
+					5.4.0
+				</option>
+				<option id="e61d1cdb915aa683-22"  value="/cx/5.3.0"  >
+					5.3.0
+				</option>
+				<option id="e61d1cdb915aa683-23"  value="/cx/5.2.0"  >
+					5.2.0
+				</option>
+				<option id="e61d1cdb915aa683-24"  value="/cx/5.1.0"  >
+					5.1.0
+				</option>
+				<option id="e61d1cdb915aa683-25"  value="/cx/5.0"  >
+					5.0
+				</option>
+				<option id="e61d1cdb915aa683-26"  value="/cx/4.10"  >
+					4.10
+				</option>
+				<option id="e61d1cdb915aa683-27"  value="/cx/4.9/apisix-routes"  selected="">
+					4.9
+				</option>
+				<option id="e61d1cdb915aa683-28"  value="/cx/4.8"  >
+					4.8
+				</option>
+				<option id="e61d1cdb915aa683-29"  value="/cx/4.7"  >
+					4.7
+				</option>
+				<option id="e61d1cdb915aa683-30"  value="/cx/4.6"  >
+					4.6
+				</option>
+				<option id="e61d1cdb915aa683-31"  value="/cx/4.5.3"  >
+					4.5.3
+				</option>
+				<option id="e61d1cdb915aa683-32"  value="/cx/4.5.2"  >
+					4.5.2
+				</option>
+				<option id="e61d1cdb915aa683-33"  value="/cx/4.5.1"  >
+					4.5.1
+				</option>
+				<option id="e61d1cdb915aa683-34"  value="/cx/4.5"  >
+					4.5
+				</option>
+				<option id="e61d1cdb915aa683-35"  value="/cx/4.4"  >
+					4.4
+				</option>
+				<option id="e61d1cdb915aa683-36"  value="/cx/4.3"  >
+					4.3
+				</option>
+		</select>
+
+		<script>
+			/**
+			 * Manages the visibility of picker option icons.
+			 * 1. Each option can have an optional icon assigned
+			 * 2. The currently selected option's icon becomes the picker's main icon
+			 */
+			(() => {
+				const select = document.getElementById('e61d1cdb915aa683-37');
+				if(select.parentElement.querySelectorAll('.picker-option-icon').length <= 0) {
+					return;
+				}
+				const sheet = new CSSStyleSheet();
+				document.adoptedStyleSheets.push(sheet);
+				select.addEventListener('change', updateIconVisibility);
+				updateIconVisibility();
+				function updateIconVisibility() {
+					sheet.replaceSync('.picker:has(select[id="' + select.id + '"]) .picker-option-icon:not(.picker-icon--' + select.selectedOptions[0].id + ')' + '{ display: none; }')
+				}
+			})();
+		</script>
+
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-caret_down picker-icon picker-marker">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#caret_down"></use>
+	</svg>
+	</auto-width-select>
+
+		</div>
+
+	<nav id="drawer-nav" class="drawer-section drawer-nav tree" aria-labelledby="drawer-nav-label">
+		<i18n-message id="drawer-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+
+						<copy-page-tree target="articleTree"></copy-page-tree>
+	</nav>
+
+			<div class="drawer-section drawer-links tree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-38" href="https://www.expertflow.com/" >Expertflow Website</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-39" href="https://api.expertflow.com/" >Public APIs</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-40" href="https://expertflow-docs.atlassian.net/wiki/login.action?os_destination=/spaces" >Login</a>
+			</div>
+
+		</li>
+</ul>
+		</div>
+</dialog>
+
+</header>
+		<section class="article-page body">
+		<theme-navigator class="navigator">
+			<button id="navigator-toggle" class="navigator-toggle" aria-controls="navigator-nav" aria-labelledby="navigator-nav-label" aria-expanded="true">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-menu navigator-icon-closed">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#menu"></use>
+	</svg>
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-chevron_left navigator-icon-opened">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#chevron_left"></use>
+	</svg>
+			</button>
+						<nav id="navigator-nav" class="navigator-body tree" aria-labelledby="navigator-nav-label">
+				<i18n-message id="navigator-nav-label" class="sr-only" i18nkey="navigation.main.label">Main</i18n-message>
+				<theme-page-tree id="articleTree">
+<ul  >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-41" href="/cx/4.9/cx-release-history" >CX Release History</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-42"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-42" href="/cx/4.9/cx-release-notes" >CX Release Notes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-44" href="/cx/4.9/expertflow-cx-data-sheet" >CX Data Sheet</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-45" href="/cx/4.9/hc-3-x-vs-expertflow-cx-features-comparison" >HC 3.x vs Expertflow CX - Features Comparison</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-46"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-46" href="/cx/4.9/conversation-studio" >Conversation Studio</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-48"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-48" href="/cx/4.9/customer-identities" >Customer</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-50"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-50" href="/cx/4.9/conversation-control" >Conversation Objects</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-52"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-52" href="/cx/4.9/customer-channels" >Channels</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-54"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-54" href="/cx/4.9/cx-events-and-activity-types" >CX-Activities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-56"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-56" href="/cx/4.9/solution-architecture" >Solution Architecture</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-58"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-58" href="/cx/4.9/expertflow-etl-data-platform" >Expertflow ETL - Data Platform</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-60"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-60" href="/cx/4.9/agent-capabilities" >Agent Capabilities</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-62"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-62" href="/cx/4.9/supervisor-controls" >Supervisor Controls</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="e61d1cdb915aa683-65"						aria-labelledby="e61d1cdb915aa683-64"
+					></button>
+				<a id="e61d1cdb915aa683-64" href="/cx/4.9/deployment-guides" >Deployment Guides</a>
+			</div>
+
+<ul  id="e61d1cdb915aa683-65" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-66"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-66" href="/cx/4.9/kubernetes-deployment-getting-started" >Deployment Planning</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-68" href="/cx/4.9/rke2-single-node-deployment" >RKE2 Single Node Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-69"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-69" href="/cx/4.9/rke2-single-node-installation-without-ha" >RKE2 Control plane Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-71" href="/cx/4.9/air-gap-install-for-rke-2-kubernetes" >Air-Gap Install for RKE-2 Kubernetes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-72" href="/cx/4.9/rke2-multi-node-installation-without-ha" >Worker HA</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-73"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-73" href="/cx/4.9/rke2-high-availability-pre-deployment-installati-1" >Control Plane HA</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-75"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-75" href="/cx/4.9/storage-solution-getting-started" >Storage Solution - Getting Started</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-77"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-77" href="/cx/4.9/tls-enablement-for-redis-mongodb-postgresql-and-ac" >TLS enablement for Redis, MongoDB , PostgreSQL and ActiveMQ</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-79"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-79" href="/cx/4.9/helm-based-deployment-for-expertflow-cx-solution" >Helm-based Deployment for Expertflow CX</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-81"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-81" href="/cx/4.9/deployment-of-solution-monitoring-components" >Monitoring Solution Deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-83"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-83" href="/cx/4.9/cx-enhancements" >CX Enhancements</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-85"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-85" href="/cx/4.9/system-administration-guides" >System Administration Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="e61d1cdb915aa683-88"						aria-labelledby="e61d1cdb915aa683-87"
+					></button>
+				<a id="e61d1cdb915aa683-87" href="/cx/4.9/upgrade-guide" >Upgrade Guide</a>
+			</div>
+
+<ul  id="e61d1cdb915aa683-88" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-89" href="/cx/4.9/upgrade-guide-cx4-8-to-cx4-9" >Upgrade Guide CX4.8 to CX4.9</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-90" href="/cx/4.9/upgrade-guide-cx4-9-to-cx4-9-1" >Upgrade Guide CX4.9 to CX4.9.1</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="true"
+aria-controls="e61d1cdb915aa683-92"						aria-labelledby="e61d1cdb915aa683-91"
+					></button>
+				<a id="e61d1cdb915aa683-91" href="/cx/4.9/upgrade-guide-cx4-9-1-to-cx4-9-2" >Upgrade Guide CX4.9.1 to CX4.9.2</a>
+			</div>
+
+<ul  id="e61d1cdb915aa683-92" >
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-93" href="/cx/4.9/license-manager-psql-subscription_order-table-crea" >License manager PSQL subscription_order Table creation script</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-94" href="/cx/4.9/apisix-routes" aria-current="page">APISIX Routes</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-95" href="/cx/4.9/upgrade-guide-cx4-9-2-to-cx4-9-3" >Upgrade Guide CX4.9.2 to CX4.9.3</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-96" href="/cx/4.9/upgrade-guide-cx4-9-3-to-cx4-9-4" >Upgrade Guide CX4.9.3 to CX4.9.4</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-97" href="/cx/4.9/upgrade-guide-cx-4-9-4-to-cx4-9-5" >Upgrade Guide CX4.9.4 to CX4.9.5</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-98" href="/cx/4.9/upgrade-guide-cx4-9-5-to-cx4-9-6" >Upgrade Guide CX4.9.5 to CX4.9.6</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-99"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-99" href="/cx/4.9/geographical-deployment-of-expertflow-cx-with-redu" >Geographical Deployment of Expertflow CX with Redundancy</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-101" href="/cx/4.9/create-self-signed-certificates-for-ingress" >Create self-signed certificates for ingress</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-102" href="/cx/4.9/health-check-api-for-cx-components" >Health-Check API for CX Components</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-103"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-103" href="/cx/4.9/expertflow-cx-deployment-on-kubernetes" >CX Deployment on Kubernetes</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-105" href="/cx/4.9/nats-deployment-guide-for-cx-on-cloud" >nats deployment guide for CX on cloud</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-106" href="/cx/4.9/helm-upgrade-guide" >Helm  Upgrade Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-107" href="/cx/4.9/apisix-deployment-for-ef-cx" >ApiSix Deployment for EF CX for CX4.9.3</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-108" href="/cx/4.9/upgrade-to-mongodb-version-8-x-for-cx-solution" >Upgrade to Mongodb Version 8.x  for CX Solution</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-109" href="/cx/4.9/qm-deployment-and-configuration-guide" >QM Deployment and Configuration Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-110" href="/cx/4.9/qm-connector-deployment-guide" >QM Connector Deployment Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-111" href="/cx/4.9/oauth2-proxy-deployment-guide-using-helm" >Oauth2-Proxy Deployment Guide using Helm</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-112" href="/cx/4.9/cx-tenant-component-deployment" >CX-Tenant Component deployment</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-113" href="/cx/4.9/linkedin-connector-deployment-using-helm-not-to-be" >LinkedIn Connector deployment using Helm</a>
+			</div>
+
+		</li>
+</ul>
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-114"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-114" href="/cx/4.9/developer-guides" >Developer Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-116"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-116" href="/cx/4.9/unified-admin-guide" >Unified Admin Guide</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-118"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-118" href="/cx/4.9/integrations" >Integrations</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-120"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-120" href="/cx/4.9/security" >Security</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-122"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-122" href="/cx/4.9/voice-recording-solution" >Voice Recording Solution</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-124" href="/cx/4.9/compatibility-guides" >Compatibility Guides</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-125" href="/cx/4.9/list-of-open-source-software" >List of Open-source Software</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-126"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-126" href="/cx/4.9/business-calendars" >Business Calendars</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-128"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-128" href="/cx/4.9/outbound-campaigns" >Outbound Campaigns</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-130"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-130" href="/cx/4.9/cx-surveys" >CX Surveys</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-132"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-132" href="/cx/4.9/reports" >Reports</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-134"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-134" href="/cx/4.9/superset-deployment-for-reporting" >Superset Deployment for Reporting</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-136" href="/cx/4.9/reporting-database-schema-vcx-4-3" >Reporting Database Schema</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+				<a id="e61d1cdb915aa683-137" href="/cx/4.9/cx-historical-reports-supporting-tables" >CX Historical Reports- Supporting Tables</a>
+			</div>
+
+		</li>
+		<li class="tree-item">
+			<div class="tree-item-header">
+					<button
+						class="tree-action"
+						type="button"
+						aria-expanded="false"
+						aria-labelledby="e61d1cdb915aa683-138"
+aria-busy="true" aria-disabled="true"					></button>
+				<a id="e61d1cdb915aa683-138" href="/cx/4.9/key-reporting-concepts" >Key Reporting Concepts</a>
+			</div>
+
+		</li>
+</ul>
+				</theme-page-tree>
+			</nav>
+		</theme-navigator>
+
+		<main class="main-content">
+			<div class="topbar">
+
+
+
+
+	<theme-breadcrumbs class="breadcrumbs" itemsbeforecollapse="2" maxitems="4">
+		<i18n-message id="e61d1cdb915aa683-140" class="sr-only" i18nkey="breadcrumbs.label">Breadcrumbs</i18n-message>
+		<nav aria-labelledby="e61d1cdb915aa683-140">
+				<ol>
+							<li>
+								<a href="/">
+										<i18n-message key="breadcrumbs.home.label">Home</i18n-message>
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.9">
+										Expertflow CX
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.9/deployment-guides">
+										Deployment Guides
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.9/upgrade-guide">
+										Upgrade Guide
+								</a>
+							</li>
+							<li>
+								<a href="/cx/4.9/upgrade-guide-cx4-9-1-to-cx4-9-2">
+										Upgrade Guide CX4.9.1 to CX4.9.2
+								</a>
+							</li>
+				</ol>
+		</nav>
+	</theme-breadcrumbs>
+					<script src="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/breadcrumbs.js"></script>
+					<ai-actions class="ai-actions"></ai-actions>
+			</div>
+		<nav class="toc sticky" data-component="toc" aria-labelledby="e61d1cdb915aa683-141">
+			<h2 class="toc-heading" id="e61d1cdb915aa683-141">
+				<i18n-message i18nkey="page.article.toc.label">On this Page</i18n-message>
+			</h2>
+			<theme-toc for="content"></theme-toc>
+		</nav>
+			<article id="content" tabindex="-1" class="fb-layout-container">
+				<header>
+					<h1>APISIX Routes</h1>
+				</header>
+				<section class="article-body fb-layout-body" data-searchable-content>
+		
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	
+
+	
+
+	
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+	
+
+
+	
+	
+	
+	
+	
+	
+		
+		
+	
+	
+	
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+						
+		
+
+
+				
+
+
+	
+	
+	
+	<h2 id="To-add-the-APISIX-Route"><span id="APISIXRoutes-ToaddtheAPISIXRoute"></span>To add the APISIX Route
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/apisix-routes#To-add-the-APISIX-Route">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h2>
+<ul>
+ <li>
+  <p>Edit the custom-values.yaml for each chart mentioned below and add the APISIX configuration to the global section of the custom-values.yaml</p>
+ </li>
+</ul>
+<details class="expand" data-component="expand">
+ <summary class="expand-control"> APISIX Configuration for global section </summary>
+ <div class="expand-body">
+  <code-snippet class="theme-code-snippet">
+   <scroll-shadow>
+    <div data-component="code">
+     <pre><code>  apisix:
+    # --- Default Keycloak OIDC Config ---
+    # Used IF a route has plugins.enableAuth = true
+    keycloak:
+      discoveryUrl: "http://keycloak.ef-external.svc/auth/realms/expertflow/.well-known/openid-configuration" # Internal URL
+      realm: "expertflow"
+      clientId: "cim"
+      # !! IMPORTANT: Use Helm secrets or external secret management for clientSecret !!
+      clientSecret: "ef61df80-061c-4c29-b9ac-387e6bf67052"
+      # Default behavior settings
+      bearerOnly: true
+      tokenSigningAlg: "RS256"
+      setAccessTokenHeader: false # Don't pass token header to backend
+      setUserInfoHeader: false    # Don't pass userinfo header to backend
+      # Default Audience/Scopes (OVERRIDE PER ROUTE if needed)
+      defaultAudience: ["cim", "account", "realm-management"]
+      defaultScopes: ["email", "profile"]
+
+    # --- Default Plugin Settings ---
+    plugins:
+      cors:
+        enabled: false # Default CORS disabled unless enabled per route
+        allowOrigins: "*"
+        allowMethods: "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+        allowCredentials: true
+      rewrite:
+        stripPrefix: true # Default rewrite action
+</code></pre>
+    </div>
+   </scroll-shadow>
+   <copy-clipboard class="theme-code-snippet-copy">
+    <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+     <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+    </svg>
+   </copy-clipboard>
+  </code-snippet>
+ </div>
+</details>
+<ul>
+ <li>
+  <p>Remove the Ingress section and replace it with the <em>apisixRoutes </em>defined below for the respective component</p>
+ </li>
+</ul>
+<h3 id="CX-Core"><span id="APISIXRoutes-CXCore"></span>CX Core
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/apisix-routes#CX-Core">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<div class="theme-table" style="--width: 1800px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="unset" data-number-column="false">
+     <table>
+      <tbody>
+       <tr>
+        <th>
+         <p><strong>Component</strong></p>
+        </th>
+        <th>
+         <p><strong>APISIX Route</strong></p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p>Agent-Manager</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> APISIX Route for Agent-Manager </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>ingress: { enabled: false }
+apisixRoutes:
+  # Route 1: Login Exclusion
+  - nameSuffix: "login-unsecured"
+    enabled: true
+    priority: 10
+    paths: ["/agent-manager/agent/login"]
+    backendServicePort: 3000
+    plugins:
+      enableAuth: false
+      enableRewrite: true
+      rewriteStripPrefix: false
+      rewriteRegexUriFrom: "^/agent-manager/agent/login$"
+      rewriteRegexUriTo: "/agent/login"
+  # Route 2: Socket.IO Exclusion
+  - nameSuffix: "socketio-unsecured"
+    enabled: true
+    priority: 10
+    paths: ["/agent-manager/socket.io/*"]
+    backendServicePort: 3000
+    enableWebsocket: true
+    websocketTimeout: { connect: "5s", send: "3600s", read: "3600s" }
+    plugins:
+      enableAuth: false
+      enableRewrite: true
+      rewriteStripPrefix: false
+      rewriteRegexUriFrom: "^/agent-manager/(socket\\.io/.*)"
+      rewriteRegexUriTo: "/$1"
+  # Route 3: Main Secured Route
+  - nameSuffix: "secured"
+    enabled: true
+    priority: 0
+    paths: ["/agent-manager/*"]
+    backendServicePort: 3000
+    plugins:
+      enableAuth: false
+      enableRewrite: true # Uses default stripPrefix
+      customPlugins:
+        - name: limit-count # Example 1: Rate Limiting
+          enable: false
+          config:
+            count: 2000
+            time_window: 60
+            key_type: var
+            key: remote_addr
+            rejected_code: 429
+        - name: ip-restriction # Example 2: IP Whitelisting
+          enable: false
+          config:
+            whitelist:
+              - "192.168.1.0/24"
+              - "127.0.0.1"
+        - name: response-rewrite # Example 3: Add response header
+          enable: false
+          config:
+            headers:
+              set:
+                X-Handled-By: AgentManager-Route
+        # --- START: Added client-control plugin ---
+        - name: client-control
+          enable: false
+          config:
+            max_body_size: 8m # Set max request body size to 8 Megabytes
+        # --- END: Added client-control plugin ---
+      # ######################################################## #
+      # END: Added customPlugins section                         #
+      # ######################################################## #
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Bot-framework</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> APISIX Route for Bot-Framework </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>ingress: { enabled: false }
+apisixRoutes:
+  - nameSuffix: "main"
+    enabled: true
+    paths: ["/bot-framework/*"]
+    backendServicePort: 8082
+    plugins:
+      enableAuth: false
+      enableRewrite: true # Uses default stripPrefix
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Customer-Channel-Manager</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> APISIX Route for CCM </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>ingress: { enabled: false }
+apisixRoutes:
+  # Route 1: Agents Exclusion
+  - nameSuffix: "agents-unsecured"
+    enabled: true
+    priority: 10
+    paths: ["/ccm/agents/*"] # Path from verified YAML
+    backendServicePort: 8081
+    plugins:
+      enableAuth: false
+      enableRewrite: true
+      rewriteStripPrefix: false
+      rewriteRegexUriFrom: "^/ccm/(.*)"
+      rewriteRegexUriTo: "/$1" # Strip /ccm/
+  # Route 2: Channels Service ID Exclusion
+  - nameSuffix: "channels-svc-id-unsecured"
+    enabled: true
+    priority: 10
+    paths: ["/ccm/channels/service-identifier/*"]
+    backendServicePort: 8081
+    plugins:
+      enableAuth: false
+      enableRewrite: true
+      rewriteStripPrefix: false
+      rewriteRegexUriFrom: "^/ccm/(.*)"
+      rewriteRegexUriTo: "/$1" # Strip /ccm/
+  # Route 3: Widget Configs Exclusion
+  - nameSuffix: "widget-configs-unsecured"
+    enabled: true
+    priority: 10
+    paths: ["/ccm/widget-configs/*"]
+    backendServicePort: 8081
+    plugins:
+      enableAuth: false
+      enableRewrite: true
+      rewriteStripPrefix: false
+      rewriteRegexUriFrom: "^/ccm/(.*)"
+      rewriteRegexUriTo: "/$1" # Strip /ccm/
+  # Route 4: Main Secured Route
+  - nameSuffix: "main-secured"
+    enabled: true
+    priority: 0
+    paths: ["/ccm/*"]
+    backendServicePort: 8081
+    plugins:
+      enableAuth: false # Enable Auth
+      enableRewrite: true # Uses default stripPrefix
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Cim-Customer</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> APISIX Route for Cim-Customer </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>ingress: { enabled: false }
+apisixRoutes:
+    - nameSuffix: "main"
+      enabled: true
+      paths: [ "/cim-customer/*" ]
+      backendServicePort: 8080
+      plugins:
+        enableAuth: false
+        enableRewrite: true # Uses default stripPrefix
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Conversation-Manager</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> APISIX Route for Conversation-Manager </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>ingress: { enabled: false }
+apisixRoutes:
+  - nameSuffix: "main"
+    enabled: true
+    paths: ["/conversation-manager/*"]
+    backendServicePort: 8080
+    plugins:
+      enableAuth: false
+      enableRewrite: true # Uses default stripPrefix
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Conversation-Monitor</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> APISIX Route for Conversation-Monitor </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>ingress: { enabled: false }
+apisixRoutes:
+  - nameSuffix: "main"
+    enabled: true
+    paths: ["/conversation-monitor/*"]
+    backendServicePort: 8080
+    plugins:
+      enableAuth: false
+      enableRewrite: true # Uses default stripPrefix
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Customer-Widget</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> APISIX Route for Customer-Widget </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>ingress:
+    enabled: false
+    ingressAssets:
+        enabled: false
+apisixRoutes:
+  # Route 1: Main path
+  - nameSuffix: "main"
+    enabled: true
+    paths: ["/customer-widget/*"]
+    backendServicePort: 80
+    plugins:
+      enableAuth: false
+      enableRewrite: true # Uses default stripPrefix
+  # Route 2: Assets path
+  - nameSuffix: "assets"
+    enabled: true
+    paths: ["/widget-assets/*"]
+    backendServicePort: 80
+    plugins:
+      enableAuth: false
+      enableRewrite: false # No rewrite needed
+      enableCors: true
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>File-Engine</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> APISIX Route for File-Engine </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>ingress: { enabled: false }
+apisixRoutes:
+  - nameSuffix: "main"
+    enabled: true
+    paths: ["/file-engine/*"]
+    backendServicePort: 8080
+    plugins:
+      enableAuth: false
+      enableRewrite: true # Uses default stripPrefix
+    # Note: proxy-body-size needs APISIX global config or maybe a specific plugin if available
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Historical Reports</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> APISIX Route for Historical-Reports </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>ingress: { enabled: false }
+apisixRoutes:
+  - nameSuffix: "main"
+    enabled: true
+    paths: ["/historical-reports/*"]
+    backendServicePort: 8081
+    plugins:
+      enableAuth: false
+      enableRewrite: true # Uses default stripPrefix
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>License Manager</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> APISIX Route for License-Manager </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>ingress: { enabled: false }
+apisixRoutes:
+  - nameSuffix: "main"
+    enabled: true
+    paths: ["/license-manager/*"]
+    backendServicePort: 8888
+    plugins:
+      enableAuth: false
+      enableRewrite: true # Uses default stripPrefix
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Realtime-Reports</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> APISIX Route for Realtime-Reports </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>ingress: { enabled: false }
+apisixRoutes:
+  - nameSuffix: "main"
+    enabled: true
+    paths: ["/realtime-reports/*"]
+    backendServicePort: 8080
+    plugins:
+      enableAuth: false
+      enableRewrite: true # Uses default stripPrefix
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Routing-Engine</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> APISIX Route for Routing-Engine </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>ingress: { enabled: false }
+apisixRoutes:
+  - nameSuffix: "main"
+    enabled: true
+    paths: ["/routing-engine/*"]
+    backendServicePort: 8081
+    plugins:
+      enableAuth: false
+      enableRewrite: true # Uses default stripPrefix
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>StateEvents-Logger</p>
+        </td>
+        <td>
+         <p>No changes</p>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Team-Announcement</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> APISIX Route for Team-Announcement </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>ingress: { enabled: false }
+apisixRoutes:
+  - nameSuffix: "main"
+    enabled: true
+    paths: ["/team-announcement/*"]
+    backendServicePort: 8080
+    plugins:
+      enableAuth: false
+      enableRewrite: true # Uses default stripPrefix
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Unified-Admin</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> APISIX Route for Unified-Admin </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>ingress:
+   enabled: false
+   defaultIngress: false
+apisixRoutes:
+  # Route 1: Main /unified-admin/* path
+  - nameSuffix: "main"
+    enabled: true
+    paths: ["/unified-admin/*"]
+    backendServicePort: 3000
+    plugins:
+      enableAuth: false
+      enableRewrite: true
+      rewriteStripPrefix: false # Custom rewrite for slash
+      rewriteRegexUriFrom: "^/unified-admin/?(.*)"
+      rewriteRegexUriTo: "/$1"
+      enableCors: true
+  # Route 2: Default /* route
+  - nameSuffix: "default"
+    enabled: true
+    priority: -10
+    paths: ["/*"]
+    backendServicePort: 3000
+    plugins:
+      enableAuth: false # No auth on default
+      enableRewrite: false # No rewrite needed
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Web-Channel-Manager</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> APISIX Route for Web-Channel-Manager </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>ingress: { enabled: false }
+apisixRoutes:
+  - nameSuffix: "main"
+    enabled: true
+    paths: ["/web-channel-manager/*"]
+    backendServicePort: 7000
+    enableWebsocket: true # Enable websocket
+    plugins:
+      enableAuth: false
+      enableRewrite: true # Uses default stripPrefix
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>Business-Calendar</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> APISIX Route for Business-Calendar </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>ingress: { enabled: false }
+apisixRoutes:
+  - nameSuffix: "main"
+    enabled: true
+    paths: ["/business-calendar/*"]
+    backendServicePort: 8443
+    # backendScheme: https # Add if needed
+    plugins:
+      enableAuth: false
+      enableRewrite: true # Uses default stripPrefix
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="Agent-Desk"><span id="APISIXRoutes-Agent-Desk"></span>Agent-Desk
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/apisix-routes#Agent-Desk">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<div class="theme-table" style="--width: 1800px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="align-start" data-number-column="false">
+     <table>
+      <tbody>
+       <tr>
+        <th>
+         <p>
+          <br>
+         </p>
+        </th>
+        <th>
+         <p>
+          <br>
+         </p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p>agent-desk</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> Click to expand... </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>    ingress:
+        enabled: false
+        ingressAssets:
+          enabled: false
+          annotations: {}
+          path: /assets
+  
+    apisixRoutes:
+      # Route 1: Main application path
+      - nameSuffix: "main"
+        enabled: true
+        priority: 0 # Default priority
+        paths: ["/unified-agent", "/unified-agent/*"] # Matches /unified-agent/ and everything after
+        backendServicePort: 80
+        plugins:
+          enableAuth: false      # Assumed: Main application endpoints require auth
+          enableRewrite: true   # Corresponds to rewrite-target removing /unified-agent
+          # rewriteStripPrefix: true is implied by enableRewrite: true unless overridden
+          enableCors: true      # From ingress annotations
+      # Route 2: Assets path
+      - nameSuffix: "assets"
+        enabled: true
+        priority: 0 # Same priority should be fine as paths are distinct prefixes
+        paths: ["/assets/*"]    # Matches /assets/* directly
+        backendServicePort: 80
+        plugins:
+          enableAuth: false     # Assumed: Assets typically don't require auth
+          enableRewrite: false  # No rewrite annotation was present for assets ingress
+          enableCors: true      # From ingress annotations
+  
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>grafana</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> Click to expand... </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>  ingress: { enabled: false } # Disabled in favor of APISIX
+  apisixRoutes:
+    - nameSuffix: "main"
+      enabled: true
+      # Translating path /grafana(/|$)(.*) to APISIX prefix match
+      paths: ["/grafana/*"]
+      backendServicePort: 3000 # Matches assumed service port
+      plugins:
+        enableAuth: false # Assuming Grafana requires auth
+        enableRewrite: true # Use default stripPrefix to remove /grafana
+        # enableCors: false # No CORS annotations were present for Grafana ingress
+
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="Channels"><span id="APISIXRoutes-Channels"></span>Channels
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/apisix-routes#Channels">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<div class="theme-table" style="--width: 1800px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="align-start" data-number-column="false">
+     <table>
+      <tbody>
+       <tr>
+        <th>
+         <p>
+          <br>
+         </p>
+        </th>
+        <th>
+         <p>
+          <br>
+         </p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p>connect360</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> Click to expand... </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>   ingress: { enabled: false }
+   apisixRoutes:
+     - nameSuffix: "main"
+       enabled: true
+       priority: 0
+       paths: ["/360connector/*"]
+       backendServicePort: 8080
+       plugins:
+         enableAuth: false          # &lt;-- *** AUTH DISABLED ***
+         enableRewrite: true
+         enableCors: false
+         enableTrailingSlashRedirect: false
+
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>facebook-connector</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> Click to expand... </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>   ingress: {enabled: false} # &lt;-- Explicitly disable standard Ingress
+   apisixRoutes:
+     - nameSuffix: "main"
+       enabled: true
+       priority: 0
+       paths: ["/facebook-connector/*"]
+       backendServicePort: 8080
+       plugins:
+         enableAuth: false
+         enableRewrite: true
+         enableCors: false
+         enableTrailingSlashRedirect: false
+
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>instagram-connector</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> Click to expand... </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>   ingress: {enabled: false} # &lt;-- Explicitly disable standard Ingress
+   apisixRoutes:
+     - nameSuffix: "main"
+       enabled: true
+       priority: 0
+       paths: ["/instagram-connector/*"]
+       backendServicePort: 8080
+       plugins:
+         enableAuth: false
+         enableRewrite: true
+         enableCors: false
+         enableTrailingSlashRedirect: false
+
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>smpp-connector</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> Click to expand... </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>   ingress: {enabled: false} # &lt;-- Explicitly disable standard Ingress
+   apisixRoutes:
+     - nameSuffix: "main"
+       enabled: true
+       priority: 0
+       paths: ["/smppconnector/*"]
+       backendServicePort: 8115
+       plugins:
+         enableAuth: false
+         enableRewrite: true
+         enableCors: false
+         enableTrailingSlashRedirect: false
+
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>telegram-connector</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> Click to expand... </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>   ingress: {enabled: false} # &lt;-- Explicitly disable standard Ingress
+   apisixRoutes:
+     - nameSuffix: "main"
+       enabled: true
+       priority: 0
+       paths: ["/telegram-connector/*"]
+       backendServicePort: 8664
+       plugins:
+         enableAuth: false
+         enableRewrite: true
+         enableCors: false
+         enableTrailingSlashRedirect: false
+
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>twilio-connector</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> Click to expand... </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>   ingress: {enabled: false} # &lt;-- Explicitly disable standard Ingress
+   apisixRoutes:
+     - nameSuffix: "main"
+       enabled: true
+       priority: 0
+       paths: ["/twilio-connector/*"]
+       backendServicePort: 8085
+       plugins:
+         enableAuth: false
+         enableRewrite: true
+         enableCors: false
+         enableTrailingSlashRedirect: false
+
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>twitter-connector</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> Click to expand... </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>   ingress: {enabled: false} # &lt;-- Explicitly disable standard Ingress
+   apisixRoutes:
+     - nameSuffix: "main"
+       enabled: true
+       priority: 0
+       paths: ["/twitter-connector/*"]
+       backendServicePort: 8080
+       plugins:
+         enableAuth: false
+         enableRewrite: true
+         enableCors: false
+         enableTrailingSlashRedirect: false
+
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>viber-connector</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> Click to expand... </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>   ingress: {enabled: false} # &lt;-- Explicitly disable standard Ingress
+   apisixRoutes:
+     - nameSuffix: "main"
+       enabled: true
+       priority: 0
+       paths: ["/viber-connector/*"]
+       backendServicePort: 8080
+       plugins:
+         enableAuth: false
+         enableRewrite: true
+         enableCors: false
+         enableTrailingSlashRedirect: false
+
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>email-connector</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> Click to expand... </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>   ingress: {enabled: false} # &lt;-- Explicitly disable standard Ingress
+   apisixRoutes:
+     - nameSuffix: "main"
+       enabled: true
+       priority: 0
+       paths: ["/email-connector/*"]
+       backendServicePort: 8080
+       plugins:
+         enableAuth: false
+         enableRewrite: true
+         enableCors: false
+         enableTrailingSlashRedirect: false
+
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>whatsapp-connector</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> Click to expand... </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>   ingress: {enabled: false} # &lt;-- Explicitly disable standard Ingress
+   apisixRoutes:
+     - nameSuffix: "main"
+       enabled: true
+       priority: 0
+       paths: ["/whatsapp-connector/*"]
+       backendServicePort: 8080
+       plugins:
+         enableAuth: false
+         enableRewrite: true
+         enableCors: false
+         enableTrailingSlashRedirect: false
+
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>ms-email-connector</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> Click to expand... </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>   ingress: {enabled: false} # &lt;-- Explicitly disable standard Ingress
+   apisixRoutes:
+     - nameSuffix: "main"
+       enabled: true
+       priority: 0
+       paths: ["/ms-email-connector/*"]
+       backendServicePort: 8080
+       plugins:
+         enableAuth: false
+         enableRewrite: true
+         enableCors: false
+         enableTrailingSlashRedirect: false
+
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>youtube-connector</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> Click to expand... </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>  ingress: {enabled: false} # &lt;-- Explicitly disable standard Ingress
+  apisixRoutes:
+    - nameSuffix: "main"
+      enabled: true
+      priority: 0
+      paths: ["/youtube-connector/*"]
+      backendServicePort: 8080
+      plugins:
+        enableAuth: false
+        enableRewrite: true
+        enableCors: false
+        enableTrailingSlashRedirect: false
+
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>linkedin-connector</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> Click to expand... </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>   ingress: {enabled: false} # &lt;-- Explicitly disable standard Ingress
+   apisixRoutes:
+     - nameSuffix: "main"
+       enabled: true
+       priority: 0
+       paths: ["/linkedin-connector/*"]
+       backendServicePort: 9001
+       plugins:
+         enableAuth: false
+         enableRewrite: true
+         enableCors: false
+         enableTrailingSlashRedirect: false
+
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<p>
+ <br>
+</p>
+<h3 id="Campaigns"><span id="APISIXRoutes-Campaigns"></span>Campaigns
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/apisix-routes#Campaigns">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<div class="theme-table" style="--width: 1800px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="align-start" data-number-column="false">
+     <table>
+      <tbody>
+       <tr>
+        <th>
+         <p>
+          <br>
+         </p>
+        </th>
+        <th>
+         <p>
+          <br>
+         </p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p>campaign-backend</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> Click to expand... </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>   ingress: { enabled: false } # Using APISIX
+   apisixRoutes:
+     - nameSuffix: "main"
+       enabled: true
+       priority: 0
+       paths: ["/campaigns/*"]     # From ingress path
+       backendServicePort: 3000    # From ingress backend
+       # backendServiceName: ""    # Optional: Defaults to chart service name
+       # backendNamespace: ""    # Optional: Defaults to release namespace
+       # backendScheme: "http"     # Optional: Defaults to http
+       # methods: ["GET", "POST"]  # Optional: Defaults to all
+       # enableWebsocket: false    # Optional: Defaults to false
+       plugins:
+         enableAuth: false          # Assumed: Requires auth
+         enableRewrite: true       # From ingress rewrite-target (implies default prefix strip)
+         # rewriteStripPrefix: true # Template default when enableRewrite=true and no custom regex
+         enableCors: false         # No CORS annotations on specific ingress
+         enableTrailingSlashRedirect: false # No redirect needed
+
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>campaign-studio</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> Click to expand... </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>   ingress: { enabled: false } # Using APISIX
+   apisixRoutes:
+     - nameSuffix: "main"
+       enabled: true
+       priority: 0
+       paths: ["/campaign-studio/*"] # From ingress path
+       backendServicePort: 1880    # From ingress backend
+       plugins:
+         enableAuth: false          # Assumed: Requires auth
+         enableRewrite: true       # Enable rewrite for custom rule
+         rewriteStripPrefix: false # MUST be false to allow custom regex below
+         rewriteRegexUriFrom: "^/campaign-studio(/|$)(.*)" # Specific rule from ingress rewrite-target: /red/$2
+         rewriteRegexUriTo: "/red/$2"
+         enableCors: true          # CORS annotations were present on specific ingress
+         enableTrailingSlashRedirect: true #
+
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>scheduled-activities</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> Click to expand... </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>  ingress: { enabled: false } # Using APISIX
+  apisixRoutes:
+    - nameSuffix: "main"
+      enabled: true
+      priority: 0
+      paths: ["/scheduler/*"]     # From ingress path
+      backendServicePort: 8894    # From ingress backend
+      plugins:
+        enableAuth: false          # Assumed: Requires auth
+        enableRewrite: true       # From ingress rewrite-target (implies default prefix strip)
+        # rewriteStripPrefix: true # Template default when enableRewrite=true and no custom regex
+        enableCors: false         # No CORS annotations on specific ingress
+        enableTrailingSlashRedirect: false # No redirect needed
+
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="Surveys"><span id="APISIXRoutes-Surveys"></span>Surveys
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/apisix-routes#Surveys">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<div class="theme-table" style="--width: 1800px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="align-start" data-number-column="false">
+     <table>
+      <tbody>
+       <tr>
+        <th>
+         <p>
+          <br>
+         </p>
+        </th>
+        <th>
+         <p>
+          <br>
+         </p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p>surveys-backend</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> Click to expand... </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>   ingress: {enabled: false} # &lt;-- Explicitly disable standard Ingress
+   apisixRoutes:
+     - nameSuffix: "main"
+       enabled: true
+       priority: 0
+       paths: ["/survey-backend/*"] # From original ingress path
+       backendServicePort: 3000     # From original ingress backend port
+       plugins:
+         enableAuth: false          # &lt;-- Default: Auth Disabled
+         enableRewrite: true        # From original ingress rewrite-target (default strip)
+         enableCors: false          # No specific CORS rules in original
+         enableTrailingSlashRedirect: false # No redirect needed
+
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>surveys-studio</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> Click to expand... </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>   ingress: {enabled: false} # &lt;-- Explicitly disable standard Ingress
+   apisixRoutes:
+     - nameSuffix: "main"
+       enabled: true
+       priority: 0
+       paths: ["/survey-studio/*"] # From original ingress path
+       backendServicePort: 1880    # From original ingress backend port
+       plugins:
+         enableAuth: false          # &lt;-- ASSUMPTION: Auth needed due to /red/ target. Confirm please!
+         enableRewrite: true       # Enable rewrite for custom rule
+         rewriteStripPrefix: false # MUST be false for custom rule
+         rewriteRegexUriFrom: "^/survey-studio(/|\\$)(.*)" # From original path + rewrite target
+         rewriteRegexUriTo: "/red/$2"                  # From original rewrite target
+         enableCors: true          # CORS enabled in original annotations
+         enableTrailingSlashRedirect: true # Trailing slash redirect needed from original snippet
+
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+<h3 id="Eleveo"><span id="APISIXRoutes-Eleveo"></span>Eleveo
+ <i18n-message i18nkey="clipboard.copyLink.label" attribute="description">
+  <copy-clipboard class="anchor-copy-button" value="https://docs.expertflow.com/cx/4.9/apisix-routes#Eleveo">
+   <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-link copy-headline-link-icon">
+    <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#link"></use>
+   </svg>
+  </copy-clipboard>
+ </i18n-message></h3>
+<div class="theme-table" style="--width: 1800px;">
+ <table-expand>
+  <scroll-shadow>
+   <table-sort>
+    <div data-component="table" data-align="align-start" data-number-column="false">
+     <table>
+      <tbody>
+       <tr>
+        <th>
+         <p>
+          <br>
+         </p>
+        </th>
+        <th>
+         <p>
+          <br>
+         </p>
+        </th>
+       </tr>
+       <tr>
+        <td>
+         <p>eleveo-api</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> Click to expand... </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>   ingress: { enabled: false } # Explicitly disable standard Ingress ***
+   apisixRoutes:
+     - nameSuffix: "main"
+       enabled: true
+       priority: 0
+       paths: ["/eleveo-connector-api/*"] # From original ingress path
+       backendServicePort: 8080          # From original ingress backend port
+       plugins:
+         enableAuth: false               # Auth Disabled as confirmed
+         enableRewrite: true             # From original ingress rewrite-target (default strip)
+         enableCors: false               # No CORS specified
+         enableTrailingSlashRedirect: false # No redirect specified
+
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         <p>eleveo-runner</p>
+        </td>
+        <td>
+         <details class="expand" data-component="expand">
+          <summary class="expand-control"> Click to expand... </summary>
+          <div class="expand-body">
+           <code-snippet class="theme-code-snippet">
+            <scroll-shadow>
+             <div data-component="code">
+              <pre><code>   ingress: {enabled: false} # &lt;-- *** CORRECTED: Explicitly disable standard Ingress ***
+   apisixRoutes:
+     - nameSuffix: "main"
+       enabled: true
+       priority: 0
+       paths: ["/eleveo-recording-runner/*"] # From original ingress path
+       backendServicePort: 8080             # From original ingress backend port
+       plugins:
+         enableAuth: false                  # Auth Disabled as confirmed
+         enableRewrite: true                # From original ingress rewrite-target (default strip)
+         enableCors: false                  # No CORS specified
+         enableTrailingSlashRedirect: false    # No redirect specified
+
+</code></pre>
+             </div>
+            </scroll-shadow>
+            <copy-clipboard class="theme-code-snippet-copy">
+             <svg role="img" aria-hidden="true" data-component="icon" class="icon icon-copy_content copy-icon">
+              <use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#copy_content"></use>
+             </svg>
+            </copy-clipboard>
+           </code-snippet>
+          </div>
+         </details>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </table-sort>
+  </scroll-shadow>
+ </table-expand>
+</div>
+
+																				<script>
+						// Mark block images on the first level as breakout so they can grow wider than the article content.
+						document.querySelectorAll('.article-body > .theme-block-image [data-component="image"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--width');
+							if (!propertyValue) {
+								return;
+							}
+							if (parseInt(propertyValue) >= 760) {
+								element.closest('.theme-block-image').classList.add('theme-block-image--breakout');
+							}
+						});
+
+						// Remove the inline size on page layouts as this would lead to layouts breaking out of the article content.
+						document.querySelectorAll('.article-body [data-component="layout-section"]').forEach((element) => {
+							const propertyValue = element.style.getPropertyValue('--inline-size');
+							if (!propertyValue) {
+								return;
+							}
+							// ONLY for this very specific width (Confluence default)
+							if (parseInt(propertyValue) === 760) {
+								element.style.removeProperty('--inline-size');
+							}
+						})
+
+						// Set the initial state of the navigation toggle to prevent shifting in the UI
+						try {
+							const navigationToggle = document.querySelector('#navigator-toggle');
+							const navigationState = localStorage.getItem('theme-navigation-state');
+
+							if (navigationState === 'collapsed' && navigationToggle) {
+								navigationToggle.setAttribute('aria-expanded', 'false');
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					</script>
+																			</section>
+				<footer>
+
+
+	<i18n-message id="e61d1cdb915aa683-142" class="sr-only" i18nkey="pagination.label">Pagination</i18n-message>
+	<nav data-component="page-pagination" class="page-pagination" aria-labelledby="e61d1cdb915aa683-142">
+		<ul class="page-pagination-items">
+				<li class="page-pagination-item">
+					<a rel="prev" href="/cx/4.9/license-manager-psql-subscription_order-table-crea">
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_left ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_left"></use>
+	</svg>
+						</div>
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.prev.label">Previous Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">License manager PSQL subscription_order Table creation script</div>
+						</div>
+					</a>
+				</li>
+				<li class="page-pagination-item">
+					<a rel="next" href="/cx/4.9/upgrade-guide-cx4-9-2-to-cx4-9-3">
+						<div>
+							<div class="page-pagination-label">
+								<i18n-message i18nkey="pagination.next.label">Next Page</i18n-message>
+							</div>
+							<div class="page-pagination-title">Upgrade Guide CX4.9.2 to CX4.9.3</div>
+						</div>
+						<div class="page-pagination-icon">
+	<svg role="img" aria-hidden="true" data-component="icon" class="icon icon-arrow_right ">
+		<use href="/__theme/b_8ca5a7d7-80f3-41c8-bea7-75cce14ad14f/scroll-sites-help-center-theme/41/icons.svg#arrow_right"></use>
+	</svg>
+						</div>
+					</a>
+				</li>
+		</ul>
+	</nav>
+
+				</footer>
+			</article>
+		</main>
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer data-component="footer" class="footer">
+
+
+
+
+
+		<img class="footer-logo footer-logo--dark" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+
+		<img class="footer-logo footer-logo--light" src="/__site/d751ae42-63dd-47a1-9afe-4b9a0e42ce06/white-ef-icon-logo.svg" alt="">
+		<ul class="footer-links">
+				<li><a href="https://www.expertflow.com/privacy-policy/">Data Protection &amp; Privacy Policy </a></li>
+				<li><a href="https://www.expertflow.com/bcp/">Business Continuity Policy</a></li>
+				<li><a href="https://www.expertflow.com/information-security-policy/">Information Security Policy</a></li>
+				<li><a href="https://www.expertflow.com/quality-policy/">Quality Policy</a></li>
+				<li><a href="https://www.expertflow.com/transparency/">Transparency and Anticorruption Policy</a></li>
+		</ul>
+	<ul class="footer-content">
+		<li><i18n-message i18nkey="footer.copyright.label">Copyright</i18n-message> <current-year></current-year></li>		<li><i18n-message i18nkey="footer.poweredBy.label">Powered by</i18n-message> <a href="https://www.k15t.com/products/scroll-sites-for-confluence" rel="external nofollow">Scroll&nbsp;Sites</a> & <a href="https://www.atlassian.com/software/confluence" rel="external nofollow">Atlassian&nbsp;Confluence</a></li>
+	</ul>
+
+</footer>
+
+
+</body>
+</html>
