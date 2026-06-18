@@ -8,7 +8,7 @@
 
 ### 1. Download Expertflow Documentation
 **Question:** Fetch every detail from https://docs.expertflow.com/
-**Answer:** Downloaded the entire docs site (~7,400 files, ~531 MB) into `deployment/expertflow-site/`
+**Answer:** Downloaded the entire docs site (~7,400 files, ~531 MB) into `Deployment/Expertflow-Site/`
 
 ### 2. Pods in Expertflow Namespace
 **Question:** Tell me about the pods in expertflow namespace
@@ -22,7 +22,7 @@
 - Step 3: Configure Channel Type, Channel Provider, Channel Connector, and Channel in EFCX Unified Admin
 - Step 4: Test by sending a WhatsApp message to the business number
 
-**Output file:** `deployment/whatsapp-integration/efcx-5.1.0-whatsapp-connector-integration.md`
+**Output file:** `Deployment/Whatsapp-Integration/efcx-5.1.0-whatsapp-connector-integration.md`
 
 ---
 
