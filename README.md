@@ -101,4 +101,4 @@ A-Product-Brief  →  B-Trigger-Map  →  C-UX-Scenarios  →  D-Design-System  
 
 ---
 
-*Maintained by the Expertflow CX team. Last updated: 2026-06-18.*
+*Maintained by the Expertflow CX team. Last updated: 2026-06-19.*
