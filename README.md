@@ -3,7 +3,7 @@
 [![Repo](https://img.shields.io/badge/EFCX-Troubleshooting_Platform-0055ff?style=for-the-badge&logo=github&logoColor=white)](https://github.com/expertflow/expertflow-cx-documentation)
 [![Docs](https://img.shields.io/badge/📖_EFCX_Documentation-0a96ba?style=for-the-badge&logo=bookstack&logoColor=white)](https://github.com/expertflow/expertflow-cx-documentation)
 [![Status](https://img.shields.io/badge/Status-Active-28a745?style=for-the-badge)](.)
-[![Last Updated](https://img.shields.io/badge/Last_Updated-2026--06--18-ff69b4?style=for-the-badge)](.)
+[![Last Updated](https://img.shields.io/badge/Last_Updated-2026--06--19-ff69b4?style=for-the-badge)](.)
 
 > 📚 **Central knowledge base, troubleshooting guides & deployment references for the Expertflow CX platform.**
 
