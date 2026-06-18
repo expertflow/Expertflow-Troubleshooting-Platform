@@ -16,12 +16,12 @@ Initial session focused on downloading Expertflow documentation, identifying dep
 | 2 | Parallel download via `xargs -P` was slow | Replaced with native `curl --parallel-max 50` for 6,982 URLs |
 | 3 | Some files had naming conflicts (directory vs file without extension) | Fixed by appending `.html` extension to all paths |
 | 4 | Permission errors moving large directories | Used `git mv` for tracked files, `cp -r` + `rm` for untracked |
-| 5 | `docs/expertflow-site/cx/4.5.1` could not be removed | Device busy — skipped and cleaned remaining files |
+| 5 | `Docs/Expertflow-Site/cx/4.5.1` could not be removed | Device busy — skipped and cleaned remaining files |
 
 ### Key Findings
 - **Total docs downloaded:** ~9,100 files (~531 MB)
-- **Key doc for WhatsApp:** `deployment/expertflow-site/cx/4.5.1/meta-whatsapp-cloud-api-configuration-deployment-g.html`
-- **Key doc for deployment:** `deployment/expertflow-site/cx/5.1.0/deployment-guide.html`
+- **Key doc for WhatsApp:** `Deployment/Expertflow-Site/cx/4.5.1/meta-whatsapp-cloud-api-configuration-deployment-g.html`
+- **Key doc for deployment:** `Deployment/Expertflow-Site/cx/5.1.0/deployment-guide.html`
 - **Connector service name:** `cx-channels-whatsapp-connector-svc` (Helm-based)
 
 ### Commands Used
@@ -33,7 +33,7 @@ curl -Z --parallel-max 50 --config /tmp/curl_config.txt
 kubectl -n expertflow get svc | grep whatsapp-connector
 
 # Search for specific terms
-grep -ri "whatsapp-connector" deployment/expertflow-site/cx/
+grep -ri "whatsapp-connector" Deployment/Expertflow-Site/cx/
 ```
 
 ---
